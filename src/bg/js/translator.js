@@ -11,14 +11,14 @@ class Translator {
     }
 
     loadDictionary(){
-        if (this.options.cust == true) {
+        if (this.options.uddt == true) {
             let dictURL = `https://rawgit.com/${this.options.user}/${this.options.repo}/${this.options.tags}/${this.options.dlib}`;
             loadjs(dictURL, {
-                success: ()=> {this.dictionary = new Custdict()},
-                error: ()=> {this.dictionary = new Defaultdict()},
+                success: ()=> {this.dictionary = new UserDict()},
+                error: ()=> {this.dictionary = new CommonDict()},
             });
         } else {
-            this.dictionary = new Defaultdict();
+            this.dictionary = new CommonDict();
         }
     }
     

@@ -30,7 +30,7 @@ class AnkiHelperBackEnd{
         this.translator.getTranslation(word).then(result =>{
             callback(result);
         }).catch (error => {
-            callback({error: error.toString ? error.toString() : error});
+            callback(null);
         });
     }
 

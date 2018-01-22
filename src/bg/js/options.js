@@ -23,11 +23,11 @@ function sanitizeOptions(options) {
         word: 'expression',
         defs: 'glossary',
         sent: 'sentence',
-        cust: true,
+        uddt: false,
         user: 'ninja33',
         repo: 'anki-online-dict-helper',
         tags: 'master',
-        dlib: 'cust/baicizhan.js',
+        dlib: 'uddt/baicizhan.js',
     };
 
     for (let key in defaults) {
