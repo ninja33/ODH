@@ -1,4 +1,4 @@
-class Baicizhan {
+class Custdict {
     constructor() {
         this.word = '';
         this.base = 'http://mall.baicizhan.com/ws/search?w='
@@ -20,13 +20,13 @@ class Baicizhan {
 
         defsContent += `<div class='bcz-section'>${wordInfo.mean_cn}</div>`;
         if (wordInfo.df != undefined)
-            defsContent += `<div class='bcz-section'><img width="340px" src='${wordInfo.df}' /></div>`;
+            defsContent += `<div class='bcz-section'><img width="260px" src='${wordInfo.df}' /></div>`;
         if (wordInfo.st != undefined)
             defsContent += `<div class='bcz-section'>${wordInfo.st}</div>`;
         if (wordInfo.sttr != undefined)
             defsContent += `<div class='bcz-section'>${wordInfo.sttr}</div>`;
         if (wordInfo.img != undefined)
-            defsContent += `<div class='bcz-section'><img width="340px" src='${wordInfo.img}' /></div>`;
+            defsContent += `<div class='bcz-section'><img width="260px" src='${wordInfo.img}' /></div>`;
         //if (wordInfo.tv != undefined)
         //    defsContent += `<div class='bcz-section'><video width="340px" controls><source src='${wordInfo.tv}' type="video/mp4"></video></div>`;
         return defsContent;

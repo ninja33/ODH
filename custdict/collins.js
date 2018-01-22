@@ -1,4 +1,4 @@
-class Collins {
+class Custdict {
     constructor() {
         this.word = '';
         this.base = 'https://www.collinsdictionary.com/dictionary/english/'

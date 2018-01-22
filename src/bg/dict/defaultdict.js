@@ -1,4 +1,4 @@
-class Youdao {
+class Defaultdict {
     constructor() {
         this.word = '';
         this.appSecret = 'xYLvWBzCupw3nTpUcBwG6dvjZZT2RGD6';

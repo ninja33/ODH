@@ -1,11 +1,11 @@
 class AnkiHelperBackEnd{
     constructor(){
         this.options = {};
-        this.translator = new Translator();
 
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
         loadOptions().then(opts => {
             this.setOptions(opts);
+            this.translator = new Translator(opts);
             this.target = new Ankiconnect(opts);
         });
     }

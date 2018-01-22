@@ -27,5 +27,6 @@
         "fg/img/cloud.png",
         "fg/img/plus.png",
         "fg/js/frame.js"
-    ]
+    ],
+    "content_security_policy": "script-src 'self' https://rawgit.com; object-src 'self'"
 }

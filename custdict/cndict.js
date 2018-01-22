@@ -1,4 +1,4 @@
-class Cndict {
+class Custdict {
     constructor() {
         this.word = '';
     }
