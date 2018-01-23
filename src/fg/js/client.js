@@ -218,7 +218,6 @@ class AnkiHelperFrontEnd {
         const range = document.caretRangeFromPoint(point.x, point.y);
         if (range !== null) {
             let textSource = new TextSourceRange(range);
-            textSource.setWordsOffset(1, 2);
             textSource.selectText();
         }
 

@@ -7,25 +7,24 @@
   font-size     : 14px;
   text-align    : left;
   color         : #1d2129; 
+  border-radius : 3px;
   /*background-color:#dcedc8;*/
-  border-radius     : 3px;
-  /*background-image: url('_bg01.jpg');*/
-  /*background-attachment: fixed;)*/
 }
 
 /* section global style */
 .abkl-sect {
   border            : 1px solid;   
   border-color      : #e5e6e9 #dfe0e4 #d0d1d5; 
-  border-radius     : 5px;  
+  border-radius     : 0 5px 5px 0;
   background-color  : rgba(255,255,255,0.95);   
   margin            : 3px 0;
   padding           : 5px;       
   line-height       : 1.6em;
   min-height        : 1.6em;
+  border-right-width: 6px;
+  border-left-style : dashed; 
   /*remove below 2 lines if you want flat style*/
-  /*border            : 0px solid;   */
-  border-left-width : 8px;
+  /*border          : 0px solid;   */
   /*box-shadow: 1px 1px 2px rgba(0,0,0,0.3), 1px 1px 3px rgba(0,0,0,0.5);*/
 }
 
@@ -35,39 +34,39 @@
 }
 
 .abkl-word{
-  border-left-color:rgba(124,179,66,0.8);
+  border-right-color:rgba(22,131,234,0.8);
 }
 .abkl-defs{
-  border-left-color:rgba(22,131,234,0.8);
+  border-right-color:rgba(124,179,66,0.8);
 }
 .abkl-sent{
-  border-left-color:rgba(229,57,53,0.8);
+  border-right-color:rgba(229,57,53,0.8);
 }
 
 hr{
   border        : 1px;
   margin        : 5px 0;    
-  border-top : 1px solid #d5d5d5; 
+  border-top    : 1px solid #d5d5d5; 
 }
 
 .abkl-word{
-  font-size:1.2em;
-  font-weight:bold;
+  font-size     :1.2em;
+  font-weight   :bold;
 }
 
 .abkl-defs{
-  word-wrap:break-word;
+  word-wrap     :break-word;
 }
 
 .abkl-sent{
-  font-size:0.8em;
+  font-size     :0.8em;
 }
 
 .abkl-createnote{
-  cursor: pointer;
-  float:right;
-  margin-right:3px;
-  vertical-align:middle;
+  cursor        : pointer;
+  float         : right;
+  margin-right  : 3px;
+  vertical-align: middle;
 }
 
 /* Tag highlight style */
