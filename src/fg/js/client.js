@@ -2,25 +2,32 @@ class AnkiHelperFrontEnd {
 
     constructor() {
 
-        this.point = {
-        x: 0,
-        y: 0,
-        };
-        this.noteinfo = {};
+        this.point = null;
+        this.note = null;
+        this.activateKey = 16;
+        this.activateBtn = 2;
+        this.enabled = true;
         this.popup = new Popup();
         this.timeout = null;
 
         window.addEventListener('mousemove', e => this.onMouseMove(e));
         window.addEventListener('mousedown', e => this.onMouseDown(e));
+        window.addEventListener('keydown', this.onKeyDown.bind(this));
         window.addEventListener('message', e => this.onFrameMessage(e));
         document.addEventListener('selectionchange', e => this.userSelectionChanged(e));
         window.addEventListener('selectionend', e => this.onSelectionEnd(e));
     }
 
+    onKeyDown(e) {
+        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
+            this.selectText(this.point);
+        }
+    }
+
     onMouseMove(e) {
         this.point = {
-        x: e.clientX,
-        y: e.clientY,
+            x: e.clientX,
+            y: e.clientY,
         };
     }
 
@@ -28,13 +35,13 @@ class AnkiHelperFrontEnd {
 
         // wait 500 ms after the last selection change event
         if (this.timeout) {
-        clearTimeout(this.timeout);
+            clearTimeout(this.timeout);
         }
 
         this.timeout = setTimeout(() => {
-                var selEndEvent = new CustomEvent("selectionend");
-                window.dispatchEvent(selEndEvent);
-            }, 500);
+            var selEndEvent = new CustomEvent("selectionend");
+            window.dispatchEvent(selEndEvent);
+        }, 500);
     }
 
     onSelectionEnd(e) {
@@ -44,21 +51,27 @@ class AnkiHelperFrontEnd {
 
         const selection = window.getSelection();
         this.word = (selection.toString() || '').trim();
-        if (this.isInvalid()){
+        if (this.isInvalid(this.word)) {
             return;
         };
 
-        this.sendBGMessage('findTerm', {word: this.word}, defs => {
+        let request = {
+            action: 'getTranslation',
+            params: {
+                word: this.word
+            },
+        };
+        chrome.runtime.sendMessage(request, defs => {
             if (defs == null)
                 return;
 
             let sent = this.getSentence(this.word);
-            this.noteinfo = {
-                word:this.word,
+            this.note = {
+                word: this.word,
                 defs,
                 sent,
             };
-            const content = this.renderPopup(this.noteinfo);
+            let content = this.renderPopup(this.note);
             this.popup.showNextTo({
                 x: this.point.x,
                 y: this.point.y,
@@ -68,11 +81,28 @@ class AnkiHelperFrontEnd {
     }
 
     onMouseDown(e) {
-        this.popup.hide();
+        this.point = {
+            x: e.clientX,
+            y: e.clientY
+        };
+        if (this.enabled && (e.shiftKey || e.which === this.activateBtn)) {
+            this.selectText(this.point);
+        } else {
+            this.popup.hide();
+        }
     }
 
     onFrameMessage(e) {
-        this.sendBGMessage('addNote',{noteinfo:this.noteinfo}, result => {});
+        if (e.data == 'createNote') {
+            let request = {
+                action: 'createNote',
+                params: {
+                    note: this.note
+                },
+            };
+            chrome.runtime.sendMessage(request, result => {});
+        }
+        return;
     }
 
     cutSentence(word, sentence) {
@@ -138,12 +168,12 @@ class AnkiHelperFrontEnd {
         }
     }
 
-    renderPopup(noteinfo) {
+    renderPopup(note) {
         let {
             word,
             defs,
             sent
-        } = noteinfo;
+        } = note;
 
         let css = chrome.extension.getURL('fg/css/frame.css');
         let js = chrome.extension.getURL('fg/js/frame.js');
@@ -156,7 +186,7 @@ class AnkiHelperFrontEnd {
             </head>\
             <body style="margin:3px;">\
             <div class="abkl-content">\
-                <div class="abkl-sect abkl-word">${word}<span class="abkl-addnote"><img src="${img}"/></span></div>\
+                <div class="abkl-sect abkl-word">${word}<span class="abkl-createnote"><img src="${img}"/></span></div>\
                 <div class="abkl-sect abkl-defs">${defs}</div>\
                 <div class="abkl-sect abkl-sent">${sent}</div>\
             </div>\
@@ -166,28 +196,33 @@ class AnkiHelperFrontEnd {
         return content;
     }
 
-    sendBGMessage(action, params, callback) {
-        chrome.runtime.sendMessage({action, params}, callback);
-    }
-
     isEmpty() {
         return (!this.word);
     }
 
-    isShortandNum() {
+    isShortandNum(word) {
         let numReg = /\d/;
-        return (this.word.length < 3 || numReg.test(this.word))
+        return (word.length < 3 || numReg.test(word))
     }
 
-    isEnglish() {
+    isEnglish(word) {
         let enReg = /^[^\u4e00-\u9fa5]+$/i;
-        return (enReg.test(this.word));
+        return (enReg.test(word));
     }
 
-    isInvalid() {
-        return (this.isEmpty() || this.isShortandNum() || !this.isEnglish());
+    isInvalid(word) {
+        return (this.isEmpty(word) || this.isShortandNum(word) || !this.isEnglish(word));
     }
-        
+
+    selectText(point) {
+        const range = document.caretRangeFromPoint(point.x, point.y);
+        if (range !== null) {
+            let textSource = new TextSourceRange(range);
+            textSource.setWordsOffset(1, 2);
+            textSource.selectText();
+        }
+
+    }
 }
 
 window.abklfrondend = new AnkiHelperFrontEnd();

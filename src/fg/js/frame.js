@@ -36,8 +36,8 @@ function hackTagsColor() {
 
 function onDomContentLoaded() {
     hackTagsColor();
-    document.getElementsByClassName('abkl-addnote')[0].addEventListener('click', () => {
-        window.parent.postMessage({action: 'addNote', params: {}}, '*');
+    document.getElementsByClassName('abkl-createnote')[0].addEventListener('click', () => {
+        window.parent.postMessage('createNote', '*');
     });
 }
 

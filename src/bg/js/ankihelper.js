@@ -26,7 +26,7 @@ class AnkiHelperBackEnd{
         return true;
     }
 
-    api_findTerm({word, callback}) {
+    api_getTranslation({word, callback}) {
         this.translator.getTranslation(word).then(result =>{
             callback(result);
         }).catch (error => {
@@ -34,11 +34,11 @@ class AnkiHelperBackEnd{
         });
     }
 
-    api_addNote({noteinfo, callback}) {
-        this.target.addNote(noteinfo).then(result =>{
+    api_createNote({note, callback}) {
+        this.target.createNote(note).then(result =>{
             callback(result);
         }).catch (error => {
-            callback({error: error.toString ? error.toString() : error});
+            callback(result);
         });
     }
 
