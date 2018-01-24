@@ -1,33 +1,15 @@
-/*
- * Copyright (C) 2016  Alex Yatskov <alex@foosoft.net>
- * Author: Alex Yatskov <alex@foosoft.net>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 function sanitizeOptions(options) {
     const defaults = {
-        deck: 'Antimoon',
-        type: 'Antimoon',
-        word: 'expression',
-        defs: 'glossary',
-        sent: 'sentence',
-        uddt: false,
-        user: 'ninja33',
-        repo: 'anki-online-dict-helper',
-        tags: 'master',
-        dlib: 'uddt/baicizhan.js',
+        actived: true,
+        deckname: 'Antimoon',
+        typename: 'Antimoon',
+        expression: 'expression',
+        definitions: 'glossary',
+        sentence: 'sentence',
+        userdefined: false,
+        currentdict:'encn-Youdao',
+        repository: 'ninja33/anki-online-dict-helper',
+        scriptpath: 'master/uddt/baicizhan.js',
     };
 
     for (let key in defaults) {
@@ -39,23 +21,65 @@ function sanitizeOptions(options) {
     return options;
 }
 
-function loadOptions() {
-    return new Promise ((resolve, reject) =>{
-        try{
-            chrome.storage.sync.get(null, (items) => resolve(sanitizeOptions(items)));
-        } catch (error) {
-            reject(error);
-        }
+function optionsLoad(callback) {
+    chrome.storage.sync.get(null, (options) => callback(sanitizeOptions(options)));
+}
+
+function optionsSave(options,callback) {
+    chrome.storage.sync.set(sanitizeOptions(options), callback);
+}
+
+function formRead() {
+}
+
+function onOKClicked(e) {
+    if (!e.originalEvent) {
+        return;
+    }
+
+    optionsLoad((optionsOld)=>{
+        const optionsNew = $.extend(true, {}, optionsOld);
+
+        optionsNew.actived = $('#actived').prop('checked');
+        optionsNew.deckname= $('#deck').val();
+        optionsNew.typename= $('#type').val();
+        optionsNew.expression= $('#word').val();
+        optionsNew.definitions= $('#defs').val();
+        optionsNew.sentence= $('#sent').val();
+        optionsNew.userdefined=$('#udfd').prop('checked');
+        optionsNew.currentdict=$('#dict').val();
+        optionsNew.repository= $('#repo').val();
+        optionsNew.scriptpath= $('#path').val();
+    
+        optionsSave(optionsNew,()=>{
+            let backwin = chrome.extension.getBackgroundPage()
+            backwin.abkl_backend.setOptions(optionsNew);
+            window.close();
+        });
     });
 }
 
-function saveOptions(opts) {
-    return new Promise ((resolve, reject) =>{
-        try{
-            chrome.storage.sync.set(sanitizeOptions(opts), resolve('success'));
-        } catch (error) {
-            reject(error);
-        }
-    });
-    
+function onCancelClicked(e) {
+    window.close();
 }
+
+function onReady() {
+    optionsLoad((opts)=>{
+        //$('#actived').prop('checked',opts.actived);
+        $('#deck').val(opts.deckname);
+        $('#type').val(opts.typename);
+        $('#word').val(opts.expression);
+        $('#defs').val(opts.definitions);
+        $('#sent').val(opts.sentence);
+        //$('#actived').prop('checked',opts.userdefined);
+        $('#dict').val(opts.currentdict);
+        $('#repo').val(opts.repository);
+        $('#path').val(opts.scriptpath);
+
+        $('#ok').click(onOKClicked);
+        $('#cancel').click(onCancelClicked);
+    });
+
+}
+
+$(document).ready(onReady);

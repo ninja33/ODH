@@ -1,13 +1,17 @@
-class CommonDict {
+class CNDict {
     constructor() {
         this.word = '';
-        this.selector = '';
-        this.attr = '';
-        this.base = 'http://dict.youdao.com/fsearch?client=deskdict&keyfrom=chrome.extension&pos=-1&doctype=xml&xmlVersion=3.2&dogVersion=1.0&vendor=unknown&appVer=3.1.17.4208&le=eng&q=';
+        this.selector = '#exp';
+        this.attr = 'outerHTML';
+        this.base = 'http://apii.dict.cn/apis/dict_plugin.php?skin=default&pie=1&tj=huaci&btype=chrome&ver=1.0.2&pos=0';
     }
 
-    resourceURL(){
-        return this.base + encodeURIComponent(this.word);
+    resourceURL() {
+        let word = encodeURIComponent(this.word);
+        let key = '73968t727aac3ee8bai593473d960c8x';
+        let md5_salt = `###${key}chromex###`;
+        let saltmd5 = md5(rawurlencode(word+'0'+md5_salt));
+        return this.base + `&t=${saltmd5}&q=${word}`;
     }
 
     findTerm(word) {
@@ -20,8 +24,7 @@ class CommonDict {
         return new Promise((resolve, reject) => {
             $.ajax({
                 url     : url,
-                type    : 'GET',
-                dataType: 'xml',
+                type    : "GET",
                 timeout : 5000,
                 error   : (xhr,status,error) => {
                     reject(error);
@@ -39,20 +42,17 @@ class CommonDict {
     }
 
     renderContent(data) {
-        let xmlroot = data.getElementsByTagName("yodaodict")[0];
-        let trans = xmlroot.getElementsByTagName("translation");
-        let transarr = Array.from(trans);
-        let content = "";
-        if (!trans[0] || !trans[0].childNodes[0])
+        let div = document.createElement("div");
+        div.innerHTML = data;
+        let content = div.querySelector(this.selector)
+        if (content){
+            let css = this.renderCSS();
+            return css + content[this.attr];
+        } else {
             return null;
-
-        for (let i = 0; i < trans.length; i++) {
-            content += trans[i].getElementsByTagName("content")[0].childNodes[0].nodeValue + "<br>";
         }
-        let css = this.renderCSS();
-        return css + content; 
     }
-    
+
     renderCSS(){
         let css = `
             <style> 

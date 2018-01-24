@@ -1,19 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Anki Helper - Online Dictionary</title>
-    </head>
-    <body>
-        <div class="option-container">
-        <h1>Options</h1>
-            <p>Option - 1</p>        
-            <p>Option - 2</p>        
-            <p>Option - 3</p>        
-        </div>
 
-        <script src="js/polyfill.js"></script>
-        <script src="js/options.js"></script>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/options.css">
+    <title>Anki Online Dictionary Helper</title>
+</head>
+
+<body>
+    <div class='container'>
+        <form>
+            <section class="anki-options">
+                <label for="deck">Deck Name</label>
+                <input type="text" id="deck" placeholder="Your anki deck name ..">
+
+                <label for="type">Type Name</label>
+                <input type="text" id="type" placeholder="Your anki type name ..">
+
+                <label for="word">Word</label>
+                <input type="text" id="word" placeholder="Field name of your {Word}">
+
+                <label for="defs">Definition</label>
+                <input type="text" id="defs" placeholder="Field name of your {Definition}">
+
+                <label for="sent">Sentence</label>
+                <input type="text" id="sent" placeholder="Field name of your {Sentence}">
+            </section>
+
+            <hr>
+
+            <section class="dict-options">
+                <label for="repo">Repository</label>
+                <input type="text" id="repo" name="repo" placeholder="User defined online dictionary">
+                <label for="path">ScriptPath</label>
+                <input type="text" id="path" name="path" placeholder="User defined online dictionary">
+
+                <label for="dict">Builtin Dict</label>
+                <select id="dict">
+                    <option value="encn-Youdao">encn-Youdao</option>
+                    <option value="encn-Haici">encn-Haici</option>
+                    <option value="encn-Baicizhan">encn-Baicizhan</option>
+                </select>
+            </section>
+            <hr>
+
+            <div class="buttons">
+                <input type="button" class="confirm" id="ok" value="OK">
+                <input type="button" class="confirm" id="cancel" value="Cancel">
+            </div>
+        </form>
+    </div>
+
+    <!--script src="js/polyfill.js"></script-->
+    <script src="../lib/jquery-2.2.2.min.js"></script>
+    <script src="js/options.js"></script>
+</body>
+
 </html>
-

@@ -1,4 +1,6 @@
-class UserDict {
+window.abkl_udfdict['encn-Collins'] = Collins;
+
+class Collins {
     constructor() {
         this.word = '';
         this.selector = '.content';

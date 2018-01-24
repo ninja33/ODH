@@ -1,27 +1,45 @@
 class Translator {
     constructor(opts) {
-        this.word = "";
-        this.defs = {};
+        this.options = null;
+        this.oldoptions = null;
+        this.word = null;
+        this.base = 'https://rawgit.com';
+        this.dictionaries = {
+            'encn-Youdao': Youdao,
+            'encn-Baicizhan': Baicizhan,
+            'encn-CNDict': CNDict,
+        };
+
         this.setOptions(opts);
         this.loadDictionary();
     }
 
-    setOptions(opts){
+    setOptions(opts) {
         this.options = opts;
     }
 
-    loadDictionary(){
-        if (this.options.uddt == true) {
-            let dictURL = `https://rawgit.com/${this.options.user}/${this.options.repo}/${this.options.tags}/${this.options.dlib}`;
+    updateOptions(opts) {
+        this.options = opts;
+        loadDictionary();
+    }
+
+    loadDictionary() {
+        const opts = this.options;
+        if (opts.userdefined && opts.repo != '' && opts.dlib != '') {
+            let dictURL = `${this.case}/${opts.repo}/${opts.dlib}`;
             loadjs(dictURL, {
-                success: ()=> {this.dictionary = new UserDict()},
-                error: ()=> {this.dictionary = new CommonDict()},
+                success: () => {
+                    this.dictionary = new this.dictionaries[opts.currentdict];
+                },
+                error: () => {
+                    this.dictionary = new this.dictionaries[opts.currentdict];
+                },
             });
         } else {
-            this.dictionary = new CommonDict();
+            this.dictionary = new this.dictionaries[opts.currentdict];
         }
     }
-    
+
     getTranslation(word) {
         this.word = word;
         return this.dictionary.findTerm(word);

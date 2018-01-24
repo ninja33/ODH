@@ -1,24 +1,32 @@
-class AnkiHelperBackEnd{
-    constructor(){
-        this.options = {};
-
+class AnkiHelperBackEnd {
+    constructor() {
+        this.options = null;
+        this.translator = null;
+        this.target = null;
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
-        loadOptions().then(opts => {
+        this.initOptions();
+    }
+
+    initOptions(opts) {
+        optionsLoad((opts) => {
             this.setOptions(opts);
-            this.translator = new Translator(opts);
-            this.target = new Ankiconnect(opts);
         });
     }
 
-    setOptions(opts){
+
+    setOptions(opts) {
         this.options = opts;
+        this.translator = new Translator(opts);
+        this.target = new Ankiconnect(opts);
     }
-    
 
     onMessage(request, sender, callback) {
-        const {action, params} = request, method = this['api_' + action];
+        const {
+            action,
+            params
+        } = request, method = this['api_' + action];
 
-        if (typeof(method) === 'function') {
+        if (typeof (method) === 'function') {
             params.callback = callback;
             method.call(this, params);
         }
@@ -26,22 +34,32 @@ class AnkiHelperBackEnd{
         return true;
     }
 
-    api_getTranslation({word, callback}) {
-        this.translator.getTranslation(word).then(result =>{
+    api_getTranslation(params) {
+        let {
+            word,
+            callback
+        } = params;
+
+        this.translator.getTranslation(word).then(result => {
             callback(result);
-        }).catch (error => {
+        }).catch(error => {
             callback(null);
         });
     }
 
-    api_createNote({note, callback}) {
-        this.target.createNote(note).then(result =>{
+    api_createNote(params) {
+        let {
+            note,
+            callback
+        } = params;
+
+        this.target.createNote(note).then(result => {
             callback(result);
-        }).catch (error => {
+        }).catch(error => {
             callback(result);
         });
     }
 
 }
 
-window.abklbackend = new AnkiHelperBackEnd();
+window.abkl_backend = new AnkiHelperBackEnd();

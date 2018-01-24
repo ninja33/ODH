@@ -1,4 +1,4 @@
-class UserDict {
+class Baicizhan {
     constructor() {
         this.word = '';
         this.base = 'http://mall.baicizhan.com/ws/search?w='

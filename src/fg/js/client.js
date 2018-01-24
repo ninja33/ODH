@@ -224,4 +224,4 @@ class AnkiHelperFrontEnd {
     }
 }
 
-window.abklfrondend = new AnkiHelperFrontEnd();
+window.abkl_frondend = new AnkiHelperFrontEnd();
