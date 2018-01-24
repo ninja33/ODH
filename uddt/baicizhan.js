@@ -64,3 +64,5 @@ class Baicizhan {
         return css;
     }
 }
+
+RegisterDict('encn-Baicizhan', new Baicizhan());

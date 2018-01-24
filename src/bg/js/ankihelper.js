@@ -1,23 +1,17 @@
 class AnkiHelperBackEnd {
     constructor() {
         this.options = null;
-        this.translator = null;
-        this.target = null;
-        chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
-        this.initOptions();
-    }
+        this.dictionary = {};
 
-    initOptions(opts) {
         optionsLoad((opts) => {
-            this.setOptions(opts);
+            this.options = opts;
+            this.dictionary = new Dictionary(opts);
+            this.translator = new Translator(opts);
+            this.target = new Ankiconnect(opts);
+            this.dictionary.loadLibrary();
+            this.translator.setDictionary(this.dictionary.getCurrentDict());
         });
-    }
-
-
-    setOptions(opts) {
-        this.options = opts;
-        this.translator = new Translator(opts);
-        this.target = new Ankiconnect(opts);
+        chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
     }
 
     onMessage(request, sender, callback) {

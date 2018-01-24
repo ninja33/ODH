@@ -6,30 +6,47 @@ function sanitizeOptions(options) {
         expression: 'expression',
         definitions: 'glossary',
         sentence: 'sentence',
-        userdefined: false,
-        currentdict:'encn-Youdao',
-        repository: 'ninja33/anki-online-dict-helper',
-        scriptpath: 'master/uddt/baicizhan.js',
+        currentdict: 'encn-Default',
+        repository: 'https://rawgit.com/ninja33/anki-online-dict-helper/master/uddt/list.js',
     };
 
-    for (let key in defaults) {
-        if (!(key in options)) {
-            options[key] = defaults[key];
+    const combine = (target, source) => {
+        for (const key in source) {
+            if (!target.hasOwnProperty(key)) {
+                target[key] = source[key];
+            }
         }
-    }
+    };
+
+    combine(options, defaults);
+    combine(options.dictionaries, defaults.dictionaries);
 
     return options;
 }
 
 function optionsLoad(callback) {
-    chrome.storage.sync.get(null, (options) => callback(sanitizeOptions(options)));
+    chrome.storage.sync.get(null, (options) => {
+        callback(sanitizeOptions(options));
+    });
 }
 
-function optionsSave(options,callback) {
+function optionsSave(options, callback) {
     chrome.storage.sync.set(sanitizeOptions(options), callback);
 }
 
-function formRead() {
+function dictionaryLoad() {
+    let repository = $('#repo').val();
+    $('#dict').append($('<option>', {
+        value: key,
+        text: key
+    }));
+}
+
+function onLoadClicked(e) {
+    if (!e.originalEvent) {
+        return;
+    }
+
 }
 
 function onOKClicked(e) {
@@ -37,23 +54,21 @@ function onOKClicked(e) {
         return;
     }
 
-    optionsLoad((optionsOld)=>{
+    optionsLoad((optionsOld) => {
         const optionsNew = $.extend(true, {}, optionsOld);
 
-        optionsNew.actived = $('#actived').prop('checked');
-        optionsNew.deckname= $('#deck').val();
-        optionsNew.typename= $('#type').val();
-        optionsNew.expression= $('#word').val();
-        optionsNew.definitions= $('#defs').val();
-        optionsNew.sentence= $('#sent').val();
-        optionsNew.userdefined=$('#udfd').prop('checked');
-        optionsNew.currentdict=$('#dict').val();
-        optionsNew.repository= $('#repo').val();
-        optionsNew.scriptpath= $('#path').val();
-    
-        optionsSave(optionsNew,()=>{
-            let backwin = chrome.extension.getBackgroundPage()
-            backwin.abkl_backend.setOptions(optionsNew);
+        //optionsNew.actived = $('#actived').prop('checked');
+        optionsNew.deckname = $('#deck').val();
+        optionsNew.typename = $('#type').val();
+        optionsNew.expression = $('#word').val();
+        optionsNew.definitions = $('#defs').val();
+        optionsNew.sentence = $('#sent').val();
+
+        optionsNew.repository = $('#repo').val();
+        optionsNew.currentdict = $('#dict').val();
+
+        optionsSave(optionsNew, () => {
+            //BackEnd().setOptions(optionsNew);
             window.close();
         });
     });
@@ -64,22 +79,33 @@ function onCancelClicked(e) {
 }
 
 function onReady() {
-    optionsLoad((opts)=>{
+    optionsLoad((opts) => {
         //$('#actived').prop('checked',opts.actived);
         $('#deck').val(opts.deckname);
         $('#type').val(opts.typename);
         $('#word').val(opts.expression);
         $('#defs').val(opts.definitions);
         $('#sent').val(opts.sentence);
-        //$('#actived').prop('checked',opts.userdefined);
-        $('#dict').val(opts.currentdict);
+
         $('#repo').val(opts.repository);
-        $('#path').val(opts.scriptpath);
+        $('#dict').val(opts.currentdict);
 
         $('#ok').click(onOKClicked);
         $('#cancel').click(onCancelClicked);
     });
 
+}
+
+function RegisterDictList(list) {
+    BackEnd().dictionary.setDictList(list);
+}
+
+function RegisterDict(name, dict) {
+    BackEnd().dictionary.addDictionaries(name, dict);
+}
+
+function BackEnd() {
+    return chrome.extension.getBackgroundPage().abkl_backend;
 }
 
 $(document).ready(onReady);

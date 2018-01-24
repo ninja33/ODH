@@ -10,7 +10,7 @@ class CNDict {
         let word = encodeURIComponent(this.word);
         let key = '73968t727aac3ee8bai593473d960c8x';
         let md5_salt = `###${key}chromex###`;
-        let saltmd5 = md5(rawurlencode(word+'0'+md5_salt));
+        let saltmd5 = md5(rawurlencode(word + '0' + md5_salt));
         return this.base + `&t=${saltmd5}&q=${word}`;
     }
 
@@ -23,20 +23,20 @@ class CNDict {
     onlineQuery(url) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url     : url,
-                type    : "GET",
-                timeout : 5000,
-                error   : (xhr,status,error) => {
+                url: url,
+                type: "GET",
+                timeout: 5000,
+                error: (xhr, status, error) => {
                     reject(error);
                 },
-                success : (data, status) => {
+                success: (data, status) => {
                     let result = this.renderContent(data);
-                    if (result){
-                        resolve(result); 
+                    if (result) {
+                        resolve(result);
                     } else {
                         reject(new Error('Not Found!'));
                     }
-                }    
+                }
             });
         });
     }
@@ -45,7 +45,7 @@ class CNDict {
         let div = document.createElement("div");
         div.innerHTML = data;
         let content = div.querySelector(this.selector)
-        if (content){
+        if (content) {
             let css = this.renderCSS();
             return css + content[this.attr];
         } else {
@@ -53,7 +53,7 @@ class CNDict {
         }
     }
 
-    renderCSS(){
+    renderCSS() {
         let css = `
             <style> 
             </style>`;
@@ -62,3 +62,5 @@ class CNDict {
     }
 
 }
+
+RegisterDict('encn-CNDict', new CNDict());

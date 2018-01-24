@@ -1,5 +1,3 @@
-window.abkl_udfdict['encn-Collins'] = Collins;
-
 class Collins {
     constructor() {
         this.word = '';
@@ -76,3 +74,5 @@ class Collins {
         return css;
     }
 }
+
+RegisterDict('encn-Collins', new Collins());
