@@ -12,7 +12,7 @@ class AnkiHelperFrontEnd {
 
         window.addEventListener('mousemove', e => this.onMouseMove(e));
         window.addEventListener('mousedown', e => this.onMouseDown(e));
-        window.addEventListener('keydown', this.onKeyDown.bind(this));
+        window.addEventListener('keydown', e =>this.onKeyDown(e));
         window.addEventListener('message', e => this.onFrameMessage(e));
         document.addEventListener('selectionchange', e => this.userSelectionChanged(e));
         window.addEventListener('selectionend', e => this.onSelectionEnd(e));

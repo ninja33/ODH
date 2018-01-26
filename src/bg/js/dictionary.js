@@ -1,48 +1,51 @@
-class Dictionary {
+class Dictlib {
     constructor(opts) {
         this.options = opts;
-        this.currentdict = opts.currentdict
-        this.dictlist = null;
-        this.dictionaries = {
-            'encn-Default': new Youdao(),
-        };
+        this.default = ['localdicts/youdao.js','localdicts/cndict.js'];
+        this.list = [];
+        this.dicts = {};
     }
 
-    loadLibrary() {
-        let repo = this.options.repository;
-        if (repo) {
-            loadjs(repo, () => {
-                if (this.dictlist)
-                    loadjs(this.dictlist, () => {});
-            });
-        }
-        if (this.dictionaries[this.currentdict] == undefined) {
-            this.setCurrentDictName('encn-Default');
+    setOptions(opts){
+        this.options = opts;
+    }
+
+    async loadDict(callback) {
+        let remotelist = this.options.dictLibrary;
+        this.list = this.default;
+        if (remotelist) {
+            await this.loadRemote(remotelist);
+            await this.loadRemote(this.list);
+            return new this.dicts['encn-Default'];
         }
     }
 
-    loadRemoteLib(repo) {
-        return new Promise((resolve, reject) => {
-            loadjs(repo, {
-                success: resolve(this.dictlist),
-                error: reject(),
+    async loadRemote(path){
+        return new Promise((resolve,reject)=>{
+            loadjs(path,{
+                success:()=>resolve(),
+                error:()=>reject(),
             });
         });
-    };
+    }
 
     setDictList(list) {
-        this.dictlist = list;
+        this.list = this.list.concat(list);
     }
 
-    addDictionaries(key, dict) {
-        this.dictionaries[key] = dict;
+    addDictionary(key, dict) {
+        try{
+            this.dicts[key] = dict;
+        } catch (error) {
+            console.log(error);
+        }
     }
+}
 
-    setCurrentDictName(name) {
-        this.currentdict = name;
-    }
+function registerDictList(list) {
+    abkl_backend.dictlib.setDictList(list);
+}
 
-    getCurrentDict() {
-        return this.dictionaries[this.currentdict];
-    }
+function registerDict(name, dict) {
+    abkl_backend.dictlib.addDictionary(name, dict);
 }

@@ -1,8 +1,7 @@
 class Translator {
-    constructor(opts) {
-        this.options = opts;
+    constructor() {
         this.dictionary = null;
-    }
+}
 
     getTranslation(word) {
         return this.dictionary.findTerm(word);

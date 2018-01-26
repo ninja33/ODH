@@ -3,6 +3,10 @@ class Ankiconnect {
         this.options = opts;
     }
 
+    setOptions(opts){
+        this.options = opts;
+    }
+
     createNote(note) {
         let opts = this.options;
         let ankinote = {

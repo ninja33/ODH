@@ -1,18 +1,14 @@
 class AnkiHelperBackEnd {
     constructor() {
-        this.options = null;
-        this.dictionary = {};
-
-        optionsLoad((opts) => {
-            this.options = opts;
-            this.dictionary = new Dictionary(opts);
-            this.translator = new Translator(opts);
-            this.target = new Ankiconnect(opts);
-            this.dictionary.loadLibrary();
-            this.translator.setDictionary(this.dictionary.getCurrentDict());
+        this.translator = null;
+        this.target = new Ankiconnect();
+        this.dictlib = new Dictlib();
+        optionsLoad().then((opts)=>{
+            this.api_updateOptions({options:opts});
         });
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
     }
+
 
     onMessage(request, sender, callback) {
         const {
@@ -28,13 +24,25 @@ class AnkiHelperBackEnd {
         return true;
     }
 
+    async api_updateOptions(params) {
+        let {
+            options,
+            callback
+        } = params;
+
+        this.target.setOptions(options);
+        this.dictlib.setOptions(options);
+        this.translator = await this.dictlib.loadDict();
+        return callback? callback(['encn-Default']) : null;
+    }
+
     api_getTranslation(params) {
         let {
             word,
             callback
         } = params;
 
-        this.translator.getTranslation(word).then(result => {
+        this.translator.findTerm(word).then(result => {
             callback(result);
         }).catch(error => {
             callback(null);

@@ -1,111 +1,103 @@
 function sanitizeOptions(options) {
     const defaults = {
         actived: true,
+
         deckname: 'Antimoon',
         typename: 'Antimoon',
         expression: 'expression',
         definitions: 'glossary',
         sentence: 'sentence',
-        currentdict: 'encn-Default',
-        repository: 'https://rawgit.com/ninja33/anki-online-dict-helper/master/uddt/list.js',
+
+        dictLibrary: '../uddt/list.js',
+
+        dictSelected: 'encn-Default',
+        dictNamelist: ['encn-Default'],
     };
 
-    const combine = (target, source) => {
-        for (const key in source) {
-            if (!target.hasOwnProperty(key)) {
-                target[key] = source[key];
-            }
+    for (const key in defaults) {
+        if (!options.hasOwnProperty(key)) {
+            options[key] = defaults[key];
         }
-    };
-
-    combine(options, defaults);
-    combine(options.dictionaries, defaults.dictionaries);
-
+    }
     return options;
 }
 
-function optionsLoad(callback) {
-    chrome.storage.sync.get(null, (options) => {
-        callback(sanitizeOptions(options));
-    });
-}
-
-function optionsSave(options, callback) {
-    chrome.storage.sync.set(sanitizeOptions(options), callback);
-}
-
-function dictionaryLoad() {
-    let repository = $('#repo').val();
-    $('#dict').append($('<option>', {
-        value: key,
-        text: key
-    }));
-}
-
-function onLoadClicked(e) {
-    if (!e.originalEvent) {
-        return;
-    }
-
-}
-
-function onOKClicked(e) {
-    if (!e.originalEvent) {
-        return;
-    }
-
-    optionsLoad((optionsOld) => {
-        const optionsNew = $.extend(true, {}, optionsOld);
-
-        //optionsNew.actived = $('#actived').prop('checked');
-        optionsNew.deckname = $('#deck').val();
-        optionsNew.typename = $('#type').val();
-        optionsNew.expression = $('#word').val();
-        optionsNew.definitions = $('#defs').val();
-        optionsNew.sentence = $('#sent').val();
-
-        optionsNew.repository = $('#repo').val();
-        optionsNew.currentdict = $('#dict').val();
-
-        optionsSave(optionsNew, () => {
-            //BackEnd().setOptions(optionsNew);
-            window.close();
+async function optionsLoad() {
+    return new Promise((resolve, reject)=>{
+        chrome.storage.local.get(null, (options) => {
+            resolve(sanitizeOptions(options));
         });
     });
 }
 
-function onCancelClicked(e) {
-    window.close();
-}
-
-function onReady() {
-    optionsLoad((opts) => {
-        //$('#actived').prop('checked',opts.actived);
-        $('#deck').val(opts.deckname);
-        $('#type').val(opts.typename);
-        $('#word').val(opts.expression);
-        $('#defs').val(opts.definitions);
-        $('#sent').val(opts.sentence);
-
-        $('#repo').val(opts.repository);
-        $('#dict').val(opts.currentdict);
-
-        $('#ok').click(onOKClicked);
-        $('#cancel').click(onCancelClicked);
+async function optionsSave(options) {
+    return new Promise((resolve, reject)=>{
+        chrome.storage.local.set(sanitizeOptions(options), resolve());
     });
-
 }
 
-function RegisterDictList(list) {
-    BackEnd().dictionary.setDictList(list);
+function updateSelectOption(dicts) {
+    $('#dict').empty();
+    dicts.forEach(name => {
+        $('#dict').append($('<option>', {
+            value: name,
+            text: name
+        }));
+    });
 }
 
-function RegisterDict(name, dict) {
-    BackEnd().dictionary.addDictionaries(name, dict);
+async function onOKClicked(e) {
+    if (!e.originalEvent) {
+        return;
+    }
+
+    let optionsOld = await optionsLoad();
+    const options = $.extend(true, {}, optionsOld);
+
+    //optionsNew.actived = $('#actived').prop('checked');
+    options.deckname = $('#deck').val();
+    options.typename = $('#type').val();
+    options.expression = $('#word').val();
+    options.definitions = $('#defs').val();
+    options.sentence = $('#sent').val();
+
+    options.dictLibrary = $('#repo').val();
+    options.dictSelected = $('#dict').val();
+
+    optionsSave(options);
+    chrome.runtime.sendMessage({action:'updateOptions', params:{options}}, dicts => {
+        updateSelectOption(dicts);
+    });
+    if (e.target.id == 'ok')
+        window.close();
 }
 
-function BackEnd() {
-    return chrome.extension.getBackgroundPage().abkl_backend;
+function onCancelClicked(e) {
+    onOKClicked(e);
+    //window.close();
 }
 
-$(document).ready(onReady);
+async function onReady() {
+    let opts = await optionsLoad();
+    //$('#actived').prop('checked',opts.actived);
+    $('#deck').val(opts.deckname);
+    $('#type').val(opts.typename);
+    $('#word').val(opts.expression);
+    $('#defs').val(opts.definitions);
+    $('#sent').val(opts.sentence);
+
+    $('#repo').val(opts.dictLibrary);
+    updateSelectOption(opts.dictNamelist);
+    $('#dict').val(opts.dictSelected);
+
+    $('#ok').click(onOKClicked);
+    $('#cancel').click(onCancelClicked);
+}
+
+$(document).ready(utilAsync(onReady));
+
+function utilAsync(func) {
+    return function(...args) {
+        func.apply(this, args);
+    };
+}
