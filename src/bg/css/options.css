@@ -5,23 +5,28 @@ body{
     align-content: center;
 }
 
+.container{
+    margin: 0 auto;
+}
+
 form{
     padding: 0 0 10px;
 }
 
 section{
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #f1f8e9;
     padding: 10px;
 }
 
 label{
+    font-weight: bold;
     width: 30%;
     padding: 6px 10px;
     margin: 4px 0;
     display: inline-block;
     color:white;
-    background-color: #4CAF50;
+    background-color: #93a085;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -36,6 +41,20 @@ select {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+/*special css style for load button*/
+input[type=text]#repo{
+    width: 47%;
+}
+label#load{
+    width: 14%;
+    cursor: pointer;
+    margin-left: 10px;
+    background-color: #4CAF50;
+}
+label#load:hover {
+    background-color: #45a049;
 }
 
 hr{

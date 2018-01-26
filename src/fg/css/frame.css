@@ -34,13 +34,13 @@
 }
 
 .abkl-word{
-  border-right-color:rgba(22,131,234,0.8);
+  border-right-color:#1683ea;
 }
 .abkl-defs{
-  border-right-color:rgba(124,179,66,0.8);
+  border-right-color:#7cb242;
 }
 .abkl-sent{
-  border-right-color:rgba(229,57,53,0.8);
+  border-right-color:#e53935;
 }
 
 hr{

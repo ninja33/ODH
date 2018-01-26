@@ -54,7 +54,7 @@ async function onOKClicked(e) {
     let optionsOld = await optionsLoad();
     let options = $.extend(true, {}, optionsOld);
 
-    //optionsNew.actived = $('#actived').prop('checked');
+    options.actived = $('#actived').prop('checked');
     options.deckname = $('#deck').val();
     options.typename = $('#type').val();
     options.expression = $('#word').val();
@@ -82,7 +82,7 @@ function onCancelClicked(e) {
 
 async function onReady() {
     let opts = await optionsLoad();
-    //$('#actived').prop('checked',opts.actived);
+    $('#actived').prop('checked',opts.actived);
     $('#deck').val(opts.deckname);
     $('#type').val(opts.typename);
     $('#word').val(opts.expression);

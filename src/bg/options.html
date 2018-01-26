@@ -4,12 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/options.css">
+    <link rel="stylesheet" href="css/checkbox.css">
     <title>Anki Online Dictionary Helper</title>
 </head>
 
 <body>
     <div class='container'>
         <form>
+            <section class="extension-options">
+                <label>Status</label>
+                <div class="actived">
+                    <input type="checkbox" value=true id="actived">
+                    <label for="actived"></label>
+                </div>
+            </section>
+
+            <hr>
+
             <section class="anki-options">
                 <label for="deck">Deck Name</label>
                 <input type="text" id="deck" placeholder="Your anki deck name ..">
@@ -17,13 +28,13 @@
                 <label for="type">Type Name</label>
                 <input type="text" id="type" placeholder="Your anki type name ..">
 
-                <label for="word">Word</label>
+                <label for="word" id="expression">Expression</label>
                 <input type="text" id="word" placeholder="Field name of your {Word}">
 
-                <label for="defs">Definition</label>
+                <label for="defs" id="definition">Definition</label>
                 <input type="text" id="defs" placeholder="Field name of your {Definition}">
 
-                <label for="sent">Sentence</label>
+                <label for="sent" id="sentence">Sentence</label>
                 <input type="text" id="sent" placeholder="Field name of your {Sentence}">
             </section>
 
@@ -32,6 +43,7 @@
             <section class="dict-options">
                 <label for="repo">Repository</label>
                 <input type="text" id="repo" name="repo" placeholder="User defined online dictionary">
+                <label for="repo" id="load">Load</label>
 
                 <label for="dict">Dictionaries</label>
                 <select id="dict">
