@@ -71,6 +71,11 @@ if (typeof Collins == 'undefined') {
                 .sense {
                     margin-bottom: 5px;
                     padding-bottom: 2px;
+                }
+                a {
+                    color: #000;
+                    text-decoration: none;
+                }
             </style>`;
 
             return css;

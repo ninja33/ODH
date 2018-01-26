@@ -32,8 +32,10 @@ class AnkiHelperBackEnd {
 
         this.target.setOptions(options);
         this.dictlib.setOptions(options);
-        this.translator = await this.dictlib.loadDict();
-        return callback? callback(['encn-Default']) : null;
+        let {dictlist, selected} = await this.dictlib.loadDict();
+        this.translator = new dictlist[selected];
+        let dictnames = Object.keys(dictlist);
+        return callback? callback({dictnames,selected}) : null;
     }
 
     api_getTranslation(params) {

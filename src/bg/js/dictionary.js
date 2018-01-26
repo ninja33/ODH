@@ -1,30 +1,35 @@
 class Dictlib {
     constructor(opts) {
         this.options = opts;
-        this.default = ['localdicts/youdao.js','localdicts/cndict.js'];
+        this.default = ['localdicts/youdao.js', 'localdicts/cndict.js'];
         this.list = [];
         this.dicts = {};
     }
 
-    setOptions(opts){
+    setOptions(opts) {
         this.options = opts;
     }
 
-    async loadDict(callback) {
+    async loadDict() {
         let remotelist = this.options.dictLibrary;
         this.list = this.default;
-        if (remotelist) {
+        this.dicts = {};
+        if (remotelist) 
             await this.loadRemote(remotelist);
-            await this.loadRemote(this.list);
-            return new this.dicts['encn-Default'];
+        await this.loadRemote(this.list);
+        let current = this.options.dictSelected;
+        current = (current in this.dicts) ? current : 'encn-Default';
+        return {
+            'dictlist': this.dicts,
+            'selected': current
         }
     }
 
-    async loadRemote(path){
-        return new Promise((resolve,reject)=>{
-            loadjs(path,{
-                success:()=>resolve(),
-                error:()=>reject(),
+    async loadRemote(path) {
+        return new Promise((resolve, reject) => {
+            loadjs(path, {
+                success: () => resolve(),
+                error: () => reject(),
             });
         });
     }
@@ -34,7 +39,7 @@ class Dictlib {
     }
 
     addDictionary(key, dict) {
-        try{
+        try {
             this.dicts[key] = dict;
         } catch (error) {
             console.log(error);

@@ -52,7 +52,7 @@ async function onOKClicked(e) {
     }
 
     let optionsOld = await optionsLoad();
-    const options = $.extend(true, {}, optionsOld);
+    let options = $.extend(true, {}, optionsOld);
 
     //optionsNew.actived = $('#actived').prop('checked');
     options.deckname = $('#deck').val();
@@ -64,12 +64,15 @@ async function onOKClicked(e) {
     options.dictLibrary = $('#repo').val();
     options.dictSelected = $('#dict').val();
 
-    optionsSave(options);
-    chrome.runtime.sendMessage({action:'updateOptions', params:{options}}, dicts => {
-        updateSelectOption(dicts);
+    chrome.runtime.sendMessage({action:'updateOptions', params:{options}}, ({dictnames,selected}) => {
+        options.dictNamelist = dictnames;
+        options.dictSelected = selected;
+        updateSelectOption(options.dictNamelist);
+        $('#dict').val(selected);
+        optionsSave(options);
+        if (e.target.id == 'ok')
+            window.close();
     });
-    if (e.target.id == 'ok')
-        window.close();
 }
 
 function onCancelClicked(e) {

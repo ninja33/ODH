@@ -4,8 +4,7 @@ class AnkiHelperFrontEnd {
 
         this.point = null;
         this.note = null;
-        this.activateKey = 16;
-        this.activateBtn = 2;
+        this.activateKey = 17; // shift 16, ctrl 17, alt 18
         this.enabled = true;
         this.popup = new Popup();
         this.timeout = null;
@@ -81,15 +80,7 @@ class AnkiHelperFrontEnd {
     }
 
     onMouseDown(e) {
-        this.point = {
-            x: e.clientX,
-            y: e.clientY
-        };
-        if (this.enabled && (e.shiftKey || e.which === this.activateBtn)) {
-            this.selectText(this.point);
-        } else {
-            this.popup.hide();
-        }
+        this.popup.hide();
     }
 
     onFrameMessage(e) {
