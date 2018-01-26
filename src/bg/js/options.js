@@ -76,8 +76,11 @@ async function onOKClicked(e) {
 }
 
 function onCancelClicked(e) {
+    window.close();
+}
+
+function onLoadClicked(e) {
     onOKClicked(e);
-    //window.close();
 }
 
 async function onReady() {
@@ -95,6 +98,7 @@ async function onReady() {
 
     $('#ok').click(onOKClicked);
     $('#cancel').click(onCancelClicked);
+    $('#load').click(onLoadClicked);
 }
 
 $(document).ready(utilAsync(onReady));
