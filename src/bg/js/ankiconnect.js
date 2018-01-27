@@ -1,26 +1,36 @@
 class Ankiconnect {
-    constructor(opts = {}) {
-        this.options = opts;
+    constructor() {
+        this.options = null;
     }
 
-    setOptions(opts){
-        this.options = opts;
+    setOptions(options){
+        this.options = options;
     }
 
     createNote(note) {
-        let opts = this.options;
+        let options = this.options;
         let ankinote = {
-            deckName: opts.deckname,
-            modelName: opts.typename,
+            deckName: options.deckname,
+            modelName: options.typename,
             fields: {
-                [opts.expression]: note.word,
-                [opts.definitions]: note.defs,
-                [opts.sentence]: note.sent,
             },
             tags: ['anki-helper']
         };
 
-        var request = {
+        if (!options.expression || !options.definitions)
+            return;
+
+        ankinote.fields[options.expression]= note.word;
+        if (!options.sentence){
+            note.defs += `<div id='adoh-sentence'>${note.sent}</div>`;
+            ankinote.fields[options.definitions]=  note.defs;
+        }
+        else {
+            ankinote.fields[options.definitions]=  note.defs;
+            ankinote.fields[options.sentence] = note.sent;
+        }
+
+        let request = {
             action: 'addNote',
             params: {
                 note: ankinote,

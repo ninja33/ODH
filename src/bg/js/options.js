@@ -1,6 +1,6 @@
 function sanitizeOptions(options) {
     const defaults = {
-        actived: true,
+        enabled: true,
 
         deckname: 'Antimoon',
         typename: 'Antimoon',
@@ -54,7 +54,7 @@ async function onOKClicked(e) {
     let optionsOld = await optionsLoad();
     let options = $.extend(true, {}, optionsOld);
 
-    options.actived = $('#actived').prop('checked');
+    options.enabled = $('#enabled').prop('checked');
     options.deckname = $('#deck').val();
     options.typename = $('#type').val();
     options.expression = $('#word').val();
@@ -85,7 +85,7 @@ function onLoadClicked(e) {
 
 async function onReady() {
     let opts = await optionsLoad();
-    $('#actived').prop('checked',opts.actived);
+    $('#enabled').prop('checked',opts.enabled);
     $('#deck').val(opts.deckname);
     $('#type').val(opts.typename);
     $('#word').val(opts.expression);

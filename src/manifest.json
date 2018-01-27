@@ -14,8 +14,9 @@
         "matches": ["*://*/*", "file://*/*"],
         "js": [
             "fg/js/popup.js",
-            "fg/js/client.js",
-            "fg/js/range.js"
+            "fg/js/range.js",
+            "fg/js/text.js",
+            "fg/js/frontend.js"
         ],
         "css": ["fg/css/client.css"]
     }],

@@ -1,7 +1,7 @@
 class Dictlib {
     constructor(opts) {
         this.options = opts;
-        this.default = ['localdicts/youdao.js', 'localdicts/cndict.js'];
+        this.default = ['local/youdao.js', 'local/cndict.js'];
         this.list = [];
         this.dicts = {};
     }
@@ -34,11 +34,11 @@ class Dictlib {
         });
     }
 
-    setDictList(list) {
+    setList(list) {
         this.list = this.list.concat(list);
     }
 
-    addDictionary(key, dict) {
+    setDict(key, dict) {
         try {
             this.dicts[key] = dict;
         } catch (error) {
@@ -47,10 +47,10 @@ class Dictlib {
     }
 }
 
-function registerDictList(list) {
-    abkl_backend.dictlib.setDictList(list);
+function registerList(list) {
+    adohback.dictlib.setList(list);
 }
 
 function registerDict(name, dict) {
-    abkl_backend.dictlib.addDictionary(name, dict);
+    adohback.dictlib.setDict(name, dict);
 }

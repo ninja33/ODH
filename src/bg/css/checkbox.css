@@ -1,8 +1,8 @@
-input[type=checkbox] {
+.enabled input[type=checkbox] {
     visibility: hidden;
 }
 
-.actived {
+.enabled {
     width: 72px;
     height: 26px;
     display:inline-block;
@@ -13,7 +13,7 @@ input[type=checkbox] {
     position: relative;
 }
 
-.actived:before {
+.enabled:before {
     content: 'On';
     position: absolute;
     top: 5px;
@@ -23,7 +23,7 @@ input[type=checkbox] {
     font-weight: bold;
 }
 
-.actived:after {
+.enabled:after {
     content: 'Off';
     position: absolute;
     top: 5px;
@@ -33,7 +33,7 @@ input[type=checkbox] {
     font-weight: bold;
 }
 
-.actived label {
+.enabled label {
     display: block;
     width: 28px;
     height: 16px;
@@ -47,7 +47,7 @@ input[type=checkbox] {
     background: #ddd;
 }
 
-.actived input[type=checkbox]:checked+label {
+.enabled input[type=checkbox]:checked+label {
     left: 36px;
     background: #76ff03;
 }
