@@ -21,7 +21,7 @@ class ADOHFront {
 
     onKeyDown(e) {
         if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
-            const range = document.caretRangeFromPoint(point.x, point.y);
+            const range = document.caretRangeFromPoint(this.point.x, this.point.y);
             if (range !== null) {
                 let textSource = new TextSourceRange(range);
                 textSource.selectText();
