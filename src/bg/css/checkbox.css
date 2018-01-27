@@ -20,7 +20,6 @@ input[type=checkbox] {
     left: 12px;
     height: 1px;
     color: #76ff03;
-    font-size: 6px;
     font-weight: bold;
 }
 
@@ -31,7 +30,6 @@ input[type=checkbox] {
     left: 40px;
     height: 1px;
     color: #f9f9f9;
-    font-size: 6px;
     font-weight: bold;
 }
 

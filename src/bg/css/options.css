@@ -1,4 +1,6 @@
 body{
+    font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
+    font-size: 12px;
     width:380px;
     height:380px;
     border-radius: 8px;
@@ -20,14 +22,13 @@ section{
 }
 
 label{
-    font-weight: bold;
     width: 30%;
     padding: 6px 10px;
     margin: 4px 0;
     display: inline-block;
     color:white;
     background-color: #93a085;
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;*/
     border-radius: 4px;
     box-sizing: border-box;
 }
