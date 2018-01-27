@@ -1,4 +1,4 @@
-class ADOHFront {
+class AODHFront {
 
     constructor() {
 
@@ -161,4 +161,4 @@ class ADOHFront {
 
 }
 
-window.adohfront = new ADOHFront();
+window.aodhfront = new AODHFront();

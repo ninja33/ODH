@@ -3,7 +3,7 @@ class Ankiconnect {
         this.options = null;
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
     }
 
@@ -12,21 +12,21 @@ class Ankiconnect {
         let ankinote = {
             deckName: options.deckname,
             modelName: options.typename,
-            fields: {
-            },
+            fields: {},
             tags: ['anki-helper']
         };
 
         if (!options.expression || !options.definitions)
             return;
 
-        ankinote.fields[options.expression]= note.word;
-        if (!options.sentence){
-            note.defs += `<div id='adoh-sentence'>${note.sent}</div>`;
-            ankinote.fields[options.definitions]=  note.defs;
-        }
-        else {
-            ankinote.fields[options.definitions]=  note.defs;
+        ankinote.fields[options.expression] = note.word;
+        if (!options.sentence) {
+            ankinote.fields[options.definitions] = note.defs;
+        } else if (options.sentence == options.definitions) {
+            note.defs += `<hr>${note.sent}`;
+            ankinote.fields[options.definitions] = note.defs;
+        } else {
+            ankinote.fields[options.definitions] = note.defs;
             ankinote.fields[options.sentence] = note.sent;
         }
 

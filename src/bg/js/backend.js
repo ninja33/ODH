@@ -1,4 +1,4 @@
-class ADOHBack {
+class AODHBack {
     constructor() {
         this.options = null;
         this.translator = null;
@@ -124,4 +124,4 @@ class ADOHBack {
 
 }
 
-window.adohback = new ADOHBack();
+window.aodhback = new AODHBack();

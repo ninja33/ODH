@@ -1,7 +1,7 @@
 class Dictlib {
     constructor(opts) {
         this.options = opts;
-        this.default = ['local/youdao.js', 'local/cndict.js'];
+        this.default = ['local/youdao.js'];
         this.list = [];
         this.dicts = {};
     }
@@ -48,9 +48,9 @@ class Dictlib {
 }
 
 function registerList(list) {
-    adohback.dictlib.setList(list);
+    aodhback.dictlib.setList(list);
 }
 
 function registerDict(name, dict) {
-    adohback.dictlib.setDict(name, dict);
+    aodhback.dictlib.setDict(name, dict);
 }

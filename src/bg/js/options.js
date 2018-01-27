@@ -2,13 +2,13 @@ function sanitizeOptions(options) {
     const defaults = {
         enabled: true,
 
-        deckname: 'Antimoon',
-        typename: 'Antimoon',
-        expression: 'expression',
-        definitions: 'glossary',
-        sentence: 'sentence',
+        deckname: 'Default',
+        typename: 'Basic',
+        expression: 'Front',
+        definitions: 'Back',
+        sentence: 'Back',
 
-        dictLibrary: '../uddt/list.js',
+        dictLibrary: '',
 
         dictSelected: 'encn-Default',
         dictNamelist: ['encn-Default'],
