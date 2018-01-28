@@ -8,7 +8,7 @@ function sanitizeOptions(options) {
         definitions: 'Back',
         sentence: 'Back',
 
-        dictLibrary: '',
+        dictLibrary: 'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/collins.js',
 
         dictSelected: 'encn-Default',
         dictNamelist: ['encn-Default'],
