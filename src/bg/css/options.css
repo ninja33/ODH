@@ -40,7 +40,7 @@ label#help {
     color: #333;
     background-color: #f1f8e9;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 50%;
     margin-right: 6px;
     text-align: center;
     cursor: pointer;

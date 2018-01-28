@@ -79,6 +79,8 @@ class Popup {
         this.popup.addEventListener('mousedown', (e) => e.stopPropagation());
         this.popup.addEventListener('scroll', (e) => e.stopPropagation());
 
-        document.body.appendChild(this.popup);
+        let simpread = document.querySelector('.simpread-read-root');
+        let root = simpread ? simpread : document.body;
+        root.appendChild(this.popup);
     }
 }
