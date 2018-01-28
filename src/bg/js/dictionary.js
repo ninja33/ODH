@@ -1,28 +1,36 @@
 class Dictlib {
-    constructor(opts) {
-        this.options = opts;
+    constructor() {
+        this.options = null;
+        this.lastoptions = null;
         this.default = ['local/youdao.js'];
         this.list = [];
         this.dicts = {};
     }
 
     setOptions(opts) {
+        this.lastoptions = this.options;
         this.options = opts;
     }
 
     async loadDict() {
         let remotelist = this.options.dictLibrary;
-        this.list = this.default;
-        this.dicts = {};
-        if (remotelist) 
-            await this.loadRemote(remotelist);
-        await this.loadRemote(this.list);
-        let current = this.options.dictSelected;
-        current = (current in this.dicts) ? current : 'encn-Default';
+        if (this.pathChanged(remotelist)){
+            this.list = this.default;
+            this.dicts = {};
+            if (remotelist) 
+                await this.loadRemote(remotelist);
+            await this.loadRemote(this.list);
+        }
+        let selected = this.options.dictSelected;
+        selected = (selected in this.dicts) ? selected : 'encn-Default';
         return {
             'dictlist': this.dicts,
-            'selected': current
+            'selected': selected
         }
+    }
+
+    pathChanged(remotelist){
+        return !this.lastoptions || (this.lastoptions.dictLibrary != remotelist);
     }
 
     async loadRemote(path) {
