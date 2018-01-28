@@ -17,11 +17,9 @@ function isInvalid(word) {
     return (isEmpty(word) || isShortandNum(word)); // for non-English language.
 }
 
-function cutSentence(word, sentence) {
-    const autocut = true;
-    const sentenceNum = 3;
+function cutSentence(word, sentence, sentenceNum) {
 
-    if (autocut && sentenceNum > 0) {
+    if (sentenceNum > 0) {
         let puncts = sentence.match(/[\.\?!;]/g) || [];
         let arr = sentence.split(/[\.\?!;]/).filter(s => s.trim() !== '').map((s, index) => s.trim() + `${puncts[index] || ''} `);
         let index = arr.findIndex(s => s.indexOf(word) !== -1);
@@ -48,8 +46,8 @@ function cutSentence(word, sentence) {
     }
 }
 
-function getSentence() {
-    let wordContent = '';
+function getSentence(sentenceNum) {
+    let sentence = '';
     const upNum = 4;
 
     const selection = window.getSelection();
@@ -67,10 +65,10 @@ function getSentence() {
     node = getBlock(node, upNum);
 
     if (node !== document) {
-        wordContent = node.innerText;
+        sentence = node.innerText;
     }
 
-    return cutSentence(word, wordContent);
+    return cutSentence(word, sentence, sentenceNum);
 }
 
 function getBlock(node, deep) {

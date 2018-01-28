@@ -4,7 +4,7 @@ class AODHFront {
 
         this.point = null;
         this.note = null;
-        this.activateKey = 17; // shift 16, ctrl 17, alt 18
+        this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.enabled = true;
         this.popup = new Popup();
         this.timeout = null;
@@ -79,8 +79,8 @@ class AODHFront {
         chrome.runtime.sendMessage(request, defs => {
             if (defs == null)
                 return;
-
-            let sent = getSentence();
+            let num = 1; //how many sentences would like to get in context.
+            let sent = getSentence(num);
             this.note = {
                 word,
                 defs,
