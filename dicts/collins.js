@@ -82,6 +82,6 @@ if (typeof Collins == 'undefined') {
         }
     }
 
-    registerDict('encn-Collins', Collins);
+    registerDict('enen-Collins', Collins);
 
 }

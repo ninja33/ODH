@@ -1,6 +1,6 @@
 function sanitizeOptions(options) {
     const defaults = {
-        enabled: true,
+        enabled: false,
 
         deckname: 'Default',
         typename: 'Basic',
@@ -11,7 +11,7 @@ function sanitizeOptions(options) {
         dictLibrary: 'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/collins.js',
 
         dictSelected: 'encn-Default',
-        dictNamelist: ['encn-Default'],
+        dictNamelist: ['encn-Default','enen-Collins'],
     };
 
     for (const key in defaults) {

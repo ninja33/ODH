@@ -1,37 +1,52 @@
-body{
+body {
     font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
     font-size: 12px;
-    width:380px;
-    height:380px;
+    width: 380px;
+    height: 380px;
     border-radius: 8px;
     align-content: center;
 }
 
-.container{
+.container {
     margin: 0 auto;
 }
 
-form{
+form {
     padding: 0 0 10px;
 }
 
-section{
+section {
     border-radius: 5px;
     background-color: #f1f8e9;
     padding: 10px;
 }
 
-label{
+label {
     width: 30%;
     padding: 6px 10px;
     margin: 4px 0;
     display: inline-block;
-    color:white;
+    color: white;
     background-color: #93a085;
     /*border: 1px solid #ccc;*/
     border-radius: 4px;
     box-sizing: border-box;
 }
+
+label#help {
+    font-weight: bold;
+    float: right;
+    width: 8%;
+    color: #333;
+    background-color: #f1f8e9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 6px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
 input[type=text],
 select {
     width: 65%;
@@ -45,26 +60,29 @@ select {
 }
 
 /*special css style for load button*/
-input[type=text]#repo{
+
+input[type=text]#repo {
     width: 47%;
 }
-label#load{
+
+label#load {
     width: 14%;
     cursor: pointer;
     margin-left: 10px;
     background-color: #4CAF50;
 }
+
 label#load:hover {
     background-color: #45a049;
 }
 
-hr{
-    border        : 1px;
-    margin        : 8px 0;    
-    border-top : 1px solid #d5d5d5; 
+hr {
+    border: 1px;
+    margin: 8px 0;
+    border-top: 1px solid #d5d5d5;
 }
-  
-div.buttons{
+
+div.buttons {
     text-align: center;
 }
 
@@ -82,5 +100,3 @@ div.buttons{
 .confirm:hover {
     background-color: #45a049;
 }
-
-
