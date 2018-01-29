@@ -152,10 +152,11 @@ Below is existing dictionaries script list. You may right click to copy the link
 
 |Dictionary Name|Descrition|Repository|Type|Contributor|
 |---|---|---|---|---|
-|encn-Default|dict.youdao.com English-Chinese Dictionary|Builtin|Builtin|ninja33|
-|encn-List|English-Chinese Dictionary Bundle|[encn-List](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn-list.js)|List|ninja33|
-|encn-Baicizhan|baicizhan.com English-Chinese Dictionary|[encn-Baicizhan](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/baicizhan.js)|Dictionary|ninja33|
-|encn-Bing|cn.bing.com English-Chinese Dictionary|[encn-Bing](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/cnbing.js)|Dictionary|ninja33|
-|encn-CNDict|dict.cn English-Chinese Dictionary|[encn-CNDict](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/cndict.js)|Dictionary|ninja33|
-|enen-Collins|collins.com English-English Dictionary|[enen-Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/collins.js)|Dictionary|ninja33|
+|encn_Default|dict.youdao.com English-Chinese Dictionary|Builtin|Builtin|ninja33|
+|frcn_Youdao|dict.youdao.com French-Chinese Dictionary|[frcn_Youdao](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/frcn_Youdao.js)|Dictionary|ninja33|
+|encn-List|English-Chinese Dictionary Bundle|[encn_List](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_List.js)|List|ninja33|
+|encn_Baicizhan|baicizhan.com English-Chinese Dictionary|[encn_Baicizhan](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Baicizhan.js)|Dictionary|ninja33|
+|encn_Bing|cn.bing.com English-Chinese Dictionary|[encn_Bing](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Bing.js)|Dictionary|ninja33|
+|encn_CNDict|dict.cn English-Chinese Dictionary|[encn_CNDict](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_CNDict.js)|Dictionary|ninja33|
+|enen_Collins|collins.com English-English Dictionary|[enen_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enen_Collins.js)|Dictionary|ninja33|
 

@@ -1,6 +1,6 @@
-if (typeof Baicizhan == 'undefined') {
+if (typeof encn_Baicizhan == 'undefined') {
 
-    class Baicizhan {
+    class encn_Baicizhan {
         constructor() {
             this.word = '';
             this.base = 'http://mall.baicizhan.com/ws/search?w='
@@ -67,6 +67,6 @@ if (typeof Baicizhan == 'undefined') {
         }
     }
 
-    registerDict('encn-Baicizhan', Baicizhan);
+    registerDict('encn_Baicizhan', encn_Baicizhan);
 
 }

@@ -58,10 +58,6 @@ hr{
   word-wrap     :break-word;
 }
 
-.abkl-sent{
-  font-size     :0.8em;
-}
-
 .abkl-createnote{
   cursor        : pointer;
   float         : right;

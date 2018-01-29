@@ -1,11 +1,11 @@
-if (typeof Youdao == 'undefined') {
+if (typeof frcn_Youdao == 'undefined') {
 
-    class Youdao {
+    class frcn_Youdao {
         constructor() {
             this.word = '';
             this.selector = '';
             this.attr = '';
-            this.base = 'http://dict.youdao.com/fsearch?client=deskdict&keyfrom=chrome.extension&pos=-1&doctype=xml&xmlVersion=3.2&dogVersion=1.0&vendor=unknown&appVer=3.1.17.4208&le=eng&q=';
+            this.base = 'http://dict.youdao.com/fsearch?client=deskdict&keyfrom=chrome.extension&pos=-1&doctype=xml&xmlVersion=3.2&dogVersion=1.0&vendor=unknown&appVer=3.1.17.4208&le=fr&q=';
         }
 
         resourceURL() {
@@ -65,6 +65,6 @@ if (typeof Youdao == 'undefined') {
 
     }
 
-    registerDict('encn-Default', Youdao);
+    registerDict('frcn_Youdao', frcn_Youdao);
 
 }

@@ -8,10 +8,10 @@ function sanitizeOptions(options) {
         definitions: 'Back',
         sentence: 'Back',
 
-        dictLibrary: 'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/collins.js',
+        dictLibrary: 'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enen_Collins.js',
 
-        dictSelected: 'encn-Default',
-        dictNamelist: ['encn-Default','enen-Collins'],
+        dictSelected: 'encn_Default',
+        dictNamelist: ['encn_Default','enen_Collins'],
     };
 
     for (const key in defaults) {

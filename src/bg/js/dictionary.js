@@ -2,7 +2,7 @@ class Dictlib {
     constructor() {
         this.options = null;
         this.lastoptions = null;
-        this.default = ['local/youdao.js'];
+        this.default = ['local/encn_Default.js'];
         this.list = [];
         this.dicts = {};
     }

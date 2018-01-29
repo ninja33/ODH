@@ -18,7 +18,7 @@ form {
 section {
     border-radius: 5px;
     background-color: #f1f8e9;
-    padding: 10px;
+    padding: 5px 10px;
 }
 
 label {
@@ -78,7 +78,7 @@ label#load:hover {
 
 hr {
     border: 1px;
-    margin: 8px 0;
+    margin: 4px 0;
     border-top: 1px solid #d5d5d5;
 }
 
@@ -91,7 +91,7 @@ div.buttons {
     background-color: #4CAF50;
     color: white;
     padding: 8px 10px;
-    margin: 8px 10px;
+    margin: 4px 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;

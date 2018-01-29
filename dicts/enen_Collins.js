@@ -1,11 +1,11 @@
-if (typeof Bing == 'undefined') {
+if (typeof enen_Collins == 'undefined') {
 
-    class Bing {
+    class enen_Collins {
         constructor() {
             this.word = '';
-            this.selector = '.lf_area ul';
-            this.attr = 'outerHTML';
-            this.base = 'https://cn.bing.com/dict/search?q='
+            this.selector = '.content';
+            this.attr = 'innerHTML';
+            this.base = 'https://www.collinsdictionary.com/dictionary/english/'
 
         }
 
@@ -43,26 +43,45 @@ if (typeof Bing == 'undefined') {
         renderContent(data) {
             let div = document.createElement("div");
             div.innerHTML = data;
-            let ul = div.querySelector('.lf_area ul')
-            ul.querySelector('.web').innerText = ul.querySelector('.web').innerText + ": "
-            let li = ul.querySelectorAll('li');
-            let content = '';
-            if (li) {
-                li.forEach(x=>{
-                    content += x.innerText + '<br>';
-                });
-                return content;
+            let content = div.querySelector(this.selector);
+            if (content) {
+                let css = this.renderCSS();
+                return css + content[this.attr];
             } else {
                 return null;
             }
         }
 
         renderCSS() {
-            let css = ``;
+            let css = `
+            <style> 
+                .type-example,
+                .copyright,
+                .inflected_forms,
+                .form {
+                    display:none;
+                }
+                .def {
+                    border: 1px solid;
+                    border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+                    border-radius: 3px;
+                    padding: 5px;
+                    margin-top: 3px;
+                }
+                .sense {
+                    margin-bottom: 5px;
+                    padding-bottom: 2px;
+                }
+                a {
+                    color: #000;
+                    text-decoration: none;
+                }
+            </style>`;
+
             return css;
         }
     }
 
-    registerDict('encn-Bing', Bing);
+    registerDict('enen_Collins', enen_Collins);
 
 }

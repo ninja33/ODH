@@ -1,19 +1,15 @@
-if (typeof CNDict == 'undefined') {
+if (typeof encn_Default == 'undefined') {
 
-    class CNDict {
+    class encn_Default {
         constructor() {
             this.word = '';
-            this.selector = '#exp';
-            this.attr = 'outerHTML';
-            this.base = 'http://apii.dict.cn/apis/dict_plugin.php?skin=default&pie=1&tj=huaci&btype=chrome&ver=1.0.2&pos=0';
+            this.selector = '';
+            this.attr = '';
+            this.base = 'http://dict.youdao.com/fsearch?client=deskdict&keyfrom=chrome.extension&pos=-1&doctype=xml&xmlVersion=3.2&dogVersion=1.0&vendor=unknown&appVer=3.1.17.4208&le=eng&q=';
         }
 
         resourceURL() {
-            let word = encodeURIComponent(this.word);
-            let key = '73968t727aac3ee8bai593473d960c8x';
-            let md5_salt = `###${key}chromex###`;
-            let saltmd5 = md5(rawurlencode(word + '0' + md5_salt));
-            return this.base + `&t=${saltmd5}&q=${word}`;
+            return this.base + encodeURIComponent(this.word);
         }
 
         findTerm(word) {
@@ -26,7 +22,8 @@ if (typeof CNDict == 'undefined') {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: url,
-                    type: "GET",
+                    type: 'GET',
+                    dataType: 'xml',
                     timeout: 5000,
                     error: (xhr, status, error) => {
                         reject(error);
@@ -44,15 +41,18 @@ if (typeof CNDict == 'undefined') {
         }
 
         renderContent(data) {
-            let div = document.createElement("div");
-            div.innerHTML = data;
-            let content = div.querySelector(this.selector)
-            if (content) {
-                let css = this.renderCSS();
-                return css + content[this.attr];
-            } else {
+            let xmlroot = data.getElementsByTagName("yodaodict")[0];
+            let trans = xmlroot.getElementsByTagName("translation");
+            let transarr = Array.from(trans);
+            let content = "";
+            if (!trans[0] || !trans[0].childNodes[0])
                 return null;
+
+            for (let i = 0; i < trans.length; i++) {
+                content += trans[i].getElementsByTagName("content")[0].childNodes[0].nodeValue + "<br>";
             }
+            let css = this.renderCSS();
+            return css + content;
         }
 
         renderCSS() {
@@ -65,6 +65,6 @@ if (typeof CNDict == 'undefined') {
 
     }
 
-    registerDict('encn-CNDict', CNDict);
+    registerDict('encn_Default', encn_Default);
 
 }
