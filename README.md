@@ -159,10 +159,10 @@ Below is existing dictionaries script list. You may right click to copy the link
 |EN|CN|baicizhan.com|[encn_Baicizhan](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Baicizhan.js)|Dictionary|ninja33|
 |EN|CN|cn.bing.com|[encn_Bing](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Bing.js)|Dictionary|ninja33|
 |EN|CN|dict.cn|[encn_CNDict](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_CNDict.js)|Dictionary|ninja33|
-|EN|CN|dictionary.cambridge.org|[encn_Cambride](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Cambride.js)|Dictionary|ninja33|
+|EN|CN|dictionary.cambridge.org|[encn_Cambridge](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Cambridge.js)|Dictionary|ninja33|
 |EN|EN|collinsdictionary.com|[enen_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enen_Collins.js)|Dictionary|ninja33|
 |EN|FR|collinsdictionary.com|[enfr_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enfr_Collins.js)|Dictionary|ninja33|
-|EN|FR|dictionary.cambridge.org|[enfr_Cambride](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enfr_Cambride.js)|Dictionary|ninja33|
+|EN|FR|dictionary.cambridge.org|[enfr_Cambridge](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enfr_Cambridge.js)|Dictionary|ninja33|
 
 dictionary.cambridge.org
 
@@ -172,6 +172,6 @@ dictionary.cambridge.org
 |---|---|---|---|---|---|
 |FR|CN|dict.youdao.com|[frcn_Youdao](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/frcn_Youdao.js)|Dictionary|ninja33|
 |FR|EN|collinsdictionary.com|[frcn_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/fren_Collins.js)|Dictionary|ninja33|
-|FR|EN|dictionary.cambridge.org|[fren_Cambride](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/fren_Cambride.js)|Dictionary|ninja33|
+|FR|EN|dictionary.cambridge.org|[fren_Cambridge](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/fren_Cambridge.js)|Dictionary|ninja33|
 
 More ...
