@@ -7,7 +7,11 @@ class AODHBack {
         optionsLoad().then((opts) => {
             this.api_updateOptions({
                 options: opts,
-                callback: () => null
+                callback: ({dictnames, selected}) => {
+                    opts.dictNamelist = dictnames;
+                    opts.dictSelected = selected;
+                    optionsSave(opts);
+                }
             });
         });
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
@@ -39,7 +43,9 @@ class AODHBack {
     }
 
     onTabReady(tabId) {
-        this.tabInvoke(tabId, 'setOptions', {options:this.options});
+        this.tabInvoke(tabId, 'setOptions', {
+            options: this.options
+        });
     }
 
     setOptions(options) {
@@ -56,7 +62,9 @@ class AODHBack {
                 });
                 break;
         }
-        this.tabInvokeAll('setOptions', {options:this.options});
+        this.tabInvokeAll('setOptions', {
+            options: this.options
+        });
     }
 
     tabInvokeAll(action, params) {

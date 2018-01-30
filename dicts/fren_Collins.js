@@ -81,6 +81,13 @@ if (typeof fren_Collins == 'undefined') {
                     font-size: 100%;
                     margin-left: 0;
                 }
+                .sense .sense {
+                    border: initial;
+                    border-color: initial;
+                    border-radius: initial;
+                    padding: initial;
+                    margin-top: initial;
+                }
                 a {
                     color: #000;
                     text-decoration: none;

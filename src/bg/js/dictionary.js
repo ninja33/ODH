@@ -22,7 +22,7 @@ class Dictlib {
             await this.loadRemote(this.list);
         }
         let selected = this.options.dictSelected;
-        selected = (selected in this.dicts) ? selected : 'encn-Default';
+        selected = (selected in this.dicts) ? selected : 'encn_Default';
         return {
             'dictlist': this.dicts,
             'selected': selected

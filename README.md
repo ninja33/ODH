@@ -1,4 +1,4 @@
-# Online Dictionary Helper (with Anki app support) 
+# Online Dictionary Helper (with Anki app support)
 
 Online Dictionary Helper is a chrome extension to show online dictionary content, which also supports flash-card making compatible with Anki  (with ankiconnect an Anki add-on installed).
 
@@ -6,7 +6,7 @@ What might set this extension apart is that the user can grab online dictionary 
 
 ## Background
 
-Reading is among the most important tasks for any dedicated language learner.  I have written an English-Chinese learning/card-marking chrome extension - [Anki Dict Helper](https://github.com/ninja33/anki-dict-helper) in 2016, which was inspired by [readlang.com](http://readlang.com/) and [Foosoft/yomichan](https://github.com/FooSoft/yomichan). 
+Reading is among the most important tasks for any dedicated language learner.  I have written an English-Chinese learning/card-marking chrome extension - [Anki Dict Helper](https://github.com/ninja33/anki-dict-helper) in 2016, which was inspired by [readlang.com](http://readlang.com/) and [Foosoft/yomichan](https://github.com/FooSoft/yomichan).
 Here is how that extension works. Reading through a web page via Google Chrome or Firefox, the user can move the mouse cursor to any given word, press <kbd>shift</kbd> key. A pop-up window would subsquently show up with the word's En-Chinese dictionary definitions on display. It supports the making of an Anki flashcard note filling fields with **word**, **definition** and **context** (the sentence in its original web page context with the selected word included). In a word, it's a personalized  web vocabulary builder which also serves as a En-Ch dictionary.
 
 ![Anki Notes](https://raw.githubusercontent.com/ninja33/anki-online-dict-helper/master/images/anki_640x400.png)
@@ -15,14 +15,14 @@ Here is how that extension works. Reading through a web page via Google Chrome o
 
 That extension is running perfectly for English-Mandarin language learners. However, as the user base grows, I've got lots of requests, asking whether it's possible to add other dictionaries/support for more languages, at least for latin-alphabet-based language similar to English which could serve as the source language.
 
-Well, here goes the same reason as Foosoft/yomichan mentioned in his project [FAQ](https://github.com/FooSoft/yomichan#frequently-asked-questions) page. 
+Well, here goes the same reason as Foosoft/yomichan mentioned in his project [FAQ](https://github.com/FooSoft/yomichan#frequently-asked-questions) page.
 First off, I, a pure mortal/coder, have no knowledge of any foreign languages other than English. Second, it's almost mission impossible for just one man to get all those dictionary files, converting them to usable formats and then incorporating them in the chrome extension.
 
-Fortunately, we are at this great Internet age with increasing amounts of online resources. There are hundreds of thousands dictionaries online for searching. Therefore, any given user can just scrape the definition from online dictionary, leave word and sentence untouched, make it popup and make a note for Anki as usual. 
+Fortunately, we are at this great Internet age with increasing amounts of online resources. There are hundreds of thousands dictionaries online for searching. Therefore, any given user can just scrape the definition from online dictionary, leave word and sentence untouched, make it popup and make a note for Anki as usual.
 Basically, here is the idea.
 
-- Anki dict helper: popup window [word, **built-in definition**, sentence] --> Anki 
-- Anki online dict helper: popup window [word, **online definition**, sentence] --> Anki 
+- Anki dict helper: popup window [word, **built-in definition**, sentence] --> Anki
+- Anki online dict helper: popup window [word, **online definition**, sentence] --> Anki
 
 The **online definition** part is run by customized javascript which could be written by you or your friend and hosted on Github.com.
 
@@ -35,7 +35,7 @@ The **online definition** part is run by customized javascript which could be wr
 3. Open any given web page such as an English article (The extension has English dictionary only by its default setting).
 4. Move mouse cursor to the word, double click to select or press <kbd>shift</kbd> to automatically select word in case it's a link.
 5. A popup window will show up displaying the word definition.
-6. (Optional) Press top/right green **(+)** icon to add Anki note. 
+6. (Optional) Press top/right green **(+)** icon to add Anki note.
 7. (Optional) You need make sure that the Anki desktop version is opened and ankiconnect addon installed beforehand.
 
 The extension has in it two dictionary samples for you to try out and experiment with.
@@ -55,7 +55,7 @@ As for dictionary collins.com, actually it is not built-in dictionary, it is her
 The extension option page is divided in three sections.
 
 1. General Option: Turn on or turn off the extension if you want.
-2. Anki Options: Setup Anki deck/type name, and which fields you are going to put **word**, **definiton**, **sentence**. 
+2. Anki Options: Setup Anki deck/type name, and which fields you are going to put **word**, **definiton**, **sentence**.
 
     *(Currently, the exntension can only output these three most important information. Web page url and audio can be added late.)*
 
@@ -74,8 +74,8 @@ If you want to display your own online dictionary content, you need build the sc
 
 For example:
 
-1. If you script was uploaded to https://**github**.com/your-name/repository/branch/filename.js
-2. You need change above address to https://**rawgit**.com/your-name/repository/branch/filename.js
+1. If you script was uploaded to `https://**github**.com/your-name/repository/branch/filename.js`
+2. You need change above address to `https://**rawgit**.com/your-name/repository/branch/filename.js`
 
 ### Framework & Workflow
 
@@ -107,7 +107,7 @@ if (typeof YouClassName == 'undefined') {
         findTerm(word) {
             return new Promise((resolve, reject){
             // Your code starting here ...
-            // resolve(content);   
+            // resolve(content);
             // reject(error);
             });
         }
@@ -120,17 +120,17 @@ if (typeof YouClassName == 'undefined') {
 
 ```javascript
 registerList([
-    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/baicizhan.js',
-    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/cnbing.js',
-    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/cndict.js',
+    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Baicizhan.js',
+    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Bing.js',
+    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_CNDict.js',
 ]);
 ```
 
 You can find the dictionary script source code sample under [/dicts](https://github.com/ninja33/anki-online-dict-helper/tree/master/dicts) of this repository.
 
-## Too Complicated?
+## Dont know programming ?
 
-Unfortunately, it's not RTG(Ready To Go) package for beginner. The extension already built up a framework to accept your broswer selection, display popup, create anki note, config the option page, but the dictionary part is up to you. Ask someone who know javascript programming if you really need help.
+You can select exsiting dictionary script contributed by others (at the end of this README), or ask someone else who know javascript programming or raise an issue here if you really need help.
 
 ## Security issue
 
@@ -150,13 +150,23 @@ Welcome pull request if you want to enhance this extension, or put your own scri
 
 Below is existing dictionaries script list. You may right click to copy the link and paste it in option page **Repository** field to load the script.
 
-|Dictionary Name|Descrition|Repository|Type|Contributor|
-|---|---|---|---|---|
-|encn_Default|dict.youdao.com English-Chinese Dictionary|Builtin|Builtin|ninja33|
-|frcn_Youdao|dict.youdao.com French-Chinese Dictionary|[frcn_Youdao](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/frcn_Youdao.js)|Dictionary|ninja33|
-|encn-List|English-Chinese Dictionary Bundle|[encn_List](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_List.js)|List|ninja33|
-|encn_Baicizhan|baicizhan.com English-Chinese Dictionary|[encn_Baicizhan](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Baicizhan.js)|Dictionary|ninja33|
-|encn_Bing|cn.bing.com English-Chinese Dictionary|[encn_Bing](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Bing.js)|Dictionary|ninja33|
-|encn_CNDict|dict.cn English-Chinese Dictionary|[encn_CNDict](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_CNDict.js)|Dictionary|ninja33|
-|enen_Collins|collins.com English-English Dictionary|[enen_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enen_Collins.js)|Dictionary|ninja33|
+### Source Language: English
 
+|Source|Target|Descrition|Repository|Type|Contributor|
+|---|---|---|---|---|---|
+|EN|CN|dict.youdao.com|Builtin|Builtin|ninja33|
+|EN|CN|Dictionaries Bundle|[encn_List](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_List.js)|List|ninja33|
+|EN|CN|baicizhan.com|[encn_Baicizhan](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Baicizhan.js)|Dictionary|ninja33|
+|EN|CN|cn.bing.com|[encn_Bing](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Bing.js)|Dictionary|ninja33|
+|EN|CN|dict.cn|[encn_CNDict](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_CNDict.js)|Dictionary|ninja33|
+|EN|EN|collinsdictionary.com|[enen_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enen_Collins.js)|Dictionary|ninja33|
+|EN|FR|collinsdictionary.com|[enfr_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enfr_Collins.js)|Dictionary|ninja33|
+
+### Source Language: French
+
+|Source|Target|Descrition|Repository|Type|Contributor|
+|---|---|---|---|---|---|
+|FR|CN|dict.youdao.com|[frcn_Youdao](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/frcn_Youdao.js)|Dictionary|ninja33|
+|FR|EN|collinsdictionary.com|[frcn_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/fren_Collins.js)|Dictionary|ninja33|
+
+More ...

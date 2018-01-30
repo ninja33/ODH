@@ -10,8 +10,8 @@ function sanitizeOptions(options) {
 
         dictLibrary: 'local/enen_Collins.js',
 
-        dictSelected: 'encn_Default',
-        dictNamelist: ['encn_Default','enen_Collins'],
+        dictSelected: '',
+        dictNamelist: [],
     };
 
     for (const key in defaults) {
