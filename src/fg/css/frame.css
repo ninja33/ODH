@@ -1,78 +1,64 @@
-.body{
-  background-color:#dcedc8;
+.odh-content {
+  font-family: 'Open Sans', Helvetica, Arial, Sans-serif;
+  font-size: 14px;
+  text-align: left;
+  color: #1d2129;
+  line-height: 1.5em;
+  min-height: 1.5em;
+  overflow-y: auto;
+  margin: 8px;
+  border-radius: 3px;
+  box-sizing: border-box;
+  ;
 }
 
-.abkl-content {
-  font-family   : 'Open Sans', Helvetica, Arial, Sans-serif;
-  font-size     : 14px;
-  text-align    : left;
-  color         : #1d2129; 
-  border-radius : 3px;
-  /*background-color:#dcedc8;*/
+.odh-headsection {
+  margin: 3px 0;
+  padding: 0 3px 3px;
+  border-bottom: 2px #666 solid;
 }
 
-/* section global style */
-.abkl-sect {
-  border            : 1px solid;   
-  border-color      : #e5e6e9 #dfe0e4 #d0d1d5; 
-  border-radius     : 0 5px 5px 0;
-  background-color  : rgba(255,255,255,0.95);   
-  margin            : 3px 0;
-  padding           : 5px;       
-  line-height       : 1.6em;
-  min-height        : 1.6em;
-  border-right-width: 6px;
-  border-left       : 2px dashed #dfe0e4; 
-  /*remove below 2 lines if you want flat style*/
-  /*border          : 0px solid;   */
-  /*box-shadow: 1px 1px 2px rgba(0,0,0,0.3), 1px 1px 3px rgba(0,0,0,0.5);*/
+.odh-expression {
+  font-size: 1.3em;
+  font-weight: bold;
 }
 
-.abkl-word span,
-.abkl-defs span{
-  vertical-align:middle;
+.odh-reading {
+  margin-left: 5px;
+  font-size: 0.9em;
 }
 
-.abkl-word{
-  border-right-color:#1683ea;
-}
-.abkl-defs{
-  border-right-color:#7cb242;
-}
-.abkl-sent{
-  border-right-color:#e53935;
-}
-
-hr{
-  border        : 1px;
-  margin        : 5px 0;    
-  border-top    : 1px solid #d5d5d5; 
+.odh-definitions,
+.odh-sentence {
+  display: block;
+  background-color: #fefefe;
+  border: 1px solid;
+  border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+  border-radius: 3px;
+  padding: 5px;
+  margin-top: 5px;
+  word-wrap: break-word;
 }
 
-.abkl-word{
-  font-size     :1.2em;
-  font-weight   :bold;
+.odh-createnote {
+  cursor: pointer;
+  position: relative;
+  float: right;
 }
 
-.abkl-defs{
-  word-wrap     :break-word;
+hr {
+  border: 1px;
+  margin: 5px 0;
+  border-top: 1px solid #d5d5d5;
 }
 
-.abkl-createnote{
-  cursor        : pointer;
-  float         : right;
-  margin-right  : 3px;
-  vertical-align: middle;
-}
-
-/* Tag highlight style */
-.highlight{
+.highlight {
   /*font-weight       : bold;*/
-  font-size         : 0.9em;
-  border-radius     : 4px; 
-  color             : #fff; 
-  padding           : 1px 2px;
-  margin-right      : 3px;
-  text-decoration   : none;
-  text-align        : center;
+  font-size: 0.9em;
+  border-radius: 4px;
+  color: #fff;
+  padding: 1px 2px;
+  margin-right: 3px;
+  text-decoration: none;
+  text-align: center;
 }

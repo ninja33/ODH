@@ -51,7 +51,7 @@ function getSentence(sentenceNum) {
     const upNum = 4;
 
     const selection = window.getSelection();
-    const word = (selection.toString() || '').trim();
+    let word = (selection.toString() || '').trim();
 
     if (selection.rangeCount < 1)
         return;
@@ -78,4 +78,9 @@ function getBlock(node, deep) {
     } else {
         return getBlock(node.parentElement, deep - 1);
     }
+}
+
+function selectedText(){
+    const selection = window.getSelection();
+    return (selection.toString() || '').trim();
 }

@@ -23,7 +23,7 @@ class AODHBack {
     onInstalled(details) {
         if (details.reason === 'install') {
             chrome.tabs.create({
-                url: chrome.extension.getURL('bg/guide.html')
+                url: chrome.extension.getURL('bg/options.html')
             });
         }
     }
@@ -106,11 +106,11 @@ class AODHBack {
 
     api_getTranslation(params) {
         let {
-            word,
+            expression,
             callback
         } = params;
 
-        this.translator.findTerm(word).then(result => {
+        this.translator.findTerm(expression).then(result => {
             callback(result);
         }).catch(error => {
             callback(null);

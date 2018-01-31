@@ -1,12 +1,13 @@
-iframe#abkl-popup {
-    all:              initial;
+iframe#odh-popup {
+    all: initial;
     background-color: #fff;
-    border:           1px solid #999;
-    box-shadow:       0 0 10px rgba(0, 0, 0, .5);
-    height:           240px;
-    position:         fixed;
-    resize:           both;
-    visibility:       hidden;
-    width:            320px;
-    z-index:          2147483647;
-}
+    border: 1px solid #999;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    border-radius: 5px;
+    height: 240px;
+    position: fixed;
+    resize: both;
+    visibility: hidden;
+    width: 320px;
+    z-index: 2147483647;
+}  

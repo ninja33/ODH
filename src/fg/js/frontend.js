@@ -61,31 +61,26 @@ class AODHFront {
         if (!this.enabled)
             return;
 
-            // reset selection timeout
+        // reset selection timeout
         this.timeout = null;
 
-        const selection = window.getSelection();
-        const word = (selection.toString() || '').trim();
-        if (isInvalid(word)) {
+        const expression = selectedText();
+        if (isInvalid(expression)) {
             return;
         };
 
         let request = {
             action: 'getTranslation',
             params: {
-                word
+                expression
             },
         };
-        chrome.runtime.sendMessage(request, defs => {
-            if (defs == null)
+        chrome.runtime.sendMessage(request, result => {
+            if (result == null)
                 return;
-            let num = 1; //how many sentences would like to get in context.
-            let sent = getSentence(num);
-            this.note = {
-                word,
-                defs,
-                sent,
-            };
+
+            this.note = this.buildNote(result);
+
             let content = this.renderPopup(this.note);
             this.popup.showNextTo({
                 x: this.point.x,
@@ -131,34 +126,64 @@ class AODHFront {
         return;
     }
 
-    renderPopup(note) {
-        let {
-            word,
-            defs,
-            sent
-        } = note;
 
-        let css = chrome.extension.getURL('fg/css/frame.css');
-        let js = chrome.extension.getURL('fg/js/frame.js');
-        let img = chrome.extension.getURL('fg/img/plus.png');
+    buildNote(result) {
+        //get 1 sentence around the expression.
+        const expression = selectedText();
+        const sentence = getSentence(1);
+        let tmpl = {
+            css:'',
+            expression,
+            reading: '',
+            sentence,
+        };
 
-        var content = `\
-        <html lang="zh-CN">\
-            <head><meta charset="UTF-8"><title></title>\
-                <link rel="stylesheet" href="${css}">\
-            </head>\
-            <body style="margin:3px;">\
-            <div class="abkl-content">\
-                <div class="abkl-sect abkl-word">${word}<span class="abkl-createnote"><img src="${img}"/></span></div>\
-                <div class="abkl-sect abkl-defs">${defs}</div>\
-                <div class="abkl-sect abkl-sent">${sent}</div>\
-            </div>\
-            <script src="${js}"></script>\
-            </body>\
-        </html>`;
-        return content;
+        //if 'result' is object with 'definitions' property, then copy this object.
+        if (result.hasOwnProperty('definitions')) {
+            for (const key in tmpl) {
+                if (!result.hasOwnProperty(key)) {
+                    result[key] = tmpl[key];
+                }
+            }
+            return result;
+        } else { // if 'result' is simple string, then return standard template.
+            tmpl['definitions'] = [].concat(result);
+            return tmpl;
+        }
+
     }
 
+    renderPopup(note) {
+        let img = chrome.extension.getURL('fg/img/plus.png');
+        let content = note.css;
+        content += `<div class="odh-headsection"><span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
+        for (const [index, definition] of note.definitions.entries()) {
+            content += `<div class="odh-definitions"><img class="odh-createnote" dataset-index=${index} src="${img}"/>${definition}</div>`;
+        }
+        content += `<div class="odh-sentence">${note.sentence}</div>`;
+        return this.popupHeader()+content+this.popupFooter();
+    }
+
+    popupHeader() {
+        let css = chrome.extension.getURL('fg/css/frame.css');
+        return `
+        <html lang="en">
+            <head><meta charset="UTF-8"><title></title>
+                <link rel="stylesheet" href="${css}">
+            </head>
+            <body style="margin:0px;">
+            <div class="odh-content">
+        `;
+    }
+
+    popupFooter() {
+        let js = chrome.extension.getURL('fg/js/frame.js');
+        return `
+            </div>
+            <script src="${js}"></script>
+            </body>
+        </html>`;
+    }
 }
 
 window.aodhfront = new AODHFront();

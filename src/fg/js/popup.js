@@ -75,7 +75,7 @@ class Popup {
         }
 
         this.popup = document.createElement('iframe');
-        this.popup.id = 'abkl-popup';
+        this.popup.id = 'odh-popup';
         this.popup.addEventListener('mousedown', (e) => e.stopPropagation());
         this.popup.addEventListener('scroll', (e) => e.stopPropagation());
 

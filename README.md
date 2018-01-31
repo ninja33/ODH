@@ -52,11 +52,11 @@ The extension option page is divided in three sections.
 
 1. You can use exsiting dictionary scripts contributed by others in the [dictionaries list](dicts/README.md)
 2. Or develop the script by yourself based on [development guide](doc/development.md) 
-3. Or raise an [issue](issues/) here if you really need help.
+3. Or raise an [issue](https://github.com/ninja33/ODH/issues) here if you really need help.
 
 ## Pull request
 
 Welcome pull request if you want to enhance this extension, or put your own script here as central repository.
 
-- the exntension source will go to [/src](https://github.com/ninja33/ODH/master/src)
-- the online dictionary script will go to [/dicts](https://github.com/ninja33/ODH/master/dicts)
+- the exntension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
+- the online dictionary script will go to [/dicts](https://github.com/ninja33/ODH/tree/master/dicts)

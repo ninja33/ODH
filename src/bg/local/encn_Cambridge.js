@@ -40,28 +40,30 @@ if (typeof encn_Cambridge == 'undefined') {
             });
         }
 
-        removeTags(elem, name) {
-            let tags = elem.querySelectorAll(name);
-            tags.forEach(x => {
-                x.outerHTML = "";
-            });
+        removeTags(elem, list) {
+            for (const name of list) {
+                let tags = elem.querySelectorAll(name);
+                for (const div of tags) {
+                    div.outerHTML = "";
+                };
+            }
         }
 
         removelinks(elem) {
             let tags = elem.querySelectorAll('a');
-            tags.forEach(x => {
-                x.outerHTML = x.innerText;
-            });
+            for (const div of tags) {
+                div.outerHTML = div.innerText;
+            };
             
             tags = elem.querySelectorAll('h2');
-            tags.forEach(x => {
-                x.outerHTML = `<div class='head2'>${x.innerHTML}</div>`;
-            });
+            for (const div of tags) {
+                div.outerHTML = `<div class='head2'>${div.innerHTML}</div>`;
+            };
 
             tags = elem.querySelectorAll('h3');
-            tags.forEach(x => {
-                x.outerHTML = `<div class='head3'>${x.innerHTML}</div>`;
-            });
+            for (const div of tags) {
+                div.outerHTML = `<div class='head3'>${div.innerHTML}</div>`;
+            };
         }
 
         renderContent(data) {
@@ -69,7 +71,7 @@ if (typeof encn_Cambridge == 'undefined') {
             div.innerHTML = data;
 
             let content = div.querySelector(this.selector);
-            this.removeTags(content, '.extraexamps');
+            this.removeTags(content, ['.extraexamps']);
             this.removelinks(content);
 
             if (content) {
