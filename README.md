@@ -9,7 +9,7 @@ What might set this extension apart is that the user can grab online dictionary 
 Reading is among the most important tasks for any dedicated language learner.  I have written an English-Chinese learning/card-marking chrome extension - [Anki Dict Helper](https://github.com/ninja33/anki-dict-helper) in 2016, which was inspired by [readlang.com](http://readlang.com/) and [Foosoft/yomichan](https://github.com/FooSoft/yomichan).
 Here is how that extension works. Reading through a web page via Google Chrome or Firefox, the user can move the mouse cursor to any given word, press <kbd>shift</kbd> key. A pop-up window would subsquently show up with the word's En-Chinese dictionary definitions on display. It supports the making of an Anki flashcard note filling fields with **word**, **definition** and **context** (the sentence in its original web page context with the selected word included). In a word, it's a personalized  web vocabulary builder which also serves as a En-Ch dictionary.
 
-![Anki Notes](https://raw.githubusercontent.com/ninja33/anki-online-dict-helper/master/images/anki_640x400.png)
+![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_640x400.png)
 
 ## The idea
 
@@ -42,11 +42,11 @@ The extension has in it two dictionary samples for you to try out and experiment
 
 1. English-Chinese dictionary: youdao.com (example for sentence captured as context)
 
-![Youdao Dictionary](https://raw.githubusercontent.com/ninja33/anki-online-dict-helper/master/images/youdao_640x400.png)
+![Youdao Dictionary](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/youdao_640x400.png)
 
 2. English-English dictionary: collins.com (example for exact sample content from online dictionary)
 
-![Collins Dictionary](https://raw.githubusercontent.com/ninja33/anki-online-dict-helper/master/images/collins_640x400.png)
+![Collins Dictionary](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/collins_640x400.png)
 
 As for dictionary collins.com, actually it is not built-in dictionary, it is here to show you how to load customized dictionary script.
 
@@ -64,7 +64,7 @@ The extension option page is divided in three sections.
     - Script Repository: Input your own script location here.
     - Selected Dictionary: Here will display all available dictionaries (buildin and customized), and please select what current dictionary you want to use.
 
-![Options Page](https://raw.githubusercontent.com/ninja33/anki-online-dict-helper/master/images/options.png)
+![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/options.png)
 
 ## Start your own script
 
@@ -120,13 +120,13 @@ if (typeof YouClassName == 'undefined') {
 
 ```javascript
 registerList([
-    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Baicizhan.js',
-    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Bing.js',
-    'https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_CNDict.js',
+    'https://rawgit.com/ninja33/ODH/master/dicts/encn_Baicizhan.js',
+    'https://rawgit.com/ninja33/ODH/master/dicts/encn_Bing.js',
+    'https://rawgit.com/ninja33/ODH/master/dicts/encn_CNDict.js',
 ]);
 ```
 
-You can find the dictionary script source code sample under [/dicts](https://github.com/ninja33/anki-online-dict-helper/tree/master/dicts) of this repository.
+You can find the dictionary script source code sample under [/dicts](https://github.com/ninja33/ODH/master/dicts) of this repository.
 
 ## Dont know programming ?
 
@@ -143,8 +143,8 @@ Because the extension will dynamically load your own customized script, so, you 
 
 Welcome pull request if you want to enhance this extension, or put your own script here as central repository.
 
-- the exntension source will go to [/src](https://github.com/ninja33/anki-online-dict-helper/tree/master/src)
-- the online dictionary script will go to [/dicts](https://github.com/ninja33/anki-online-dict-helper/tree/master/dicts)
+- the exntension source will go to [/src](https://github.com/ninja33/ODH/master/src)
+- the online dictionary script will go to [/dicts](https://github.com/ninja33/ODH/master/dicts)
 
 ## Dictionary script list
 
@@ -155,14 +155,14 @@ Below is existing dictionaries script list. You may right click to copy the link
 |Source|Target|Descrition|Repository|Type|Contributor|
 |---|---|---|---|---|---|
 |EN|CN|dict.youdao.com|Builtin|Builtin|ninja33|
-|EN|CN|Dictionaries Bundle|[encn_List](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_List.js)|List|ninja33|
-|EN|CN|baicizhan.com|[encn_Baicizhan](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Baicizhan.js)|Dictionary|ninja33|
-|EN|CN|cn.bing.com|[encn_Bing](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Bing.js)|Dictionary|ninja33|
-|EN|CN|dict.cn|[encn_CNDict](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_CNDict.js)|Dictionary|ninja33|
-|EN|CN|dictionary.cambridge.org|[encn_Cambridge](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/encn_Cambridge.js)|Dictionary|ninja33|
-|EN|EN|collinsdictionary.com|[enen_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enen_Collins.js)|Dictionary|ninja33|
-|EN|FR|collinsdictionary.com|[enfr_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enfr_Collins.js)|Dictionary|ninja33|
-|EN|FR|dictionary.cambridge.org|[enfr_Cambridge](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/enfr_Cambridge.js)|Dictionary|ninja33|
+|EN|CN|Dictionaries Bundle|[encn_List](https://rawgit.com/ninja33/ODH/master/dicts/encn_List.js)|List|ninja33|
+|EN|CN|baicizhan.com|[encn_Baicizhan](https://rawgit.com/ninja33/ODH/master/dicts/encn_Baicizhan.js)|Dictionary|ninja33|
+|EN|CN|cn.bing.com|[encn_Bing](https://rawgit.com/ninja33/ODH/master/dicts/encn_Bing.js)|Dictionary|ninja33|
+|EN|CN|dict.cn|[encn_CNDict](https://rawgit.com/ninja33/ODH/master/dicts/encn_CNDict.js)|Dictionary|ninja33|
+|EN|CN|dictionary.cambridge.org|[encn_Cambridge](https://rawgit.com/ninja33/ODH/master/dicts/encn_Cambridge.js)|Dictionary|ninja33|
+|EN|EN|collinsdictionary.com|[enen_Collins](https://rawgit.com/ninja33/ODH/master/dicts/enen_Collins.js)|Dictionary|ninja33|
+|EN|FR|collinsdictionary.com|[enfr_Collins](https://rawgit.com/ninja33/ODH/master/dicts/enfr_Collins.js)|Dictionary|ninja33|
+|EN|FR|dictionary.cambridge.org|[enfr_Cambridge](https://rawgit.com/ninja33/ODH/master/dicts/enfr_Cambridge.js)|Dictionary|ninja33|
 
 dictionary.cambridge.org
 
@@ -170,8 +170,8 @@ dictionary.cambridge.org
 
 |Source|Target|Descrition|Repository|Type|Contributor|
 |---|---|---|---|---|---|
-|FR|CN|dict.youdao.com|[frcn_Youdao](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/frcn_Youdao.js)|Dictionary|ninja33|
-|FR|EN|collinsdictionary.com|[frcn_Collins](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/fren_Collins.js)|Dictionary|ninja33|
-|FR|EN|dictionary.cambridge.org|[fren_Cambridge](https://rawgit.com/ninja33/anki-online-dict-helper/master/dicts/fren_Cambridge.js)|Dictionary|ninja33|
+|FR|CN|dict.youdao.com|[frcn_Youdao](https://rawgit.com/ninja33/ODH/master/dicts/frcn_Youdao.js)|Dictionary|ninja33|
+|FR|EN|collinsdictionary.com|[frcn_Collins](https://rawgit.com/ninja33/ODH/master/dicts/fren_Collins.js)|Dictionary|ninja33|
+|FR|EN|dictionary.cambridge.org|[fren_Cambridge](https://rawgit.com/ninja33/ODH/master/dicts/fren_Cambridge.js)|Dictionary|ninja33|
 
 More ...
