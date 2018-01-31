@@ -4,6 +4,7 @@ class AODHFront {
 
         this.point = null;
         this.note = null;
+        this.audio = {};
         this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.enabled = true;
         this.popup = new Popup();
@@ -114,25 +115,48 @@ class AODHFront {
     }
 
     onFrameMessage(e) {
-        if (e.data == 'createNote') {
-            let request = {
-                action: 'createNote',
-                params: {
-                    note: this.note
-                },
-            };
-            chrome.runtime.sendMessage(request, () => {});
+        const {
+            action,
+            params
+        } = e.data, method = this['api_' + action];
+        if (typeof (method) === 'function') {
+            method.call(this, params);
         }
-        return;
     }
 
+    api_createNote(index) {
+        let note = Object.assign({}, this.note);
+        note.definition = this.note.css + this.note.definitions[index];
+        let request = {
+            action: 'createNote',
+            params: {
+                note
+            },
+        };
+        chrome.runtime.sendMessage(request, () => {});
+    }
+
+    api_playAudio(index) {
+
+        let url = this.note.audiourl;
+
+        for (let key in this.audio) {
+            this.audio[key].pause();
+        }
+
+        const audio = this.audio[url] || new Audio(url);
+        audio.currentTime = 0;
+        audio.play();
+
+        this.audio[url] = audio;
+    }
 
     buildNote(result) {
         //get 1 sentence around the expression.
         const expression = selectedText();
         const sentence = getSentence(1);
         let tmpl = {
-            css:'',
+            css: '',
             expression,
             reading: '',
             sentence,
@@ -154,14 +178,18 @@ class AODHFront {
     }
 
     renderPopup(note) {
-        let img = chrome.extension.getURL('fg/img/plus.png');
+        let plusimg = chrome.extension.getURL('fg/img/plus.png');
+        let playimg = chrome.extension.getURL('fg/img/play.png');
+
         let content = note.css;
-        content += `<div class="odh-headsection"><span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
+        let audiosegment = note.audiourl ? `<img class="odh-playaudio" src="${playimg}"/>` : '';
+        content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
+
         for (const [index, definition] of note.definitions.entries()) {
-            content += `<div class="odh-definitions"><img class="odh-createnote" dataset-index=${index} src="${img}"/>${definition}</div>`;
+            content += `<div class="odh-definitions"><img class="odh-createnote" data-index="${index}" src="${plusimg}"/>${definition}</div>`;
         }
         content += `<div class="odh-sentence">${note.sentence}</div>`;
-        return this.popupHeader()+content+this.popupFooter();
+        return this.popupHeader() + content + this.popupFooter();
     }
 
     popupHeader() {
@@ -172,8 +200,7 @@ class AODHFront {
                 <link rel="stylesheet" href="${css}">
             </head>
             <body style="margin:0px;">
-            <div class="odh-content">
-        `;
+            <div class="odh-content">`;
     }
 
     popupFooter() {

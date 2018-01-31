@@ -19,15 +19,15 @@ class Ankiconnect {
         if (!options.expression || !options.definitions)
             return;
 
-        ankinote.fields[options.expression] = note.word;
+        ankinote.fields[options.expression] = note.expression;
         if (!options.sentence) {
-            ankinote.fields[options.definitions] = note.defs;
-        } else if (options.sentence == options.definitions) {
-            note.defs += `<hr>${note.sent}`;
-            ankinote.fields[options.definitions] = note.defs;
+            ankinote.fields[options.definition] = note.definition;
+        } else if (options.sentence == options.definition) {
+            note.definition += `<hr>${note.sentence}`;
+            ankinote.fields[options.definition] = note.definition;
         } else {
-            ankinote.fields[options.definitions] = note.defs;
-            ankinote.fields[options.sentence] = note.sent;
+            ankinote.fields[options.definition] = note.definition;
+            ankinote.fields[options.sentence] = note.sentence;
         }
 
         let request = {

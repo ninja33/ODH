@@ -5,7 +5,7 @@ function sanitizeOptions(options) {
         deckname: 'Default',
         typename: 'Basic',
         expression: 'Front',
-        definitions: 'Back',
+        definition: 'Back',
         sentence: 'Back',
 
         dictLibrary: 'local/enen_Collins.js',
@@ -58,7 +58,7 @@ async function onOKClicked(e) {
     options.deckname = $('#deck').val();
     options.typename = $('#type').val();
     options.expression = $('#word').val();
-    options.definitions = $('#defs').val();
+    options.definition = $('#defs').val();
     options.sentence = $('#sent').val();
 
     options.dictLibrary = $('#repo').val();
@@ -89,7 +89,7 @@ async function onReady() {
     $('#deck').val(opts.deckname);
     $('#type').val(opts.typename);
     $('#word').val(opts.expression);
-    $('#defs').val(opts.definitions);
+    $('#defs').val(opts.definition);
     $('#sent').val(opts.sentence);
 
     $('#repo').val(opts.dictLibrary);
