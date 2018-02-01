@@ -1,0 +1,58 @@
+{
+    "appName": {
+        "message": "Online Dictionary Helper",
+        "description": "The title of the application, displayed in the web store."
+    },
+    "appDesc": {
+        "message": "A translation popup tool to show online dictionary content (with anki support)",
+        "description": "The description of the application, displayed in the web store."
+    },
+    "optTitle":{
+        "message": "Online Dictionary Helper",
+        "description": "label text for 'Title' on optipon page."
+    },
+    "optEnabled":{
+        "message": "Enabled",
+        "description": "label text for 'Enabled/Disable' checkbox on optipon page."
+    },
+    "optDeckName":{
+        "message": "DeckName",
+        "description": "label text for 'Deck Name' on optipon page."
+    },
+    "optTypeName":{
+        "message": "TypeName",
+        "description": "label text for 'Type Name' on optipon page."
+    },
+    "optExpression":{
+        "message": "Expression",
+        "description": "label text for 'Expression' on optipon page."
+    },
+    "optDefinition":{
+        "message": "Definition",
+        "description": "label text for 'Definition' on optipon page."
+    },
+    "optSentence":{
+        "message": "Sentence",
+        "description": "label text for 'Sentence' on optipon page."
+    },
+    "optRepository":{
+        "message": "Repository",
+        "description": "label text for 'Repository' on optipon page."
+    },
+    "optDictionaries":{
+        "message": "Dictionaries",
+        "description": "label text for 'Dictionaries' on optipon page."
+    },
+    "optLoad":{
+        "message": "Load",
+        "description": "for 'Load' button on option page."
+    },
+    "optOK":{
+        "message": "OK",
+        "description": "for 'OK' button on option page."
+    },
+    "optCancel":{
+        "message": "Cancel",
+        "description": "for 'Cancel' button on option page."
+    }
+}

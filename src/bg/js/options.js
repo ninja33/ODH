@@ -1,3 +1,9 @@
+function localizeHtmlPage(){
+    for (const el of document.querySelectorAll('[data-i18n]')) {
+        el.innerHTML = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
+    }
+}
+
 function sanitizeOptions(options) {
     const defaults = {
         enabled: false,
@@ -84,6 +90,7 @@ function onLoadClicked(e) {
 }
 
 async function onReady() {
+    localizeHtmlPage();
     let opts = await optionsLoad();
     $('#enabled').prop('checked',opts.enabled);
     $('#deck').val(opts.deckname);

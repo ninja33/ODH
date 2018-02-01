@@ -85,7 +85,7 @@ div.buttons {
     text-align: center;
 }
 
-.confirm {
+label.button {
     width: 35%;
     background-color: #4CAF50;
     color: white;
@@ -96,6 +96,7 @@ div.buttons {
     cursor: pointer;
 }
 
-.confirm:hover {
+label.button:hover {
     background-color: #45a049;
 }
+

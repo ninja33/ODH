@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/options.css">
     <link rel="stylesheet" href="css/checkbox.css">
-    <title>Anki Online Dictionary Helper</title>
+    <title data-i18n="optTitle">Online Dictionary Helper</title>
 </head>
 
 <body>
     <div class='container'>
         <form>
             <section class="extension-options">
-                <label>Turn On/Off</label>
+                <label data-i18n="optEnabled">Turn On/Off</label>
                 <div class="enabled">
                     <input type="checkbox" value=true id="enabled">
                     <label for="enabled"></label>
@@ -23,30 +23,30 @@
             <hr>
 
             <section class="anki-options">
-                <label for="deck">Anki Deck Name</label>
+                <label for="deck" data-i18n="optDeckName">Anki Deck Name</label>
                 <input type="text" id="deck" placeholder="input your anki deck name ...">
 
-                <label for="type">Anki Type Name</label>
+                <label for="type" data-i18n="optTypeName">Anki Type Name</label>
                 <input type="text" id="type" placeholder="input your anki type name ...">
 
-                <label for="word" id="expression">Expression Field</label>
+                <label for="word" id="expression" data-i18n="optExpression">Expression Field</label>
                 <input type="text" id="word" placeholder="anki field name for {expression}">
 
-                <label for="defs" id="definition">Definition Field</label>
+                <label for="defs" id="definition" data-i18n="optDefinition">Definition Field</label>
                 <input type="text" id="defs" placeholder="anki field name for {definition}">
 
-                <label for="sent" id="sentence">Sentence Field</label>
+                <label for="sent" id="sentence" data-i18n="optSentence">Sentence Field</label>
                 <input type="text" id="sent" placeholder="anki field name for {sentence}">
             </section>
 
             <hr>
 
             <section class="dict-options">
-                <label for="repo">Repository</label>
+                <label for="repo" data-i18n="optRepository">Repository</label>
                 <input type="text" id="repo" name="repo" placeholder="User defined online dictionary">
-                <label for="repo" id="load">Load</label>
+                <label for="repo" id="load" data-i18n="optLoad">Load</label>
 
-                <label for="dict">Dictionaries</label>
+                <label for="dict" data-i18n="optDictionaries">Dictionaries</label>
                 <select id="dict">
                     <option value="encn-Default">encn-Default</option>
                     <option value="encn-CNdict">encn-CNDict</option>
@@ -55,8 +55,8 @@
             <hr>
 
             <div class="buttons">
-                <input type="button" class="confirm" id="ok" value="OK">
-                <input type="button" class="confirm" id="cancel" value="Cancel">
+                <label class="button" id="ok" data-i18n="optOK">OK</label>
+                <label class="button" id="cancel" data-i18n="optCancel">Cancel</label>
             </div>
         </form>
     </div>

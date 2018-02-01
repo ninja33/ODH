@@ -44,13 +44,9 @@
   border: 2px dashed #d0d1d5;
 }
 
-.odh-createnote {
-  cursor: pointer;
-  position: relative;
-  float: right;
-}
-
+.odh-createnote,
 .odh-playaudio {
+  margin:3px;
   cursor: pointer;
   position: relative;
   float: right;
