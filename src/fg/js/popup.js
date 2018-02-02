@@ -21,12 +21,12 @@ class Popup {
         const popupRect = this.popup.getBoundingClientRect();
 
         var posX = elementRect.left;
-        if (posX + popupRect.width >= window.innerWidth) {
-            posX = window.innerWidth - popupRect.width;
+        if (posX + popupRect.width >= document.documentElement.clientWidth) {
+            posX = document.documentElement.clientWidth - popupRect.width;
         }
 
         var posY = elementRect.bottom + this.offset;
-        if (posY + popupRect.height >= window.innerHeight) {
+        if (posY + popupRect.height >= document.documentElement.clientHeight) {
             posY = elementRect.top - popupRect.height - this.offset;
         }
 

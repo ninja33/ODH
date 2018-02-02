@@ -1,9 +1,3 @@
-//function onDomContentLoaded() {
-//    document.getElementsByClassName('odh-createnote')[0].addEventListener('click', () => {
-//        window.parent.postMessage('createNote', '*');
-//    });
-//}
-
 function registerAddNoteLinks() {
     for (let link of document.getElementsByClassName('odh-createnote')) {
         link.addEventListener('click', (e) => {
@@ -29,4 +23,22 @@ function onDomContentLoaded() {
     registerAudioLinks();
 }
 
+function onMessage(e) {
+    const {action, params} = e.data, method = window['api_' + action];
+    if (typeof(method) === 'function') {
+        method(params);
+    }
+}
+
+function onMouseWheel(e){
+    document.querySelector('html').scrollTop -= e.wheelDeltaY / 3; 
+    e.preventDefault();
+}
+
+function api_setActionState(params) {
+    return null;
+}
+
 document.addEventListener('DOMContentLoaded', onDomContentLoaded, false);
+window.addEventListener('message', onMessage);
+window.addEventListener('wheel', onMouseWheel);
