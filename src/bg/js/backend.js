@@ -126,7 +126,7 @@ class AODHBack {
         this.target.createNote(note).then(result => {
             callback(result);
         }).catch(error => {
-            callback(result);
+            callback(error);
         });
     }
 

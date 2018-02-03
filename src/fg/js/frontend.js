@@ -138,7 +138,7 @@ class AODHFront {
 
     api_playAudio(index) {
 
-        let url = this.note.audiourl;
+        let url = this.note.audios[index];
 
         for (let key in this.audio) {
             this.audio[key].pause();
@@ -182,7 +182,12 @@ class AODHFront {
         let playimg = chrome.extension.getURL('fg/img/play.png');
 
         let content = note.css;
-        let audiosegment = note.audiourl ? `<img class="odh-playaudio" src="${playimg}"/>` : '';
+        let audiosegment = '';
+        if (note.audios){
+            for (const [index, audio] of note.audios.entries()){
+                audiosegment += `<img class="odh-playaudio" data-index="${index}" src="${playimg}"/>`;
+            }
+        }
         content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
 
         for (const [index, definition] of note.definitions.entries()) {

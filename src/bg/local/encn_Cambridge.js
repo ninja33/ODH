@@ -140,6 +140,6 @@ if (typeof encn_Cambridge == 'undefined') {
         }
     }
 
-    registerDict('encn_Cambridge', encn_Cambridge);
+    registerDict(chrome.i18n.getMessage('encn_Cambridge'), encn_Cambridge);
 
 }

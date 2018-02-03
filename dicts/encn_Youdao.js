@@ -1,4 +1,4 @@
-if (typeof encn_Default == 'undefined') {
+if (typeof encn_Youdao == 'undefined') {
 
     class encn_Default {
         constructor() {
@@ -65,6 +65,6 @@ if (typeof encn_Default == 'undefined') {
 
     }
 
-    registerDict('encn_Default', encn_Default);
+    registerDict('encn_Youdao ', encn_Youdao);
 
 }

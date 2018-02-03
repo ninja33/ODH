@@ -2,7 +2,7 @@ class Dictlib {
     constructor() {
         this.options = null;
         this.lastoptions = null;
-        this.default = ['local/encn_Default.js'];
+        this.default = ['local/encn_Collins.js'];
         this.list = [];
         this.dicts = {};
     }
@@ -22,7 +22,7 @@ class Dictlib {
             await this.loadRemote(this.list);
         }
         let selected = this.options.dictSelected;
-        selected = (selected in this.dicts) ? selected : 'encn_Default';
+        selected = (selected in this.dicts) ? selected : chrome.i18n.getMessage('encn_Collins');
         return {
             'dictlist': this.dicts,
             'selected': selected

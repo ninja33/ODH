@@ -16,8 +16,8 @@ class Ankiconnect {
             tags: ['anki-helper']
         };
 
-        if (!options.expression || !options.definitions)
-            return;
+        if (!options.expression || !options.definition)
+            return Promise.reject(null);
 
         ankinote.fields[options.expression] = note.expression;
         if (!options.sentence) {

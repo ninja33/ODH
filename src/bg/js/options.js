@@ -14,7 +14,7 @@ function sanitizeOptions(options) {
         definition: 'Back',
         sentence: 'Back',
 
-        dictLibrary: 'local/enen_Collins.js',
+        dictLibrary: '',
 
         dictSelected: '',
         dictNamelist: [],
