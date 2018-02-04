@@ -66,5 +66,9 @@
     "encn_Cambridge":{
         "message": "encn_Cambridge",
         "description": "Dictionary name displayed in option page."
+    },
+    "encn_Baicizhan":{
+        "message": "encn_Baicizhan",
+        "description": "Dictionary name displayed in option page."
     }
 }

@@ -1,4 +1,4 @@
-.odh-content {
+.odh-notes {
   font-family: 'Open Sans', Helvetica, Arial, Sans-serif;
   font-size: 14px;
   text-align: left;
@@ -12,6 +12,12 @@
   ;
 }
 
+.odh-note {
+  margin: 5px 0;
+  padding: 0px;
+  /*border: 1px dashed red;*/
+}
+
 .odh-headsection {
   margin: 3px 0;
   padding: 0 3px 3px;
@@ -19,7 +25,7 @@
 }
 
 .odh-expression {
-  font-size: 1.3em;
+  font-size: 1.2em;
   font-weight: bold;
 }
 
@@ -28,7 +34,7 @@
   font-size: 0.9em;
 }
 
-.odh-definitions,
+.odh-definition,
 .odh-sentence {
   display: block;
   background-color: #fefefe;
@@ -46,7 +52,7 @@
 
 .odh-createnote,
 .odh-playaudio {
-  margin:3px;
+  margin: 3px;
   cursor: pointer;
   position: relative;
   float: right;

@@ -18,7 +18,7 @@ class TextSourceRange {
     }
 
     isAlpha(char) {
-        return /[\u002D|\u002E|\u0041-\u005A|\u0061-\u007A|\u00A0-\u024F]/.test(char);
+        return /[\u002D|\u0041-\u005A|\u0061-\u007A|\u00A0-\u024F]/.test(char);
     }
 
     getStartPos(backwardcount) {

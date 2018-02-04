@@ -66,5 +66,9 @@
     "encn_Cambridge":{
         "message": "劍橋英漢雙解詞典",
         "description": "Dictionary name displayed in option page."
+    },
+    "encn_Baicizhan":{
+        "message": "百詞斬英漢圖解詞典",
+        "description": "Dictionary name displayed in option page."
     }
 }

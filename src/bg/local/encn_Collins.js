@@ -3,21 +3,21 @@ if (typeof encn_Collins == 'undefined') {
     class encn_Collins {
         constructor() {
             this.word = '';
-            this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec",collins"]]}&xmlVersion=5.1&q='
-
+            this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","collins"]]}&xmlVersion=5.1&q='
         }
 
-        resourceURL() {
-            return this.base + encodeURIComponent(this.word);
+        resourceURL(word) {
+            return this.base + encodeURIComponent(word);
         }
 
-        findTerm(word) {
+        async findTerm(word) {
             this.word = word;
-            let url = this.resourceURL();
-            return this.onlineQuery(url);
+            let deflection = formhelper.deinflect(word);
+            let results = await Promise.all([this.findCollins(word), this.findEC(word)]);
+            return [].concat(...results);
         }
 
-        onlineQuery(url) {
+        async onlineQuery(url) {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: url,
@@ -27,9 +27,8 @@ if (typeof encn_Collins == 'undefined') {
                         reject(error);
                     },
                     success: (data, status) => {
-                        let result = this.renderContent(data);
-                        if (result) {
-                            resolve(result);
+                        if (data) {
+                            resolve(data);
                         } else {
                             reject(new Error('Not Found!'));
                         }
@@ -38,79 +37,82 @@ if (typeof encn_Collins == 'undefined') {
             });
         }
 
-        removeTags(elem, list) {
-            for (const name of list) {
-                let tags = elem.querySelectorAll(name);
-                for (const div of tags) {
-                    div.outerHTML = "";
-                };
-            }
-        }
+        async findCollins(word) {
+            let notes = [];
 
-        removelinks(elem) {
-            let tags = elem.querySelectorAll('a');
-            for (const div of tags) {
-                div.outerHTML = div.innerText;
-            };
-        }
+            if (word) {
+                let url = this.resourceURL(word);
+                let data = await this.onlineQuery(url);
 
-        renderContent(data) {
-            //let result = JSON.parse(data);
+                if (data.collins) {
+                    for (const collins_entry of data.collins.collins_entries) {
+                        let definitions = [];
+                        let audios = [];
 
-            if (data.collins) {
-                let entries = [];
-                let expression ='';
-                let reading = '';
-                let audios=[];
-                let definitions = [];
-                for (const collins_entry of data.collins.collins_entries) {
-                    expression = collins_entry.headword; //headword
-                    reading = collins_entry.phonetic; // phonetic
-                    audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-                    audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
-                    for (const entry of collins_entry.entries.entry) {
-                        let definition = '';
-                        for (const tran_entry of entry.tran_entry){
-                            const pos = tran_entry.pos_entry ? `<span class='pos'>${tran_entry.pos_entry.pos}</span>` : '';
-                            let tran = tran_entry.tran ? `<span class='tran'>${tran_entry.tran}</span>` : '';
-                            if (tran) {
-                                tran = tran.replace(/[\u4e00-\u9fa5]+/gi, '<span class="chn_tran">$&</span>');
-                                definition += `${pos}${tran}`;
-                                // make exmaple sentence segement
-                                let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
-                                if (sents.length > 0){
-                                    definition += '<ul class="sents">';
-                                    for (const sent of sents) {
-                                        definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
+                        let expression = collins_entry.headword; //headword
+                        let reading = collins_entry.phonetic; // phonetic
+                        audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+                        audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+
+                        for (const entry of collins_entry.entries.entry) {
+                            let definition = '';
+                            for (const tran_entry of entry.tran_entry) {
+                                const pos = tran_entry.pos_entry ? `<span class='pos'>${tran_entry.pos_entry.pos}</span>` : '';
+                                let tran = tran_entry.tran ? `<span class='tran'>${tran_entry.tran}</span>` : '';
+                                if (tran) {
+                                    tran = tran.replace(/([\u4e00-\u9fa5]|( ?\()|(\) ?))+/gi, '<span class="chn_tran">$&</span>');
+                                    definition += `${pos}${tran}`;
+                                    // make exmaple sentence segement
+                                    let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
+                                    if (sents.length > 0) {
+                                        definition += '<ul class="sents">';
+                                        for (const sent of sents) {
+                                            definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
+                                        }
+                                        definition += '</ul>';
                                     }
-                                    definition += '</ul>';
+                                    // add into difinition array
+                                    definitions.push(definition);
                                 }
-                            // add into difinition array
-                            definitions.push(definition);
                             }
                         }
+
+                        let css = this.renderCSS();
+                        notes.push({
+                            css,
+                            expression,
+                            reading,
+                            definitions,
+                            audios
+                        });
                     }
                 }
-                let css = this.renderCSS();
-                let note = {
-                    css,
-                    expression,
-                    reading,
-                    definitions,
-                    audios
-                }
-                return note;
-            } else if (data.ec) {
-                let note = '<ul>';
-                const trs = data.ec.word ? data.ec.word[0].trs : [];
-                for (const tr of trs)
-                    note += `<li>${tr.tr[0].l.i[0]}</li>`;
-                note += '</ul>';
-                return `<style>ul, li {list-style: square inside;margin:0;padding:0} </style>` + note;
-            } else {
-                return null;
             }
+            return notes;
+        }
 
+        async findEC(word) {
+            let notes = [];
+            if (word) {
+                let url = this.resourceURL(word);
+                let data = await this.onlineQuery(url);
+
+                if (data.ec) {
+                    let definitions = '<ul class="ec">';
+                    const trs = data.ec.word ? data.ec.word[0].trs : [];
+                    for (const tr of trs)
+                        definitions += `<li class="ec">${tr.tr[0].l.i[0]}</li>`;
+                    definitions += '</ul>';
+                    notes.push({
+                        css: '<style>ul.ec, li.ec {list-style: square inside;margin:0;padding:0} </style>',
+                        expression: data.ec.word[0]['return-phrase'].l.i,
+                        reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
+                        definitions: [definitions],
+                        audios: [],
+                    });
+                }
+            }
+            return notes;
         }
 
         renderCSS() {

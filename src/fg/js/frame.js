@@ -3,7 +3,7 @@ function registerAddNoteLinks() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const ds = e.currentTarget.dataset;
-            window.parent.postMessage({action: 'createNote', params: ds.index}, '*');
+            window.parent.postMessage({action: 'createNote', params: {nindex:ds.nindex,dindex:ds.dindex}}, '*');
         });
     }
 }
@@ -13,7 +13,7 @@ function registerAudioLinks() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const ds = e.currentTarget.dataset;
-            window.parent.postMessage({action: 'playAudio', params: ds.index}, '*');
+            window.parent.postMessage({action: 'playAudio', params: {nindex:ds.nindex,dindex:ds.dindex}}, '*');
         });
     }
 }

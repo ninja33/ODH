@@ -2,7 +2,7 @@ class Dictlib {
     constructor() {
         this.options = null;
         this.lastoptions = null;
-        this.default = ['local/encn_Collins.js'];
+        this.default = ['local/encn_Collins.js','local/encn_Longman.js','local/encn_Cambridge.js','local/encn_Baicizhan.js'];
         this.list = [];
         this.dicts = {};
     }

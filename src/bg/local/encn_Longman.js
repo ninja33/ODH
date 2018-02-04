@@ -1,23 +1,23 @@
-if (typeof encn_Collins == 'undefined') {
+if (typeof encn_Longman == 'undefined') {
 
-    class encn_Collins {
+    class encn_Longman {
         constructor() {
             this.word = '';
-            this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec",longman"]]}&xmlVersion=5.1&q='
-
+            this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","longman"]]}&xmlVersion=5.1&q='
         }
 
-        resourceURL() {
-            return this.base + encodeURIComponent(this.word);
+        resourceURL(word) {
+            return this.base + encodeURIComponent(word);
         }
 
-        findTerm(word) {
+        async findTerm(word) {
             this.word = word;
-            let url = this.resourceURL();
-            return this.onlineQuery(url);
+            let deflection = formhelper.deinflect(word);
+            let results = await Promise.all([this.findLongman(word), this.findLongman(deflection),this.findEC(word)]);
+            return [].concat(...results);
         }
 
-        onlineQuery(url) {
+        async onlineQuery(url) {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: url,
@@ -27,9 +27,8 @@ if (typeof encn_Collins == 'undefined') {
                         reject(error);
                     },
                     success: (data, status) => {
-                        let result = this.renderContent(data);
-                        if (result) {
-                            resolve(result);
+                        if (data) {
+                            resolve(data);
                         } else {
                             reject(new Error('Not Found!'));
                         }
@@ -38,72 +37,90 @@ if (typeof encn_Collins == 'undefined') {
             });
         }
 
-        removeTags(elem, list) {
-            for (const name of list) {
-                let tags = elem.querySelectorAll(name);
-                for (const div of tags) {
-                    div.outerHTML = "";
-                };
-            }
-        }
+        async findLongman(word) {
+            let notes = [];
 
-        removelinks(elem) {
-            let tags = elem.querySelectorAll('a');
-            for (const div of tags) {
-                div.outerHTML = div.innerText;
-            };
-        }
-
-        renderContent(data) {
-            //let result = JSON.parse(data);
-
-            if (data.collins) {
-                const collinsroot = data.collins.collins_entries[0]
-                const expression = collinsroot.headword; //headword
-                const reading = collinsroot.phonetic; // phonetic
-                const audios = [] // uk and us audio
-                audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-                audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
-                const definitions = [];
-                const entries = collinsroot.entries ? collinsroot.entries.entry : [];
-                for (const entry of entries) {
-                    const transroot = entry.tran_entry[0]
-                    const pos = transroot.pos_entry ? `<span class='pos'>${transroot.pos_entry.pos}</span>` : '';
-                    let tran = transroot.tran ? `<span class='tran'>${transroot.tran}</span>` : '';
-                    if (tran){
-                        tran = tran.replace(/[\u4e00-\u9fa5]+/gi, '<span class="chn_tran">$&</span>');
-                        let definition = `${pos}${tran}`;
-                        // make exmaple sentence segement
-                        definition += '<ul class="sents">';
-                        let sents = transroot.exam_sents ? transroot.exam_sents.sent : [];
-                        for (const sent of sents) {
-                            definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
+            if (word){
+                let url = this.resourceURL(word);
+                let data = await this.onlineQuery(url);
+    
+                if (data.longman) {
+                    for (const word of data.longman.wordList) {
+                        let definitions = [];
+                        let audios = [];
+    
+                        let expression = word.Entry.Head[0].HWD ? word.Entry.Head[0].HWD[0] : ''; //headword
+                        let reading = word.Entry.Head[0].PronCodes ? word.Entry.Head[0].PronCodes[0].PRON[0] : ''; // phonetic
+                        audios[0] = word.Entry.Head[0].VIDEOCAL ? word.Entry.Head[0].VIDEOCAL[0] : [];
+    
+                        const head_pos = word.Entry.Head[0].POS ? word.Entry.Head[0].POS[0] : '';
+                        const head_gram = word.Entry.Head[0].GRAM ? word.Entry.Head[0].GRAM[0].toLowerCase() : '';
+                        let pos = '';
+                        if (head_pos || head_gram) {
+                            pos = `<span class='pos'>${head_pos+(head_gram?'-'+head_gram:'')}</span>`;
+                        } else {
+                            pos = '';
                         }
-                        definition += '</ul>';
-                        // add into difinition array
-                        definitions.push(definition);
+    
+                        for (const sense of word.Entry.Sense) {
+                            let chn_tran = sense.TRAN ? `<span class='chn_tran'>${sense.TRAN[0]}</span>` : '';
+                            if (chn_tran) {
+                                let definition = '';
+                                let eng_tran = sense.DEF ? sense.DEF[0] : '';
+                                let tran = `<span class="tran">${eng_tran}${chn_tran}</span>`;
+                                definition += `${pos}${tran}`;
+                                // make exmaple sentence segement
+                                let eng_examples = sense.EXAMPLE ? sense.EXAMPLE : [];
+                                let chn_examples = sense.EXAMPLETRAN ? sense.EXAMPLETRAN : []
+                                if (eng_examples.length > 0 && chn_examples.length > 0) {
+                                    definition += '<ul class="sents">';
+                                    for (const [index, example] of eng_examples.entries()) {
+                                        definition += `<li class='sent'><span class='eng_sent'>${eng_examples[index]}</span><span class='chn_sent'>${chn_examples[index]}</span></li>`;
+                                    }
+                                    definition += '</ul>';
+                                }
+                                // add into difinition array
+                                definitions.push(definition);
+                            }
+                        }
+    
+                        let css = this.renderCSS();
+                        notes.push({
+                            css,
+                            expression,
+                            reading,
+                            definitions,
+                            audios
+                        });
                     }
                 }
-                let css = this.renderCSS();
-                let note = {
-                    css,
-                    expression,
-                    reading,
-                    definitions,
-                    audios
-                }
-                return note;
-            } else if (data.ec) {
-                let note = '<ul>';
-                const trs = data.ec.word ? data.ec.word[0].trs : [];
-                for (const tr of trs)
-                    note += `<li>${tr.tr[0].l.i[0]}</li>`;
-                note += '</ul>';
-                return `<style>ul, li {list-style: square inside;margin:0;padding:0} </style>` + note;
-            } else {
-                return null;
             }
+            return notes;
+        }
 
+        async findEC(word) {
+            let notes = [];
+
+            if (word){
+                let url = this.resourceURL(word);
+                let data = await this.onlineQuery(url);
+    
+                if (data.ec) {
+                    let definitions = '<ul class="ec">';
+                    const trs = data.ec.word ? data.ec.word[0].trs : [];
+                    for (const tr of trs)
+                        definitions += `<li class="ec">${tr.tr[0].l.i[0]}</li>`;
+                    definitions += '</ul>';
+                    notes.push({
+                        css: '<style>ul.ec, li.ec {list-style: square inside;margin:0;padding:0} </style>',
+                        expression: data.ec.word[0]['return-phrase'].l.i,
+                        reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
+                        definitions: [definitions],
+                        audios: [],
+                    });
+                }
+            }
+            return notes;
         }
 
         renderCSS() {
@@ -114,19 +131,23 @@ if (typeof encn_Collins == 'undefined') {
                     padding: 0 3px;
                     text-transform: lowercase;
                     color: white;
-                    background-color: grey;
+                    background-color: #0d47a1;
                     border-radius: 3px;
                 }
                 span.chn_tran{
-                    color:#3F51B5;
+                    margin-left: 5px;
+                    color:#0d47a1;
+                    word-break: keep-all;
                 }
                 ul.sents{
                     list-style: square inside;
-                    margin: 5px 0;
-                    padding: 0;
+                    margin: 3px 0;
+                    padding: 5px;
+                    background: #0d47a11a;
+                    border-radius: 5px;
                 }
                 li.sent{
-                    margin: 5px 0;
+                    margin: 0;
                     padding: 0;
                 }
                 span.eng_sent{
@@ -135,13 +156,13 @@ if (typeof encn_Collins == 'undefined') {
                 }
                 span.chn_sent{
                     margin: 5px;
-                    color: #3F51B5;
+                    color:#0d47a1;
                 }
             </style>`;
             return css;
         }
     }
 
-    registerDict(chrome.i18n.getMessage('encn_Collins'), encn_Collins);
+    registerDict(chrome.i18n.getMessage('encn_Longman'), encn_Longman);
 
 }

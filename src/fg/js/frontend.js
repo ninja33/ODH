@@ -3,7 +3,8 @@ class AODHFront {
     constructor() {
 
         this.point = null;
-        this.note = null;
+        this.notes = null;
+        this.sentence = null;
         this.audio = {};
         this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.enabled = true;
@@ -77,12 +78,12 @@ class AODHFront {
             },
         };
         chrome.runtime.sendMessage(request, result => {
-            if (result == null)
+            if (result == null || result.length == 0)
                 return;
 
-            this.note = this.buildNote(result);
+            this.notes = this.buildNote(result);
 
-            let content = this.renderPopup(this.note);
+            let content = this.renderPopup(this.notes);
             this.popup.showNextTo({
                 x: this.point.x,
                 y: this.point.y,
@@ -124,9 +125,14 @@ class AODHFront {
         }
     }
 
-    api_createNote(index) {
-        let note = Object.assign({}, this.note);
-        note.definition = this.note.css + this.note.definitions[index];
+    api_createNote(params) {
+        let {
+            nindex,
+            dindex
+        } = params;
+
+        let note = Object.assign({}, this.notes[nindex]);
+        note.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
         let request = {
             action: 'createNote',
             params: {
@@ -136,9 +142,12 @@ class AODHFront {
         chrome.runtime.sendMessage(request, () => {});
     }
 
-    api_playAudio(index) {
-
-        let url = this.note.audios[index];
+    api_playAudio(params) {
+        let {
+            nindex,
+            dindex
+        } = params;
+        let url = this.notes[nindex].audios[dindex];
 
         for (let key in this.audio) {
             this.audio[key].pause();
@@ -155,45 +164,52 @@ class AODHFront {
         //get 1 sentence around the expression.
         const expression = selectedText();
         const sentence = getSentence(1);
+        this.sentence = sentence;
         let tmpl = {
             css: '',
             expression,
             reading: '',
+            definitions:["script didn't generate definition, please double check!"],
             sentence,
         };
 
-        //if 'result' is object with 'definitions' property, then copy this object.
-        if (result.hasOwnProperty('definitions')) {
-            for (const key in tmpl) {
-                if (!result.hasOwnProperty(key)) {
-                    result[key] = tmpl[key];
+        //if 'result' is array with notes.
+        if (Array.isArray(result)) {
+            for (const item of result) {
+                for (const key in tmpl) {
+                    if (!item.hasOwnProperty(key)) {
+                        item[key] = tmpl[key];
+                    }
                 }
             }
             return result;
         } else { // if 'result' is simple string, then return standard template.
             tmpl['definitions'] = [].concat(result);
-            return tmpl;
+            return [tmpl];
         }
 
     }
 
-    renderPopup(note) {
+    renderPopup(notes) {
         let plusimg = chrome.extension.getURL('fg/img/plus.png');
         let playimg = chrome.extension.getURL('fg/img/play.png');
 
-        let content = note.css;
-        let audiosegment = '';
-        if (note.audios){
-            for (const [index, audio] of note.audios.entries()){
-                audiosegment += `<img class="odh-playaudio" data-index="${index}" src="${playimg}"/>`;
+        let content = '';
+        for (const [nindex, note] of notes.entries()) {
+            content += note.css +`<div class="odh-note">`;
+            let audiosegment = '';
+            if (note.audios) {
+                for (const [dindex, audio] of note.audios.entries()) {
+                    audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${playimg}"/>`;
+                }
             }
+            content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
+            for (const [dindex, definition] of note.definitions.entries()) {
+                content += `<div class="odh-definition"><img class="odh-createnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${plusimg}"/>${definition}</div>`;
+            }
+            content += `</div>`;
         }
-        content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
-
-        for (const [index, definition] of note.definitions.entries()) {
-            content += `<div class="odh-definitions"><img class="odh-createnote" data-index="${index}" src="${plusimg}"/>${definition}</div>`;
-        }
-        content += `<div class="odh-sentence">${note.sentence}</div>`;
+        content += `<div class="odh-sentence">${this.sentence}</div>`;
         return this.popupHeader() + content + this.popupFooter();
     }
 
@@ -205,7 +221,7 @@ class AODHFront {
                 <link rel="stylesheet" href="${css}">
             </head>
             <body style="margin:0px;">
-            <div class="odh-content">`;
+            <div class="odh-notes">`;
     }
 
     popupFooter() {
