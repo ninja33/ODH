@@ -15,7 +15,6 @@ if (typeof encn_Oxford == 'undefined') {
         async findTerm(word) {
             this.word = word;
             let deflection = formhelper.deinflect(word);
-            deflection = deflection ? deflection : word;
             let results = await Promise.all([this.findOxford(word), this.findOxford(deflection), this.findEC(word)]);
             return [].concat(...results);
         }
@@ -61,7 +60,7 @@ if (typeof encn_Oxford == 'undefined') {
                 reading_us = reading_us ? reading_us.innerText.trim().match(/\[.+\]/gi) : ''; // phonetic US
                 let reading_uk = doc.querySelector('.hd_pr');
                 reading_uk = reading_uk ? reading_uk.innerText.trim().match(/\[.+\]/gi) : ''; // phonetic UK
-                let reading = `US ${reading_us} UK ${reading_us}`;
+                let reading = `UK${reading_uk} US${reading_us}`;
 
                 let audios = [];
                 let audioslinks = doc.querySelectorAll('.hd_tf a');
@@ -192,9 +191,9 @@ if (typeof encn_Oxford == 'undefined') {
             let css = `
             <style>
                 span.pos{
+                    font-size: 0.85em;
                     margin-right: 5px;
                     padding: 0 3px;
-                    /*text-transform: lowercase;*/
                     color: white;
                     background-color: #0d47a1;
                     border-radius: 3px;
@@ -202,7 +201,6 @@ if (typeof encn_Oxford == 'undefined') {
                 span.chn_tran{
                     margin-left: 5px;
                     color:#0d47a1;
-                    word-break: keep-all;
                 }
                 ul.sents{
                     list-style: square inside;

@@ -51,7 +51,7 @@ if (typeof encn_Collins == 'undefined') {
                         let audios = [];
 
                         let expression = collins_entry.headword; //headword
-                        let reading = collins_entry.phonetic; // phonetic
+                        let reading = collins_entry.phonetic || ''; // phonetic
                         audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
                         audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
@@ -132,16 +132,15 @@ if (typeof encn_Collins == 'undefined') {
             let css = `
             <style>
                 span.pos{
+                    font-size: 0.85em;
                     margin-right: 5px;
                     padding: 0 3px;
-                    text-transform: lowercase;
                     color: white;
                     background-color: #0d47a1;
                     border-radius: 3px;
                 }
                 span.chn_tran{
                     color:#0d47a1;
-                    word-break: keep-all;
                 }
                 ul.sents{
                     list-style: square inside;

@@ -140,9 +140,9 @@ if (typeof encn_Longman == 'undefined') {
             let css = `
             <style>
                 span.pos{
+                    font-size: 0.85em;
                     margin-right: 5px;
                     padding: 0 3px;
-                    text-transform: lowercase;
                     color: white;
                     background-color: #0d47a1;
                     border-radius: 3px;
@@ -150,7 +150,6 @@ if (typeof encn_Longman == 'undefined') {
                 span.chn_tran{
                     margin-left: 5px;
                     color:#0d47a1;
-                    word-break: keep-all;
                 }
                 ul.sents{
                     list-style: square inside;

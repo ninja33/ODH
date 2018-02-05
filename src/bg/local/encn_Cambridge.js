@@ -59,12 +59,21 @@ if (typeof encn_Cambridge == 'undefined') {
                         let definitions = [];
                         let audios = [];
 
-                        let expression = entry.querySelector('.pos-header .headword').innerText.trim() || ''; //headword
-                        let reading = entry.querySelector('.pron-info .ipa').innerText.trim() || ''; // phonetic
-                        let pos = entry.querySelector('.pos-header .posgram').innerText.trim() || '';
-                        pos = pos ? `<span class='pos'>${pos}</span>` : '';
-                        audios[0] = entry.querySelector('.pron-info>.uk .audio_play_button').getAttribute('data-src-mp3') || '';
-                        audios[1] = entry.querySelector('.pron-info>.us .audio_play_button').getAttribute('data-src-mp3') || '';
+                        let expression = entry.querySelector('.headword')
+                        expression = expression ? expression.innerText.trim() : ''; //headword
+                        let reading = '';
+                        let readings = entry.querySelectorAll('.pron-info .ipa')
+                        if (readings) {
+                            let reading_uk = readings[0] ? readings[0].innerText.trim() : '';
+                            let reading_us = readings[1] ? readings[1].innerText.trim() : '';
+                            reading = (reading_uk || reading_us) ? `UK[${reading_uk}] US[${reading_us}] ` : '';
+                        }
+                        let pos = entry.querySelector('.posgram')
+                        pos = pos ? `<span class='pos'>${pos.innerText.trim()}</span>` : '';
+                        audios[0] = entry.querySelector('.pron-info>.us .audio_play_button')
+                        audios[0] = audios[0] ? audios[0].getAttribute('data-src-mp3') : '';
+                        audios[1] = entry.querySelector('.pron-info>.uk .audio_play_button');
+                        audios[1] = audios[1] ? audios[1].getAttribute('data-src-mp3') : '';
 
                         let defblocks = entry.querySelectorAll('.def-block');
                         if (defblocks) {
@@ -150,9 +159,9 @@ if (typeof encn_Cambridge == 'undefined') {
             let css = `
             <style>
                 span.pos{
+                    font-size: 0.85em;
                     margin-right: 5px;
                     padding: 0 3px;
-                    /*text-transform: lowercase;*/
                     color: white;
                     background-color: #0d47a1;
                     border-radius: 3px;
@@ -160,7 +169,6 @@ if (typeof encn_Cambridge == 'undefined') {
                 span.chn_tran{
                     margin-left: 5px;
                     color:#0d47a1;
-                    word-break: keep-all;
                 }
                 ul.sents{
                     list-style: square inside;

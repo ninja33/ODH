@@ -139,7 +139,6 @@ if (typeof encn_Baicizhan == 'undefined') {
                 span.chn_tran{
                     margin-left: 5px;
                     color:#0d47a1;
-                    word-break: keep-all;
                 }
                 ul.sents{
                     list-style: square inside;

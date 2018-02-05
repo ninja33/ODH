@@ -200,7 +200,8 @@ class AODHFront {
             let audiosegment = '';
             if (note.audios) {
                 for (const [dindex, audio] of note.audios.entries()) {
-                    audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${playimg}"/>`;
+                    if (audio)
+                        audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${playimg}"/>`;
                 }
             }
             content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
