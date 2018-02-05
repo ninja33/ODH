@@ -12,7 +12,7 @@ if (typeof encn_Collins == 'undefined') {
 
         async findTerm(word) {
             this.word = word;
-            let deflection = formhelper.deinflect(word);
+            //let deflection = formhelper.deinflect(word);
             let results = await Promise.all([this.findCollins(word), this.findEC(word)]);
             return [].concat(...results);
         }
@@ -66,7 +66,8 @@ if (typeof encn_Collins == 'undefined') {
                                     let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
                                     if (sents.length > 0) {
                                         definition += '<ul class="sents">';
-                                        for (const sent of sents) {
+                                        for (const [index, sent] of sents.entries()) {
+                                            if (index > 1) break; // to control only 2 example sentence.
                                             definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
                                         }
                                         definition += '</ul>';
@@ -98,16 +99,16 @@ if (typeof encn_Collins == 'undefined') {
                 let data = await this.onlineQuery(url);
 
                 if (data.ec) {
-                    let definitions = '<ul class="ec">';
+                    let definition = '<ul class="ec">';
                     const trs = data.ec.word ? data.ec.word[0].trs : [];
                     for (const tr of trs)
-                        definitions += `<li class="ec">${tr.tr[0].l.i[0]}</li>`;
-                    definitions += '</ul>';
+                        definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
+                    definition += '</ul>';
                     notes.push({
-                        css: '<style>ul.ec, li.ec {list-style: square inside;margin:0;padding:0} </style>',
+                        css: '',
                         expression: data.ec.word[0]['return-phrase'].l.i,
                         reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
-                        definitions: [definitions],
+                        definitions: [definition],
                         audios: [],
                     });
                 }
@@ -134,7 +135,7 @@ if (typeof encn_Collins == 'undefined') {
                     list-style: square inside;
                     margin: 3px 0;
                     padding: 5px;
-                    background: #0d47a11a;
+                    background: rgba(13,71,161,0.1);;
                     border-radius: 5px;
                 }
                 li.sent{
@@ -143,11 +144,20 @@ if (typeof encn_Collins == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
+                    margin-left: -10px;
                     color: black;
                 }
                 span.chn_sent{
                     margin: 5px;
                     color:#0d47a1;
+                }
+                ul.ec, li.ec{
+                    list-style: square inside;
+                    margin:0;
+                    padding:0
+                }
+                span.ec_chn{
+                    margin-left: -10px;
                 }
             </style>`;
             return css;

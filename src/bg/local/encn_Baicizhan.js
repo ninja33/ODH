@@ -57,7 +57,7 @@ if (typeof encn_Baicizhan == 'undefined') {
                     let definition = `<ul class="bcz">`;
                     let defs = note.mean_cn.split('\n');
                     for (const def of defs) {
-                            definition += `<li class="bcz"><span class="chn_tran">${def}</span></li>`;
+                            definition += `<li class="bcz"><span class="bcz_chn">${def}</span></li>`;
                     }
                     definition += `</ul>`;
                     definition += note.df ? `<div class='bcz'><img src='${note.df}' /></div>` : '';
@@ -91,10 +91,10 @@ if (typeof encn_Baicizhan == 'undefined') {
                     let definition = '<ul class="ec">';
                     const trs = data.ec.word ? data.ec.word[0].trs : [];
                     for (const tr of trs)
-                        definition += `<li class="ec">${tr.tr[0].l.i[0]}</li>`;
+                        definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
                     definition += '</ul>';
                     notes.push({
-                        css: '<style>ul.ec, li.ec {list-style: square inside;margin:0;padding:0} </style>',
+                        css: '',
                         expression: data.ec.word[0]['return-phrase'].l.i,
                         reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
                         definitions:[definition],
@@ -109,8 +109,9 @@ if (typeof encn_Baicizhan == 'undefined') {
             let css = `
                 <style>
                 ul.bcz, li.bcz{
-                    list-style: square;
+                    list-style: square inside;
                     margin:0;
+                    margin-left: 2px;
                     padding:0
                 }
                 .bcz img {
@@ -119,6 +120,9 @@ if (typeof encn_Baicizhan == 'undefined') {
                     padding: 2px;
                     width: 350px;
                     border-radius: 5px;
+                }
+                span.bcz_chn{
+                    margin-left: -10px;
                 }
                 span.chn_tran{
                     margin-left: 5px;
@@ -129,7 +133,7 @@ if (typeof encn_Baicizhan == 'undefined') {
                     list-style: square inside;
                     margin: 3px 0;
                     padding: 5px;
-                    background: #0d47a11a;
+                    background: rgba(13,71,161,0.1);
                     border-radius: 5px;
                 }
                 li.sent{
@@ -138,11 +142,20 @@ if (typeof encn_Baicizhan == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
+                    margin-left: -10px;
                     color: black;
                 }
                 span.chn_sent{
                     margin: 5px;
                     color:#0d47a1;
+                }
+                ul.ec, li.ec{
+                    list-style: square inside;
+                    margin:0;
+                    padding:0
+                }
+                span.ec_chn{
+                    margin-left: -10px;
                 }
                 </style>`;
 

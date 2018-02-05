@@ -31,7 +31,7 @@ function onMessage(e) {
 }
 
 function onMouseWheel(e){
-    document.querySelector('html').scrollTop -= e.wheelDeltaY / 3; 
+    document.querySelector('body').scrollTop -= e.wheelDeltaY / 3; 
     e.preventDefault();
 }
 

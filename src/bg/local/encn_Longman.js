@@ -13,7 +13,7 @@ if (typeof encn_Longman == 'undefined') {
         async findTerm(word) {
             this.word = word;
             let deflection = formhelper.deinflect(word);
-            let results = await Promise.all([this.findLongman(word), this.findLongman(deflection),this.findEC(word)]);
+            let results = await Promise.all([this.findLongman(word), this.findLongman(deflection), this.findEC(word)]);
             return [].concat(...results);
         }
 
@@ -40,28 +40,28 @@ if (typeof encn_Longman == 'undefined') {
         async findLongman(word) {
             let notes = [];
 
-            if (word){
+            if (word) {
                 let url = this.resourceURL(word);
                 let data = await this.onlineQuery(url);
-    
+
                 if (data.longman) {
                     for (const word of data.longman.wordList) {
                         let definitions = [];
                         let audios = [];
-    
+
                         let expression = word.Entry.Head[0].HWD ? word.Entry.Head[0].HWD[0] : ''; //headword
                         let reading = word.Entry.Head[0].PronCodes ? word.Entry.Head[0].PronCodes[0].PRON[0] : ''; // phonetic
                         audios[0] = word.Entry.Head[0].VIDEOCAL ? word.Entry.Head[0].VIDEOCAL[0] : [];
-    
+
                         const head_pos = word.Entry.Head[0].POS ? word.Entry.Head[0].POS[0] : '';
                         const head_gram = word.Entry.Head[0].GRAM ? word.Entry.Head[0].GRAM[0].toLowerCase() : '';
-                        let pos = '';
-                        if (head_pos || head_gram) {
-                            pos = `<span class='pos'>${head_pos+(head_gram?'-'+head_gram:'')}</span>`;
-                        } else {
-                            pos = '';
-                        }
-    
+                        let pos = head_pos ? `<span class='pos'>${head_pos}</span>` : '';
+                        //if (head_pos || head_gram) {
+                        //    pos = `<span class='pos'>${head_pos+(head_gram?'-'+head_gram:'')}</span>`;
+                        //} else {
+                        //    pos = '';
+                        //}
+
                         for (const sense of word.Entry.Sense) {
                             let chn_tran = sense.TRAN ? `<span class='chn_tran'>${sense.TRAN[0]}</span>` : '';
                             if (chn_tran) {
@@ -75,6 +75,7 @@ if (typeof encn_Longman == 'undefined') {
                                 if (eng_examples.length > 0 && chn_examples.length > 0) {
                                     definition += '<ul class="sents">';
                                     for (const [index, example] of eng_examples.entries()) {
+                                        if (index >1 ) break; // to control only 2 example sentence.
                                         definition += `<li class='sent'><span class='eng_sent'>${eng_examples[index]}</span><span class='chn_sent'>${chn_examples[index]}</span></li>`;
                                     }
                                     definition += '</ul>';
@@ -83,7 +84,7 @@ if (typeof encn_Longman == 'undefined') {
                                 definitions.push(definition);
                             }
                         }
-    
+
                         let css = this.renderCSS();
                         notes.push({
                             css,
@@ -101,21 +102,21 @@ if (typeof encn_Longman == 'undefined') {
         async findEC(word) {
             let notes = [];
 
-            if (word){
+            if (word) {
                 let url = this.resourceURL(word);
                 let data = await this.onlineQuery(url);
-    
+
                 if (data.ec) {
-                    let definitions = '<ul class="ec">';
+                    let definition = '<ul class="ec">';
                     const trs = data.ec.word ? data.ec.word[0].trs : [];
                     for (const tr of trs)
-                        definitions += `<li class="ec">${tr.tr[0].l.i[0]}</li>`;
-                    definitions += '</ul>';
+                        definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
+                    definition += '</ul>';
                     notes.push({
-                        css: '<style>ul.ec, li.ec {list-style: square inside;margin:0;padding:0} </style>',
+                        css: '',
                         expression: data.ec.word[0]['return-phrase'].l.i,
                         reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
-                        definitions: [definitions],
+                        definitions: [definition],
                         audios: [],
                     });
                 }
@@ -143,7 +144,7 @@ if (typeof encn_Longman == 'undefined') {
                     list-style: square inside;
                     margin: 3px 0;
                     padding: 5px;
-                    background: #0d47a11a;
+                    background: rgba(13,71,161,0.1);
                     border-radius: 5px;
                 }
                 li.sent{
@@ -152,11 +153,20 @@ if (typeof encn_Longman == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
+                    margin-left: -10px;
                     color: black;
                 }
                 span.chn_sent{
                     margin: 5px;
                     color:#0d47a1;
+                }
+                ul.ec, li.ec{
+                    list-style: square inside;
+                    margin:0;
+                    padding:0
+                }
+                span.ec_chn{
+                    margin-left: -10px;
                 }
             </style>`;
             return css;
