@@ -55,6 +55,10 @@
         "message": "Cancel",
         "description": "for 'Cancel' button on option page."
     },
+    "encn_Oxford":{
+        "message": "encn_Oxford",
+        "description": "Dictionary name displayed in option page."
+    },
     "encn_Collins":{
         "message": "encn_Collins",
         "description": "Dictionary name displayed in option page."

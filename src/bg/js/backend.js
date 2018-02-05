@@ -96,7 +96,7 @@ class AODHBack {
             dictlist,
             selected
         } = await this.dictlib.loadDict();
-        this.translator = new dictlist[selected];
+        this.translator = new dictlist[selected](options);
         let dictnames = Object.keys(dictlist);
         callback({
             dictnames,

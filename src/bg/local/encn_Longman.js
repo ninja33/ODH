@@ -1,7 +1,8 @@
 if (typeof encn_Longman == 'undefined') {
 
     class encn_Longman {
-        constructor() {
+        constructor(options) {
+            this.options = options;
             this.word = '';
             this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","longman"]]}&xmlVersion=5.1&q='
         }
@@ -112,8 +113,19 @@ if (typeof encn_Longman == 'undefined') {
                     for (const tr of trs)
                         definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
                     definition += '</ul>';
+                    let css = `
+                    <style>
+                        ul.ec, li.ec{
+                            list-style: square inside;
+                            margin:0;
+                            padding:0
+                        }
+                        span.ec_chn{
+                            margin-left: -10px;
+                        }
+                    </style>`;
                     notes.push({
-                        css: '',
+                        css,
                         expression: data.ec.word[0]['return-phrase'].l.i,
                         reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
                         definitions: [definition],
@@ -159,14 +171,6 @@ if (typeof encn_Longman == 'undefined') {
                 span.chn_sent{
                     margin: 5px;
                     color:#0d47a1;
-                }
-                ul.ec, li.ec{
-                    list-style: square inside;
-                    margin:0;
-                    padding:0
-                }
-                span.ec_chn{
-                    margin-left: -10px;
                 }
             </style>`;
             return css;

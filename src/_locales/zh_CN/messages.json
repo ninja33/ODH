@@ -55,6 +55,10 @@
         "message": "取消",
         "description": "for 'Cancel' button on option page."
     },
+    "encn_Oxford":{
+        "message": "牛津英汉双解词典",
+        "description": "Dictionary name displayed in option page."
+    },
     "encn_Collins":{
         "message": "柯林斯英汉双解词典",
         "description": "Dictionary name displayed in option page."
