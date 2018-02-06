@@ -81,35 +81,51 @@ if (typeof encn_Oxford == 'undefined') {
                 let pos = T(entry.querySelector('.pos'));
                 pos = pos ? `<span class='pos'>${pos}</span>` : '';
                 // process definitions;
-                let defblocks = entry.querySelectorAll('.se_lis');
-                if (!defblocks) continue;
-                for (const defblock of defblocks) {
-                    let eng_tran = T(defblock.querySelector('.val'));
-                    let chn_tran = T(defblock.querySelector('.bil'));
-                    if (!eng_tran || !chn_tran) continue;
-                    
-                    let definition = '';
-                    eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
-                    chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
-                    definition += `${pos}<span class='tran'>${eng_tran}${chn_tran}</span>`;
-                    // make exmaple segement
-                    if (!defblock.nextSibling || defblock.nextSibling.className != 'li_exs') {
-                        definitions.push(definition);
-                        continue;
-                    }
-                    let examps = defblock.nextSibling.querySelectorAll('.li_ex') || [];
-                    if (examps.length > 0) {
-                        definition += '<ul class="sents">';
-                        for (const [index, examp] of examps.entries()) {
-                            if (index > 1) break; // to control only 2 example sentence.
-                            let eng_examp = T(examp.querySelector('.val_ex'));
-                            let chn_examp = T(examp.querySelector('.bil_ex'));
-                            definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                let segements = entry.querySelector('.de_seg').childNodes || [];
+                if (!segements) continue;
+                let definition = '';
+                let dis = '';
+                for (const segement of segements) {
+                    if (segement.classList && segement.classList.contains('dis')) {
+                        let eng_dis = T(segement.querySelector('.val_dis'));
+                        let chn_dis = T(segement.querySelector('.bil_dis'));
+                        dis = (chn_dis && eng_dis) ? `<div class="dis"><span class="eng_dis">${eng_dis}</span><span class="chn_dis">${chn_dis}</span></div>` : '';
+                    };
+                    if (segement.classList && segement.classList.contains('se_lis')) {
+                        let eng_tran = T(segement.querySelector('.val'));
+                        let chn_tran = T(segement.querySelector('.bil'));
+                        if (!eng_tran || !chn_tran) continue;
+                        if (definition){
+                            definitions.push(definition);
+                            definition = '';
                         }
-                        definition += '</ul>';
-                    }
-                    definitions.push(definition);
+                        let grammar = T(segement.querySelector('.gra'));
+                        grammar = grammar ? `<span class="grammar">${grammar}</span>`:'';
+                        let informal = T(segement.querySelector('.infor'));
+                        informal = informal ? `<span class="informal">${informal}</span>`:'';
+                        let complement = T(segement.querySelector('.comple'));
+                        complement = complement ? `<span class="complement">${complement}</span>`:'';
+                        eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
+                        chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
+                    definition += `${dis}${pos}${grammar}${complement}${informal}<span class='tran'>${eng_tran}${chn_tran}</span>`;
+                    };
+                    if (segement.classList && segement.classList.contains('li_exs')) {
+                        let examps = segement.querySelectorAll('.li_ex') || [];
+                        if (examps.length > 0) {
+                            definition += '<ul class="sents">';
+                            for (const [index, examp] of examps.entries()) {
+                                if (index > 1) break; // to control only 2 example sentence.
+                                let eng_examp = T(examp.querySelector('.val_ex'));
+                                let chn_examp = T(examp.querySelector('.bil_ex'));
+                                definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                            }
+                            definition += '</ul>';
+                        }
+                    };
                 }
+                if (definition)
+                    definitions.push(definition);
+                
                 //process idiom
                 let idmsents = entry.querySelectorAll('.idm_s');
                 if (!idmsents) continue;
@@ -188,10 +204,31 @@ if (typeof encn_Oxford == 'undefined') {
                     text-transform: lowercase;
                     font-size: 0.9em;
                     margin-right: 5px;
-                    padding: 2px 4px;
+                    padding: 1px 3px;
                     color: white;
                     background-color: #0d47a1;
                     border-radius: 3px;
+                }
+                div.dis{
+                    font-weight: bold;
+                    margin-bottom:3px;
+                    padding:0;
+                }
+                span.eng_dis{
+                    margin-right: 5px;
+                }
+                span.chn_dis{
+                    margin: 0;
+                    padding: 0;
+                }
+                span.grammar,
+                span.informal {
+                    margin: 0 2px;
+                    color: #0d47a1;
+                }
+                span.complement{
+                    margin: 0 2px;
+                    font-weight: bold;
                 }
                 span.tran{
                     margin: 0;
@@ -209,7 +246,7 @@ if (typeof encn_Oxford == 'undefined') {
                     list-style: square inside;
                     margin: 3px 0;
                     padding: 5px;
-                    background: rgba(13,71,161,0.1);;
+                    background: rgba(13,71,161,0.1);
                     border-radius: 5px;
                 }
                 li.sent{
