@@ -44,76 +44,67 @@ if (typeof encn_Baicizhan == 'undefined') {
         async findBaicizhan(word) {
             let notes = [];
 
-            if (word) {
-                let url = this.resourceURL(word);
-                let note = await this.onlineQuery(url);
+            if (!word) return notes;
+            let url = this.resourceURL(word);
+            let note = await this.onlineQuery(url);
 
-                //let note = JSON.parse(data);
-                if (note.mean_cn) {
-                    let definitions = [];
-                    let audios = [];
-                    let expression = note.word ? note.word : ''; //headword
-                    let reading = note.accent ? note.accent : ''; // phonetic
-                    audios[0] = `http://baicizhan.qiniucdn.com/word_audios/${expression}.mp3`;
-                    let definition = `<ul class="bcz">`;
-                    let defs = note.mean_cn.split('\n');
-                    for (const def of defs) {
-                            definition += `<li class="bcz"><span class="bcz_chn">${def}</span></li>`;
-                    }
-                    definition += `</ul>`;
-                    definition += note.df ? `<div class='bcz'><img src='${note.df}' /></div>` : '';
-                    definition += note.st && note.sttr ? `<ul class='sents'><li class='sent'><span class='eng_sent'>${note.st}</span><span class='chn_sent'>${note.sttr}</span></li></ul>` : '';
-                    definition += note.img ? `<div class='bcz'><img src='${note.img}' /></div>` : '';
-                    //definition += `<div class='bcz'><video width="340px" controls><source src='${note.tv}' type="video/mp4"></video></div>`;
-                    definitions.push(definition);
-                    let css = this.renderCSS();
-                    notes.push({
-                        css,
-                        expression,
-                        reading,
-                        definitions,
-                        audios,
-                    });
-                }
+            if (!note.mean_cn) return notes;
+            let definitions = [];
+            let audios = [];
+            let expression = note.word || ''; //headword
+            let reading = note.accent || ''; // phonetic
+            audios[0] = `http://baicizhan.qiniucdn.com/word_audios/${expression}.mp3`;
+            let definition = `<ul class="bcz">`;
+            let defs = note.mean_cn.split('\n');
+            for (const def of defs) {
+                    definition += `<li class="bcz"><span class="bcz_chn">${def}</span></li>`;
             }
+            definition += `</ul>`;
+            definition += note.df ? `<div class='bcz'><img src='${note.df}' /></div>` : '';
+            definition += note.st && note.sttr ? `<ul class='sents'><li class='sent'><span class='eng_sent'>${note.st}</span><span class='chn_sent'>${note.sttr}</span></li></ul>` : '';
+            definition += note.img ? `<div class='bcz'><img src='${note.img}' /></div>` : '';
+            //definition += `<div class='bcz'><video width="340px" controls><source src='${note.tv}' type="video/mp4"></video></div>`;
+            definitions.push(definition);
+            let css = this.renderCSS();
+            notes.push({
+                css,
+                expression,
+                reading,
+                definitions,
+                audios,
+            });
             return notes;
         }
 
         async findEC(word) {
             let notes = [];
 
-            if (word) {
-                let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
-                let url = base + encodeURIComponent(word);
-                let data = await this.onlineQuery(url);
+            if (!word) return notes;
+            let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+            let url = base + encodeURIComponent(word);
+            let data = await this.onlineQuery(url);
 
-                if (data.ec) {
-                    let audios = [];
-                    let definition = '<ul class="ec">';
-                    const trs = data.ec.word ? data.ec.word[0].trs : [];
-                    for (const tr of trs)
-                        definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
-                    definition += '</ul>';
-                    let css = `
-                    <style>
-                        ul.ec, li.ec{
-                            list-style: square inside;
-                            margin:0;
-                            padding:0
-                        }
-                        span.ec_chn{
-                            margin-left: -10px;
-                        }
-                    </style>`;
-                    notes.push({
-                        css,
-                        expression: data.ec.word[0]['return-phrase'].l.i,
-                        reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
-                        definitions:[definition],
-                        audios,
-                    });
-                }
-            }
+            if (!data.ec) return notes;
+            let expression = data.ec.word[0]['return-phrase'].l.i || '';
+            let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
+            let audios = [];
+            let definition = '<ul class="ec">';
+            const trs = data.ec.word ? data.ec.word[0].trs : [];
+            for (const tr of trs)
+                definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
+            definition += '</ul>';
+            let css = `
+            <style>
+                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                span.ec_chn {margin-left: -10px;}
+            </style>`;
+            notes.push({
+                css,
+                expression,
+                reading,
+                definitions: [definition],
+                audios,
+            });
             return notes;
         }
 
@@ -161,7 +152,6 @@ if (typeof encn_Baicizhan == 'undefined') {
                     color:#0d47a1;
                 }
                 </style>`;
-
             return css;
         }
     }

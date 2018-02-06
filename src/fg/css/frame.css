@@ -1,5 +1,5 @@
 .odh-notes {
-  font-family: 'Open Sans', Helvetica, Arial, Sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
   font-size: 14px;
   text-align: left;
   color: #1d2129;
@@ -27,11 +27,18 @@
 .odh-expression {
   font-size: 1.2em;
   font-weight: bold;
+  margin-right: 4px;
 }
 
 .odh-reading {
-  margin-left: 5px;
+  margin-right: 4px;
   font-size: 0.9em;
+  display: inline-block;
+}
+
+.odh-extra {
+  margin-right: 4px;
+  display: inline-block;
 }
 
 .odh-definition,

@@ -169,7 +169,8 @@ class AODHFront {
             css: '',
             expression,
             reading: '',
-            definitions:["script didn't generate definition, please double check!"],
+            extra:'',
+            definitions:["No definition!"],
             sentence,
         };
 
@@ -204,7 +205,7 @@ class AODHFront {
                         audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${playimg}"/>`;
                 }
             }
-            content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span></div>`;
+            content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span><span class="odh-extra">${note.extra}</span></div>`;
             for (const [dindex, definition] of note.definitions.entries()) {
                 content += `<div class="odh-definition"><img class="odh-createnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${plusimg}"/>${definition}</div>`;
             }

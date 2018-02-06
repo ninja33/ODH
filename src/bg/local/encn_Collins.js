@@ -41,90 +41,86 @@ if (typeof encn_Collins == 'undefined') {
         async findCollins(word) {
             let notes = [];
 
-            if (word) {
-                let url = this.resourceURL(word);
-                let data = await this.onlineQuery(url);
+            if (!word) return notes;
+            let url = this.resourceURL(word);
+            let data = await this.onlineQuery(url);
 
-                if (data.collins) {
-                    for (const collins_entry of data.collins.collins_entries) {
-                        let definitions = [];
-                        let audios = [];
+            if (!data.collins) return notes;
+            for (const collins_entry of data.collins.collins_entries) {
+                let definitions = [];
+                let audios = [];
 
-                        let expression = collins_entry.headword; //headword
-                        let reading = collins_entry.phonetic || ''; // phonetic
-                        audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-                        audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+                let expression = collins_entry.headword; //headword
+                let reading = collins_entry.phonetic || ''; // phonetic
+                audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+                audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
-                        for (const entry of collins_entry.entries.entry) {
-                            let definition = '';
-                            for (const tran_entry of entry.tran_entry) {
-                                const pos = tran_entry.pos_entry ? `<span class='pos'>${tran_entry.pos_entry.pos}</span>` : '';
-                                let tran = tran_entry.tran ? `<span class='tran'>${tran_entry.tran}</span>` : '';
-                                if (tran) {
-                                    tran = tran.replace(/([\u4e00-\u9fa5]|( ?\()|(\) ?))+/gi, '<span class="chn_tran">$&</span>');
-                                    definition += `${pos}${tran}`;
-                                    // make exmaple sentence segement
-                                    let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
-                                    if (sents.length > 0) {
-                                        definition += '<ul class="sents">';
-                                        for (const [index, sent] of sents.entries()) {
-                                            if (index > 1) break; // to control only 2 example sentence.
-                                            definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
-                                        }
-                                        definition += '</ul>';
-                                    }
-                                    // add into difinition array
-                                    definitions.push(definition);
-                                }
+                for (const entry of collins_entry.entries.entry) {
+                    for (const tran_entry of entry.tran_entry) {
+                        let definition = '';
+                        const pos = tran_entry.pos_entry ? `<span class='pos'>${tran_entry.pos_entry.pos}</span>` : '';
+                        if (!tran_entry.tran) continue;
+                        let chn_tran = tran_entry.tran.match(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi).join(' ').trim();
+                        let eng_tran = tran_entry.tran.replace(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi, '').trim();
+                        chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
+                        eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
+                        definition += `${pos}<span clas="tran">${eng_tran}${chn_tran}</span>`;
+                        // make exmaple sentence segement
+                        let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
+                        if (sents.length > 0) {
+                            definition += '<ul class="sents">';
+                            for (const [index, sent] of sents.entries()) {
+                                if (index > 1) break; // to control only 2 example sentence.
+                                definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
                             }
+                            definition += '</ul>';
                         }
-
-                        let css = this.renderCSS();
-                        notes.push({
-                            css,
-                            expression,
-                            reading,
-                            definitions,
-                            audios
-                        });
+                        definitions.push(definition);
                     }
                 }
+
+                let css = this.renderCSS();
+                notes.push({
+                    css,
+                    expression,
+                    reading,
+                    definitions,
+                    audios
+                });
             }
             return notes;
         }
 
         async findEC(word) {
             let notes = [];
-            if (word) {
-                let url = this.resourceURL(word);
-                let data = await this.onlineQuery(url);
 
-                if (data.ec) {
-                    let definition = '<ul class="ec">';
-                    const trs = data.ec.word ? data.ec.word[0].trs : [];
-                    for (const tr of trs)
-                        definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
-                    definition += '</ul>';
-                    let css = `
-                    <style>
-                        ul.ec, li.ec{
-                            list-style: square inside;
-                            margin:0;
-                            padding:0
-                        }
-                        span.ec_chn{
-                            margin-left: -10px;
-                        }
-                    </style>`;
-                    notes.push({
-                        css,
-                        expression: data.ec.word[0]['return-phrase'].l.i,
-                        reading: data.ec.word[0].phone || data.ec.word[0].ukphone,
-                        definitions: [definition],
-                        audios: [],
-                    });
-                }
-            }
+            if (!word) return notes;
+
+            let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+            let url = base + encodeURIComponent(word);
+            let data = await this.onlineQuery(url);
+
+            if (!data.ec) return notes;
+            let expression = data.ec.word[0]['return-phrase'].l.i;
+            let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
+            let audios = [];
+            let definition = '<ul class="ec">';
+            const trs = data.ec.word ? data.ec.word[0].trs : [];
+            for (const tr of trs)
+                definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
+            definition += '</ul>';
+            let css = `
+            <style>
+                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                span.ec_chn {margin-left: -10px;}
+            </style>`;
+            notes.push({
+                css,
+                expression,
+                reading,
+                definitions: [definition],
+                audios,
+            });
             return notes;
         }
 
@@ -132,17 +128,27 @@ if (typeof encn_Collins == 'undefined') {
             let css = `
             <style>
                 span.pos{
-                    font-size: 0.85em;
+                    text-transform: lowercase;
+                    font-size: 0.9em;
                     margin-right: 5px;
-                    padding: 0 3px;
+                    padding: 2px 4px;
                     color: white;
                     background-color: #0d47a1;
                     border-radius: 3px;
+                }
+                span.tran{
+                    margin: 0;
+                    padding: 0;
+                }
+                span.eng_tran{
+                    margin-right: 3px;
+                    padding: 0;
                 }
                 span.chn_tran{
                     color:#0d47a1;
                 }
                 ul.sents{
+                    font-size: 0.9em;
                     list-style: square inside;
                     margin: 3px 0;
                     padding: 5px;
@@ -159,7 +165,6 @@ if (typeof encn_Collins == 'undefined') {
                     color: black;
                 }
                 span.chn_sent{
-                    margin: 5px;
                     color:#0d47a1;
                 }
             </style>`;
