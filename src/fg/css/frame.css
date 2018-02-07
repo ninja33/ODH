@@ -1,5 +1,6 @@
 .odh-notes {
   font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
+  /*font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, 'Microsoft Yahei', sans-serif;*/
   font-size: 14px;
   text-align: left;
   color: #1d2129;
@@ -31,6 +32,7 @@
 }
 
 .odh-reading {
+  font-family: Arial, Helvetica, sans-serif;
   margin-right: 4px;
   font-size: 0.9em;
   display: inline-block;
