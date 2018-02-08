@@ -11,9 +11,33 @@
         "message": "在线词典助手",
         "description": "label text for 'Title' on optipon page."
     },
+    "optGeneralOptionTitle":{
+        "message": "通用选项",
+        "description": "label text for 'General Option' title."
+    },
+    "optAnkiOptionTitle":{
+        "message": "Anki选项",
+        "description": "label text for 'Anki Option' title."
+    },
+    "optDictionaryOptionTitle":{
+        "message": "词典选项",
+        "description": "label text for 'Dictionary Option' title."
+    },
     "optEnabled":{
-        "message": "激活插件",
+        "message": "打开关闭插件",
         "description": "label text for 'Enabled/Disable' checkbox on optipon page."
+    },
+    "optAutoSelectionHotKey":{
+        "message": "自动取词热键",
+        "description": "label text for 'Auto Selection Hotkey' option list."
+    },
+    "optContextSentence":{
+        "message": "摘选原句数量",
+        "description": "label text for 'Context Sentence Number' option list."
+    },
+    "optExampleSentence":{
+        "message": "词典例句数量",
+        "description": "label text for 'Example Sentence Number' option list."
     },
     "optDeckName":{
         "message": "牌组名称",
@@ -36,19 +60,19 @@
         "description": "label text for 'Sentence' on optipon page."
     },
     "optRepository":{
-        "message": "脚本地址",
+        "message": "远程脚本地址",
         "description": "label text for 'Repository' on optipon page."
     },
     "optDictionaries":{
-        "message": "当前词典",
+        "message": "当前词典名称",
         "description": "label text for 'Dictionaries' on optipon page."
     },
     "optLoad":{
-        "message": "加载",
+        "message": "加载脚本",
         "description": "for 'Load' button on option page."
     },
     "optOK":{
-        "message": "确定",
+        "message": "保存选项",
         "description": "for 'OK' button on option page."
     },
     "optCancel":{

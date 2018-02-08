@@ -7,6 +7,9 @@ function localizeHtmlPage(){
 function sanitizeOptions(options) {
     const defaults = {
         enabled: false,
+        hotkey: '16',
+        contextnum: '1',
+        examplenum: '2',
 
         deckname: 'Default',
         typename: 'Basic',
@@ -61,6 +64,9 @@ async function onOKClicked(e) {
     let options = $.extend(true, {}, optionsOld);
 
     options.enabled = $('#enabled').prop('checked');
+    options.hotkey = $('#hotkey').val();
+    options.contextnum = $('#contextnum').val();
+    options.examplenum = $('#examplenum').val();
     options.deckname = $('#deck').val();
     options.typename = $('#type').val();
     options.expression = $('#word').val();
@@ -93,6 +99,9 @@ async function onReady() {
     localizeHtmlPage();
     let opts = await optionsLoad();
     $('#enabled').prop('checked',opts.enabled);
+    $('#hotkey').val(opts.hotkey);
+    $('#contextnum').val(opts.contextnum);
+    $('#examplenum').val(opts.examplenum);
     $('#deck').val(opts.deckname);
     $('#type').val(opts.typename);
     $('#word').val(opts.expression);

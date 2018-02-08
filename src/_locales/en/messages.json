@@ -11,45 +11,73 @@
         "message": "Online Dictionary Helper",
         "description": "label text for 'Title' on optipon page."
     },
+    "optGeneralOptionTitle":{
+        "message": "General Options",
+        "description": "label text for 'General Option' title."
+    },
+    "optAnkiOptionTitle":{
+        "message": "Ankiconnect Options",
+        "description": "label text for 'Anki Option' title."
+    },
+    "optDictionaryOptionTitle":{
+        "message": "Dictionary Options",
+        "description": "label text for 'Dictionary Option' title."
+    },
     "optEnabled":{
         "message": "Enabled",
-        "description": "label text for 'Enabled/Disable' checkbox on optipon page."
+        "description": "label text for 'Enabled/Disable' checkbox."
+    },
+    "optAutoSelectionHotKey":{
+        "message": "AutoSel. Hotkey",
+        "description": "label text for 'Auto Selection Hotkey' option list."
+    },
+    "optContextSentence":{
+        "message": "Context Sent. #",
+        "description": "label text for 'Context Sentence Number' option list."
+    },
+    "optExampleSentence":{
+        "message": "Example Sent. #",
+        "description": "label text for 'Example Sentence Number' option list."
     },
     "optDeckName":{
-        "message": "DeckName",
-        "description": "label text for 'Deck Name' on optipon page."
+        "message": "Deck Name",
+        "description": "label text for 'Deck Name'."
     },
     "optTypeName":{
-        "message": "TypeName",
-        "description": "label text for 'Type Name' on optipon page."
+        "message": "Type Name",
+        "description": "label text for 'Type Name'."
+    },
+    "optAnkiStatus":{
+        "message": "Anki Status",
+        "description": "label text for 'Anki Status'."
     },
     "optExpression":{
         "message": "Expression",
-        "description": "label text for 'Expression' on optipon page."
+        "description": "label text for 'Expression'."
     },
     "optDefinition":{
         "message": "Definition",
-        "description": "label text for 'Definition' on optipon page."
+        "description": "label text for 'Definition'."
     },
     "optSentence":{
         "message": "Sentence",
-        "description": "label text for 'Sentence' on optipon page."
+        "description": "label text for 'Sentence'."
     },
     "optRepository":{
         "message": "Repository",
-        "description": "label text for 'Repository' on optipon page."
+        "description": "label text for 'Repository'."
     },
     "optDictionaries":{
         "message": "Dictionaries",
-        "description": "label text for 'Dictionaries' on optipon page."
+        "description": "label text for 'Dictionaries'."
     },
     "optLoad":{
-        "message": "Load",
-        "description": "for 'Load' button on option page."
+        "message": "Load Repos.",
+        "description": "for 'Load' button."
     },
     "optOK":{
-        "message": "OK",
-        "description": "for 'OK' button on option page."
+        "message": "Save Option",
+        "description": "for 'Save' button."
     },
     "optCancel":{
         "message": "Cancel",

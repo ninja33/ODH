@@ -11,53 +11,84 @@
 <body>
     <div class='container'>
         <form>
-            <section class="extension-options">
-                <label data-i18n="optEnabled">Turn On/Off</label>
+            <div class="option-head general-option-head">
+                <span class="general-option-title" data-i18n="optGeneralOptionTitle">General Options</span>
+                <span class="general-option-help"><a href="https://github.com/ninja33/anki-online-dict-helper/blob/master/README.md" target="_blank">?</a></span>
+            </div>
+            <section class="general-options right">
+                <label data-i18n="optContextSentence">Context Sent. #</label>
+                <select id="contextnum">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+
+                <label data-i18n="optExampleSentence">Example Sent. #</label>
+                <select id="examplenum">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+            </section>
+
+            <section class="general-options">
+                <label data-i18n="optEnabled">Enable/Disable</label>
                 <div class="enabled">
                     <input type="checkbox" value=true id="enabled">
                     <label for="enabled"></label>
                 </div>
-                <a href="https://github.com/ninja33/anki-online-dict-helper/blob/master/README.md" target="_blank"><label id="help">?</label></a>
-            </section>
 
-            <hr>
-
-            <section class="anki-options">
-                <label for="deck" data-i18n="optDeckName">Anki Deck Name</label>
-                <input type="text" id="deck" placeholder="input your anki deck name ...">
-
-                <label for="type" data-i18n="optTypeName">Anki Type Name</label>
-                <input type="text" id="type" placeholder="input your anki type name ...">
-
-                <label for="word" id="expression" data-i18n="optExpression">Expression Field</label>
-                <input type="text" id="word" placeholder="anki field name for {expression}">
-
-                <label for="defs" id="definition" data-i18n="optDefinition">Definition Field</label>
-                <input type="text" id="defs" placeholder="anki field name for {definition}">
-
-                <label for="sent" id="sentence" data-i18n="optSentence">Sentence Field</label>
-                <input type="text" id="sent" placeholder="anki field name for {sentence}">
-            </section>
-
-            <hr>
-
-            <section class="dict-options">
-                <label for="repo" data-i18n="optRepository">Repository</label>
-                <input type="text" id="repo" name="repo" placeholder="User defined online dictionary">
-                <label for="repo" id="load" data-i18n="optLoad">Load</label>
-
-                <label for="dict" data-i18n="optDictionaries">Dictionaries</label>
-                <select id="dict">
-                    <option value="encn-Default">encn-Default</option>
-                    <option value="encn-CNdict">encn-CNDict</option>
+                <label data-i18n="optAutoSelectionHotKey">AuoSel. HotKey</label>
+                <select id="hotkey">
+                        <option value="0">Off</option>
+                        <option value="16">Shift</option>
+                        <option value="17">Ctrl</option>
+                        <option value="18">Alt</option>
                 </select>
             </section>
+
             <hr>
 
-            <div class="buttons">
-                <label class="button" id="ok" data-i18n="optOK">OK</label>
-                <label class="button" id="cancel" data-i18n="optCancel">Cancel</label>
+            <div class="option-head anki-option-head">
+                    <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
             </div>
+            <section class="anki-options right">
+                <label for="word" id="expression" data-i18n="optExpression">Expression</label>
+                <input type="text" id="word" placeholder="{expression}">
+
+                <label for="defs" id="definition" data-i18n="optDefinition">Definition</label>
+                <input type="text" id="defs" placeholder="{definition}">
+
+                <label for="sent" id="sentence" data-i18n="optSentence">Sentence</label>
+                <input type="text" id="sent" placeholder="{sentence}">
+            </section>
+
+            <section class="anki-options">
+                <label for="deck" data-i18n="optDeckName">Deck Name</label>
+                <input type="text" id="deck" placeholder="Anki Deck">
+
+                <label for="type" data-i18n="optTypeName">Type Name</label>
+                <input type="text" id="type" placeholder="Anki Type">
+
+                <label id="anki-status" data-i18n="optAnkiStatus">Anki Status</label>
+            </section>
+
+            <hr>
+
+            <div class="option-head dictionary-head">
+                <span class="dictionary-option-title" data-i18n="optDictionaryOptionTitle">Dictionary Options</span>
+            </div>
+            <section class="dictionary-options">
+                <label for="repo" data-i18n="optRepository">Repository</label>
+                <input type="text" id="repo" name="repo" placeholder="User defined online dictionary">
+                <label class="button" id="load" data-i18n="optLoad">Load Repos.</label>
+
+                <label for="dict" data-i18n="optDictionaries">Dictionary</label>
+                <select id="dict">
+                    <option value="encn-Default">encn-Default</option>
+                </select>
+                <label class="button" id="ok" data-i18n="optOK">Save Option</label>
+            </section>
         </form>
     </div>
 

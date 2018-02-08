@@ -3,11 +3,11 @@
 }
 
 .enabled {
-    width: 72px;
+    width: 65px;
     height: 26px;
     display:inline-block;
     background: #555;
-    margin: 0 10px;
+    margin: 3px;
     border-radius: 25px;
     top:-2px;
     position: relative;
@@ -17,7 +17,7 @@
     content: 'On';
     position: absolute;
     top: 5px;
-    left: 12px;
+    left: 10px;
     height: 1px;
     color: #76ff03;
     font-weight: bold;
@@ -27,7 +27,7 @@
     content: 'Off';
     position: absolute;
     top: 5px;
-    left: 40px;
+    left: 35px;
     height: 1px;
     color: #f9f9f9;
     font-weight: bold;
@@ -35,19 +35,20 @@
 
 .enabled label {
     display: block;
-    width: 28px;
+    width: 26px;
     height: 16px;
+    border: none;
     border-radius: 37px;
     transition: all .5s ease;
     cursor: pointer;
     position: absolute;
-    top: 1px;
+    top: 2px;
     z-index: 1;
-    left: 7px;
+    left: 4px;
     background: #ddd;
 }
 
 .enabled input[type=checkbox]:checked+label {
-    left: 36px;
+    left: 28px;
     background: #76ff03;
 }
