@@ -16,15 +16,15 @@
                 <span class="general-option-help"><a href="https://github.com/ninja33/anki-online-dict-helper/blob/master/README.md" target="_blank">?</a></span>
             </div>
             <section class="general-options right">
-                <label data-i18n="optContextSentence">Context Sent. #</label>
-                <select id="contextnum">
+                <label data-i18n="optMaxContext">Max. Context #</label>
+                <select id="maxcontext">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                 </select>
 
-                <label data-i18n="optExampleSentence">Example Sent. #</label>
-                <select id="examplenum">
+                <label data-i18n="optMaxExample">Max. Example #</label>
+                <select id="maxexample">
                     <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -52,25 +52,28 @@
             <div class="option-head anki-option-head">
                     <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
             </div>
-            <section class="anki-options right">
-                <label for="word" id="expression" data-i18n="optExpression">Expression</label>
-                <input type="text" id="word" placeholder="{expression}">
-
-                <label for="defs" id="definition" data-i18n="optDefinition">Definition</label>
-                <input type="text" id="defs" placeholder="{definition}">
-
-                <label for="sent" id="sentence" data-i18n="optSentence">Sentence</label>
-                <input type="text" id="sent" placeholder="{sentence}">
-            </section>
-
             <section class="anki-options">
                 <label for="deck" data-i18n="optDeckName">Deck Name</label>
-                <input type="text" id="deck" placeholder="Anki Deck">
+                <select id="deck">
+                </select>
 
                 <label for="type" data-i18n="optTypeName">Type Name</label>
-                <input type="text" id="type" placeholder="Anki Type">
+                <select id="type">
+                </select>
 
-                <label id="anki-status" data-i18n="optAnkiStatus">Anki Status</label>
+                <label for="word" id="expression" data-i18n="optExpression">Expression</label>
+                <select id="word">
+                </select>
+
+                <label for="defs" id="definition" data-i18n="optDefinition">Definition</label>
+                <select id="defs">
+                </select>
+
+                <label for="sent" id="sentence" data-i18n="optSentence">Sentence</label>
+                <select id="sent">
+                </select>
+
+                <label id="ankistatus">Anki Status</label>
             </section>
 
             <hr>

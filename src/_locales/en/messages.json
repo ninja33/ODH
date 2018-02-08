@@ -31,13 +31,13 @@
         "message": "AutoSel. Hotkey",
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
-    "optContextSentence":{
-        "message": "Context Sent. #",
-        "description": "label text for 'Context Sentence Number' option list."
+    "optMaxContext":{
+        "message": "Max. Context #",
+        "description": "label text for 'Max Context  Number' option list."
     },
-    "optExampleSentence":{
-        "message": "Example Sent. #",
-        "description": "label text for 'Example Sentence Number' option list."
+    "optMaxExample":{
+        "message": "Max. Example #",
+        "description": "label text for 'Max Example  Number' option list."
     },
     "optDeckName":{
         "message": "Deck Name",

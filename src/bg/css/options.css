@@ -2,7 +2,7 @@ body {
     font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
     font-size: 12px;
     width: 380px;
-    height: 360px;
+    height: 460px;
     border-radius: 8px;
 }
 
@@ -48,19 +48,17 @@ section {
     padding: 5px;
 }
 
-section.general-options,
-section.anki-options {
+section.general-options {
     width: 178px;
 }
 
-section.general-options.right,
-section.anki-options.right {
+section.general-options.right {
     float: right;
 }
 
 label {
-    width: 80px;
-    padding: 5px 3px;
+    width: 95px;
+    padding: 5px;
     margin: 3px;
     display: inline-block;
     color: black;
@@ -70,10 +68,14 @@ label {
     box-sizing: border-box;
 }
 
+label#ankistatus {
+    width: 360px;
+}
+
 input[type=text],
 select {
     width: 80px;
-    padding: 4px 2px;
+    padding: 4px;
     margin: 3px;
     /*display: inline-block;*/
     border: 1px solid #ccc;
@@ -81,30 +83,28 @@ select {
     box-sizing: border-box;
 }
 
-input[type=text] {
-    padding: 5px 3px;
-}
-
-.general-options label {
-    width: 95px;
-}
-
 .general-options select {
     width: 65px;
+}
+
+.anki-options input[type=text],
+.anki-options select {
+    width: 257px;
 }
 
 .anki-options label#anki-status {
     width: 170px;
 }
 
+
 .dictionary-options input[type=text],
 .dictionary-options select {
-    width: 184px;
+    width: 152px;
 }
 
 .button {
     text-align: center;
-    width: 80px;
+    width: 95px;
     background-color: #4CAF50;
     color: white;
     padding: 5px;

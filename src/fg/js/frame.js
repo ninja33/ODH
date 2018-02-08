@@ -1,9 +1,9 @@
 function registerAddNoteLinks() {
-    for (let link of document.getElementsByClassName('odh-createnote')) {
+    for (let link of document.getElementsByClassName('odh-addnote')) {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const ds = e.currentTarget.dataset;
-            window.parent.postMessage({action: 'createNote', params: {nindex:ds.nindex,dindex:ds.dindex}}, '*');
+            window.parent.postMessage({action: 'addNote', params: {nindex:ds.nindex,dindex:ds.dindex}}, '*');
         });
     }
 }

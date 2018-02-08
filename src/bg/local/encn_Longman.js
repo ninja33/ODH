@@ -3,6 +3,7 @@ if (typeof encn_Longman == 'undefined') {
     class encn_Longman {
         constructor(options) {
             this.options = options;
+            this.maxexample = options.maxexample;
             this.word = '';
             this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","longman"]]}&xmlVersion=5.1&q='
         }
@@ -90,10 +91,10 @@ if (typeof encn_Longman == 'undefined') {
                         // make exmaple sentence segement
                         let eng_examples = subsense.EXAMPLE || [];
                         let chn_examples = subsense.EXAMPLETRAN || [];
-                        if (eng_examples.length > 0 && chn_examples.length > 0) {
+                        if (eng_examples.length > 0 && chn_examples.length > 0 && this.maxexample > 0) {
                             definition += '<ul class="sents">';
                             for (const [index, example] of eng_examples.entries()) {
-                                if (index > 1) break; // to control only 2 example sentence.
+                                if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                                 definition += `<li class='sent'><span class='eng_sent'>${eng_examples[index]}</span><span class='chn_sent'>${chn_examples[index]}</span></li>`;
                             }
                             definition += '</ul>';
@@ -109,7 +110,7 @@ if (typeof encn_Longman == 'undefined') {
                             definition += `<span class="gram_extra">${eng_gram_form}${eng_gram_prep}${eng_gram_gloss}${chn_gram_tran}</span>`;
                             let eng_gram_examp = T(gram.EXAMPLE) ? `<span class="eng_gram_examp">${T(gram.EXAMPLE)}</span>` : '';
                             let chn_gram_examp = T(gram.EXAMPLETRAN) ? `<span class="chn_gram_examp">${T(gram.EXAMPLETRAN)}</span>` : '';
-                            if (eng_gram_examp && chn_gram_examp)
+                            if (eng_gram_examp && chn_gram_examp && this.maxexample > 0)
                                 definition += `<ul class="gram_examps"><li class="gram_examp">${eng_gram_examp}${chn_gram_examp}</li></ul>`;
                         }
                         definitions.push(definition);
@@ -259,7 +260,7 @@ if (typeof encn_Longman == 'undefined') {
                 span.eng_sent,
                 span.eng_gram_examp{
                     margin-right: 5px;
-                    margin-left: -10px;
+                    margin-left: -5px;
                     color: black;
                 }
                 span.chn_sent,

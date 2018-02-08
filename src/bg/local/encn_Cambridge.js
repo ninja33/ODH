@@ -3,6 +3,7 @@ if (typeof encn_Cambridge == 'undefined') {
     class encn_Cambridge {
         constructor(options) {
             this.options = options;
+            this.maxexample = options.maxexample;
             this.word = '';
             this.base = 'https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q='
 
@@ -108,10 +109,10 @@ if (typeof encn_Cambridge == 'undefined') {
 
                             // make exmaple segement
                             let examps = defblock.querySelectorAll('.def-body .examp') || [];
-                            if (examps.length > 0) {
+                            if (examps.length > 0 && this.maxexample > 0) {
                                 definition += '<ul class="sents">';
                                 for (const [index, examp] of examps.entries()) {
-                                    if (index > 1) break; // to control only 2 example sentence.
+                                    if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                                     let eng_examp = T(examp.querySelector('.eg'));
                                     let chn_examp = T(examp.querySelector('.trans'));
                                     definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
@@ -208,7 +209,7 @@ if (typeof encn_Cambridge == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
-                    margin-left: -10px;
+                    margin-left: -5px;
                     color: black;
                 }
                 span.chn_sent{

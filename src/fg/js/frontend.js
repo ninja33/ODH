@@ -1,13 +1,14 @@
 class AODHFront {
 
     constructor() {
-
+        this.options = null;
         this.point = null;
         this.notes = null;
         this.sentence = null;
         this.audio = {};
-        this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.enabled = true;
+        this.activateKey = 16; // shift 16, ctl 17, alt 18
+        this.maxContext = 1; //max context sentence #
         this.popup = new Popup();
         this.timeout = null;
 
@@ -22,6 +23,10 @@ class AODHFront {
     }
 
     onKeyDown(e) {
+
+        if (!this.activateKey)
+            return;
+
         if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
             const range = document.caretRangeFromPoint(this.point.x, this.point.y);
             if (range !== null) {
@@ -110,8 +115,10 @@ class AODHFront {
             options,
             callback
         } = params;
-
+        this.options = options;
         this.enabled = options.enabled;
+        this.activateKey = Number(this.options.hotkey);
+        this.maxContext = Number(this.options.maxcontext);
         callback();
     }
 
@@ -125,18 +132,18 @@ class AODHFront {
         }
     }
 
-    api_createNote(params) {
+    api_addNote(params) {
         let {
             nindex,
             dindex
         } = params;
 
-        let note = Object.assign({}, this.notes[nindex]);
-        note.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
+        let notedef = Object.assign({}, this.notes[nindex]);
+        notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
         let request = {
-            action: 'createNote',
+            action: 'addNote',
             params: {
-                note
+                notedef
             },
         };
         chrome.runtime.sendMessage(request, () => {});
@@ -163,7 +170,7 @@ class AODHFront {
     buildNote(result) {
         //get 1 sentence around the expression.
         const expression = selectedText();
-        const sentence = getSentence(1);
+        const sentence = getSentence(this.maxContext);
         this.sentence = sentence;
         let tmpl = {
             css: '',
@@ -205,9 +212,14 @@ class AODHFront {
                         audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${playimg}"/>`;
                 }
             }
-            content += `<div class="odh-headsection">${audiosegment}<span class="odh-expression">${note.expression}</span><span class="odh-reading">${note.reading}</span><span class="odh-extra">${note.extra}</span></div>`;
+            content += `
+                <div class="odh-headsection">${audiosegment}
+                    <span class="odh-expression">${note.expression}</span>
+                    <span class="odh-reading">${note.reading}</span>
+                    <span class="odh-extra">${note.extra}</span>
+                </div>`;
             for (const [dindex, definition] of note.definitions.entries()) {
-                content += `<div class="odh-definition"><img class="odh-createnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${plusimg}"/>${definition}</div>`;
+                content += `<div class="odh-definition"><img class="odh-addnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${plusimg}"/>${definition}</div>`;
             }
             content += `</div>`;
         }

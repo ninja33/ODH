@@ -31,13 +31,13 @@
         "message": "自動取詞熱鍵",
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
-    "optContextSentence":{
-        "message": "摘選原句數量",
-        "description": "label text for 'Context Sentence Number' option list."
+    "optMaxContext":{
+        "message": "最大原句數量",
+        "description": "label text for 'Max Context  Number' option list."
     },
-    "optExampleSentence":{
-        "message": "詞典例句數量",
-        "description": "label text for 'Example Sentence Number' option list."
+    "optMaxExample":{
+        "message": "最大例句數量",
+        "description": "label text for 'Max Example  Number' option list."
     },
     "optDeckName":{
         "message": "牌組名稱",

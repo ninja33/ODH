@@ -3,6 +3,7 @@ if (typeof encn_Oxford == 'undefined') {
     class encn_Oxford {
         constructor(options) {
             this.options = options;
+            this.maxexample = options.maxexample;
             this.word = '';
             this.base = 'https://cn.bing.com/dict/search?q='
 
@@ -95,26 +96,26 @@ if (typeof encn_Oxford == 'undefined') {
                         let eng_tran = T(segement.querySelector('.val'));
                         let chn_tran = T(segement.querySelector('.bil'));
                         if (!eng_tran || !chn_tran) continue;
-                        if (definition){
+                        if (definition) {
                             definitions.push(definition);
                             definition = '';
                         }
                         let grammar = T(segement.querySelector('.gra'));
-                        grammar = grammar ? `<span class="grammar">${grammar}</span>`:'';
+                        grammar = grammar ? `<span class="grammar">${grammar}</span>` : '';
                         let informal = T(segement.querySelector('.infor'));
-                        informal = informal ? `<span class="informal">${informal}</span>`:'';
+                        informal = informal ? `<span class="informal">${informal}</span>` : '';
                         let complement = T(segement.querySelector('.comple'));
-                        complement = complement ? `<span class="complement">${complement}</span>`:'';
+                        complement = complement ? `<span class="complement">${complement}</span>` : '';
                         eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
                         chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
-                    definition += `${dis}${pos}${grammar}${complement}${informal}<span class='tran'>${eng_tran}${chn_tran}</span>`;
+                        definition += `${dis}${pos}${grammar}${complement}${informal}<span class='tran'>${eng_tran}${chn_tran}</span>`;
                     };
                     if (segement.classList && segement.classList.contains('li_exs')) {
                         let examps = segement.querySelectorAll('.li_ex') || [];
-                        if (examps.length > 0) {
+                        if (examps.length > 0 && this.maxexample > 0) {
                             definition += '<ul class="sents">';
                             for (const [index, examp] of examps.entries()) {
-                                if (index > 1) break; // to control only 2 example sentence.
+                                if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                                 let eng_examp = T(examp.querySelector('.val_ex'));
                                 let chn_examp = T(examp.querySelector('.bil_ex'));
                                 definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
@@ -125,7 +126,7 @@ if (typeof encn_Oxford == 'undefined') {
                 }
                 if (definition)
                     definitions.push(definition);
-                
+
                 //process idiom
                 let idmsents = entry.querySelectorAll('.idm_s');
                 if (!idmsents) continue;
@@ -136,7 +137,7 @@ if (typeof encn_Oxford == 'undefined') {
                     let eng_tran = T(idmblock.querySelector('.val'));
                     let chn_tran = T(idmblock.querySelector('.bil'));
                     if (!eng_tran || !chn_tran) continue;
-                    
+
                     let definition = '';
                     eng_tran = eng_tran ? `<span class='eng_tran'>${eng_tran}</span>` : '';
                     chn_tran = chn_tran ? `<span class='chn_tran'>${chn_tran}</span>` : '';
@@ -144,7 +145,7 @@ if (typeof encn_Oxford == 'undefined') {
                     // make exmaple segement
                     let eng_examp = T(idmblock.querySelector('.val_ex'));
                     let chn_examp = T(idmblock.querySelector('.bil_ex'));
-                    if (eng_examp && chn_examp) {
+                    if (eng_examp && chn_examp && this.maxexample > 0) {
                         definition += '<ul class="sents">';
                         definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
                         definition += '</ul>';
@@ -255,7 +256,7 @@ if (typeof encn_Oxford == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
-                    margin-left: -10px;
+                    margin-left: -5px;
                     color: black;
                 }
                 span.chn_sent{

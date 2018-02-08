@@ -3,6 +3,7 @@ if (typeof encn_Collins == 'undefined') {
     class encn_Collins {
         constructor(options) {
             this.options = options;
+            this.maxexample = options.maxexample;
             this.word = '';
             this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","collins"]]}&xmlVersion=5.1&q='
         }
@@ -67,10 +68,10 @@ if (typeof encn_Collins == 'undefined') {
                         definition += `${pos}<span clas="tran">${eng_tran}${chn_tran}</span>`;
                         // make exmaple sentence segement
                         let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
-                        if (sents.length > 0) {
+                        if (sents.length > 0 && this.maxexample > 0) {
                             definition += '<ul class="sents">';
                             for (const [index, sent] of sents.entries()) {
-                                if (index > 1) break; // to control only 2 example sentence.
+                                if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                                 definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
                             }
                             definition += '</ul>';
@@ -161,7 +162,7 @@ if (typeof encn_Collins == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
-                    margin-left: -10px;
+                    margin-left: -5px;
                     color: black;
                 }
                 span.chn_sent{

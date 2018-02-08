@@ -82,6 +82,30 @@ class AODHBack {
         }, () => null);
     }
 
+    formatNote(notedef) {
+        let options = this.options;
+        if (!options.expression || !options.definition)
+            return null;
+
+        let note = {
+            deckName: options.deckname,
+            modelName: options.typename,
+            fields: {},
+            tags: ['anki-helper']
+        };
+
+        note.fields[options.expression] = notedef.expression;
+        if (!options.sentence) {
+            note.fields[options.definition] = notedef.definition;
+        } else if (options.sentence == options.definition) {
+            notedef.definition += `<hr>${notedef.sentence}`;
+            note.fields[options.definition] = notedef.definition;
+        } else {
+            note.fields[options.definition] = notedef.definition;
+            note.fields[options.sentence] = notedef.sentence;
+        }
+        return note;
+    }
 
     async api_updateOptions(params) {
         let {
@@ -117,17 +141,34 @@ class AODHBack {
         });
     }
 
-    api_createNote(params) {
+    api_addNote(params) {
         let {
-            note,
+            notedef,
             callback
         } = params;
 
-        this.target.createNote(note).then(result => {
+        const note = this.formatNote(notedef);
+        this.target.addNote(note).then(result => {
             callback(result);
         }).catch(error => {
             callback(error);
         });
+    }
+
+    async api_getDeckNames() {
+        return await this.target.getDeckNames();
+    }
+
+    async api_getModelNames() {
+        return await this.target.getModelNames();
+    }
+
+    async api_getModelFieldNames(modelName) {
+        return await this.target.getModelFieldNames(modelName);
+    }
+
+    async api_getVersion() {
+        return await this.target.getVersion();
     }
 
 }
