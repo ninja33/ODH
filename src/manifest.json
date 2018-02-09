@@ -7,7 +7,7 @@
     "icons": {"16": "img/icon16.png", "48": "img/icon48.png", "128": "img/icon128.png"},
     "browser_action": {
         "default_icon": {"19": "img/icon19.png", "38": "img/icon38.png"},
-        "default_popup": "bg/options.html"
+        "default_popup": "bg/popup.html"
     },
     "author": "Zhenyu Huang",
     "background": {"page": "bg/background.html"},
@@ -31,6 +31,7 @@
         "fg/img/play.png",
         "fg/img/cloud.png",
         "fg/img/plus.png",
+        "fg/img/loading.gif",
         "fg/js/frame.js"
     ],
     "content_security_policy": "script-src 'self' https://rawgit.com; object-src 'self'"

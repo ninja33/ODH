@@ -146,7 +146,13 @@ class AODHFront {
                 notedef
             },
         };
-        chrome.runtime.sendMessage(request, () => {});
+        chrome.runtime.sendMessage(request, (success) => {
+            let result = {
+                success,
+                params,
+            };
+            this.popup.sendMessage('setActionState', result);
+        });
     }
 
     api_playAudio(params) {
@@ -176,8 +182,8 @@ class AODHFront {
             css: '',
             expression,
             reading: '',
-            extra:'',
-            definitions:["No definition!"],
+            extra: '',
+            definitions: ["No definition!"],
             sentence,
         };
 
@@ -201,10 +207,11 @@ class AODHFront {
     renderPopup(notes) {
         let plusimg = chrome.extension.getURL('fg/img/plus.png');
         let playimg = chrome.extension.getURL('fg/img/play.png');
+        let loading = chrome.runtime.getURL('fg/img/loading.gif');
 
         let content = '';
         for (const [nindex, note] of notes.entries()) {
-            content += note.css +`<div class="odh-note">`;
+            content += note.css + `<div class="odh-note">`;
             let audiosegment = '';
             if (note.audios) {
                 for (const [dindex, audio] of note.audios.entries()) {
@@ -219,7 +226,17 @@ class AODHFront {
                     <span class="odh-extra">${note.extra}</span>
                 </div>`;
             for (const [dindex, definition] of note.definitions.entries()) {
-                content += `<div class="odh-definition"><img class="odh-addnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${plusimg}"/>${definition}</div>`;
+                content += `
+                    <div class="odh-definition">
+                        <img class="odh-addnote" 
+                            data-nindex="${nindex}" 
+                            data-dindex="${dindex}" 
+                            data-loadingimg=${loading} 
+                            data-normalimg=${plusimg} 
+                            src="${plusimg}"
+                        />
+                        ${definition}
+                    </div>`;
             }
             content += `</div>`;
         }
@@ -239,7 +256,7 @@ class AODHFront {
     }
 
     popupFooter() {
-        let js = chrome.extension.getURL('fg/js/frame.js');
+        let js = chrome.runtime.getURL('fg/js/frame.js');
         return `
             </div>
             <script src="${js}"></script>

@@ -7,11 +7,8 @@ class AODHBack {
         optionsLoad().then((opts) => {
             this.api_updateOptions({
                 options: opts,
-                callback: ({dictnames, selected}) => {
-                    opts.dictNamelist = dictnames;
-                    opts.dictSelected = selected;
-                    optionsSave(opts);
-                }
+                callback: newOptions => 
+                    optionsSave(newOptions),
             });
         });
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
@@ -114,18 +111,12 @@ class AODHBack {
         } = params;
 
         this.setOptions(options);
-        this.target.setOptions(options);
         this.dictlib.setOptions(options);
-        let {
-            dictlist,
-            selected
-        } = await this.dictlib.loadDict();
-        this.translator = new dictlist[selected](options);
-        let dictnames = Object.keys(dictlist);
-        callback({
-            dictnames,
-            selected
-        });
+        let newOptions = await this.dictlib.loadDict();
+        let dictionaries = this.dictlib.dicts;
+        let selected = newOptions.dictSelected;
+        this.translator = new dictionaries[selected](newOptions);
+        callback(newOptions);
     }
 
     api_getTranslation(params) {
@@ -150,8 +141,6 @@ class AODHBack {
         const note = this.formatNote(notedef);
         this.target.addNote(note).then(result => {
             callback(result);
-        }).catch(error => {
-            callback(error);
         });
     }
 

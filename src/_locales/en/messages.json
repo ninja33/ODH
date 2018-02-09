@@ -28,7 +28,7 @@
         "description": "label text for 'Enabled/Disable' checkbox."
     },
     "optAutoSelectionHotKey":{
-        "message": "AutoSel. Hotkey",
+        "message": "AutoSel.Hotkey",
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
     "optMaxContext":{
@@ -82,6 +82,18 @@
     "optCancel":{
         "message": "Cancel",
         "description": "for 'Cancel' button on option page."
+    },
+    "baTitle":{
+        "message": "Quick Options",
+        "description": "option title on broswer action page."
+    },
+    "baEnabled":{
+        "message": "Enabled",
+        "description": "label text for 'enabled' checkbox on broswer action page."
+    },
+    "baHotkey":{
+        "message": "AutoSel.",
+        "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
     "encn_Oxford":{
         "message": "encn_Oxford",

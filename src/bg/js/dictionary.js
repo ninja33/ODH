@@ -23,10 +23,9 @@ class Dictlib {
         }
         let selected = this.options.dictSelected;
         selected = (selected in this.dicts) ? selected : chrome.i18n.getMessage('encn_Collins');
-        return {
-            'dictlist': this.dicts,
-            'selected': selected
-        }
+        this.options.dictSelected = selected;
+        this.options.dictNamelist = Object.keys(this.dicts);
+        return this.options;
     }
 
     pathChanged(remotelist){

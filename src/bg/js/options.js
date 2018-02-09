@@ -8,48 +8,6 @@ function localizeHtmlPage(){
     }
 }
 
-function sanitizeOptions(options) {
-    const defaults = {
-        enabled: false,
-        hotkey: '0', // 0:off , 16:shift, 17:ctrl, 18:alt
-        maxcontext: '1',
-        maxexample: '2',
-
-        deckname: 'Default',
-        typename: 'Basic',
-        expression: 'Front',
-        definition: 'Back',
-        sentence: 'Back',
-
-        dictLibrary: '',
-
-        dictSelected: '',
-        dictNamelist: [],
-    };
-
-    for (const key in defaults) {
-        if (!options.hasOwnProperty(key)) {
-            options[key] = defaults[key];
-        }
-    }
-    return options;
-}
-
-
-async function optionsLoad() {
-    return new Promise((resolve, reject)=>{
-        chrome.storage.local.get(null, (options) => {
-            resolve(sanitizeOptions(options));
-        });
-    });
-}
-
-async function optionsSave(options) {
-    return new Promise((resolve, reject)=>{
-        chrome.storage.local.set(sanitizeOptions(options), resolve());
-    });
-}
-
 async function populateAnkiDeckAndModel(opts) {
     let names = [];
     $('#deck').empty();
@@ -90,16 +48,14 @@ async function populateAnkiFields(){
 }
 
 async function updateAnkiStatus() {
-    $('#ankistatus').text('Connecting to Anki ...');
-    try{
-        let version = await odhback().api_getVersion();
-        if (version === null) {
-            $('#ankistatus').text('Status: Ankiconnect was not actived!');
-        } else {
-            $('#ankistatus').text(`Status: Ankiconnect (version ${version}) was actived.`);
-        }
-    } catch (err) {
-        $('#ankistatus').text('Status: Ankiconnect was not actived!');
+    $('#anki-options-status').text('Connecting to Anki ...');
+    let version = await odhback().api_getVersion();
+    if (version === null) {
+        $('#anki-options-params').hide();
+        $('#anki-options-status').text('Status: Ankiconnect was not actived!');
+    } else {
+        $('#anki-options-params').show();
+        $('#anki-options-status').text(`Status: Ankiconnect (version ${version}) was actived.`);
     }
 }
 
@@ -134,12 +90,10 @@ async function onOKClicked(e) {
     options.dictLibrary = $('#repo').val();
     options.dictSelected = $('#dict').val();
 
-    chrome.runtime.sendMessage({action:'updateOptions', params:{options}}, ({dictnames,selected}) => {
-        options.dictNamelist = dictnames;
-        options.dictSelected = selected;
-        populateDictionary(options.dictNamelist);
-        $('#dict').val(selected);
-        optionsSave(options);
+    chrome.runtime.sendMessage({action:'updateOptions', params:{options}}, (newOptions) => {
+        populateDictionary(newOptions.dictNamelist);
+        $('#dict').val(newOptions.dictSelected);
+        optionsSave(newOptions);
         if (e.target.id == 'ok')
             window.close();
     });
@@ -166,6 +120,7 @@ async function onReady() {
     $('#defs').val(opts.definition);
     $('#sent').val(opts.sentence);
 
+
     $('#repo').val(opts.dictLibrary);
     populateDictionary(opts.dictNamelist);
     $('#dict').val(opts.dictSelected);
@@ -175,6 +130,7 @@ async function onReady() {
     $('#load').click(onLoadClicked);
     $('#type').change(onAnkiTypeChanged);
     
+    $('#anki-options-params').hide();
     updateAnkiStatus();
     populateAnkiDeckAndModel(opts);
     populateAnkiFields();

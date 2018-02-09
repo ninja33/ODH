@@ -53,27 +53,28 @@
                     <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
             </div>
             <section class="anki-options">
-                <label for="deck" data-i18n="optDeckName">Deck Name</label>
-                <select id="deck">
-                </select>
+                <div id="anki-options-params">
+                    <label for="deck" data-i18n="optDeckName">Deck Name</label>
+                    <select id="deck">
+                    </select>
 
-                <label for="type" data-i18n="optTypeName">Type Name</label>
-                <select id="type">
-                </select>
+                    <label for="type" data-i18n="optTypeName">Type Name</label>
+                    <select id="type">
+                    </select>
 
-                <label for="word" id="expression" data-i18n="optExpression">Expression</label>
-                <select id="word">
-                </select>
+                    <label for="word" id="expression" data-i18n="optExpression">Expression</label>
+                    <select id="word">
+                    </select>
 
-                <label for="defs" id="definition" data-i18n="optDefinition">Definition</label>
-                <select id="defs">
-                </select>
+                    <label for="defs" id="definition" data-i18n="optDefinition">Definition</label>
+                    <select id="defs">
+                    </select>
 
-                <label for="sent" id="sentence" data-i18n="optSentence">Sentence</label>
-                <select id="sent">
-                </select>
-
-                <label id="ankistatus">Anki Status</label>
+                    <label for="sent" id="sentence" data-i18n="optSentence">Sentence</label>
+                    <select id="sent">
+                    </select>
+                </div>
+                <label id="anki-options-status">Anki Status</label>
             </section>
 
             <hr>
@@ -97,6 +98,7 @@
 
     <!--script src="js/polyfill.js"></script-->
     <script src="../lib/jquery-2.2.2.min.js"></script>
+    <script src="js/storage.js"></script>
     <script src="js/options.js"></script>
 </body>
 

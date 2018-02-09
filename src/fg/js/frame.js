@@ -3,7 +3,14 @@ function registerAddNoteLinks() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const ds = e.currentTarget.dataset;
-            window.parent.postMessage({action: 'addNote', params: {nindex:ds.nindex,dindex:ds.dindex}}, '*');
+            e.currentTarget.src = ds.loadingimg;
+            window.parent.postMessage({
+                action: 'addNote',
+                params: {
+                    nindex: ds.nindex,
+                    dindex: ds.dindex
+                }
+            }, '*');
         });
     }
 }
@@ -13,7 +20,13 @@ function registerAudioLinks() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const ds = e.currentTarget.dataset;
-            window.parent.postMessage({action: 'playAudio', params: {nindex:ds.nindex,dindex:ds.dindex}}, '*');
+            window.parent.postMessage({
+                action: 'playAudio',
+                params: {
+                    nindex: ds.nindex,
+                    dindex: ds.dindex
+                }
+            }, '*');
         });
     }
 }
@@ -24,20 +37,35 @@ function onDomContentLoaded() {
 }
 
 function onMessage(e) {
-    const {action, params} = e.data, method = window['api_' + action];
-    if (typeof(method) === 'function') {
+    const {
+        action,
+        params
+    } = e.data, method = window['api_' + action];
+    if (typeof (method) === 'function') {
         method(params);
     }
 }
 
-function onMouseWheel(e){
-    document.querySelector('html').scrollTop -= e.wheelDeltaY / 3; 
-    document.querySelector('body').scrollTop -= e.wheelDeltaY / 3; 
-    e.preventDefault();
+function api_setActionState(result) {
+    let {
+        success,
+        params
+    } = result;
+    
+    let {
+        nindex,
+        dindex
+    } = params;
+
+    const match = document.querySelector(`.odh-addnote[data-nindex="${nindex}"].odh-addnote[data-dindex="${dindex}"]`);
+    match.src = match.dataset['normalimg'];
+    //classes.add('disabled');
 }
 
-function api_setActionState(params) {
-    return null;
+function onMouseWheel(e) {
+    document.querySelector('html').scrollTop -= e.wheelDeltaY / 3;
+    document.querySelector('body').scrollTop -= e.wheelDeltaY / 3;
+    e.preventDefault();
 }
 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded, false);

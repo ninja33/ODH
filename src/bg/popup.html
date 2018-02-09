@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/popup.css">
+    <link rel="stylesheet" href="css/checkbox.css">
+    <title data-i18n="optTitle">Online Dictionary Helper</title>
+</head>
+
+<body>
+    <div class='container'>
+        <form>
+            <div class="option-head">
+                <span class="title" data-i18n="baTitle">Options</span>
+                <span class="more" id="more">...</span>
+            </div>
+
+            <section class="general-options">
+                <label data-i18n="baEnabled">Enabled</label>
+                <div class="enabled">
+                    <input type="checkbox" value=true id="enabled">
+                    <label for="enabled"></label>
+                </div>
+
+                <label data-i18n="baHotKey">AuoSel.</label>
+                <select id="hotkey">
+                        <option value="0">Off</option>
+                        <option value="16">Shift</option>
+                        <option value="17">Ctrl</option>
+                        <option value="18">Alt</option>
+                </select>
+            </section>
+
+            <hr>
+
+            <section class="dictionary-options">
+                <select id="dict">
+                    <option value="encn-Default">encn-Default</option>
+                </select>
+            </section>
+
+        </form>
+    </div>
+
+    <!--script src="js/polyfill.js"></script-->
+    <script src="../lib/jquery-2.2.2.min.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/popup.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+body {
+    font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
+    font-size: 12px;
+    width: 158px;
+    border-radius: 8px;
+    margin: 2px;
+    padding:0;
+}
+
+.container {
+    margin: 0;
+}
+
+div.option-head {
+    font-weight: bold;
+    color: white;
+    background-color: #93a085;
+    height: 20px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    padding: 2px 10px 1px;
+}
+
+.title {
+    margin: auto 0;
+}
+
+.more {
+    float: right;
+    color: white;
+    cursor: pointer;
+}
+
+section {
+    border-radius: 4px;
+    background-color: #f1f8e9;
+    padding: 5px;
+}
+
+label,
+input[type=text],
+select {
+    width: 65px;
+    padding: 5px;
+    margin: 3px;
+    color: black;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.dictionary-options select {
+    width: 140px;
+}
+
+hr {
+    border: 1px;
+    margin: 4px 0;
+    border-top: 1px solid #d5d5d5;
+}
