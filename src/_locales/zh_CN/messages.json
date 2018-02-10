@@ -84,11 +84,11 @@
         "description": "option title on broswer action page."
     },
     "baEnabled":{
-        "message": "激活",
+        "message": "激活插件",
         "description": "label text for 'enabled' checkbox on broswer action page."
     },
     "baHotkey":{
-        "message": "取词",
+        "message": "取词热键",
         "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
     "encn_Oxford":{

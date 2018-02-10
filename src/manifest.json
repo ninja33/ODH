@@ -28,11 +28,12 @@
     "permissions": ["file://*/*", "http://*/*", "https://*/*", "storage"],
     "web_accessible_resources": [
         "fg/css/frame.css",
+        "fg/js/frame.js",
         "fg/img/play.png",
-        "fg/img/cloud.png",
         "fg/img/plus.png",
-        "fg/img/loading.gif",
-        "fg/js/frame.js"
+        "fg/img/load.gif",
+        "fg/img/fail.png",
+        "fg/img/good.png"
     ],
     "content_security_policy": "script-src 'self' https://rawgit.com; object-src 'self'"
 }

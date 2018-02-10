@@ -205,10 +205,6 @@ class AODHFront {
     }
 
     renderPopup(notes) {
-        let plusimg = chrome.extension.getURL('fg/img/plus.png');
-        let playimg = chrome.extension.getURL('fg/img/play.png');
-        let loading = chrome.runtime.getURL('fg/img/loading.gif');
-
         let content = '';
         for (const [nindex, note] of notes.entries()) {
             content += note.css + `<div class="odh-note">`;
@@ -216,7 +212,7 @@ class AODHFront {
             if (note.audios) {
                 for (const [dindex, audio] of note.audios.entries()) {
                     if (audio)
-                        audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${playimg}"/>`;
+                        audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/play.png')}"/>`;
                 }
             }
             content += `
@@ -228,13 +224,7 @@ class AODHFront {
             for (const [dindex, definition] of note.definitions.entries()) {
                 content += `
                     <div class="odh-definition">
-                        <img class="odh-addnote" 
-                            data-nindex="${nindex}" 
-                            data-dindex="${dindex}" 
-                            data-loadingimg=${loading} 
-                            data-normalimg=${plusimg} 
-                            src="${plusimg}"
-                        />
+                        <img class="odh-addnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/plus.png')}" />
                         ${definition}
                     </div>`;
             }
@@ -245,21 +235,25 @@ class AODHFront {
     }
 
     popupHeader() {
-        let css = chrome.extension.getURL('fg/css/frame.css');
         return `
         <html lang="en">
             <head><meta charset="UTF-8"><title></title>
-                <link rel="stylesheet" href="${css}">
+                <link rel="stylesheet" href="${chrome.runtime.getURL('fg/css/frame.css')}">
             </head>
             <body style="margin:0px;">
             <div class="odh-notes">`;
     }
 
     popupFooter() {
-        let js = chrome.runtime.getURL('fg/js/frame.js');
         return `
             </div>
-            <script src="${js}"></script>
+            <div class="icons hidden"">
+                <img id="plus" src="${chrome.runtime.getURL('fg/img/plus.png')}"/>
+                <img id="load" src="${chrome.runtime.getURL('fg/img/load.gif')}"/>
+                <img id="good" src="${chrome.runtime.getURL('fg/img/good.png')}"/>
+                <img id="fail" src="${chrome.runtime.getURL('fg/img/fail.png')}"/>
+            </div>
+            <script src="${chrome.runtime.getURL('fg/js/frame.js')}"></script>
             </body>
         </html>`;
     }

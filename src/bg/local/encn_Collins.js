@@ -113,7 +113,7 @@ if (typeof encn_Collins == 'undefined') {
             let css = `
             <style>
                 ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
-                span.ec_chn {margin-left: -10px;}
+                span.ec_chn {margin-left: -5px;}
             </style>`;
             notes.push({
                 css,

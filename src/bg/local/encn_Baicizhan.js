@@ -96,7 +96,7 @@ if (typeof encn_Baicizhan == 'undefined') {
             let css = `
             <style>
                 ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
-                span.ec_chn {margin-left: -10px;}
+                span.ec_chn {margin-left: -5px;}
             </style>`;
             notes.push({
                 css,
@@ -144,7 +144,7 @@ if (typeof encn_Baicizhan == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
-                    margin-left: -10px;
+                    margin-left: -5px;
                     color: black;
                 }
                 span.chn_sent{

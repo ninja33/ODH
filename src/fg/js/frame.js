@@ -1,9 +1,13 @@
+function getImageSource(id){
+    return document.querySelector(`#${id}`).src;
+}
+
 function registerAddNoteLinks() {
     for (let link of document.getElementsByClassName('odh-addnote')) {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const ds = e.currentTarget.dataset;
-            e.currentTarget.src = ds.loadingimg;
+            e.currentTarget.src = getImageSource('load');
             window.parent.postMessage({
                 action: 'addNote',
                 params: {
@@ -58,8 +62,14 @@ function api_setActionState(result) {
     } = params;
 
     const match = document.querySelector(`.odh-addnote[data-nindex="${nindex}"].odh-addnote[data-dindex="${dindex}"]`);
-    match.src = match.dataset['normalimg'];
-    //classes.add('disabled');
+    if (success)
+        match.src = getImageSource('good');
+     else 
+        match.src = getImageSource('fail');
+    
+    setTimeout(()=>{
+        match.src = getImageSource('plus');
+    },1000);
 }
 
 function onMouseWheel(e) {

@@ -73,6 +73,10 @@ hr {
   border-top: 1px solid #d5d5d5;
 }
 
+.hidden{
+  display: none;
+}
+
 .highlight {
   /*font-weight       : bold;*/
   font-size: 0.9em;
