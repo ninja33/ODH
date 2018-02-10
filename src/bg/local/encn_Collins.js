@@ -53,6 +53,20 @@ if (typeof encn_Collins == 'undefined') {
 
                 let expression = collins_entry.headword; //headword
                 let reading = collins_entry.phonetic || ''; // phonetic
+
+                let extra_star = "";
+                let extra_cet = "";
+                let cets = collins_entry.basic_entries.basic_entry[0].cet || '';
+                if (cets){
+                    for (const cet of cets.split(' ')) {
+                        extra_cet += `<span class="cet">${cet}</span>`
+                    }
+                }
+
+                let star = collins_entry.star || '';
+                extra_star = star ? `<span class="star">${'\u2605'.repeat(Number(star))}</span>` : '';
+                let extra = extra_star + extra_cet;
+
                 audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
                 audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
@@ -85,6 +99,7 @@ if (typeof encn_Collins == 'undefined') {
                     css,
                     expression,
                     reading,
+                    extra,
                     definitions,
                     audios
                 });
@@ -128,6 +143,18 @@ if (typeof encn_Collins == 'undefined') {
         renderCSS() {
             let css = `
             <style>
+                span.star{
+                    color: #FFBB00;
+                }
+                span.cet{
+                    margin: 0 3px;
+                    padding: 0 3px;
+                    font-weight: normal;
+                    font-size: 0.8em;
+                    color: white;
+                    background-color: #5cb85c;
+                    border-radius: 3px;
+                }
                 span.pos{
                     text-transform: lowercase;
                     font-size: 0.9em;
