@@ -2,7 +2,7 @@ class Dictlib {
     constructor() {
         this.options = null;
         this.lastoptions = null;
-        this.default = ['local/encn_Youdao.js','local/encn_Oxford.js','local/encn_Collins.js','local/encn_Longman.js','local/encn_Cambridge.js','local/encn_Baicizhan.js'];
+        this.default = ['local/encn_Youdao.js'];
         this.list = [];
         this.dicts = {};
     }
@@ -22,7 +22,7 @@ class Dictlib {
             await this.loadRemote(this.list);
         }
         let selected = this.options.dictSelected;
-        selected = (selected in this.dicts) ? selected : chrome.i18n.getMessage('encn_Collins');
+        selected = (selected in this.dicts) ? selected : chrome.i18n.getMessage('encn_Youdao');
         this.options.dictSelected = selected;
         this.options.dictNamelist = Object.keys(this.dicts);
         return this.options;

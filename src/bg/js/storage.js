@@ -12,7 +12,7 @@ function sanitizeOptions(options) {
         definition: 'Back',
         sentence: 'Back',
 
-        dictLibrary: '',
+        dictLibrary: 'local/encn_List.js',
 
         dictSelected: '',
         dictNamelist: [],

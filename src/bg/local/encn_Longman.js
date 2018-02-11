@@ -267,7 +267,6 @@ if (typeof encn_Longman == 'undefined') {
                 span.eng_sent,
                 span.eng_gram_examp{
                     margin-right: 5px;
-                    margin-left: -5px;
                     color: black;
                 }
                 span.chn_sent,

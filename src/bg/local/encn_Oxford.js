@@ -263,7 +263,6 @@ if (typeof encn_Oxford == 'undefined') {
                 }
                 span.eng_sent{
                     margin-right: 5px;
-                    margin-left: -5px;
                     color: black;
                 }
                 span.chn_sent{
