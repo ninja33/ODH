@@ -1,5 +1,7 @@
 # Online Dictionary Helper (with Anki app support)
 
+[[中文版说明](README.zh_CN.md)]
+
 Online Dictionary Helper is a chrome extension to show online dictionary content, which also supports flash-card making compatible with Anki  (with **ankiconnect**, an Anki add-on, installed).
 
 For the reason why comes this extension, you may check the detail [background](doc/background.md) if you are interested.
@@ -13,12 +15,11 @@ What might set this extension apart is that the users can grab online dictionary
 [[Chrome Web Store Link](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)]
 
 1. Install the extension first from Chrome Web store. Setup Option and turn on the extension if you want. (Details could be found under the option page section)
-2. (Optional) Setup the designated Anki deck, type and fields names to put your **word**, **definition**, **sentence**.
-3. Open any given web page such as an English article (The extension has English dictionary only by its default setting).
-4. Move mouse cursor to the word, double click to select or press <kbd>shift</kbd> to automatically select word in case it's a link.
-5. A popup window will show up displaying the word definition.
-6. (Optional) Press top/right green **(+)** icon to add Anki note.
-7. (Optional) You need make sure that the Anki desktop version is opened and ankiconnect addon installed beforehand.
+2. Open any given web page, move mouse cursor to the word.
+3. Click-drag/Double click to select word, or press **Hotkey**(defined in options page) to automatically select word in case it's a link.
+4. A popup window will show up displaying the word definition.
+5. (Optional) Setup the designated Anki deck, type and fields names to put your **word**, **definition**, **sentence** while Anki and ankiconnect is running.
+6. (Optional) Press top/right green **(+)** icon in popup window to add Anki note.
 
 The extension has in it two dictionary samples for you to try out and experiment with.
 
