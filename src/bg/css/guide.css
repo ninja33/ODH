@@ -1,0 +1,64 @@
+.container {
+    font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
+    font-size: 14px;
+    width: 380px;
+    border-radius: 5px;
+    margin: 5px auto;
+    padding: 15px;
+    background: #fefefe;
+    border: 1px solid;
+    border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+    overflow: auto;
+}
+
+div.tabmenus {
+    border-bottom: 1px solid grey;
+    margin-bottom: 10px;
+    padding-bottom: 2px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a.tabmenu {
+    color: #777777;
+    margin: 2px 8px 0;
+    padding: 0 8px;
+}
+
+a.tabmenu.active {
+    color: #dd4b39;
+    border-bottom: 3px solid #dd4b39;
+}
+
+h3 {
+    margin: 0 auto 5px;
+    text-align: center;
+}
+
+ol {
+    margin: 0;
+    padding: 5px 10px;
+}
+
+li {
+    margin: 5px;
+    line-height: 1.5em;
+}
+
+p {
+    margin: 8px auto;
+    line-height: 1.5em;
+}
+
+img {
+    border: 1px dashed darkgrey;
+    padding: 1px;
+    margin: 0 4px 0 3px;
+    vertical-align: bottom;
+}
+
+.notice {
+    color: blue;
+}
