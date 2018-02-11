@@ -1,6 +1,6 @@
-if (typeof encn_Baicizhan == 'undefined') {
+if (typeof encn_Youdao == 'undefined') {
 
-    class encn_Baicizhan {
+    class encn_Youdao {
         constructor(options) {
             this.options = options;
             this.word = '';
@@ -15,8 +15,7 @@ if (typeof encn_Baicizhan == 'undefined') {
         async findTerm(word) {
             this.word = word;
             let deflection = formhelper.deinflect(word);
-            deflection = deflection ? deflection : word;
-            let results = await Promise.all([this.findBaicizhan(deflection), this.findEC(word)]);
+            let results = await Promise.all([this.findEC(deflection), this.findEC(word)]);
             return [].concat(...results);
         }
 
@@ -39,41 +38,6 @@ if (typeof encn_Baicizhan == 'undefined') {
                     }
                 });
             });
-        }
-
-        async findBaicizhan(word) {
-            let notes = [];
-
-            if (!word) return notes;
-            let url = this.resourceURL(word);
-            let note = await this.onlineQuery(url);
-
-            if (!note.mean_cn) return notes;
-            let definitions = [];
-            let audios = [];
-            let expression = note.word || ''; //headword
-            let reading = note.accent || ''; // phonetic
-            audios[0] = `http://baicizhan.qiniucdn.com/word_audios/${expression}.mp3`;
-            let definition = `<ul class="bcz">`;
-            let defs = note.mean_cn.split('\n');
-            for (const def of defs) {
-                    definition += `<li class="bcz"><span class="bcz_chn">${def}</span></li>`;
-            }
-            definition += `</ul>`;
-            definition += note.df ? `<div class='bcz'><img src='${note.df}' /></div>` : '';
-            definition += note.st && note.sttr ? `<ul class='sents'><li class='sent'><span class='eng_sent'>${note.st}</span><span class='chn_sent'>${note.sttr}</span></li></ul>` : '';
-            definition += note.img ? `<div class='bcz'><img src='${note.img}' /></div>` : '';
-            //definition += `<div class='bcz'><video width="340px" controls><source src='${note.tv}' type="video/mp4"></video></div>`;
-            definitions.push(definition);
-            let css = this.renderCSS();
-            notes.push({
-                css,
-                expression,
-                reading,
-                definitions,
-                audios,
-            });
-            return notes;
         }
 
         async findEC(word) {
@@ -164,6 +128,6 @@ if (typeof encn_Baicizhan == 'undefined') {
         }
     }
 
-    registerDict(chrome.i18n.getMessage('encn_Baicizhan'), encn_Baicizhan);
+    registerDict(chrome.i18n.getMessage('encn_Youdao'), encn_Youdao);
 
 }

@@ -147,7 +147,13 @@ if (typeof encn_Cambridge == 'undefined') {
             if (!data.ec) return notes;
             let expression = data.ec.word[0]['return-phrase'].l.i;
             let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
-            let audios = [];
+
+            let extra = '';
+            let types = data.ec.exam_type || [];
+            for (const type of types) {
+                extra += `<span class="examtype">${type}</span>`
+            }
+
             let definition = '<ul class="ec">';
             const trs = data.ec.word ? data.ec.word[0].trs : [];
             for (const tr of trs)
@@ -155,6 +161,7 @@ if (typeof encn_Cambridge == 'undefined') {
             definition += '</ul>';
             let css = `
             <style>
+                span.examtype {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
                 ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
                 span.ec_chn {margin-left: -5px;}
             </style>`;
@@ -162,8 +169,8 @@ if (typeof encn_Cambridge == 'undefined') {
                 css,
                 expression,
                 reading,
+                extra,
                 definitions: [definition],
-                audios,
             });
             return notes;
         }

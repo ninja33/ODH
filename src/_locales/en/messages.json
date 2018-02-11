@@ -95,6 +95,10 @@
         "message": "AutoSel.",
         "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
+    "encn_Youdao":{
+        "message": "encn_Youdao",
+        "description": "Dictionary name displayed in option page."
+    },
     "encn_Oxford":{
         "message": "encn_Oxford",
         "description": "Dictionary name displayed in option page."
@@ -113,6 +117,10 @@
     },
     "encn_Baicizhan":{
         "message": "encn_Baicizhan",
+        "description": "Dictionary name displayed in option page."
+    },
+    "enen_UrbanDict":{
+        "message": "enen_UrbanDict",
         "description": "Dictionary name displayed in option page."
     }
 }

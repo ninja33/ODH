@@ -91,6 +91,10 @@
         "message": "取詞熱鍵",
         "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
+    "encn_Youdao":{
+        "message": "有道英漢簡明詞典",
+        "description": "Dictionary name displayed in option page."
+    },
     "encn_Oxford":{
         "message": "牛津英漢雙解詞典",
         "description": "Dictionary name displayed in option page."
@@ -110,5 +114,10 @@
     "encn_Baicizhan":{
         "message": "百詞斬英漢圖解詞典",
         "description": "Dictionary name displayed in option page."
+    },
+    "enen_UrbanDict":{
+        "message": "Urban英英俚語詞典",
+        "description": "Dictionary name displayed in option page."
     }
+
 }
