@@ -208,71 +208,21 @@ if (typeof encn_Oxford == 'undefined') {
         renderCSS() {
             let css = `
             <style>
-                span.pos{
-                    text-transform: lowercase;
-                    font-size: 0.9em;
-                    margin-right: 5px;
-                    padding: 1px 3px;
-                    color: white;
-                    background-color: #0d47a1;
-                    border-radius: 3px;
-                }
-                div.dis{
-                    font-weight: bold;
-                    margin-bottom:3px;
-                    padding:0;
-                }
-                span.eng_dis{
-                    margin-right: 5px;
-                }
-                span.chn_dis{
-                    margin: 0;
-                    padding: 0;
-                }
+                div.dis {font-weight: bold;margin-bottom:3px;padding:0;}
                 span.grammar,
-                span.informal {
-                    margin: 0 2px;
-                    color: #0d47a1;
-                }
-                span.complement{
-                    margin: 0 2px;
-                    font-weight: bold;
-                }
-                span.tran{
-                    margin: 0;
-                    padding: 0;
-                }
-                span.eng_tran{
-                    margin-right: 3px;
-                    padding: 0;
-                }
-                span.chn_tran{
-                    color:#0d47a1;
-                }
-                ul.sents{
-                    font-size: 0.9em;
-                    list-style: square inside;
-                    margin: 3px 0;
-                    padding: 5px;
-                    background: rgba(13,71,161,0.1);
-                    border-radius: 5px;
-                }
-                li.sent{
-                    margin: 0;
-                    padding: 0;
-                }
-                span.eng_sent{
-                    margin-right: 5px;
-                    color: black;
-                }
-                span.chn_sent{
-                    color:#0d47a1;
-                }
-                div.idmphrase{
-                    font-weight: bold;
-                    margin: 0;
-                    padding: 0;
-                }
+                span.informal   {margin: 0 2px;color: #0d47a1;}
+                span.complement {margin: 0 2px;font-weight: bold;}
+                div.idmphrase {font-weight: bold;margin: 0;padding: 0;}
+                span.eng_dis  {margin-right: 5px;}
+                span.chn_dis  {margin: 0;padding: 0;}
+                span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                span.tran {margin:0; padding:0;}
+                span.eng_tran {margin-right:3px; padding:0;}
+                span.chn_tran {color:#0d47a1;}
+                ul.sents {font-size:0.9em; list-style:square inside; margin:3px 0;padding:5px;background:rgba(13,71,161,0.1); border-radius:5px;}
+                li.sent  {margin:0; padding:0;}
+                span.eng_sent {margin-right:5px;}
+                span.chn_sent {color:#0d47a1;}
             </style>`;
             return css;
         }

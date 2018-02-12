@@ -60,7 +60,6 @@ if (typeof encn_Longman == 'undefined') {
                 let definitions = [];
 
                 let header = entry.Entry.Head[0];
-                let senses = entry.Entry.Sense;
                 //let tailer = entry.Entry.Tail;
 
                 let expression = T(header.HWD); //headword
@@ -76,6 +75,11 @@ if (typeof encn_Longman == 'undefined') {
 
                 let pos = T(header.POS) ? `<span class='pos'>${T(header.POS)}</span>` : '';
 
+                let PhrHead = entry.Entry.PhrVbEntry ? entry.Entry.PhrVbEntry[0].Head[0] : '';
+                expression = PhrHead ? T(PhrHead.PHRVBHWD) : expression;
+                pos = PhrHead ? `<span class='pos'>${T(PhrHead.POS)}</span>` : pos;
+
+                let senses = entry.Entry.Sense || (PhrHead ? entry.Entry.PhrVbEntry[0].Sense : '');
                 for (const sense of senses) {
                     let signpost = T(sense.SIGNPOST);
                     let signtran = T(sense.SIGNTRAN);
@@ -174,105 +178,35 @@ if (typeof encn_Longman == 'undefined') {
         renderCSS() {
             let css = `
             <style>
-                span.head_gram{
-                    font-size: 0.8em;
-                    font-weight: bold;
-                    background-color: green;
-                    color: white;
-                    border-radius: 3px;
-                    margin: 0 3px;
-                    padding : 2px 3px;
-                }
-                span.head_freq{
-                    font-size: 0.8em;
-                    font-weight: bold;
-                    border: 1px solid red;
-                    border-radius:3px;
-                    color: red;
-                    margin: 0 3px;
-                    padding: 1px 2px;
-                }
-                span.pos{
-                    text-transform: lowercase;
-                    font-size: 0.9em;
-                    margin-right: 5px;
-                    padding: 2px 4px;
-                    color: white;
-                    background-color: #0d47a1;
-                    border-radius: 3px;
-                }
-                div.sign{
-                    font-weight: 0.9em;
-                    font-weight: bold;
-                    margin-bottom:3px;
-                    padding:0;
-                }
-                span.eng_sign{
-                    margin-right: 3px;
-                }
-                span.chn_sign{
-                    margin: 0;
-                    padding: 0;
-                }
+                span.head_gram{font-size: 0.8em;font-weight: bold;background-color: green;color: white;border-radius: 3px;margin: 0 3px;padding : 2px 3px;}
+                span.head_freq{font-size: 0.8em;font-weight: bold;border: 1px solid red;border-radius:3px;color: red;margin: 0 3px;padding: 1px 2px;}
+                span.pos{text-transform: lowercase;font-size: 0.9em;margin-right: 5px;padding: 2px 4px;color: white;background-color: #0d47a1;border-radius: 3px;}
+                div.sign{font-weight: 0.9em;font-weight: bold;margin-bottom:3px;padding:0;}
+                span.eng_sign{margin-right: 3px;}
+                span.chn_sign{margin: 0;padding: 0;}
                 span.tran,
-                span.gram_extra{
-                    margin: 0;
-                    padding: 0;
-                }
+                span.gram_extra{margin: 0;padding: 0;}
                 span.eng_tran,
                 span.eng_gram_form,
                 span.eng_gram_prep,
-                span.eng_gram_gloss{
-                    margin-right: 3px;
-                    padding: 0;
-                }
+                span.eng_gram_gloss{margin-right: 3px;padding: 0;}
                 span.eng_gram_form,
-                span.eng_gram_prep{
-                    font-weight: bold;
-                    display: block;
-                }
-                span.eng_gram_prep::before{
-                    content: "[+";
-                }
-                span.eng_gram_prep::after{
-                    content: "]";
-                }
-                span.eng_gram_gloss::before{
-                    content: "(=";
-                }
-                span.eng_gram_gloss::after{
-                    content: ")";
-                }
-                span.eng_gram_gloss{
-                    font-style: italic;
-                }
+                span.eng_gram_prep{font-weight: bold;display: block;}
+                span.eng_gram_prep::before {content: "[+";}
+                span.eng_gram_prep::after  {content: "]";}
+                span.eng_gram_gloss::before{content: "(=";}
+                span.eng_gram_gloss::after {content: ")";}
+                span.eng_gram_gloss{font-style: italic;}
                 span.chn_tran,
-                span.chn_gram_tran{
-                    color: #0d47a1;
-                }
+                span.chn_gram_tran{color: #0d47a1;}
                 ul.sents,
-                ul.gram_examps{
-                    font-size: 0.9em;
-                    list-style: square inside;
-                    margin: 3px 0;
-                    padding: 5px;
-                    background: rgba(13,71,161,0.1);
-                    border-radius: 3px;
-                }
+                ul.gram_examps{font-size: 0.9em;list-style: square inside;margin: 3px 0;padding: 5px;background: rgba(13,71,161,0.1);border-radius: 3px;}
                 li.sent,
-                li.gram_examp{
-                    margin: 0;
-                    padding: 0;
-                }
+                li.gram_examp{margin: 0;padding: 0;}
                 span.eng_sent,
-                span.eng_gram_examp{
-                    margin-right: 5px;
-                    color: black;
-                }
+                span.eng_gram_examp{margin-right: 5px;color: black;}
                 span.chn_sent,
-                span.chn_gram_examp{
-                    color:#0d47a1;
-                }
+                span.chn_gram_examp{color:#0d47a1;}
             </style>`;
             return css;
         }

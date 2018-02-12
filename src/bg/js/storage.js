@@ -15,7 +15,7 @@ function sanitizeOptions(options) {
         sentence: 'Back',
 
 
-        dictLibrary: 'local/encn_List.js',
+        dictLibrary: 'odh://encn_List',
 
         dictSelected: '',
         dictNamelist: [],
