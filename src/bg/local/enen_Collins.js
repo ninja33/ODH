@@ -71,7 +71,7 @@ if (typeof enen_Collins == 'undefined') {
             let audios = sound ? [sound.dataset.srcMp3] : [];
             // make definition segement
             let definitions = [];
-            let defblocks = dictionary.querySelectorAll('.dictionary.Cob_Adv_Brit .hom') || [];
+            let defblocks = dictionary.querySelectorAll('.hom') || [];
             for (const defblock of defblocks) {
                 let pos = T(defblock.querySelector('.pos'));
                 pos = pos ? `<span class="pos">${pos}</span>` : '';

@@ -69,6 +69,14 @@
         "message": "单词字段",
         "description": "label text for 'Expression' on optipon page."
     },
+    "optReading":{
+        "message": "音标字段",
+        "description": "label text for 'Reading'."
+    },
+    "optExtraInfo":{
+        "message": "额外字段",
+        "description": "label text for 'Extra Info'."
+    },
     "optDefinition":{
         "message": "释义字段",
         "description": "label text for 'Definition' on optipon page."

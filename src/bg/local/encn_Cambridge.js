@@ -53,14 +53,10 @@ if (typeof encn_Cambridge == 'undefined') {
 
             let url = this.resourceURL(word);
             let data = await this.onlineQuery(url);
-            let regexp = /(<div class="cdo-dblclick-area">(.|[\r\n])+)<div class="definition-src">/gi;
-            let match = regexp.exec(data);
-            if (!match) return notes; // return empty notes
+            let parser = new DOMParser(),
+            doc = parser.parseFromString(data, "text/html");
 
-            let doc = document.createElement("div");
-            doc.innerHTML = match[1];
-
-            let entries = doc.querySelectorAll('.entry-body__el') || [];
+            let entries = doc.querySelectorAll('.cdo-dblclick-area .entry-body__el') || [];
             for (const entry of entries) {
                 let definitions = [];
                 let audios = [];

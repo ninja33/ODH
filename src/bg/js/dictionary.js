@@ -18,8 +18,8 @@ class Dictlib {
             this.list = this.default;
             this.dicts = {};
             if (remotelist)
-                await this.loadLibrary([remotelist].map(this.pathMapping));
-            await this.loadLibrary(this.list.map(this.pathMapping));
+                await this.loadScript([remotelist].map(this.pathMapping));
+            await this.loadScript(this.list.map(this.pathMapping));
         }
         let selected = this.options.dictSelected;
         selected = (selected in this.dicts) ? selected : chrome.i18n.getMessage('encn_Youdao');
@@ -47,7 +47,7 @@ class Dictlib {
         return !this.lastoptions || (this.lastoptions.dictLibrary != remotelist);
     }
 
-    async loadLibrary(path) {
+    async loadScript(path) {
         return new Promise((resolve, reject) => {
             loadjs(path, {
                 success: () => resolve(),
