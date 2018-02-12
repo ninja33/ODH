@@ -8,7 +8,7 @@ For the reason why comes this extension, you may check the detail [background](d
 
 ![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_640x400.png)
 
-What might set this extension apart is that the users can grab online dictionary content with their own customized script. For development detail, please check the [development guide](doc/development.md)
+What might set this extension apart is that the users can grab online dictionary content with their own customized script (running under extension development mode). For development detail, please check the [development guide](doc/development.md)
 
 ## How to use
 
@@ -51,7 +51,7 @@ The extension option page is divided in three sections.
 
 ## Use existing script or develop by yourself
 
-1. You can use exsiting dictionary scripts contributed by others in the [dictionaries list](dicts/README.md)
+1. You can use exsiting dictionary scripts in the [dictionaries list](doc/scriptlist.md)
 2. Or develop the script by yourself based on [development guide](doc/development.md) 
 3. Or raise an [issue](https://github.com/ninja33/ODH/issues) here if you really need help.
 
@@ -60,4 +60,4 @@ The extension option page is divided in three sections.
 Welcome pull request if you want to enhance this extension, or put your own script here as central repository.
 
 - the exntension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
-- the online dictionary script will go to [/dicts](https://github.com/ninja33/ODH/tree/master/dicts)
+- the online dictionary script will go to [/dicts](https://github.com/ninja33/ODH/tree/master/src/bg/local)

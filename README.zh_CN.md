@@ -6,7 +6,7 @@
 
 ![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_640x400.png)
 
-和其他弹窗类词典工具有所不同的是，本词典助手支持外部脚本，可以定制化脚本，以扩展插件功能抓取更多的网页词典。有关开发细节，详情可见 [开发指南](doc/development.zh_CN.md)
+本词典助手支持加载脚本，以扩展插件功能抓取更多的网页词典(插件以开发者模式运行)。有关开发细节，详情可见 [开发指南](doc/development.zh_CN.md)
 
 ## 使用说明
 
@@ -58,8 +58,8 @@ As for dictionary collins.com, actually it is not built-in dictionary, it is her
 
 ## 使用外部脚本
 
-1. 你可以选择别人预制的外部脚本，详见[[脚本清单](dicts/README.md)]。
-2. 也可以自行开发外部脚本并加载，详见[[开发指南](doc/development.md)]。
+1. 你可以选择预制的外部脚本，详见[[脚本清单](doc/scriptlist.md)]。
+2. 也可以自行开发脚本并加载，详见[[开发指南](doc/development.md)]。
 3. 如有任何问题和想法，你也可以提交[[issue](https://github.com/ninja33/ODH/issues)]。
 
 ## Pull request
@@ -67,4 +67,4 @@ As for dictionary collins.com, actually it is not built-in dictionary, it is her
 如果你想提交词典脚本或者改进插件本身，欢迎PR。
 
 - 插件源代码 [[/src](https://github.com/ninja33/ODH/tree/master/src)]。
-- 外部脚本代码 [[/dicts](https://github.com/ninja33/ODH/tree/master/dicts)]。
+- 外部脚本代码 [[/dicts](https://github.com/ninja33/ODH/tree/master/src/bg/local)]。

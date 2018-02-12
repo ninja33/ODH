@@ -14,7 +14,7 @@ class Dictlib {
     async loadDict() {
         let dictslist = this.options.dictLibrary;
         if (this.pathChanged(dictslist)) {
-            this.list = ['odh://encn_Youdao'];
+            this.list = ['encn_Youdao'];
             this.dicts = {};
             if (dictslist)
                 await this.loadScript([dictslist].map(this.pathMapping));
@@ -28,16 +28,7 @@ class Dictlib {
     }
 
     pathMapping(path) {
-        let paths = {
-            'odh://': 'local/',
-            //'lib://': 'https://rawgit.com/ninja33/ODH/master/dicts/',
-            //'git://': 'https://rawgit.com/',
-        }
-
-        for (const key of Object.keys(paths)) {
-            path = (path.indexOf(key) != -1) ? paths[key] + path.replace(key, '') : path;
-        }
-
+        path = 'local/' + path;
         path = (path.indexOf('.js') == -1) ? path + '.js' : path;
         return path;
     }
