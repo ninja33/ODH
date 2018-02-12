@@ -19,23 +19,17 @@ div.option-head {
     padding: 2px 10px 1px;
 }
 
-.general-option-title {
-    margin: auto 0;
-}
-
-.general-option-help {
+.option-helps {
     float: right;
 }
 
-.general-option-help a {
+.option-helps a {
     color: white;
     text-decoration: none;
 }
 
-.general-option-help a:visited,
-.general-option-help a:hover {
-    text-decoration: none;
-    color: white;
+.general-option-title {
+    margin: auto 0;
 }
 
 section {

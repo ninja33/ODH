@@ -14,12 +14,12 @@ class Dictlib {
 
     async loadDict() {
         let remotelist = this.options.dictLibrary;
-        if (this.pathChanged(remotelist)){
+        if (this.pathChanged(remotelist)) {
             this.list = this.default;
             this.dicts = {};
-            if (remotelist) 
-                await this.loadRemote(remotelist);
-            await this.loadRemote(this.list);
+            if (remotelist)
+                await this.loadLibrary([remotelist].map(this.pathMapping));
+            await this.loadLibrary(this.list.map(this.pathMapping));
         }
         let selected = this.options.dictSelected;
         selected = (selected in this.dicts) ? selected : chrome.i18n.getMessage('encn_Youdao');
@@ -28,11 +28,26 @@ class Dictlib {
         return this.options;
     }
 
-    pathChanged(remotelist){
+    pathMapping(path) {
+        let paths = {
+            'odh://': 'local/',
+            'lib://': 'https://rawgit.com/ninja33/ODH/master/dicts/',
+            'git://': 'https://rawgit.com/',
+        }
+
+        for (const key of Object.keys(paths)) {
+            path = (path.indexOf(key) != -1) ? paths[key] + path.replace(key, '') : path;
+        }
+
+        path = (path.indexOf('.js') == -1) ? path + '.js' : path;
+        return path;
+    }
+
+    pathChanged(remotelist) {
         return !this.lastoptions || (this.lastoptions.dictLibrary != remotelist);
     }
 
-    async loadRemote(path) {
+    async loadLibrary(path) {
         return new Promise((resolve, reject) => {
             loadjs(path, {
                 success: () => resolve(),

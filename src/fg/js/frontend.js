@@ -182,7 +182,7 @@ class AODHFront {
             css: '',
             expression,
             reading: '',
-            extra: '',
+            extrainfo: '',
             definitions: ["No definition!"],
             sentence,
         };
@@ -219,7 +219,7 @@ class AODHFront {
                 <div class="odh-headsection">${audiosegment}
                     <span class="odh-expression">${note.expression}</span>
                     <span class="odh-reading">${note.reading}</span>
-                    <span class="odh-extra">${note.extra}</span>
+                    <span class="odh-extra">${note.extrainfo}</span>
                 </div>`;
             for (const [dindex, definition] of note.definitions.entries()) {
                 content += `

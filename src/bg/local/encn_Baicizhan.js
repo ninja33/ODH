@@ -89,10 +89,10 @@ if (typeof encn_Baicizhan == 'undefined') {
             let expression = data.ec.word[0]['return-phrase'].l.i;
             let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
 
-            let extra = '';
+            let extrainfo = '';
             let types = data.ec.exam_type || [];
             for (const type of types) {
-                extra += `<span class="examtype">${type}</span>`
+                extrainfo += `<span class="examtype">${type}</span>`
             }
 
             let definition = '<ul class="ec">';
@@ -110,7 +110,7 @@ if (typeof encn_Baicizhan == 'undefined') {
                 css,
                 expression,
                 reading,
-                extra,
+                extrainfo,
                 definitions: [definition],
             });
             return notes;

@@ -32,30 +32,35 @@ async function populateAnkiFields(){
     if (modelName === null) {
         return;
     }
-    
-    $('#word').empty();
-    $('#defs').empty();
-    $('#sent').empty();
-    let names = await odhback().api_getModelFieldNames(modelName);
-    if (names !== null) {
-        names.forEach(name => $('#word').append($('<option>', {value: name, text: name})));
-        names.forEach(name => $('#defs').append($('<option>', {value: name, text: name})));
-        names.forEach(name => $('#sent').append($('<option>', {value: name, text: name})));
+
+    let fields ={
+        '#word':opts.expression,
+        '#read':opts.reading,
+        '#extr':opts.extrainfo,
+        '#defs':opts.definition,
+        '#sent':opts.sentence,
     }
-    $('#word').val(opts.expression);
-    $('#defs').val(opts.definition);
-    $('#sent').val(opts.sentence);
+
+    for (const key of Object.keys(fields)) {
+        $(key).empty();
+    }
+    let names = await odhback().api_getModelFieldNames(modelName);
+    if (names == null) return;
+    for (const key of Object.keys(fields)) {
+        names.forEach(name => $(key).append($('<option>', {value: name, text: name})));
+        $(key).val(fields[key]);
+    }
 }
 
 async function updateAnkiStatus() {
-    $('#anki-options-status').text('Connecting to Anki ...');
+    $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnecting'));
     let version = await odhback().api_getVersion();
     if (version === null) {
         $('#anki-options-params').hide();
-        $('#anki-options-status').text('Status: Ankiconnect was not actived!');
+        $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnectedFail'));
     } else {
         $('#anki-options-params').show();
-        $('#anki-options-status').text(`Status: Ankiconnect (version ${version}) was actived.`);
+        $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnectedSuccess',[version]));
     }
 }
 
@@ -84,6 +89,8 @@ async function onOKClicked(e) {
     options.deckname = $('#deck').val();
     options.typename = $('#type').val();
     options.expression = $('#word').val();
+    options.reading = $('#read').val();
+    options.extrainfo = $('#extr').val();
     options.definition = $('#defs').val();
     options.sentence = $('#sent').val();
 
@@ -117,6 +124,8 @@ async function onReady() {
     $('#deck').val(opts.deckname);
     $('#type').val(opts.typename);
     $('#word').val(opts.expression);
+    $('#read').val(opts.reading);
+    $('#extr').val(opts.extrainfo);
     $('#defs').val(opts.definition);
     $('#sent').val(opts.sentence);
 

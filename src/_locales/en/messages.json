@@ -39,6 +39,24 @@
         "message": "Max. Example #",
         "description": "label text for 'Max Example  Number' option list."
     },
+    "optAnkiConnecting":{
+        "message": "Status: Connecting to Anki ...",
+        "description": "label text for Anki status: Connecting."
+    },
+    "optAnkiConnectedFail":{
+        "message": "Status: Ankiconnect was not actived!",
+        "description": "label text for Anki status: Failed."
+    },
+    "optAnkiConnectedSuccess":{
+        "message": "Status: Ankiconnect (version: $VERSION$) was actived.",
+        "description": "label text for Anki status: Success.",
+        "placeholders": {
+            "version": {
+              "content": "$1",
+              "example": "Ankiconnect version number, like 1, 2, 5 ..."
+            }
+        }
+    },
     "optDeckName":{
         "message": "Deck Name",
         "description": "label text for 'Deck Name'."
@@ -55,6 +73,14 @@
         "message": "Expression",
         "description": "label text for 'Expression'."
     },
+    "optReading":{
+        "message": "Reading",
+        "description": "label text for 'Reading'."
+    },
+    "optExtraInfo":{
+        "message": "ExtraInfo",
+        "description": "label text for 'Extra Info'."
+    },
     "optDefinition":{
         "message": "Definition",
         "description": "label text for 'Definition'."
@@ -64,7 +90,7 @@
         "description": "label text for 'Sentence'."
     },
     "optRepository":{
-        "message": "Repository",
+        "message": "Dicts. Script",
         "description": "label text for 'Repository'."
     },
     "optDictionaries":{
@@ -72,7 +98,7 @@
         "description": "label text for 'Dictionaries'."
     },
     "optLoad":{
-        "message": "Load Repos.",
+        "message": "Load Script",
         "description": "for 'Load' button."
     },
     "optOK":{

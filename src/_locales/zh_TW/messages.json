@@ -39,6 +39,24 @@
         "message": "最大例句數量",
         "description": "label text for 'Max Example  Number' option list."
     },
+    "optAnkiConnecting":{
+        "message": "狀態: 嘗試連接Anki ...",
+        "description": "label text for Anki status: Connecting."
+    },
+    "optAnkiConnectedFail":{
+        "message": "狀態: 連接Anki失敗，請打開Anki並安裝Ankiconnect",
+        "description": "label text for Anki status: Failed."
+    },
+    "optAnkiConnectedSuccess":{
+        "message": "狀態: 連接Ankiconnect(版本號:$VERSION$)成功。",
+        "description": "label text for Anki status: Success.",
+        "placeholders": {
+            "version": {
+              "content": "$1",
+              "example": "Ankiconnect version number, like 1, 2, 5 ..."
+            }
+        }
+    },
     "optDeckName":{
         "message": "牌組名稱",
         "description": "label text for 'Deck Name' on optipon page."
@@ -60,7 +78,7 @@
         "description": "label text for 'Sentence' on optipon page."
     },
     "optRepository":{
-        "message": "遠程腳本地址",
+        "message": "詞典腳本地址",
         "description": "label text for 'Repository' on optipon page."
     },
     "optDictionaries":{

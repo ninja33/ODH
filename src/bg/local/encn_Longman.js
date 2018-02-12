@@ -68,10 +68,10 @@ if (typeof encn_Longman == 'undefined') {
 
                 let audios = T(header.VIDEOCAL) ? [T(header.VIDEOCAL)] : [];
 
-                let extra = T(header.GRAM) ? `<span class='head_gram'>${T(header.GRAM)}</span>` : '';
+                let extrainfo = T(header.GRAM) ? `<span class='head_gram'>${T(header.GRAM)}</span>` : '';
                 let freqs = header.FREQ || [];
                 for (const freq of freqs) {
-                    extra += `<span class="head_freq">${freq}</span>`;
+                    extrainfo += `<span class="head_freq">${freq}</span>`;
                 }
 
                 let pos = T(header.POS) ? `<span class='pos'>${T(header.POS)}</span>` : '';
@@ -122,7 +122,7 @@ if (typeof encn_Longman == 'undefined') {
                     css,
                     expression,
                     reading,
-                    extra,
+                    extrainfo,
                     definitions,
                     audios
                 });
@@ -143,10 +143,10 @@ if (typeof encn_Longman == 'undefined') {
             let expression = data.ec.word[0]['return-phrase'].l.i;
             let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
 
-            let extra = '';
+            let extrainfo = '';
             let types = data.ec.exam_type || [];
             for (const type of types) {
-                extra += `<span class="examtype">${type}</span>`
+                extrainfo += `<span class="examtype">${type}</span>`
             }
 
             let definition = '<ul class="ec">';
@@ -164,7 +164,7 @@ if (typeof encn_Longman == 'undefined') {
                 css,
                 expression,
                 reading,
-                extra,
+                extrainfo,
                 definitions: [definition],
             });
             return notes;

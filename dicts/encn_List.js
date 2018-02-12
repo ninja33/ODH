@@ -1,6 +1,6 @@
 registerList([
-    'local/encn_Oxford.js',
-    'local/encn_Longman.js',
-    'local/encn_Collins.js',
-    'local/encn_Cambridge.js',
+    'odh://encn_Oxford.js',
+    'odh://encn_Longman.js',
+    'odh://encn_Collins.js',
+    'odh://encn_Cambridge.js',
 ]);

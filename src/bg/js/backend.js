@@ -7,7 +7,7 @@ class AODHBack {
         optionsLoad().then((opts) => {
             this.api_updateOptions({
                 options: opts,
-                callback: newOptions => 
+                callback: newOptions =>
                     optionsSave(newOptions),
             });
         });
@@ -19,11 +19,15 @@ class AODHBack {
 
     onInstalled(details) {
         if (details.reason === 'install') {
-            chrome.tabs.create({url: chrome.extension.getURL('bg/guide.html')});
+            chrome.tabs.create({
+                url: chrome.extension.getURL('bg/guide.html')
+            });
             return;
         }
         if (details.reason === 'update') {
-            chrome.tabs.create({url: chrome.extension.getURL('bg/update.html')});
+            chrome.tabs.create({
+                url: chrome.extension.getURL('bg/update.html')
+            });
             return;
         }
     }
@@ -84,7 +88,7 @@ class AODHBack {
 
     formatNote(notedef) {
         let options = this.options;
-        if (!options.expression || !options.definition)
+        if (!options.deckname || !options.typename || !options.expression || !options.definition)
             return null;
 
         let note = {
@@ -94,15 +98,10 @@ class AODHBack {
             tags: ['anki-helper']
         };
 
-        note.fields[options.expression] = notedef.expression;
-        if (!options.sentence) {
-            note.fields[options.definition] = notedef.definition;
-        } else if (options.sentence == options.definition) {
-            notedef.definition += `<hr>${notedef.sentence}`;
-            note.fields[options.definition] = notedef.definition;
-        } else {
-            note.fields[options.definition] = notedef.definition;
-            note.fields[options.sentence] = notedef.sentence;
+        let fieldnames = ['expression','reading','extrainfo','definition','sentence']
+        for (const fieldname of fieldnames) {
+            if (!options[fieldname]) continue;
+            note.fields[options[fieldname]] = notedef[fieldname];
         }
         return note;
     }

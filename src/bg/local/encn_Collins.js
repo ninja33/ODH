@@ -65,7 +65,7 @@ if (typeof encn_Collins == 'undefined') {
 
                 let star = collins_entry.star || '';
                 extra_star = star ? `<span class="star">${'\u2605'.repeat(Number(star))}</span>` : '';
-                let extra = extra_star + extra_cet;
+                let extrainfo = extra_star + extra_cet;
 
                 audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
                 audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
@@ -99,7 +99,7 @@ if (typeof encn_Collins == 'undefined') {
                     css,
                     expression,
                     reading,
-                    extra,
+                    extrainfo,
                     definitions,
                     audios
                 });
@@ -120,10 +120,10 @@ if (typeof encn_Collins == 'undefined') {
             let expression = data.ec.word[0]['return-phrase'].l.i;
             let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
 
-            let extra = '';
+            let extrainfo = '';
             let types = data.ec.exam_type || [];
             for (const type of types) {
-                extra += `<span class="examtype">${type}</span>`
+                extrainfo += `<span class="examtype">${type}</span>`
             }
 
             let definition = '<ul class="ec">';
@@ -141,7 +141,7 @@ if (typeof encn_Collins == 'undefined') {
                 css,
                 expression,
                 reading,
-                extra,
+                extrainfo,
                 definitions: [definition],
             });
             return notes;

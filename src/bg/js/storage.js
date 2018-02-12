@@ -9,8 +9,11 @@ function sanitizeOptions(options) {
         deckname: 'Default',
         typename: 'Basic',
         expression: 'Front',
+        reading: '',
+        extrainfo: '',
         definition: 'Back',
         sentence: 'Back',
+
 
         dictLibrary: 'local/encn_List.js',
 

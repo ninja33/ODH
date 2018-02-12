@@ -13,7 +13,7 @@
         <form>
             <div class="option-head general-option-head">
                 <span class="general-option-title" data-i18n="optGeneralOptionTitle">General Options</span>
-                <span class="general-option-help"><a href="https://github.com/ninja33/anki-online-dict-helper/blob/master/README.md" target="_blank">?</a></span>
+                <span class="option-helps"><a href="https://github.com/ninja33/ODH/blob/master/README.md" target="_blank">?</a></span>
             </div>
             <section class="general-options right">
                 <label data-i18n="optMaxContext">Max. Context #</label>
@@ -51,6 +51,7 @@
 
             <div class="option-head anki-option-head">
                     <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
+                    <span class="option-helps"><a href="https://github.com/FooSoft/anki-connect" target="_blank">?</a></span>
             </div>
             <section class="anki-options">
                 <div id="anki-options-params">
@@ -64,6 +65,14 @@
 
                     <label for="word" id="expression" data-i18n="optExpression">Expression</label>
                     <select id="word">
+                    </select>
+
+                    <label for="read" id="reading" data-i18n="optReading">Reading</label>
+                    <select id="read">
+                    </select>
+
+                    <label for="extr" id="extrainfo" data-i18n="optExtraInfo">ExtraInfo</label>
+                    <select id="extr">
                     </select>
 
                     <label for="defs" id="definition" data-i18n="optDefinition">Definition</label>
@@ -81,6 +90,7 @@
 
             <div class="option-head dictionary-head">
                 <span class="dictionary-option-title" data-i18n="optDictionaryOptionTitle">Dictionary Options</span>
+                <span class="option-helps"><a href="https://github.com/ninja33/ODH/blob/master/dicts/README.md" target="_blank">?</a></span>
             </div>
             <section class="dictionary-options">
                 <label for="repo" data-i18n="optRepository">Repository</label>
