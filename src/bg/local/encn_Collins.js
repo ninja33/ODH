@@ -70,6 +70,7 @@ if (typeof encn_Collins == 'undefined') {
                 audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
                 audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
+                if (!collins_entry.entries) continue;
                 for (const entry of collins_entry.entries.entry) {
                     for (const tran_entry of entry.tran_entry) {
                         let definition = '';

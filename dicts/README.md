@@ -16,7 +16,7 @@ prefix **lib://** = script located in *THIS* git repository
 
 prefix **git://** = script located in **your own** git repository
 
-- example: git://your-name/your-repo/your-branch/encn_Youdao means loading a script in this your own repository at `https://rawgit.com/your-name/your-repo/your-branch/encn_Youdao.js`
+- example: git://your-name/your-repo/your-branch/encn_Youdao means loading a script in your own repository at `https://rawgit.com/your-name/your-repo/your-branch/encn_Youdao.js`
 
 **Note: You don't need put .js at the end of script name.**
 
@@ -31,22 +31,22 @@ prefix **git://** = script located in **your own** git repository
 |EN|CN|Longman|odh://encn_Longman|
 |EN|CN|Collins|odh://encn_Collinsn|
 |EN|CN|Cambridge|odh://encn_Cambridge|
+|FR|CN|Youdao|lib://frcn_Youdao|
 
-## Source Language: English
+## Target Language: English
 
 |Source|Target|Descrition|Path|
 |---|---|---|---|
 |EN|EN|UrbanDict|odh://enen_UrbanDict|
 |EN|EN|Collins|lib://enen_Collins|
-|EN|FR|Collins|lib://enfr_Collins|
-|EN|FR|Cambridge|lib://enfr_Cambridge|
+|FR|EN|Cambridge|lib://fren_Cambridge|
+|FR|EN|Collins|lib://fren_Collins|
 
-## Source Language: French
+## Target Language: French
 
 |Source|Target|Descrition|Path|
 |---|---|---|---|
-|FR|CN|Youdao|lib://frcn_Youdao|
-|FR|EN|Collins|lib://fren_Collins|
-|FR|EN|Cambridge|lib://fren_Cambridge|
+|EN|FR|Cambridge|lib://enfr_Cambridge|
+|EN|FR|Collins|lib://enfr_Collins|
 
 More ...
