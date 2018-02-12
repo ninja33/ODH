@@ -1,6 +1,6 @@
 registerList([
-    'odh://encn_Oxford',
-    'odh://encn_Longman',
-    'odh://encn_Collins',
-    'odh://encn_Cambridge',
+    'encn_Oxford',
+    'encn_Longman',
+    'encn_Collins',
+    'encn_Cambridge',
 ]);
