@@ -2,7 +2,6 @@ class Dictlib {
     constructor() {
         this.options = null;
         this.lastoptions = null;
-        this.default = ['odh://encn_Youdao'];
         this.list = [];
         this.dicts = {};
     }
@@ -13,12 +12,12 @@ class Dictlib {
     }
 
     async loadDict() {
-        let remotelist = this.options.dictLibrary;
-        if (this.pathChanged(remotelist)) {
-            this.list = this.default;
+        let dictslist = this.options.dictLibrary;
+        if (this.pathChanged(dictslist)) {
+            this.list = ['odh://encn_Youdao'];
             this.dicts = {};
-            if (remotelist)
-                await this.loadScript([remotelist].map(this.pathMapping));
+            if (dictslist)
+                await this.loadScript([dictslist].map(this.pathMapping));
             await this.loadScript(this.list.map(this.pathMapping));
         }
         let selected = this.options.dictSelected;
@@ -31,8 +30,8 @@ class Dictlib {
     pathMapping(path) {
         let paths = {
             'odh://': 'local/',
-            'lib://': 'https://rawgit.com/ninja33/ODH/master/dicts/',
-            'git://': 'https://rawgit.com/',
+            //'lib://': 'https://rawgit.com/ninja33/ODH/master/dicts/',
+            //'git://': 'https://rawgit.com/',
         }
 
         for (const key of Object.keys(paths)) {
