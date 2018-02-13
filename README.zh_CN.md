@@ -4,7 +4,7 @@
 
 有关制作该工具的缘由细节，详情可见[背景](doc/background.zh_CN.md)介绍。
 
-![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_640x400.png)
+![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_001_640x400.png)
 
 本词典助手支持加载脚本，以扩展插件功能抓取更多的网页词典(插件以开发者模式运行)。有关开发细节，详情可见 [开发指南](doc/development.zh_CN.md)
 
@@ -44,7 +44,7 @@
     - 脚本地址: 在此处可输入脚本地址，并点击**加载脚本**按钮加载。加载后可在下方词典列表中选择新加载词典。
     - 当前词典: 显示所有插件内置和外部加载的词典名称，用于选择当前划词翻译所用词典。
 
-![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/options.png)
+![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400.png)
 
 ## 使用其他脚本
 

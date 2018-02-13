@@ -6,7 +6,7 @@ Online Dictionary Helper is a chrome extension to show online dictionary content
 
 For the reason why comes this extension, you may check the detail [background](doc/background.md) if you are interested.
 
-![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_640x400.png)
+![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_001_640x400.png)
 
 What might set this extension apart is that the users can grab online dictionary content with their own customized script (running under extension development mode). For development detail, please check the [development guide](doc/development.md)
 
@@ -33,7 +33,7 @@ The extension option page is divided in three sections.
     - Dictioanry Scrip: Input your own script name here, and click <kbd>Load Script</kbd> button to load it.
     - Selected Dictionary: Here will display all available dictionaries (buildin or loaded), and please select what current dictionary you want to use.
 
-![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/options.png)
+![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400.png)
 
 ## Use existing script or develop by yourself
 

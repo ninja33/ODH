@@ -1,5 +1,7 @@
 # Dictionaries script list
 
+[[简体中文版](scriptlist.zh_CN.md)]
+
 Here is existing dictionaries script list. You can copy script name in name column and paste it in option page **Dicts. Script** field. Click <kbd>Load Script</kbd> button to load.
 
 ## Target Language: Chinese
