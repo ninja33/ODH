@@ -1,10 +1,10 @@
 # Dictionaries script list
 
-Here is existing dictionaries script list. You can copy script path in path column and paste it in option page **Dicts. Script** field. Click <kbd>Load Script</kbd> button to load.
+Here is existing dictionaries script list. You can copy script name in name column and paste it in option page **Dicts. Script** field. Click <kbd>Load Script</kbd> button to load.
 
 ## Target Language: Chinese
 
-|Source|Target|Descrition|Path|
+|Source|Target|Descrition|Name|
 |---|---|---|---|
 |EN|CN|Bundle|encn_List|
 |EN|CN|Youdao|encn_Youdao|
@@ -17,7 +17,7 @@ Here is existing dictionaries script list. You can copy script path in path colu
 
 ## Target Language: English
 
-|Source|Target|Descrition|Path|
+|Source|Target|Descrition|Name|
 |---|---|---|---|
 |EN|EN|UrbanDict|enen_UrbanDict|
 |EN|EN|Collins|enen_Collins|
@@ -26,7 +26,7 @@ Here is existing dictionaries script list. You can copy script path in path colu
 
 ## Target Language: French
 
-|Source|Target|Descrition|Path|
+|Source|Target|Descrition|Name|
 |---|---|---|---|
 |EN|FR|Cambridge|enfr_Cambridge|
 |EN|FR|Collins|enfr_Collins|
