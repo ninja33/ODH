@@ -60,7 +60,7 @@ registerList([
 ]);
 ```
 
-You can find the dictionary script source code sample under [/dicts](https://github.com/ninja33/ODH/master/dicts) of this repository.
+You can find the dictionary script source code sample under [/dicts](https://github.com/ninja33/ODH/tree/master/src/bg/local) of this repository.
 
 ## Security issue
 
