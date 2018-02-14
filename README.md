@@ -33,7 +33,7 @@ The extension option page is divided in three sections.
     - Dictioanry Scrip: Input your own script name here, and click <kbd>Load Script</kbd> button to load it.
     - Selected Dictionary: Here will display all available dictionaries (buildin or loaded), and please select what current dictionary you want to use.
 
-![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400.png)
+![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400_en.png)
 
 ## Use existing script or develop by yourself
 
