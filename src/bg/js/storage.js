@@ -15,7 +15,7 @@ function sanitizeOptions(options) {
         sentence: 'Back',
 
 
-        dictLibrary: 'encn_List',
+        dictLibrary: 'encn_Longman, encn_Cambridge',
 
         dictSelected: '',
         dictNamelist: [],

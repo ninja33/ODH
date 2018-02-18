@@ -53,8 +53,8 @@ if (typeof encn_Cambridge == 'undefined') {
 
             let url = this.resourceURL(word);
             let data = await this.onlineQuery(url);
-            let parser = new DOMParser(),
-            doc = parser.parseFromString(data, "text/html");
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(data, "text/html");
 
             let entries = doc.querySelectorAll('.cdo-dblclick-area .entry-body__el') || [];
             for (const entry of entries) {

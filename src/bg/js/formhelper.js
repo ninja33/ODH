@@ -5,32 +5,15 @@ class Formhelper {
     }
 
     async loadData() {
-        this.wordforms = await Formhelper.loadData(this.path);
+        try {
+            this.wordforms = JSON.parse(await onlineQuery(this.path));
+        } catch (err) {
+            this.wordforms = null;
+        }
     }
 
     deinflect(term) {
-        return this.wordforms[term]?this.wordforms[term]:null;
-    }
-
-    static async loadData(path) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: path,
-                type: "GET",
-                dataType: "json",
-                timeout: 5000,
-                error: (xhr, status, error) => {
-                    reject(error);
-                },
-                success: (data, status) => {
-                    if (data) {
-                        resolve(data);
-                    } else {
-                        reject(new Error('Not Found!'));
-                    }
-                }
-            });
-        });
+        return this.wordforms[term] ? this.wordforms[term] : null;
     }
 
 }

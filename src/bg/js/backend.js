@@ -1,16 +1,9 @@
 class AODHBack {
     constructor() {
         this.options = null;
-        this.translator = null;
         this.target = new Ankiconnect();
         this.dictlib = new Dictlib();
-        optionsLoad().then((opts) => {
-            this.api_updateOptions({
-                options: opts,
-                callback: newOptions =>
-                    optionsSave(newOptions),
-            });
-        });
+
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
         chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
         chrome.tabs.onCreated.addListener((tab) => this.onTabReady(tab.id));
@@ -42,7 +35,6 @@ class AODHBack {
             params.callback = callback;
             method.call(this, params);
         }
-
         return true;
     }
 
@@ -98,12 +90,20 @@ class AODHBack {
             tags: ['anki-helper']
         };
 
-        let fieldnames = ['expression','reading','extrainfo','definition','sentence']
+        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'sentence']
         for (const fieldname of fieldnames) {
             if (!options[fieldname]) continue;
             note.fields[options[fieldname]] = notedef[fieldname];
         }
         return note;
+    }
+
+    async api_sandboxLoaded(params) {
+        let opts = await optionsLoad();
+        this.api_updateOptions({
+            options: opts,
+            callback: newOptions => optionsSave(newOptions),
+        });
     }
 
     async api_updateOptions(params) {
@@ -115,23 +115,21 @@ class AODHBack {
         this.setOptions(options);
         this.dictlib.setOptions(options);
         let newOptions = await this.dictlib.loadDict();
-        let dictionaries = this.dictlib.dicts;
-        let selected = newOptions.dictSelected;
-        this.translator = new dictionaries[selected](newOptions);
         callback(newOptions);
     }
 
-    api_getTranslation(params) {
+    async api_getTranslation(params) {
         let {
             expression,
             callback
         } = params;
 
-        this.translator.findTerm(expression).then(result => {
+        try {
+            let result = await this.dictlib.findTerm(expression);
             callback(result);
-        }).catch(error => {
+        } catch (err) {
             callback(null);
-        });
+        }
     }
 
     api_addNote(params) {
