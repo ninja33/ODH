@@ -1,4 +1,4 @@
-class AODHFront {
+class ODHFront {
 
     constructor() {
         this.options = null;
@@ -259,4 +259,4 @@ class AODHFront {
     }
 }
 
-window.aodhfront = new AODHFront();
+window.odhfront = new ODHFront();

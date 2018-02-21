@@ -1,24 +1,14 @@
-function odhback(){
-    return chrome.extension.getBackgroundPage().aodhback
-}
-
-function localizeHtmlPage(){
-    for (const el of document.querySelectorAll('[data-i18n]')) {
-        el.innerHTML = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
-    }
-}
-
 async function populateAnkiDeckAndModel(opts) {
     let names = [];
     $('#deck').empty();
-    names = await odhback().api_getDeckNames();
+    names = await odhback().opt_getDeckNames();
     if (names !== null) {
         names.forEach(name => $('#deck').append($('<option>', {value: name, text: name})));
     }
     $('#deck').val(opts.deckname);
 
     $('#type').empty();
-    names = await odhback().api_getModelNames();
+    names = await odhback().opt_getModelNames();
     if (names !== null) {
         names.forEach(name => $('#type').append($('<option>', {value: name, text: name})));
         //populateAnkiFields($('#anki-vocab-model').val(opts.ankiVocabModel), opts);
@@ -44,7 +34,7 @@ async function populateAnkiFields(){
     for (const key of Object.keys(fields)) {
         $(key).empty();
     }
-    let names = await odhback().api_getModelFieldNames(modelName);
+    let names = await odhback().opt_getModelFieldNames(modelName);
     if (names == null) return;
     for (const key of Object.keys(fields)) {
         names.forEach(name => $(key).append($('<option>', {value: name, text: name})));
@@ -54,7 +44,7 @@ async function populateAnkiFields(){
 
 async function updateAnkiStatus() {
     $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnecting'));
-    let version = await odhback().api_getVersion();
+    let version = await odhback().opt_getVersion();
     if (version === null) {
         $('#anki-options-params').hide();
         $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnectedFail'));
@@ -97,13 +87,11 @@ async function onOKClicked(e) {
     options.dictLibrary = $('#repo').val();
     options.dictSelected = $('#dict').val();
 
-    chrome.runtime.sendMessage({action:'updateOptions', params:{options}}, (newOptions) => {
-        populateDictionary(newOptions.dictNamelist);
-        $('#dict').val(newOptions.dictSelected);
-        optionsSave(newOptions);
-        if (e.target.id == 'ok')
-            window.close();
-    });
+    let newOptions = await odhback().opt_optionsChanged(options);
+    populateDictionary(newOptions.dictNamelist);
+    $('#dict').val(newOptions.dictSelected);
+    if (e.target.id == 'ok')
+        window.close();
 }
 
 function onCancelClicked(e) {
@@ -146,9 +134,3 @@ async function onReady() {
 }
 
 $(document).ready(utilAsync(onReady));
-
-function utilAsync(func) {
-    return function(...args) {
-        func.apply(this, args);
-    };
-}

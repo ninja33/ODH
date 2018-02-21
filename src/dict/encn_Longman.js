@@ -17,7 +17,7 @@ class encn_Longman {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = formhelper.deinflect(word);
+        let deflection = await deInflect(word);
         let results = await Promise.all([this.findLongman(word), this.findLongman(deflection), this.findEC(word)]);
         return [].concat(...results);
     }

@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "在線詞典助手",
+        "message": "在線詞典助手 (沙盒版)",
         "description": "The title of the application, displayed in the web store."
     },
     "appDesc": {
@@ -8,7 +8,7 @@
         "description": "The description of the application, displayed in the web store."
     },
     "optTitle":{
-        "message": "在線詞典助手",
+        "message": "在線詞典助手 (沙盒版)",
         "description": "label text for 'Title' on optipon page."
     },
     "optGeneralOptionTitle":{

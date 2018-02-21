@@ -1,4 +1,3 @@
-
 function sanitizeOptions(options) {
     const defaults = {
         enabled: false,
@@ -15,7 +14,7 @@ function sanitizeOptions(options) {
         sentence: 'Back',
 
 
-        dictLibrary: 'encn_Longman, encn_Cambridge',
+        dictLibrary: 'encn_Oxford, encn_Longman, encn_Collins, encn_Cambridge',
 
         dictSelected: '',
         dictNamelist: [],
@@ -42,4 +41,20 @@ async function optionsSave(options) {
     return new Promise((resolve, reject)=>{
         chrome.storage.local.set(sanitizeOptions(options), resolve());
     });
+}
+
+function utilAsync(func) {
+    return function (...args) {
+        func.apply(this, args);
+    };
+}
+
+function odhback() {
+    return chrome.extension.getBackgroundPage().odhback
+}
+
+function localizeHtmlPage() {
+    for (const el of document.querySelectorAll('[data-i18n]')) {
+        el.innerHTML = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
+    }
 }

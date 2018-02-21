@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "__MSG_appName__",
-    "version": "0.2",
+    "version": "0.1",
     "default_locale": "en",
     "description": "__MSG_appDesc__",
     "icons": {
@@ -14,7 +14,7 @@
             "19": "img/icon19.png",
             "38": "img/icon38.png"
         },
-        "default_popup": "bg/action.html"
+        "default_popup": "bg/popup.html"
     },
     "author": "Zhenyu Huang",
     "background": {
@@ -36,7 +36,7 @@
     },
     "permissions": ["file://*/*", "http://*/*", "https://*/*", "storage"],
     "sandbox": {
-        "pages": ["bg/sandbox.html"]
+        "pages": ["bg/sandbox/sandbox.html"]
     },
     "web_accessible_resources": [
         "fg/css/frame.css",

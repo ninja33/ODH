@@ -17,7 +17,7 @@ class encn_Baicizhan {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = formhelper.deinflect(word);
+        let deflection = await deInflect(word);
         deflection = deflection ? deflection : word;
         let results = await Promise.all([this.findBaicizhan(deflection), this.findEC(word)]);
         return [].concat(...results);

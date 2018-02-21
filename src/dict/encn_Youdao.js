@@ -17,7 +17,7 @@ class encn_Youdao {
     
     async findTerm(word) {
         this.word = word;
-        let deflection = formhelper.deinflect(word);
+        let deflection = await deInflect(word);
         let results = await Promise.all([this.findEC(deflection), this.findEC(word)]);
         return [].concat(...results);
     }

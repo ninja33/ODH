@@ -1,8 +1,14 @@
-class AODHBack {
+class ODHBack {
     constructor() {
         this.options = null;
+        this.lastoptions = null;
+
         this.target = new Ankiconnect();
-        this.dictlib = new Dictlib();
+        this.deinflector = new Deinflector();
+        this.deinflector.loadData();
+
+        this.list = [];
+        this.agent = new Agent();
 
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
         chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
@@ -45,7 +51,9 @@ class AODHBack {
     }
 
     setOptions(options) {
+        this.lastoptions = this.options;
         this.options = options;
+
         switch (options.enabled) {
             case false:
                 chrome.browserAction.setBadgeText({
@@ -98,24 +106,67 @@ class AODHBack {
         return note;
     }
 
-    async api_sandboxLoaded(params) {
-        let opts = await optionsLoad();
-        this.api_updateOptions({
-            options: opts,
-            callback: newOptions => optionsSave(newOptions),
-        });
+    async loadDict() {
+        let path = this.options.dictLibrary;
+        if (this.pathChanged(path)) {
+            const loadingpath = Array.from(new Set(['encn_Youdao'].concat(path.split(',').filter(x => x).map(x => x.trim()))));
+            this.list = await this.loadDictionaries(loadingpath.map(this.pathMapping));
+        }
+        let selected = this.options.dictSelected;
+        selected = this.list.includes(selected) ? selected : 'encn_Youdao';
+        this.options.dictSelected = selected;
+        this.options.dictNamelist = this.list;
+        await this.setDictOptions(this.options);
+        return this.options;
     }
 
-    async api_updateOptions(params) {
+
+    pathMapping(path) {
+        let gitbase = 'https://raw.githubusercontent.com/';
+
+        if ((path.indexOf('lib://') != -1) || (path.indexOf('git://') != -1)) {
+            path = (path.indexOf('lib://') != -1) ? gitbase + 'ninja33/ODH/master/src/dict/' + path.replace('lib://', '') : path;
+            path = (path.indexOf('git://') != -1) ? gitbase + path.replace('git://', '') : path;
+        } else {
+            path = chrome.runtime.getURL('dict/' + path);
+        }
+        path = (path.indexOf('.js') == -1) ? path + '.js' : path;
+        return path;
+    }
+
+    pathChanged(path) {
+        return !this.lastoptions || (this.lastoptions.dictLibrary != path);
+    }
+
+    async api_sandboxLoaded(params) {
+        let options = await optionsLoad();
+        this.opt_optionsChanged(options);
+    }
+
+    async api_onlineQuery(params) {
         let {
-            options,
+            url,
             callback
         } = params;
 
-        this.setOptions(options);
-        this.dictlib.setOptions(options);
-        let newOptions = await this.dictlib.loadDict();
-        callback(newOptions);
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        xhr.timeout = 5000;
+        xhr.onload = () => {
+            callback(xhr.response);
+        };
+        xhr.onerror = xhr.ontimeout = () => {
+            callback(null);
+        };
+        xhr.send();
+    }
+
+    async api_deInflect(params) {
+        let {
+            word,
+            callback
+        } = params;
+        callback(this.deinflector.deinflect(word));
     }
 
     async api_getTranslation(params) {
@@ -125,7 +176,7 @@ class AODHBack {
         } = params;
 
         try {
-            let result = await this.dictlib.findTerm(expression);
+            let result = await this.findTerm(expression);
             callback(result);
         } catch (err) {
             callback(null);
@@ -144,22 +195,69 @@ class AODHBack {
         });
     }
 
-    async api_getDeckNames() {
+    // Option page and Brower Action page requests handlers.
+    async opt_optionsChanged(options) {
+        this.setOptions(options);
+        let newOptions = await this.loadDict();
+        await optionsSave(newOptions);
+        return newOptions;
+    }
+
+    async opt_getDeckNames() {
         return await this.target.getDeckNames();
     }
 
-    async api_getModelNames() {
+    async opt_getModelNames() {
         return await this.target.getModelNames();
     }
 
-    async api_getModelFieldNames(modelName) {
+    async opt_getModelFieldNames(modelName) {
         return await this.target.getModelFieldNames(modelName);
     }
 
-    async api_getVersion() {
+    async opt_getVersion() {
         return await this.target.getVersion();
+    }
+
+    // Sandbox communication start here
+    async loadDictionaries(list) {
+        let promises = list.map((url) => this.loadDictionary(url));
+        let results = await Promise.all(promises);
+        return results.filter(x => x)
+    }
+
+    async loadDictionary(url) {
+        return new Promise((resolve, reject) => {
+            this.agent.postMessage('loadDictionary', {
+                url
+            }, result => resolve(result));
+        })
+    }
+
+    async setCurrentDict(selected) {
+        return new Promise((resolve, reject) => {
+            this.agent.postMessage('setCurrentDict', {
+                selected
+            }, result => resolve(result));
+        })
+    }
+
+    async setDictOptions(options) {
+        return new Promise((resolve, reject) => {
+            this.agent.postMessage('setDictOptions', {
+                options
+            }, result => resolve(result));
+        });
+    }
+
+    async findTerm(expression) {
+        return new Promise((resolve, reject) => {
+            this.agent.postMessage('findTerm', {
+                expression
+            }, result => resolve(result));
+        })
     }
 
 }
 
-window.aodhback = new AODHBack();
+window.odhback = new ODHBack();
