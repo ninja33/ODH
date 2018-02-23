@@ -3,10 +3,8 @@ class Ankiconnect {
     }
 
     async ankiInvoke(action, params = {}) {
-        let version = 5;
         let request = {
             action,
-            version,
             params
         };
         return new Promise((resolve, reject) => {
@@ -16,7 +14,7 @@ class Ankiconnect {
                 data: JSON.stringify(request),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: (data) => resolve(data.result),
+                success: (data) => resolve(data),
                 error: (xhr, status, err) => resolve(null),
             });
         });

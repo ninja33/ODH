@@ -105,11 +105,13 @@ class ODHBack {
         }
 
         if (options.audio && notedef.audios.length > 0) {
+            note.fields[options.audio] = '';
             let audionumber = Number(options.preferredaudio);
-            let audiofile = (audionumber && notedef.audios[audionumber]) ? notedef.audios[audionumber] : notedef.audios[0];
+            audionumber = (audionumber && notedef.audios[audionumber]) ? audionumber : 0
+            let audiofile = notedef.audios[audionumber];
             note.audio = {
                 "url": audiofile,
-                "filename": `ODH_${options.dictSelected}_${encodeURIComponent(notedef.expression)}.mp3`,
+                "filename": `ODH_${options.dictSelected}_${encodeURIComponent(notedef.expression)}_${audionumber}.mp3`,
                 "fields": [options.audio]
             };
         }

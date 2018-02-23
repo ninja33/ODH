@@ -59,12 +59,22 @@
   border: 2px dashed #d0d1d5;
 }
 
-.odh-addnote,
-.odh-playaudio {
+.odh-addnote {
   margin: 3px;
   cursor: pointer;
   position: relative;
   float: right;
+}
+
+.odh-audios {
+  margin: 3px;
+  position: relative;
+  float: right;
+}
+
+.odh-playaudio {
+  cursor: pointer;
+  margin: 0 3px;
 }
 
 hr {
@@ -73,7 +83,7 @@ hr {
   border-top: 1px solid #d5d5d5;
 }
 
-.hidden{
+.hidden {
   display: none;
 }
 

@@ -217,7 +217,8 @@ class ODHFront {
                 }
             }
             content += `
-                <div class="odh-headsection">${audiosegment}
+                <div class="odh-headsection">
+                    <span class="odh-audios">${audiosegment}</span>
                     <span class="odh-expression">${note.expression}</span>
                     <span class="odh-reading">${note.reading}</span>
                     <span class="odh-extra">${note.extrainfo}</span>
