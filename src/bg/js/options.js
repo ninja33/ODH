@@ -3,34 +3,40 @@ async function populateAnkiDeckAndModel(opts) {
     $('#deckname').empty();
     names = await odhback().opt_getDeckNames();
     if (names !== null) {
-        names.forEach(name => $('#deckname').append($('<option>', {value: name, text: name})));
+        names.forEach(name => $('#deckname').append($('<option>', {
+            value: name,
+            text: name
+        })));
     }
     $('#deckname').val(opts.deckname);
 
     $('#typename').empty();
     names = await odhback().opt_getModelNames();
     if (names !== null) {
-        names.forEach(name => $('#typename').append($('<option>', {value: name, text: name})));
+        names.forEach(name => $('#typename').append($('<option>', {
+            value: name,
+            text: name
+        })));
         //populateAnkiFields($('#anki-vocab-model').val(opts.ankiVocabModel), opts);
     }
     $('#typename').val(opts.typename);
 }
 
-async function populateAnkiFields(){
+async function populateAnkiFields() {
     let opts = await optionsLoad();
     const modelName = $('#typename').val() || opts.typename;
     if (modelName === null) {
         return;
     }
 
-    let fields ={
-        '#expression':opts.expression,
-        '#reading':opts.reading,
-        '#extrainfo':opts.extrainfo,
-        '#definition':opts.definition,
-        '#sentence':opts.sentence,
-        '#url':opts.url,
-        '#audio':opts.audio,
+    let fields = {
+        '#expression': opts.expression,
+        '#reading': opts.reading,
+        '#extrainfo': opts.extrainfo,
+        '#definition': opts.definition,
+        '#sentence': opts.sentence,
+        '#url': opts.url,
+        '#audio': opts.audio,
     }
 
     for (const key of Object.keys(fields)) {
@@ -39,8 +45,14 @@ async function populateAnkiFields(){
     let names = await odhback().opt_getModelFieldNames(modelName);
     if (names == null) return;
     for (const key of Object.keys(fields)) {
-        $(key).append($('<option>', {value: '', text: ''}));
-        names.forEach(name => $(key).append($('<option>', {value: name, text: name})));
+        $(key).append($('<option>', {
+            value: '',
+            text: ''
+        }));
+        names.forEach(name => $(key).append($('<option>', {
+            value: name,
+            text: name
+        })));
         $(key).val(fields[key]);
     }
 }
@@ -53,16 +65,19 @@ async function updateAnkiStatus() {
         $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnectedFail'));
     } else {
         $('#anki-options-params').show();
-        $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnectedSuccess',[version]));
+        $('#anki-options-status').text(chrome.i18n.getMessage('optAnkiConnectedSuccess', [version]));
     }
 }
 
 function populateDictionary(dicts) {
     $('#dict').empty();
-    dicts.forEach(name => $('#dict').append($('<option>', {value: name,text: name})));
+    dicts.forEach(name => $('#dict').append($('<option>', {
+        value: name,
+        text: name
+    })));
 }
 
-function onAnkiTypeChanged(e){
+function onAnkiTypeChanged(e) {
     if (e.originalEvent)
         populateAnkiFields();
 }
@@ -80,15 +95,11 @@ async function onOKClicked(e) {
     options.maxcontext = $('#maxcontext').val();
     options.maxexample = $('#maxexample').val();
 
-    options.deckname = $('#deckname').val();
-    options.typename = $('#typename').val();
-    options.expression = $('#expression').val();
-    options.reading = $('#reading').val();
-    options.extrainfo = $('#extrainfo').val();
-    options.definition = $('#definition').val();
-    options.sentence = $('#sentence').val();
-    options.url = $('#url').val();
-    options.audio = $('#audio').val();
+    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'sentence', 'url', 'audio']
+    fields.forEach(field => {
+        options[field] = $('#' + field).val() == null ? options[field] : $('#' + field).val();
+    });
+
     options.preferredaudio = $('#anki-preferred-audio').val();
 
     options.dictLibrary = $('#repo').val();
@@ -112,20 +123,15 @@ function onLoadClicked(e) {
 async function onReady() {
     localizeHtmlPage();
     let opts = await optionsLoad();
-    $('#enabled').prop('checked',opts.enabled);
+    $('#enabled').prop('checked', opts.enabled);
     $('#hotkey').val(opts.hotkey);
     $('#maxcontext').val(opts.maxcontext);
     $('#maxexample').val(opts.maxexample);
 
-    $('#deckname').val(opts.deckname);
-    $('#typename').val(opts.typename);
-    $('#expression').val(opts.expression);
-    $('#reading').val(opts.reading);
-    $('#extrainfo').val(opts.extrainfo);
-    $('#definition').val(opts.definition);
-    $('#sentence').val(opts.sentence);
-    $('#url').val(opts.url);
-    $('#audio').val(opts.audio);
+    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'sentence', 'url', 'audio']
+    fields.forEach(field => {
+        $('#' + field).val(opts[field]);
+    });
     $('#anki-preferred-audio').val(opts.preferredaudio);
 
 
@@ -137,7 +143,7 @@ async function onReady() {
     $('#cancel').click(onCancelClicked);
     $('#load').click(onLoadClicked);
     $('#typename').change(onAnkiTypeChanged);
-    
+
     $('#anki-options-params').hide();
     updateAnkiStatus();
     populateAnkiDeckAndModel(opts);
