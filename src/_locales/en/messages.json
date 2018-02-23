@@ -89,6 +89,26 @@
         "message": "Sentence",
         "description": "label text for 'Sentence'."
     },
+    "optUrl":{
+        "message": "URL",
+        "description": "label text for 'URL'."
+    },
+    "optAudio":{
+        "message": "Audio",
+        "description": "label text for 'Audio'."
+    },
+    "optPreferredAudio":{
+        "message": "Preferred",
+        "description": "label text for 'Preferred Audio'."
+    },
+    "optPreferredAudio_0":{
+        "message": "Download Audio# 0(if available)",
+        "description": "label text for 'Preferred Audio# 0'."
+    },
+    "optPreferredAudio_1":{
+        "message": "Download Audio# 1(if available)",
+        "description": "label text for 'Preferred Audio# 1'."
+    },
     "optRepository":{
         "message": "Dicts. Script",
         "description": "label text for 'Repository'."

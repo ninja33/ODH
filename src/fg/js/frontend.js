@@ -140,6 +140,7 @@ class ODHFront {
 
         let notedef = Object.assign({}, this.notes[nindex]);
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
+        notedef.url = window.location.href;
         let request = {
             action: 'addNote',
             params: {
@@ -183,17 +184,17 @@ class ODHFront {
             expression,
             reading: '',
             extrainfo: '',
-            definitions: ["No definition!"],
+            definitions: '',
             sentence,
+            url: '',
+            audios: [],
         };
 
         //if 'result' is array with notes.
         if (Array.isArray(result)) {
             for (const item of result) {
                 for (const key in tmpl) {
-                    if (!item.hasOwnProperty(key)) {
-                        item[key] = tmpl[key];
-                    }
+                    item[key] = item[key] ? item[key] : tmpl[key];
                 }
             }
             return result;

@@ -85,6 +85,26 @@
         "message": "原句字段",
         "description": "label text for 'Sentence' on optipon page."
     },
+    "optUrl":{
+        "message": "網址字段",
+        "description": "label text for 'URL'."
+    },
+    "optAudio":{
+        "message": "音頻字段",
+        "description": "label text for 'Audio'."
+    },
+    "optPreferredAudio":{
+        "message": "音頻偏好",
+        "description": "label text for 'Preferred Audio'."
+    },
+    "optPreferredAudio_0":{
+        "message": "#0音頻優先(如英音)",
+        "description": "label text for 'Preferred Audio# 0'."
+    },
+    "optPreferredAudio_1":{
+        "message": "#1音頻優先(如美音)",
+        "description": "label text for 'Preferred Audio# 1'."
+    },
     "optRepository":{
         "message": "詞典腳本地址",
         "description": "label text for 'Repository' on optipon page."

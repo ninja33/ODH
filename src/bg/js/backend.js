@@ -98,16 +98,33 @@ class ODHBack {
             tags: ['anki-helper']
         };
 
-        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'sentence']
+        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'sentence', 'url']
         for (const fieldname of fieldnames) {
             if (!options[fieldname]) continue;
             note.fields[options[fieldname]] = notedef[fieldname];
         }
+
+        if (options.audio && notedef.audios.length > 0) {
+            let audionumber = Number(options.preferredaudio);
+            let audiofile = (audionumber && notedef.audios[audionumber]) ? notedef.audios[audionumber] : notedef.audios[0];
+            note.audio = {
+                "url": audiofile,
+                "filename": `ODH_${options.dictSelected}_${encodeURIComponent(notedef.expression)}.mp3`,
+                "fields": [options.audio]
+            };
+        }
+
         return note;
     }
 
     async loadDict() {
         let path = this.options.dictLibrary;
+        //temporary path fix for v0.2
+        if (path == 'encn_List') {
+            path = 'encn_Oxford, encn_Longman, encn_Collins, encn_Cambridge';
+            this.options.dictLibrary = path;
+        }
+
         if (this.pathChanged(path)) {
             const loadingpath = Array.from(new Set(['encn_Youdao'].concat(path.split(',').filter(x => x).map(x => x.trim()))));
             this.list = await this.loadDictionaries(loadingpath.map(this.pathMapping));
@@ -124,12 +141,21 @@ class ODHBack {
     pathMapping(path) {
         let gitbase = 'https://raw.githubusercontent.com/';
 
-        if ((path.indexOf('lib://') != -1) || (path.indexOf('git://') != -1)) {
-            path = (path.indexOf('lib://') != -1) ? gitbase + 'ninja33/ODH/master/src/dict/' + path.replace('lib://', '') : path;
-            path = (path.indexOf('git://') != -1) ? gitbase + path.replace('git://', '') : path;
-        } else {
+        let paths = {
+            'loc://': 'http://127.0.0.1/',
+            'lib://': gitbase + 'ninja33/ODH/master/src/dict/',
+            'git://': gitbase,
+        }
+
+        //to shorten script URL.
+        for (const key of Object.keys(paths)) {
+            path = (path.indexOf(key) != -1) ? paths[key] + path.replace(key, '') : path;
+        }
+        //use local script if nothing specified in URL prefix.
+        if ((path.indexOf('https://') == -1) && (path.indexOf('http://') == -1)) {
             path = chrome.runtime.getURL('dict/' + path);
         }
+        //add .js suffix if missing.
         path = (path.indexOf('.js') == -1) ? path + '.js' : path;
         return path;
     }

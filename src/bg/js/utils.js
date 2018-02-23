@@ -11,11 +11,12 @@ function sanitizeOptions(options) {
         reading: '',
         extrainfo: '',
         definition: 'Back',
-        sentence: 'Back',
-
+        sentence: '',
+        url: '',
+        audio: '',
+        preferredaudio: '0',
 
         dictLibrary: 'encn_Oxford, encn_Longman, encn_Collins, encn_Cambridge',
-
         dictSelected: '',
         dictNamelist: [],
     };
@@ -30,7 +31,7 @@ function sanitizeOptions(options) {
 
 
 async function optionsLoad() {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         chrome.storage.local.get(null, (options) => {
             resolve(sanitizeOptions(options));
         });
@@ -38,7 +39,7 @@ async function optionsLoad() {
 }
 
 async function optionsSave(options) {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         chrome.storage.local.set(sanitizeOptions(options), resolve());
     });
 }
