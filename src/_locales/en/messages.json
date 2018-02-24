@@ -1,6 +1,6 @@
 {
     "appName": {
-        "message": "Online Dictionary Helper (Sandbox Version)",
+        "message": "Online Dictionary Helper",
         "description": "The title of the application, displayed in the web store."
     },
     "appDesc": {
@@ -8,7 +8,7 @@
         "description": "The description of the application, displayed in the web store."
     },
     "optTitle":{
-        "message": "Online Dictionary Helper (Sandbox Version)",
+        "message": "Online Dictionary Helper",
         "description": "label text for 'Title' on optipon page."
     },
     "optGeneralOptionTitle":{
