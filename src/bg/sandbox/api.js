@@ -1,25 +1,48 @@
-async function sendBGMessage(action, params) {
-    return new Promise((resolve, reject)=>{
-        try {
-            chrome.runtime.sendMessage({action, params},result=>resolve(result));
-        } catch (err) {
-            reject(null);
-        }
-    });
+class SandboxAPI {
+    constructor() {
+
+    }
+
+    async sendBGMessage(action, params) {
+        return new Promise((resolve, reject) => {
+            try {
+                chrome.runtime.sendMessage({
+                    action,
+                    params
+                }, result => resolve(result));
+            } catch (err) {
+                reject(null);
+            }
+        });
+    }
+
+    async deinflect(word) {
+        return await this.sendBGMessage("Deinflect", {
+            word
+        });
+    }
+
+    async fetch(url) {
+        return await this.sendBGMessage("Fetch", {
+            url
+        });
+    }
+
+    async locale() {
+        return await this.sendBGMessage("getLocale", {})
+    }
+
+    callback(data, callbackId) {
+        this.sendBGMessage("callback", {
+            data,
+            callbackId
+        });
+    }
+
+    sandboxLoaded() {
+        this.sendBGMessage("sandboxLoaded", {});
+    }
+
 }
 
-async function deInflect(word) {
-    return await sendBGMessage("deInflect", {word});
-}
-
-async function onlineQuery(url) {
-    return await sendBGMessage("onlineQuery", {url});
-}
-
-function callback(data, callbackId) {
-    sendBGMessage("callback", {data, callbackId});
-}
-
-function sandboxLoaded() {
-    sendBGMessage("sandboxLoaded", {});
-}
+window.api = new SandboxAPI();

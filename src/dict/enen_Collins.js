@@ -3,22 +3,26 @@ class enen_Collins {
         this.options = options;
         this.maxexample = 2;
         this.word = '';
-        this.base = 'https://www.collinsdictionary.com/dictionary/english/'
-
     }
 
-    resourceURL(word) {
-        return this.base + encodeURIComponent(word);
+    async displayName() {
+        let locale = await api.locale();
+        if (locale.indexOf('CN') != -1)
+            return '柯林斯英英词典';
+        if (locale.indexOf('TW') != -1)
+            return '柯林斯英英詞典';
+        return 'enen_Collins';
     }
 
-    setOptions(options){
+
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
 
     async findTerm(word) {
         this.word = word;
-        //let deflection = deInflect(word);
+        //let deflection = api.deinflect(word);
         let results = await Promise.all([this.findCollins(word)]);
         return [].concat(...results);
     }
@@ -34,10 +38,11 @@ class enen_Collins {
                 return node.innerText.trim();
         }
 
-        let url = this.resourceURL(word);
+        let base = 'https://www.collinsdictionary.com/dictionary/english/'
+        let url = base + encodeURIComponent(word);
         let doc = '';
         try {
-            let data = await onlineQuery(url);
+            let data = await api.fetch(url);
             let parser = new DOMParser();
             doc = parser.parseFromString(data, "text/html");
         } catch (err) {

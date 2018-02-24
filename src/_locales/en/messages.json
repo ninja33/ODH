@@ -85,6 +85,10 @@
         "message": "Definition",
         "description": "label text for 'Definition'."
     },
+    "optDefinitions":{
+        "message": "Definitions",
+        "description": "label text for 'Definitions'."
+    },
     "optSentence":{
         "message": "Sentence",
         "description": "label text for 'Sentence'."

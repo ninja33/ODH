@@ -3,22 +3,26 @@ class enen_UrbanDict {
         this.options = options;
         this.maxexample = 2;
         this.word = '';
-        this.base = 'https://www.urbandictionary.com/define.php?term='
-
     }
 
-    resourceURL(word) {
-        return this.base + encodeURIComponent(word);
+    async displayName() {
+        let locale = await api.locale();
+        if (locale.indexOf('CN') != -1)
+            return 'Urban俚语英英词典';
+        if (locale.indexOf('TW') != -1)
+            return 'Urban俚語英英詞典';
+        return 'enen_UrbanDict';
     }
 
-    setOptions(options){
+
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
 
     async findTerm(word) {
         this.word = word;
-        //let deflection = deInflect(word);
+        //let deflection = api.deinflect(word);
         let results = await Promise.all([this.findUrbanDict(word), this.findEC(word)]);
         return [].concat(...results);
     }
@@ -34,10 +38,11 @@ class enen_UrbanDict {
                 return node.innerText.trim();
         }
 
-        let url = this.resourceURL(word);
+        this.base = 'https://www.urbandictionary.com/define.php?term='
+        let url = base + encodeURIComponent(word);
         let doc = '';
         try {
-            let data = await onlineQuery(url);
+            let data = await api.fetch(url);
             let parser = new DOMParser();
             doc = parser.parseFromString(data, "text/html");
         } catch (err) {
@@ -87,8 +92,8 @@ class enen_UrbanDict {
         let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
         let url = base + encodeURIComponent(word);
         let data = '';
-        try{
-            data = JSON.parse(await onlineQuery(url));
+        try {
+            data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }

@@ -21,16 +21,28 @@ class Sandbox {
             callbackId
         } = params;
 
-        let script = await onlineQuery(url);
-        if (script) {
-            let obj = eval(`(${script})`)
-            if (obj.name && typeof obj === 'function' && !this.dicts.hasOwnProperty(obj.name)) {
-                this.dicts[obj.name] = new obj();
-            }
-            callback(obj.name, callbackId);
+        let script = await api.fetch(url);
+        if (!script) {
+            api.callback(null, callbackId);
             return;
         }
-        callback(null, callbackId);
+
+        let Dictionary = null;
+        let displayname = null;
+        try {
+            Dictionary = eval(`(${script})`);
+        } catch (err) {
+            api.callback(null, callbackId);
+            return;
+        }
+
+        if (Dictionary.name && typeof Dictionary === 'function') {
+            let dictionary = new Dictionary();
+            displayname = (typeof dictionary.displayName === 'function') ? await dictionary.displayName() : Dictionary.name;
+            if (!this.dicts[displayname])
+                this.dicts[displayname] = dictionary;
+        }
+        api.callback(displayname, callbackId);
     }
 
     backend_setDictOptions(params) {
@@ -46,10 +58,10 @@ class Sandbox {
         let selected = options.dictSelected;
         if (this.dicts[selected]) {
             this.current = selected;
-            callback(selected, callbackId);
+            api.callback(selected, callbackId);
             return
         }
-        callback(null, callbackId);
+        api.callback(null, callbackId);
     }
 
     async backend_findTerm(params) {
@@ -60,12 +72,14 @@ class Sandbox {
 
         if (this.dicts[this.current]) {
             let notes = await this.dicts[this.current].findTerm(expression);
-            callback(notes, callbackId);
+            api.callback(notes, callbackId);
             return;
         }
-        callback(null, callbackId);
+        api.callback(null, callbackId);
     }
 }
 
 window.sandbox = new Sandbox();
-document.addEventListener('DOMContentLoaded', sandboxLoaded, false);
+document.addEventListener('DOMContentLoaded', () => {
+    api.sandboxLoaded()
+}, false);

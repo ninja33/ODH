@@ -3,12 +3,15 @@ class encn_Cambridge {
         this.options = options;
         this.maxexample = 2;
         this.word = '';
-        this.base = 'https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q='
-
     }
 
-    resourceURL(word) {
-        return this.base + encodeURIComponent(word);
+    async displayName() {
+        let locale = await api.locale();
+        if (locale.indexOf('CN') != -1)
+            return '剑桥双解英汉词典';
+        if (locale.indexOf('TW') != -1)
+            return '劍橋雙解英漢詞典';
+        return 'encn_Cambridge';
     }
 
     setOptions(options){
@@ -18,7 +21,7 @@ class encn_Cambridge {
     
     async findTerm(word) {
         this.word = word;
-        //let deflection = await deInflect(word);
+        //let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findCambridge(word), this.findEC(word)]);
         return [].concat(...results);
     }
@@ -33,11 +36,11 @@ class encn_Cambridge {
             else
                 return node.innerText.trim();
         }
-
-        let url = this.resourceURL(word);
+        let base = 'https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q='
+        let url = base + encodeURIComponent(word);
         let doc = '';
         try {
-            let data = await onlineQuery(url);
+            let data = await api.fetch(url);
             let parser = new DOMParser();
             doc = parser.parseFromString(data, "text/html");
         } catch (err) {
@@ -128,7 +131,7 @@ class encn_Cambridge {
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
-            data = JSON.parse(await onlineQuery(url));
+            data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }

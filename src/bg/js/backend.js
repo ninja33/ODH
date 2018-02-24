@@ -31,19 +31,6 @@ class ODHBack {
         }
     }
 
-    onMessage(request, sender, callback) {
-        const {
-            action,
-            params
-        } = request, method = this['api_' + action];
-
-        if (typeof (method) === 'function') {
-            params.callback = callback;
-            method.call(this, params);
-        }
-        return true;
-    }
-
     onTabReady(tabId) {
         this.tabInvoke(tabId, 'setOptions', {
             options: this.options
@@ -88,7 +75,7 @@ class ODHBack {
 
     formatNote(notedef) {
         let options = this.options;
-        if (!options.deckname || !options.typename || !options.expression || !options.definition)
+        if (!options.deckname || !options.typename || !options.expression)
             return null;
 
         let note = {
@@ -98,7 +85,7 @@ class ODHBack {
             tags: ['anki-helper']
         };
 
-        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'sentence', 'url']
+        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url']
         for (const fieldname of fieldnames) {
             if (!options[fieldname]) continue;
             note.fields[options[fieldname]] = notedef[fieldname];
@@ -120,6 +107,7 @@ class ODHBack {
     }
 
     async loadDict() {
+        let defaultdict = ['encn_Youdao'];
         let path = this.options.dictLibrary;
         //temporary path fix for v0.2
         if (path == 'encn_List') {
@@ -128,11 +116,11 @@ class ODHBack {
         }
 
         if (this.pathChanged(path)) {
-            const loadingpath = Array.from(new Set(['encn_Youdao'].concat(path.split(',').filter(x => x).map(x => x.trim()))));
+            const loadingpath = Array.from(new Set(defaultdict.concat(path.split(',').filter(x => x).map(x => x.trim()))));
             this.list = await this.loadDictionaries(loadingpath.map(this.pathMapping));
         }
         let selected = this.options.dictSelected;
-        selected = this.list.includes(selected) ? selected : 'encn_Youdao';
+        selected = this.list.includes(selected) ? selected : this.list[0];
         this.options.dictSelected = selected;
         this.options.dictNamelist = this.list;
         await this.setDictOptions(this.options);
@@ -166,36 +154,56 @@ class ODHBack {
         return !this.lastoptions || (this.lastoptions.dictLibrary != path);
     }
 
+    // Message Hub and Handler start from here ...
+    onMessage(request, sender, callback) {
+        const {
+            action,
+            params
+        } = request, method = this['api_' + action];
+
+        if (typeof (method) === 'function') {
+            params.callback = callback;
+            method.call(this, params);
+        }
+        return true;
+    }
+
     async api_sandboxLoaded(params) {
         let options = await optionsLoad();
         this.opt_optionsChanged(options);
     }
 
-    async api_onlineQuery(params) {
+    async api_Fetch(params) {
         let {
             url,
             callback
         } = params;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
-        xhr.timeout = 5000;
-        xhr.onload = () => {
-            callback(xhr.response);
-        };
-        xhr.onerror = xhr.ontimeout = () => {
-            callback(null);
-        };
-        xhr.send();
+        let request = {
+            url,
+            type: "GET",
+            dataType: "text",
+            timeout: 5000,
+            error: (xhr, status, error) => callback(null),
+            success: (data, status) => callback(data)
+        }
+        $.ajax(request);
     }
 
-    async api_deInflect(params) {
+    async api_Deinflect(params) {
         let {
             word,
             callback
         } = params;
         callback(this.deinflector.deinflect(word));
     }
+
+    async api_getLocale(params){
+        let {
+            callback
+        } = params;
+        callback(chrome.i18n.getUILanguage());
+    }   
 
     async api_getTranslation(params) {
         let {
@@ -258,14 +266,6 @@ class ODHBack {
         return new Promise((resolve, reject) => {
             this.agent.postMessage('loadDictionary', {
                 url
-            }, result => resolve(result));
-        })
-    }
-
-    async setCurrentDict(selected) {
-        return new Promise((resolve, reject) => {
-            this.agent.postMessage('setCurrentDict', {
-                selected
             }, result => resolve(result));
         })
     }

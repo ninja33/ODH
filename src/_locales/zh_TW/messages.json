@@ -81,6 +81,10 @@
         "message": "釋義字段",
         "description": "label text for 'Definition' on optipon page."
     },
+    "optDefinitions":{
+        "message": "多義字段",
+        "description": "label text for 'Definitions'."
+    },
     "optSentence":{
         "message": "原句字段",
         "description": "label text for 'Sentence' on optipon page."

@@ -140,6 +140,7 @@ class ODHFront {
 
         let notedef = Object.assign({}, this.notes[nindex]);
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
+        notedef.definitions = this.notes[nindex].css + this.notes[nindex].definitions.join('<hr>');
         notedef.url = window.location.href;
         let request = {
             action: 'addNote',

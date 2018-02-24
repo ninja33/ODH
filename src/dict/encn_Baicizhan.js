@@ -1,23 +1,28 @@
 class encn_Baicizhan {
     constructor(options) {
         this.options = options;
+        this.maxexample = 2;
         this.word = '';
-        this.base = 'http://mall.baicizhan.com/ws/search?w='
-
     }
 
-    resourceURL(word) {
-        return this.base + encodeURIComponent(word);
+    async displayName() {
+        let locale = await api.locale();
+        if (locale.indexOf('CN') != -1)
+            return '百词斩图文英汉词典';
+        if (locale.indexOf('TW') != -1)
+            return '百詞斬圖文英漢詞典';
+        return 'encn_Baicizhan';
     }
+
 
     setOptions(options){
         this.options = options;
         this.maxexample = options.maxexample;
     }
-
+    
     async findTerm(word) {
         this.word = word;
-        let deflection = await deInflect(word);
+        let deflection = await api.deinflect(word);
         deflection = deflection ? deflection : word;
         let results = await Promise.all([this.findBaicizhan(deflection), this.findEC(word)]);
         return [].concat(...results);
@@ -27,10 +32,11 @@ class encn_Baicizhan {
         let notes = [];
 
         if (!word) return notes;
-        let url = this.resourceURL(word);
+        let base = 'http://mall.baicizhan.com/ws/search?w='
+        let url = base + encodeURIComponent(word);
         let note = '';
         try{
-            note = JSON.parse(await onlineQuery(url));
+            note = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }
@@ -72,7 +78,7 @@ class encn_Baicizhan {
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
-            data = JSON.parse(await onlineQuery(url));
+            data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }

@@ -3,13 +3,17 @@ class encn_Oxford {
         this.options = options;
         this.maxexample = 2;
         this.word = '';
-        this.base = 'https://cn.bing.com/dict/search?q='
-
     }
 
-    resourceURL(word) {
-        return this.base + encodeURIComponent(word);
+    async displayName() {
+        let locale = await api.locale();
+        if (locale.indexOf('CN') != -1)
+            return '牛津英汉双解词典';
+        if (locale.indexOf('TW') != -1)
+            return '牛津英漢雙解詞典';
+        return 'encn_Oxford';
     }
+
 
     setOptions(options){
         this.options = options;
@@ -18,7 +22,7 @@ class encn_Oxford {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await deInflect(word);
+        let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findOxford(word), this.findOxford(deflection), this.findEC(word)]);
         return [].concat(...results);
     }
@@ -34,10 +38,11 @@ class encn_Oxford {
                 return node.innerText.trim();
         }
 
-        let url = this.resourceURL(word);
+        let base = 'https://cn.bing.com/dict/search?q='
+        let url = base + encodeURIComponent(word);
         let doc = '';
         try {
-            let data = await onlineQuery(url);
+            let data = await api.fetch(url);
             let parser = new DOMParser();
             doc = parser.parseFromString(data, "text/html").querySelector('.qdef');
         } catch (err) {
@@ -158,7 +163,7 @@ class encn_Oxford {
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
-            data = JSON.parse(await onlineQuery(url));
+            data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }

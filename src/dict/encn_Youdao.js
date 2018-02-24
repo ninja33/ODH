@@ -1,23 +1,27 @@
 class encn_Youdao {
-    constructor(options) {
-        this.options = options;
+    constructor() {
+        this.options = null;
+        this.maxexample = 2;
         this.word = '';
-        this.base = 'http://mall.baicizhan.com/ws/search?w='
-
     }
 
-    resourceURL(word) {
-        return this.base + encodeURIComponent(word);
+    async displayName() {
+        let locale = await api.locale();
+        if (locale.indexOf('CN') != -1)
+            return '有道简明英汉词典';
+        if (locale.indexOf('TW') != -1)
+            return '有道簡明英漢詞典';
+        return 'encn_Youdao';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
-    
+
     async findTerm(word) {
         this.word = word;
-        let deflection = await deInflect(word);
+        let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findEC(deflection), this.findEC(word)]);
         return [].concat(...results);
     }
@@ -30,8 +34,8 @@ class encn_Youdao {
         let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
         let url = base + encodeURIComponent(word);
         let data = '';
-        try{
-            data = JSON.parse(await onlineQuery(url));
+        try {
+            data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }

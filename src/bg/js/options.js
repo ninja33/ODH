@@ -23,38 +23,28 @@ async function populateAnkiDeckAndModel(opts) {
 }
 
 async function populateAnkiFields() {
-    let opts = await optionsLoad();
-    const modelName = $('#typename').val() || opts.typename;
+    let options = await optionsLoad();
+    const modelName = $('#typename').val() || options.typename;
     if (modelName === null) {
         return;
     }
 
-    let fields = {
-        '#expression': opts.expression,
-        '#reading': opts.reading,
-        '#extrainfo': opts.extrainfo,
-        '#definition': opts.definition,
-        '#sentence': opts.sentence,
-        '#url': opts.url,
-        '#audio': opts.audio,
-    }
-
-    for (const key of Object.keys(fields)) {
-        $(key).empty();
-    }
     let names = await odhback().opt_getModelFieldNames(modelName);
     if (names == null) return;
-    for (const key of Object.keys(fields)) {
-        $(key).append($('<option>', {
+
+    let fields = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio']
+    fields.forEach(field => {
+        $(`#${field}`).empty();
+        $(`#${field}`).append($('<option>', {
             value: '',
             text: ''
         }));
-        names.forEach(name => $(key).append($('<option>', {
+        names.forEach(name => $(`#${field}`).append($('<option>', {
             value: name,
             text: name
         })));
-        $(key).val(fields[key]);
-    }
+        $(`#${field}`).val(options[field]);
+    });
 }
 
 async function updateAnkiStatus() {
@@ -95,9 +85,9 @@ async function onOKClicked(e) {
     options.maxcontext = $('#maxcontext').val();
     options.maxexample = $('#maxexample').val();
 
-    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'sentence', 'url', 'audio']
+    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio']
     fields.forEach(field => {
-        options[field] = $('#' + field).val() == null ? options[field] : $('#' + field).val();
+        options[field] = $(`#${field}`).val() == null ? options[field] : $(`#${field}`).val();
     });
 
     options.preferredaudio = $('#anki-preferred-audio').val();
@@ -128,9 +118,9 @@ async function onReady() {
     $('#maxcontext').val(opts.maxcontext);
     $('#maxexample').val(opts.maxexample);
 
-    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'sentence', 'url', 'audio']
+    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio']
     fields.forEach(field => {
-        $('#' + field).val(opts[field]);
+        $(`#${field}`).val(opts[field]);
     });
     $('#anki-preferred-audio').val(opts.preferredaudio);
 

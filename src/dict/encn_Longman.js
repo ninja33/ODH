@@ -3,12 +3,17 @@ class encn_Longman {
         this.options = options;
         this.maxexample = 2;
         this.word = '';
-        this.base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","longman"]]}&xmlVersion=5.1&q='
     }
 
-    resourceURL(word) {
-        return this.base + encodeURIComponent(word);
+    async displayName() {
+        let locale = await api.locale();
+        if (locale.indexOf('CN') != -1)
+            return '朗文双解英汉词典';
+        if (locale.indexOf('TW') != -1)
+            return '朗文雙解英漢詞典';
+        return 'encn_Longman';
     }
+
 
     setOptions(options){
         this.options = options;
@@ -17,7 +22,7 @@ class encn_Longman {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await deInflect(word);
+        let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findLongman(word), this.findLongman(deflection), this.findEC(word)]);
         return [].concat(...results);
     }
@@ -35,10 +40,11 @@ class encn_Longman {
                 return node;
         }
 
-        let url = this.resourceURL(word);
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","longman"]]}&xmlVersion=5.1&q='
+        let url = base + encodeURIComponent(word);
         let data = '';
         try{
-            data = JSON.parse(await onlineQuery(url));
+            data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }
@@ -131,7 +137,7 @@ class encn_Longman {
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
-            data = JSON.parse(await onlineQuery(url));
+            data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
         }
