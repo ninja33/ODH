@@ -82,7 +82,7 @@ class ODHBack {
             deckName: options.deckname,
             modelName: options.typename,
             fields: {},
-            tags: ['anki-helper']
+            tags: ['ODH']
         };
 
         let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url']

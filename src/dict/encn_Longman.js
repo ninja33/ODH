@@ -8,9 +8,9 @@ class encn_Longman {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '朗文双解英汉词典';
+            return '朗文英汉双解词典';
         if (locale.indexOf('TW') != -1)
-            return '朗文雙解英漢詞典';
+            return '朗文英漢雙解詞典';
         return 'encn_Longman';
     }
 

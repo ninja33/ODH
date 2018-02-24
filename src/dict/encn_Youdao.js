@@ -8,9 +8,9 @@ class encn_Youdao {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '有道简明英汉词典';
+            return '有道英汉简明词典';
         if (locale.indexOf('TW') != -1)
-            return '有道簡明英漢詞典';
+            return '有道英漢簡明詞典';
         return 'encn_Youdao';
     }
 

@@ -8,9 +8,9 @@ class enen_UrbanDict {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return 'Urban俚语英英词典';
+            return 'Urban英英俚语词典';
         if (locale.indexOf('TW') != -1)
-            return 'Urban俚語英英詞典';
+            return 'Urban英英俚語詞典';
         return 'enen_UrbanDict';
     }
 

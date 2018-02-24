@@ -102,11 +102,11 @@
         "description": "label text for 'Preferred Audio'."
     },
     "optPreferredAudio_0":{
-        "message": "#0音频优先(如英音)",
+        "message": "优先下载#0音频(如有)",
         "description": "label text for 'Preferred Audio# 0'."
     },
     "optPreferredAudio_1":{
-        "message": "#1音频优先(如美音)",
+        "message": "优先下载#1音频(如有)",
         "description": "label text for 'Preferred Audio# 1'."
     },
     "optRepository":{

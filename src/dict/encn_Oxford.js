@@ -59,7 +59,7 @@ class encn_Oxford {
         let audioslinks = doc.querySelectorAll('.hd_tf a');
         if (audioslinks)
             for (const [index, audiolink] of audioslinks.entries()) {
-                audios[index] = audiolink.getAttribute('onmouseover').match(/(?<=this,').+?(?=')/gi) || '';
+                audios[index] = audiolink.getAttribute('onmouseover').match(/(?<=this,').+?(?=')/gi)[0] || '';
             }
 
 

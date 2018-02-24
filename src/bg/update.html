@@ -10,47 +10,47 @@
 <body>
     <div class="container">
         <div class="tabmenus">
-            <a href="#tab-1" data-contentid="tab-1" class="tabmenu active">English</a>
-            <a href="#tab-2" data-contentid="tab-2" class="tabmenu">简体中文</a>
+            <a href="#tab-1" data-contentid="tab-1" class="tabmenu active">简体中文</a>
+            <a href="#tab-2" data-contentid="tab-2" class="tabmenu">English</a>
         </div>
 
         <div id="tab-1" class="tabcontent">
-            <h3>Online Dictionary Helper Guide</h3>
-            <p>Thanks for installing. Here is the brief introduction. If you need more details, please visit
+            <h3>在线词典助手-升级说明</h3>
+            <p>您已升级至在线词典助手0.3版本。如需完整文档或插件最新信息，请访问
+                <a class="notice" href="https://github.com/ninja33/ODH" target="_blank">项目主页</a>
+            </p>
+            <b class="notice">0.3版本</b>
+            <ol>
+                <li>支持运行外部脚本，便于扩展对任意词典的解析。</li>
+                <li>增加多义字段，用来一次性保存单词的多个意思。</li>
+                <li>增加网址字段，用以记录阅读时所在的网页地址。</li>
+                <li>增加音频字段，用以下载单词所对应的音频文件。</li>
+                <li>音频下载选项，可在美音或者英音之间进行选择。</li>
+            </ol>
+            <p>提示：ankiconnect官版不支持同一单词重复制卡。想重复制卡，详见这篇<a class="notice" href='http://www.laohuang.net/20180213/ankiconnect-dupe-card-issue/' target="_blank">博客文章</a></p>
+            <p style="float:right">作者:
+                <a class="notice" href='http://www.laohuang.net' target="_blank">你家老黄</a>
+            </p>
+        </div>
+
+        <div id="tab-2" class="tabcontent" style="display:none">
+            <h3>Online Dictionary Helper -- Upgrade Notes</h3>
+            <p>You extension was upgraded to v0.3. Here is the release note. If you need more details, please visit
                 <a class="notice" href="https://github.com/ninja33/ODH" target="_blank">Project Home</a>
             </p>
+            <b class="notice">version 0.3</b>
             <ol>
-                <li>Open any given web page, Move mouse cursor to the word.</li>
-                <li>Click-Drag/Double Click mouse button to select word and phrase, or press <b>Hotkey</b> to automatically select word in case it's a link.</li>
-                <li>A popup window will show up displaying the word definition.</li>
-                <li>Left click
-                    <img src="../img/icon16.png" alt>icon, you may quickly
-                    <b>Enabled/Disable</b> this extension, choose <b>Hotkey</b> for automatical text selection, or select current dictionary.</li>
-                <li>Right click
-                    <img src="../img/icon16.png" alt>icon, select <b>"Options"</b>, you may open options page for further setting</li>
+                <li>Added sandbox to support self-defined script.</li>
+                <li>Added 'definitions' field to one click save multiple definitions.</li>
+                <li>Added 'URL' field to save web page address.</li>
+                <li>Added 'audio' field to download audio files.</li>
+                <li>Allow user choose audio to download through 'Preferred Auidio' option.</li>
             </ol>
             <p style="float:right">Author:
                 <a class="notice" href='http://www.laohuang.net' target="_blank">Ninja Huang</a>
             </p>
         </div>
 
-        <div id="tab-2" class="tabcontent" style="display:none">
-            <h3>在线词典助手-使用说明</h3>
-            <p>欢迎使用本插件，以下是插件简要说明，如需完整文档或插件最新信息，请访问
-                <a class="notice" href="https://github.com/ninja33/ODH" target="_blank">项目主页</a>
-            </p>
-            <ol>
-                <li>打开任意网页，将鼠标移动到想要查询的单词上。</li>
-                <li>点击拖动或者双击鼠标选取单词或者短语。如果单词文本是一个链接，可按下<b>取词热键</b>自动取词。</li>
-                <li>选词后，插件会弹出释义窗口显示在单词旁边。</li>
-                <li>左击<img src="../img/icon16.png" alt>图标，可以快速<b>启用/禁用</b>插件，选择<b>取词热键</b>，或者选择当前词典。</li>
-                <li>右击<img src="../img/icon16.png" alt>图标，然后选择<b>"选项"</b>可打开选项页，以进一步定制化插件。</li>
-            </ol>
-            <p>提示：ankiconnect官版不支持同一单词重复制卡。想重复制卡，可在ankiconnect.py文件中搜寻dupeOrEmpty字样的判重函数，该行前用#号注释即可。</p>
-            <p style="float:right">作者:
-                <a class="notice" href='http://www.laohuang.net' target="_blank">你家老黄</a>
-            </p>
-        </div>
     </div>
     <script src="js/guide.js"></script>
 </body>
