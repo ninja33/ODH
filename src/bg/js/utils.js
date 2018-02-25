@@ -52,7 +52,7 @@ function utilAsync(func) {
 }
 
 function odhback() {
-    return chrome.extension.getBackgroundPage().odhback
+    return chrome.extension.getBackgroundPage().odhback;
 }
 
 function localizeHtmlPage() {

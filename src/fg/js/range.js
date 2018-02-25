@@ -49,7 +49,7 @@ class TextSourceRange {
             rangeText = clone.toString();
             count += this.isAlpha(rangeText.charAt(rangeText.length - 1)) ? 0 : 1;
             if (count == forwardcount) {
-                break
+                break;
             }
         }
         return pos;

@@ -14,23 +14,23 @@ class SandboxAPI {
     }
 
     async deinflect(word) {
-        return await this.sendBGMessage("Deinflect", { word });
+        return await this.sendBGMessage('Deinflect', { word });
     }
 
     async fetch(url) {
-        return await this.sendBGMessage("Fetch", { url });
+        return await this.sendBGMessage('Fetch', { url });
     }
 
     async locale() {
-        return await this.sendBGMessage("getLocale", {})
+        return await this.sendBGMessage('getLocale', {});
     }
 
     callback(data, callbackId) {
-        this.sendBGMessage("callback", { data, callbackId });
+        this.sendBGMessage('callback', { data, callbackId });
     }
 
     sandboxLoaded() {
-        this.sendBGMessage("sandboxLoaded", {});
+        this.sendBGMessage('sandboxLoaded', {});
     }
 
 }

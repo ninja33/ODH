@@ -1,3 +1,4 @@
+/* global Ankiconnect, Deinflector, Agent, optionsLoad, optionsSave */
 class ODHBack {
     constructor() {
         this.options = null;
@@ -42,12 +43,12 @@ class ODHBack {
         this.options = options;
 
         switch (options.enabled) {
-            case false:
-                chrome.browserAction.setBadgeText({ text: 'off' });
-                break;
-            case true:
-                chrome.browserAction.setBadgeText({ text: '' });
-                break;
+        case false:
+            chrome.browserAction.setBadgeText({ text: 'off' });
+            break;
+        case true:
+            chrome.browserAction.setBadgeText({ text: '' });
+            break;
         }
         this.tabInvokeAll('setOptions', { options: this.options });
     }
@@ -76,7 +77,7 @@ class ODHBack {
             tags: ['ODH']
         };
 
-        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url']
+        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url'];
         for (const fieldname of fieldnames) {
             if (!options[fieldname]) continue;
             note.fields[options[fieldname]] = notedef[fieldname];
@@ -85,12 +86,12 @@ class ODHBack {
         if (options.audio && notedef.audios.length > 0) {
             note.fields[options.audio] = '';
             let audionumber = Number(options.preferredaudio);
-            audionumber = (audionumber && notedef.audios[audionumber]) ? audionumber : 0
+            audionumber = (audionumber && notedef.audios[audionumber]) ? audionumber : 0;
             let audiofile = notedef.audios[audionumber];
             note.audio = {
-                "url": audiofile,
-                "filename": `ODH_${options.dictSelected}_${encodeURIComponent(notedef.expression)}_${audionumber}.mp3`,
-                "fields": [options.audio]
+                'url': audiofile,
+                'filename': `ODH_${options.dictSelected}_${encodeURIComponent(notedef.expression)}_${audionumber}.mp3`,
+                'fields': [options.audio]
             };
         }
 
@@ -126,7 +127,7 @@ class ODHBack {
             'loc://': 'http://127.0.0.1/',
             'lib://': gitbase + 'ninja33/ODH/master/src/dict/',
             'git://': gitbase,
-        }
+        };
 
         //to shorten script URL.
         for (const key of Object.keys(paths)) {
@@ -167,12 +168,12 @@ class ODHBack {
 
         let request = {
             url,
-            type: "GET",
-            dataType: "text",
+            type: 'GET',
+            dataType: 'text',
             timeout: 5000,
             error: (xhr, status, error) => callback(null),
             success: (data, status) => callback(data)
-        }
+        };
         $.ajax(request);
     }
 
@@ -234,13 +235,13 @@ class ODHBack {
     async loadDictionaries(list) {
         let promises = list.map((url) => this.loadDictionary(url));
         let results = await Promise.all(promises);
-        return results.filter(x => x)
+        return results.filter(x => x);
     }
 
     async loadDictionary(url) {
         return new Promise((resolve, reject) => {
             this.agent.postMessage('loadDictionary', { url }, result => resolve(result));
-        })
+        });
     }
 
     async setDictOptions(options) {
@@ -252,7 +253,7 @@ class ODHBack {
     async findTerm(expression) {
         return new Promise((resolve, reject) => {
             this.agent.postMessage('findTerm', { expression }, result => resolve(result));
-        })
+        });
     }
 
 }

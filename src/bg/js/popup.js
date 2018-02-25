@@ -1,3 +1,4 @@
+/* global odhback, localizeHtmlPage, utilAsync, optionsLoad, optionsSave */
 function populateDictionary(dicts) {
     $('#dict').empty();
     dicts.forEach(name => $('#dict').append($('<option>', { value: name, text: name })));
@@ -11,10 +12,6 @@ async function onOptionChanged(e) {
     options.enabled = $('#enabled').prop('checked');
     options.hotkey = $('#hotkey').val();
     options.dictSelected = $('#dict').val();
-    let request = {
-        action: 'updateOptions',
-        params: { options }
-    };
     odhback().opt_optionsChanged(options);
 }
 

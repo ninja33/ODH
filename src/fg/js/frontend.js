@@ -1,3 +1,4 @@
+/* global Popup, TextSourceRange, selectedText, isInvalid, getSentence*/
 class ODHFront {
 
     constructor() {
@@ -55,7 +56,7 @@ class ODHFront {
         }
 
         this.timeout = setTimeout(() => {
-            var selEndEvent = new CustomEvent("selectionend");
+            var selEndEvent = new CustomEvent('selectionend');
             window.dispatchEvent(selEndEvent);
         }, 500);
     }
@@ -71,7 +72,7 @@ class ODHFront {
         const expression = selectedText();
         if (isInvalid(expression)) {
             return;
-        };
+        }
 
         let request = {
             action: 'getTranslation',
@@ -184,7 +185,7 @@ class ODHFront {
     renderPopup(notes) {
         let content = '';
         for (const [nindex, note] of notes.entries()) {
-            content += note.css + `<div class="odh-note">`;
+            content += note.css + '<div class="odh-note">';
             let audiosegment = '';
             if (note.audios) {
                 for (const [dindex, audio] of note.audios.entries()) {
@@ -206,7 +207,7 @@ class ODHFront {
                         ${definition}
                     </div>`;
             }
-            content += `</div>`;
+            content += '</div>';
         }
         content += `<div class="odh-sentence">${this.sentence}</div>`;
         return this.popupHeader() + content + this.popupFooter();

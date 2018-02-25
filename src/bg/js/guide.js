@@ -5,10 +5,10 @@ function localizeHtmlPage() {
 }
 
 function SwitchTab(e) {
-    for (const x of document.getElementsByClassName("tabcontent"))
+    for (const x of document.getElementsByClassName('tabcontent'))
         x.style.display = 'none';
     document.getElementById(e.target.dataset.contentid).style.display = 'block';
-    for (const x of document.getElementsByClassName("tabmenu")) {
+    for (const x of document.getElementsByClassName('tabmenu')) {
         x.className = 'tabmenu';
     }
     e.target.className = 'tabmenu active';

@@ -2,17 +2,14 @@ class Ankiconnect {
     constructor() {}
 
     async ankiInvoke(action, params = {}) {
-        let request = {
-            action,
-            params
-        };
+        let request = { action, params };
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: "http://127.0.0.1:8765",
+                url: 'http://127.0.0.1:8765',
                 type: 'POST',
                 data: JSON.stringify(request),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
                 success: (data) => resolve(data),
                 error: (xhr, status, err) => resolve(null),
             });

@@ -1,3 +1,4 @@
+/* global odhback, localizeHtmlPage, utilAsync, optionsLoad, optionsSave */
 async function populateAnkiDeckAndModel(opts) {
     let names = [];
     $('#deckname').empty();
@@ -23,7 +24,7 @@ async function populateAnkiFields() {
     let names = await odhback().opt_getModelFieldNames(modelName);
     if (names == null) return;
 
-    let fields = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio']
+    let fields = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
     fields.forEach(field => {
         $(`#${field}`).empty();
         $(`#${field}`).append($('<option>', { value: '', text: '' }));
@@ -65,7 +66,7 @@ async function onOKClicked(e) {
     options.maxcontext = $('#maxcontext').val();
     options.maxexample = $('#maxexample').val();
 
-    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio']
+    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
     fields.forEach(field => {
         options[field] = $(`#${field}`).val() == null ? options[field] : $(`#${field}`).val();
     });
@@ -98,7 +99,7 @@ async function onReady() {
     $('#maxcontext').val(opts.maxcontext);
     $('#maxexample').val(opts.maxexample);
 
-    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio']
+    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
     fields.forEach(field => {
         $(`#${field}`).val(opts[field]);
     });

@@ -1,3 +1,4 @@
+/* global api */
 class Dictionary {
     constructor() {
         this.dicts = {};
@@ -43,7 +44,7 @@ class Dictionary {
     backend_setDictOptions(params) {
         let { options, callbackId } = params;
 
-        for (const [key, dictionary] of Object.entries(this.dicts)) {
+        for (const dictionary of Object.values(this.dicts)) {
             if (typeof(dictionary.setOptions) === 'function')
                 dictionary.setOptions(options);
         }
@@ -52,7 +53,7 @@ class Dictionary {
         if (this.dicts[selected]) {
             this.current = selected;
             api.callback(selected, callbackId);
-            return
+            return;
         }
         api.callback(null, callbackId);
     }
@@ -71,5 +72,5 @@ class Dictionary {
 
 window.sandbox = new Dictionary();
 document.addEventListener('DOMContentLoaded', () => {
-    api.sandboxLoaded()
+    api.sandboxLoaded();
 }, false);

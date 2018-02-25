@@ -4,7 +4,7 @@ function isEmpty(word) {
 
 function isShortandNum(word) {
     let numReg = /\d/;
-    return (word.length < 3 || numReg.test(word))
+    return (word.length < 3 || numReg.test(word));
 }
 
 function isEnglish(word) {
