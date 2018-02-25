@@ -41,10 +41,7 @@ class ODHFront {
     }
 
     onMouseMove(e) {
-        this.point = {
-            x: e.clientX,
-            y: e.clientY,
-        };
+        this.point = { x: e.clientX, y: e.clientY, };
     }
 
     userSelectionChanged(e) {
@@ -78,9 +75,7 @@ class ODHFront {
 
         let request = {
             action: 'getTranslation',
-            params: {
-                expression
-            },
+            params: { expression },
         };
         chrome.runtime.sendMessage(request, result => {
             if (result == null || result.length == 0)
@@ -89,20 +84,16 @@ class ODHFront {
             this.notes = this.buildNote(result);
 
             let content = this.renderPopup(this.notes);
-            this.popup.showNextTo({
-                x: this.point.x,
-                y: this.point.y,
-            }, content);
+            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, content);
         });
 
     }
 
-    onBgMessage({
-        action,
-        params
-    }, sender, callback) {
+    onBgMessage(request, sender, callback) {
+        const { action, params } = request;
         const method = this['api_' + action];
-        if (typeof (method) === 'function') {
+
+        if (typeof(method) === 'function') {
             params.callback = callback;
             method.call(this, params);
         }
@@ -111,10 +102,7 @@ class ODHFront {
     }
 
     api_setOptions(params) {
-        let {
-            options,
-            callback
-        } = params;
+        let { options, callback } = params;
         this.options = options;
         this.enabled = options.enabled;
         this.activateKey = Number(this.options.hotkey);
@@ -123,20 +111,15 @@ class ODHFront {
     }
 
     onFrameMessage(e) {
-        const {
-            action,
-            params
-        } = e.data, method = this['api_' + action];
-        if (typeof (method) === 'function') {
+        const { action, params } = e.data;
+        const method = this['api_' + action];
+        if (typeof(method) === 'function') {
             method.call(this, params);
         }
     }
 
     api_addNote(params) {
-        let {
-            nindex,
-            dindex
-        } = params;
+        let { nindex, dindex } = params;
 
         let notedef = Object.assign({}, this.notes[nindex]);
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
@@ -144,24 +127,16 @@ class ODHFront {
         notedef.url = window.location.href;
         let request = {
             action: 'addNote',
-            params: {
-                notedef
-            },
+            params: { notedef },
         };
         chrome.runtime.sendMessage(request, (success) => {
-            let result = {
-                success,
-                params,
-            };
+            let result = { success, params, };
             this.popup.sendMessage('setActionState', result);
         });
     }
 
     api_playAudio(params) {
-        let {
-            nindex,
-            dindex
-        } = params;
+        let { nindex, dindex } = params;
         let url = this.notes[nindex].audios[dindex];
 
         for (let key in this.audio) {

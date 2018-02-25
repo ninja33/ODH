@@ -17,3 +17,6 @@
 # Web store zip
 *.zip
 *.json
+
+# JS Beautify
+.jsbeautifyrc

@@ -43,19 +43,13 @@ class ODHBack {
 
         switch (options.enabled) {
             case false:
-                chrome.browserAction.setBadgeText({
-                    text: 'off'
-                });
+                chrome.browserAction.setBadgeText({ text: 'off' });
                 break;
             case true:
-                chrome.browserAction.setBadgeText({
-                    text: ''
-                });
+                chrome.browserAction.setBadgeText({ text: '' });
                 break;
         }
-        this.tabInvokeAll('setOptions', {
-            options: this.options
-        });
+        this.tabInvokeAll('setOptions', { options: this.options });
     }
 
     tabInvokeAll(action, params) {
@@ -67,10 +61,7 @@ class ODHBack {
     }
 
     tabInvoke(tabId, action, params) {
-        chrome.tabs.sendMessage(tabId, {
-            action,
-            params
-        }, () => null);
+        chrome.tabs.sendMessage(tabId, { action, params }, () => null);
     }
 
     formatNote(notedef) {
@@ -156,12 +147,10 @@ class ODHBack {
 
     // Message Hub and Handler start from here ...
     onMessage(request, sender, callback) {
-        const {
-            action,
-            params
-        } = request, method = this['api_' + action];
+        const { action, params } = request;
+        const method = this['api_' + action];
 
-        if (typeof (method) === 'function') {
+        if (typeof(method) === 'function') {
             params.callback = callback;
             method.call(this, params);
         }
@@ -174,10 +163,7 @@ class ODHBack {
     }
 
     async api_Fetch(params) {
-        let {
-            url,
-            callback
-        } = params;
+        let { url, callback } = params;
 
         let request = {
             url,
@@ -191,25 +177,17 @@ class ODHBack {
     }
 
     async api_Deinflect(params) {
-        let {
-            word,
-            callback
-        } = params;
+        let { word, callback } = params;
         callback(this.deinflector.deinflect(word));
     }
 
-    async api_getLocale(params){
-        let {
-            callback
-        } = params;
+    async api_getLocale(params) {
+        let { callback } = params;
         callback(chrome.i18n.getUILanguage());
-    }   
+    }
 
     async api_getTranslation(params) {
-        let {
-            expression,
-            callback
-        } = params;
+        let { expression, callback } = params;
 
         try {
             let result = await this.findTerm(expression);
@@ -220,10 +198,7 @@ class ODHBack {
     }
 
     api_addNote(params) {
-        let {
-            notedef,
-            callback
-        } = params;
+        let { notedef, callback } = params;
 
         const note = this.formatNote(notedef);
         this.target.addNote(note).then(result => {
@@ -264,25 +239,19 @@ class ODHBack {
 
     async loadDictionary(url) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('loadDictionary', {
-                url
-            }, result => resolve(result));
+            this.agent.postMessage('loadDictionary', { url }, result => resolve(result));
         })
     }
 
     async setDictOptions(options) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('setDictOptions', {
-                options
-            }, result => resolve(result));
+            this.agent.postMessage('setDictOptions', { options }, result => resolve(result));
         });
     }
 
     async findTerm(expression) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('findTerm', {
-                expression
-            }, result => resolve(result));
+            this.agent.postMessage('findTerm', { expression }, result => resolve(result));
         })
     }
 

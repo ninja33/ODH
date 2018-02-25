@@ -1,6 +1,5 @@
 class Ankiconnect {
-    constructor() {
-    }
+    constructor() {}
 
     async ankiInvoke(action, params = {}) {
         let request = {
@@ -22,9 +21,7 @@ class Ankiconnect {
 
     async addNote(note) {
         if (note)
-            return await this.ankiInvoke('addNote', {
-                note
-            });
+            return await this.ankiInvoke('addNote', { note });
         else
             return Promise.resolve(null);
     }
@@ -38,9 +35,7 @@ class Ankiconnect {
     }
 
     async getModelFieldNames(modelName) {
-        return await this.ankiInvoke('modelFieldNames', {
-            modelName
-        });
+        return await this.ankiInvoke('modelFieldNames', { modelName });
     }
 
     async getVersion() {

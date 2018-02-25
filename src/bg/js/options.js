@@ -3,21 +3,14 @@ async function populateAnkiDeckAndModel(opts) {
     $('#deckname').empty();
     names = await odhback().opt_getDeckNames();
     if (names !== null) {
-        names.forEach(name => $('#deckname').append($('<option>', {
-            value: name,
-            text: name
-        })));
+        names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
     }
     $('#deckname').val(opts.deckname);
 
     $('#typename').empty();
     names = await odhback().opt_getModelNames();
     if (names !== null) {
-        names.forEach(name => $('#typename').append($('<option>', {
-            value: name,
-            text: name
-        })));
-        //populateAnkiFields($('#anki-vocab-model').val(opts.ankiVocabModel), opts);
+        names.forEach(name => $('#typename').append($('<option>', { value: name, text: name })));
     }
     $('#typename').val(opts.typename);
 }
@@ -25,9 +18,7 @@ async function populateAnkiDeckAndModel(opts) {
 async function populateAnkiFields() {
     let options = await optionsLoad();
     const modelName = $('#typename').val() || options.typename;
-    if (modelName === null) {
-        return;
-    }
+    if (modelName === null) return;
 
     let names = await odhback().opt_getModelFieldNames(modelName);
     if (names == null) return;
@@ -35,14 +26,8 @@ async function populateAnkiFields() {
     let fields = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio']
     fields.forEach(field => {
         $(`#${field}`).empty();
-        $(`#${field}`).append($('<option>', {
-            value: '',
-            text: ''
-        }));
-        names.forEach(name => $(`#${field}`).append($('<option>', {
-            value: name,
-            text: name
-        })));
+        $(`#${field}`).append($('<option>', { value: '', text: '' }));
+        names.forEach(name => $(`#${field}`).append($('<option>', { value: name, text: name })));
         $(`#${field}`).val(options[field]);
     });
 }
@@ -61,10 +46,7 @@ async function updateAnkiStatus() {
 
 function populateDictionary(dicts) {
     $('#dict').empty();
-    dicts.forEach(name => $('#dict').append($('<option>', {
-        value: name,
-        text: name
-    })));
+    dicts.forEach(name => $('#dict').append($('<option>', { value: name, text: name })));
 }
 
 function onAnkiTypeChanged(e) {
@@ -73,9 +55,7 @@ function onAnkiTypeChanged(e) {
 }
 
 async function onOKClicked(e) {
-    if (!e.originalEvent) {
-        return;
-    }
+    if (!e.originalEvent) return;
 
     let optionsOld = await optionsLoad();
     let options = $.extend(true, {}, optionsOld);

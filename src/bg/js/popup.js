@@ -1,15 +1,10 @@
 function populateDictionary(dicts) {
     $('#dict').empty();
-    dicts.forEach(name => $('#dict').append($('<option>', {
-        value: name,
-        text: name
-    })));
+    dicts.forEach(name => $('#dict').append($('<option>', { value: name, text: name })));
 }
 
 async function onOptionChanged(e) {
-    if (!e.originalEvent) {
-        return;
-    }
+    if (!e.originalEvent) return;
 
     let options = await optionsLoad();
 
@@ -18,9 +13,7 @@ async function onOptionChanged(e) {
     options.dictSelected = $('#dict').val();
     let request = {
         action: 'updateOptions',
-        params: {
-            options
-        }
+        params: { options }
     };
     odhback().opt_optionsChanged(options);
 }

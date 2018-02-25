@@ -1,4 +1,4 @@
-class Sandbox {
+class Dictionary {
     constructor() {
         this.dicts = {};
         this.current = null;
@@ -6,20 +6,15 @@ class Sandbox {
     }
 
     onBackendMessage(e) {
-        const {
-            action,
-            params,
-        } = e.data, method = this['backend_' + action];
-        if (typeof (method) === 'function') {
+        const { action, params } = e.data;
+        const method = this['backend_' + action];
+        if (typeof(method) === 'function') {
             method.call(this, params);
         }
     }
 
     async backend_loadDictionary(params) {
-        let {
-            url,
-            callbackId
-        } = params;
+        let { url, callbackId } = params;
 
         let script = await api.fetch(url);
         if (!script) {
@@ -27,18 +22,18 @@ class Sandbox {
             return;
         }
 
-        let Dictionary = null;
+        let DictObject = null;
         let displayname = null;
         try {
-            Dictionary = eval(`(${script})`);
+            DictObject = eval(`(${script})`);
         } catch (err) {
             api.callback(null, callbackId);
             return;
         }
 
-        if (Dictionary.name && typeof Dictionary === 'function') {
-            let dictionary = new Dictionary();
-            displayname = (typeof dictionary.displayName === 'function') ? await dictionary.displayName() : Dictionary.name;
+        if (DictObject.name && typeof DictObject === 'function') {
+            let dictionary = new DictObject();
+            displayname = typeof(dictionary.displayName) === 'function' ? await dictionary.displayName() : DictObject.name;
             if (!this.dicts[displayname])
                 this.dicts[displayname] = dictionary;
         }
@@ -46,13 +41,11 @@ class Sandbox {
     }
 
     backend_setDictOptions(params) {
-        let {
-            options,
-            callbackId
-        } = params;
+        let { options, callbackId } = params;
 
-        for (const [key, item] of Object.entries(this.dicts)) {
-            item.setOptions(options);
+        for (const [key, dictionary] of Object.entries(this.dicts)) {
+            if (typeof(dictionary.setOptions) === 'function')
+                dictionary.setOptions(options);
         }
 
         let selected = options.dictSelected;
@@ -65,12 +58,9 @@ class Sandbox {
     }
 
     async backend_findTerm(params) {
-        let {
-            expression,
-            callbackId
-        } = params;
+        let { expression, callbackId } = params;
 
-        if (this.dicts[this.current]) {
+        if (this.dicts[this.current] && typeof(this.dicts[this.current].findTerm) === 'function') {
             let notes = await this.dicts[this.current].findTerm(expression);
             api.callback(notes, callbackId);
             return;
@@ -79,7 +69,7 @@ class Sandbox {
     }
 }
 
-window.sandbox = new Sandbox();
+window.sandbox = new Dictionary();
 document.addEventListener('DOMContentLoaded', () => {
     api.sandboxLoaded()
 }, false);

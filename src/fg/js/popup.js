@@ -33,10 +33,7 @@ class Popup {
         posX = (posX < 0) ? 0 : posX;
         posY = (posY < 0) ? 0 : posY;
 
-        this.showAt({
-            x: posX,
-            y: posY
-        }, content);
+        this.showAt({ x: posX, y: posY }, content);
     }
 
     hide() {
@@ -62,10 +59,7 @@ class Popup {
 
     sendMessage(action, params, callback) {
         if (this.popup !== null) {
-            this.popup.contentWindow.postMessage({
-                action,
-                params
-            }, '*');
+            this.popup.contentWindow.postMessage({ action, params }, '*');
         }
     }
 

@@ -13,10 +13,7 @@ class Agent {
         }
         if (!this.sandbox)
             this.sandbox = document.getElementById('sandbox').contentWindow;
-        this.sandbox.postMessage({
-            action,
-            params,
-        }, '*');
+        this.sandbox.postMessage({ action, params, }, '*');
     }
 
     onSandboxMessage(request, sender, callback) {
@@ -28,7 +25,7 @@ class Agent {
         if (action != 'callback' || !params || !params.callbackId)
             return;
         // we are the sender getting the callback
-        if (this.callbacks[params.callbackId] && typeof (this.callbacks[params.callbackId]) === 'function') {
+        if (this.callbacks[params.callbackId] && typeof(this.callbacks[params.callbackId]) === 'function') {
             this.callbacks[params.callbackId](params.data);
             delete this.callbacks[params.callbackId];
         }

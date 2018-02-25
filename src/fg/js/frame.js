@@ -1,4 +1,4 @@
-function getImageSource(id){
+function getImageSource(id) {
     return document.querySelector(`#${id}`).src;
 }
 
@@ -41,35 +41,26 @@ function onDomContentLoaded() {
 }
 
 function onMessage(e) {
-    const {
-        action,
-        params
-    } = e.data, method = window['api_' + action];
-    if (typeof (method) === 'function') {
+    const { action, params } = e.data;
+    const method = window['api_' + action];
+    if (typeof(method) === 'function') {
         method(params);
     }
 }
 
 function api_setActionState(result) {
-    let {
-        success,
-        params
-    } = result;
-    
-    let {
-        nindex,
-        dindex
-    } = params;
+    const { success, params } = result;
+    const { nindex, dindex } = params;
 
     const match = document.querySelector(`.odh-addnote[data-nindex="${nindex}"].odh-addnote[data-dindex="${dindex}"]`);
     if (success)
         match.src = getImageSource('good');
-     else 
+    else
         match.src = getImageSource('fail');
-    
-    setTimeout(()=>{
+
+    setTimeout(() => {
         match.src = getImageSource('plus');
-    },1000);
+    }, 1000);
 }
 
 function onMouseWheel(e) {
