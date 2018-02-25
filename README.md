@@ -46,4 +46,4 @@ The extension option page is divided in three sections.
 Welcome pull request if you want to enhance this extension, or put your own script in next release.
 
 - the exntension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
-- the dictionary script will go to [/src/bg/local](https://github.com/ninja33/ODH/tree/master/src/bg/local)
+- the dictionary script will go to [/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)

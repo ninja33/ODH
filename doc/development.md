@@ -46,4 +46,4 @@ if (typeof YouClassName == 'undefined') {
 }
 ```
 
-You can find the dictionary script source code sample under [/src/bg/local](https://github.com/ninja33/ODH/tree/master/src/bg/local) of this repository.
+You can find the dictionary script source code sample under [/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict) of this repository.

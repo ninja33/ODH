@@ -57,4 +57,4 @@
 如果你想提交词典脚本或者改进插件本身，欢迎PR。
 
 - 插件代码 [[/src](https://github.com/ninja33/ODH/tree/master/src)]。
-- 脚本代码 [[/src/bg/local](https://github.com/ninja33/ODH/tree/master/src/bg/local)]。
+- 脚本代码 [[/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)]。
