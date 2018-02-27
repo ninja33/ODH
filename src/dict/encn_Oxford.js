@@ -1,3 +1,4 @@
+/* global api */
 class encn_Oxford {
     constructor(options) {
         this.options = options;
@@ -15,7 +16,7 @@ class encn_Oxford {
     }
 
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
@@ -38,28 +39,28 @@ class encn_Oxford {
                 return node.innerText.trim();
         }
 
-        let base = 'https://cn.bing.com/dict/search?q='
+        let base = 'https://cn.bing.com/dict/search?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/html").querySelector('.qdef');
+            doc = parser.parseFromString(data, 'text/html').querySelector('.qdef');
         } catch (err) {
             return [];
         }
 
 
         let expression = T(doc.querySelector('#headword'));
-        let reading_us = T(doc.querySelector('.hd_prUS')).match(/\[.+\]/gi); // phonetic US
-        let reading_uk = T(doc.querySelector('.hd_pr')).match(/\[.+\]/gi); // phonetic UK
-        let reading = `UK${reading_uk} US${reading_us}`;
+        let reading_us = T(doc.querySelector('.hd_prUS')).match(/\[.+\]/gi)[0] || ''; // phonetic US
+        let reading_uk = T(doc.querySelector('.hd_pr')).match(/\[.+\]/gi)[0] || ''; // phonetic UK
+        let reading = reading_us && reading_uk ? `UK${reading_uk} US${reading_us}` : '';
 
         let audios = [];
         let audioslinks = doc.querySelectorAll('.hd_tf a');
         if (audioslinks)
             for (const [index, audiolink] of audioslinks.entries()) {
-                audios[index] = audiolink.getAttribute('onmouseover').match(/(?<=this,').+?(?=')/gi)[0] || '';
+                audios[index] = audiolink.getAttribute('onmouseover').match(/https:.+?mp3/gi)[0] || '';
             }
 
 
@@ -80,7 +81,7 @@ class encn_Oxford {
                     let eng_dis = T(segement.querySelector('.val_dis'));
                     let chn_dis = T(segement.querySelector('.bil_dis'));
                     dis = (chn_dis && eng_dis) ? `<div class="dis"><span class="eng_dis">${eng_dis}</span><span class="chn_dis">${chn_dis}</span></div>` : '';
-                };
+                }
                 if (segement.classList && segement.classList.contains('se_lis')) {
                     let eng_tran = T(segement.querySelector('.val'));
                     let chn_tran = T(segement.querySelector('.bil'));
@@ -98,7 +99,7 @@ class encn_Oxford {
                     eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
                     chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
                     definition += `${dis}${pos}${grammar}${complement}${informal}<span class='tran'>${eng_tran}${chn_tran}</span>`;
-                };
+                }
                 if (segement.classList && segement.classList.contains('li_exs')) {
                     let examps = segement.querySelectorAll('.li_ex') || [];
                     if (examps.length > 0 && this.maxexample > 0) {
@@ -111,7 +112,7 @@ class encn_Oxford {
                         }
                         definition += '</ul>';
                     }
-                };
+                }
             }
             if (definition)
                 definitions.push(definition);
@@ -159,10 +160,10 @@ class encn_Oxford {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
-        try{
+        try {
             data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
@@ -175,7 +176,7 @@ class encn_Oxford {
         let extrainfo = '';
         let types = data.ec.exam_type || [];
         for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`
+            extrainfo += `<span class="examtype">${type}</span>`;
         }
 
         let definition = '<ul class="ec">';
