@@ -1,3 +1,4 @@
+/* global api */
 class enen_UrbanDict {
     constructor(options) {
         this.options = options;
@@ -38,13 +39,13 @@ class enen_UrbanDict {
                 return node.innerText.trim();
         }
 
-        this.base = 'https://www.urbandictionary.com/define.php?term='
+        let base = 'https://www.urbandictionary.com/define.php?term=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/html");
+            doc = parser.parseFromString(data, 'text/html');
         } catch (err) {
             return [];
         }
@@ -64,8 +65,8 @@ class enen_UrbanDict {
             // make exmaple segement
             let exampsnode = defblock.querySelector('.example') || '';
             if (!exampsnode) continue;
-            exampsnode.innerHTML = exampsnode.innerHTML.replace("<br>", "@")
-            let examps = exampsnode.innerText.split("@");
+            exampsnode.innerHTML = exampsnode.innerHTML.replace('<br>', '@');
+            let examps = exampsnode.innerText.split('@');
             if (examps.length > 0 && this.maxexample > 0) {
                 definition += '<ul class="sents">';
                 for (const [index, examp] of examps.entries()) {
@@ -89,7 +90,7 @@ class enen_UrbanDict {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try {
