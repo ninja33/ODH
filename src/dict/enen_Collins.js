@@ -24,7 +24,7 @@ class enen_Collins {
         this.word = word;
         //let deflection = api.deinflect(word);
         let results = await Promise.all([this.findCollins(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findCollins(word) {
@@ -84,7 +84,7 @@ class enen_Collins {
                 }
                 definition += '</ul>';
             }
-            definitions.push(definition);
+            definition && definitions.push(definition);
         }
         let css = this.renderCSS();
         notes.push({

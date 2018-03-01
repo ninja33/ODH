@@ -25,7 +25,7 @@ class encn_Oxford {
         this.word = word;
         let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findOxford(word), this.findOxford(deflection), this.findEC(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findOxford(word) {
@@ -141,7 +141,7 @@ class encn_Oxford {
                     definition += '</ul>';
                 }
                 // add into difinition array
-                definitions.push(definition);
+                definition && definitions.push(definition);
             }
             let css = this.renderCSS();
             notes.push({

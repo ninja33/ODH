@@ -15,17 +15,17 @@ class encn_Baicizhan {
     }
 
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
-    
+
     async findTerm(word) {
         this.word = word;
         let deflection = await api.deinflect(word);
         deflection = deflection ? deflection : word;
         let results = await Promise.all([this.findBaicizhan(deflection), this.findEC(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findBaicizhan(word) {
@@ -35,7 +35,7 @@ class encn_Baicizhan {
         let base = 'http://mall.baicizhan.com/ws/search?w='
         let url = base + encodeURIComponent(word);
         let note = '';
-        try{
+        try {
             note = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];
@@ -57,7 +57,7 @@ class encn_Baicizhan {
         definition += note.st && note.sttr ? `<ul class='sents'><li class='sent'><span class='eng_sent'>${note.st}</span><span class='chn_sent'>${note.sttr}</span></li></ul>` : '';
         definition += note.img ? `<div class='bcz'><img src='${note.img}' /></div>` : '';
         //definition += `<div class='bcz'><video width="340px" controls><source src='${note.tv}' type="video/mp4"></video></div>`;
-        definitions.push(definition);
+        definition && definitions.push(definition);
         let css = this.renderCSS();
         notes.push({
             css,
@@ -77,7 +77,7 @@ class encn_Baicizhan {
         let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
         let url = base + encodeURIComponent(word);
         let data = '';
-        try{
+        try {
             data = JSON.parse(await api.fetch(url));
         } catch (err) {
             return [];

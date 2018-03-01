@@ -24,7 +24,7 @@ class enen_UrbanDict {
         this.word = word;
         //let deflection = api.deinflect(word);
         let results = await Promise.all([this.findUrbanDict(word), this.findEC(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findUrbanDict(word) {
@@ -74,7 +74,7 @@ class enen_UrbanDict {
                 }
                 definition += '</ul>';
             }
-            definitions.push(definition);
+            definition && definitions.push(definition);
         }
         let css = this.renderCSS();
         notes.push({

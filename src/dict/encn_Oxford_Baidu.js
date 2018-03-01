@@ -26,7 +26,7 @@ class encn_Oxford_Baidu {
         let deflection = await api.deinflect(word);
         //let results = await Promise.all([this.findOxford(word), this.findOxford(deflection), this.findEC(word)]);
         let results = await Promise.all([this.findOxford(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findOxford(word) {
@@ -106,8 +106,7 @@ class encn_Oxford_Baidu {
                     }
                     definition += '</ul>';
                 }
-                if (definition)
-                    definitions.push(definition);
+                definition && definitions.push(definition);
             }
 
             //process idiom

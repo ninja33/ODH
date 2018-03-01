@@ -23,7 +23,7 @@ class encn_Cambridge {
         this.word = word;
         //let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findCambridge(word), this.findEC(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findCambridge(word) {
@@ -106,7 +106,7 @@ class encn_Cambridge {
                             }
                             definition += '</ul>';
                         }
-                        definitions.push(definition);
+                        definition && definitions.push(definition);
                     }
                 }
             }

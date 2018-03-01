@@ -24,7 +24,7 @@ class encn_Longman {
         this.word = word;
         let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findLongman(word), this.findLongman(deflection), this.findEC(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findLongman(word) {
@@ -111,7 +111,7 @@ class encn_Longman {
                         if (eng_gram_examp && chn_gram_examp && this.maxexample > 0)
                             definition += `<ul class="gram_examps"><li class="gram_examp">${eng_gram_examp}${chn_gram_examp}</li></ul>`;
                     }
-                    definitions.push(definition);
+                    definition && definitions.push(definition);
                 }
             }
 

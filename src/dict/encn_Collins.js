@@ -24,7 +24,7 @@ class encn_Collins {
         this.word = word;
         //let deflection = api.deinflect(word);
         let results = await Promise.all([this.findCollins(word), this.findEC(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findCollins(word) {
@@ -85,7 +85,7 @@ class encn_Collins {
                         }
                         definition += '</ul>';
                     }
-                    definitions.push(definition);
+                    definition && definitions.push(definition);
                 }
             }
 

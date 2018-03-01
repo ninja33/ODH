@@ -23,7 +23,7 @@ class encn_Youdao {
         this.word = word;
         let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findEC(deflection), this.findEC(word)]);
-        return [].concat(...results);
+        return [].concat(...results).filter(x => x);
     }
 
     async findEC(word) {
