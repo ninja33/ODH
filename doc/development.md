@@ -5,7 +5,7 @@
 ## Start your own script
 
 If you want to display your own online dictionary content, you need build the script by yourself.
-Because of security issue, the script can only be loaded within Chrome extension naming space. So, currently you can only run your own script in development mode. Or you can send PR to me, and I will include it in next release.
+Because of security issue, the script currenly can only be running in HTML3 sandbox, but it's enough to complete your work.
 
 ### Framework & Workflow
 
@@ -15,11 +15,11 @@ The dictionary script contains three parts:
 
 1. Build an online dictionary query url. In most cases, it's like `http(s)://example.online.dictionary.com/search?word={your-word}`
 2. Perform online query by sending above url, and get the web page content.
-3. To clear up the content and return. You may need use Elemenet/CSS selector (`getEelement(s)byXXX or querySelector(All)`) to get the definition part you want.
+3. You may need use Elemenet/CSS selector (`getEelement(s)byXXX or querySelector(All)`) to get the definition part you want.
 
 ### Coding convention
 
-1. First of all, you need wrap all of your online dictionary scraping code in a Class. To avoid duplicated declaration, you need detect if this Class was declared or not, and then register this Class with a display name (will be displayed in extension option page) at the end of code.
+1. First of all, you need wrap all of your online dictionary scraping code in a Class. To avoid duplicated declaration, you'd better not use too general name.
 
     **Important:** To distinguish different language by displayname, you'd better use 2 digit country code for both source and target language as prefix, like **encn_DictionryName** for dictionary taking English as source and Chinese as target.
 
@@ -28,21 +28,18 @@ The dictionary script contains three parts:
 Below is script template to start your own coding.
 
 ```javascript
-if (typeof YouClassName == 'undefined') {
-    Class YouClassName{
-        constructor() {
-            // Your code starting here ...
-        }
-
-        findTerm(word) {
-            return new Promise((resolve, reject){
-            // Your code starting here ...
-            // resolve(content);
-            // reject(error);
-            });
-        }
+Class YouClassName{
+    constructor() {
+        // Your code starting here ...
     }
-    registerDict('Your Dicionary Display Name', YouClassName);
+
+    findTerm(word) {
+        return new Promise((resolve, reject){
+        // Your code starting here ...
+        // resolve(content);
+        // reject(error);
+        });
+    }
 }
 ```
 
