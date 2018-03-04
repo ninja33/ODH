@@ -25,7 +25,7 @@ class frcn_Eudict {
         if (!word) return null;
 
         let base = 'http://www.frdic.com/dicts/prefix/';
-        let url = base + encodeURIComponent(word);
+        let url = base + encodeURIComponent(word) + '?gmrohy=cshco1';
         try {
             let terms = JSON.parse(await api.fetch(url));
             if (terms.length == 0) return null;
