@@ -1,3 +1,4 @@
+/* global api */
 class enen_Collins {
     constructor(options) {
         this.options = options;
@@ -38,13 +39,13 @@ class enen_Collins {
                 return node.innerText.trim();
         }
 
-        let base = 'https://www.collinsdictionary.com/dictionary/english/'
+        let base = 'https://www.collinsdictionary.com/dictionary/english/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/html");
+            doc = parser.parseFromString(data, 'text/html');
         } catch (err) {
             return [];
         }

@@ -1,3 +1,4 @@
+/* global api */
 class fren_Cambridge {
     constructor(options) {
         this.options = options;
@@ -35,13 +36,13 @@ class fren_Cambridge {
                 return node.innerText.trim();
         }
 
-        let base = 'https://dictionary.cambridge.org/search/french-english/direct/?q='
+        let base = 'https://dictionary.cambridge.org/search/french-english/direct/?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/html");
+            doc = parser.parseFromString(data, 'text/html');
         } catch (err) {
             return [];
         }

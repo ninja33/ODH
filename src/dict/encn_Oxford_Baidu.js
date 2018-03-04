@@ -42,7 +42,7 @@ class encn_Oxford_Baidu {
                 return node;
         }
 
-        let base = 'http://fanyi.baidu.com/v2transapi?from=en&to=zh&simple_means_flag=3'
+        let base = 'http://fanyi.baidu.com/v2transapi?from=en&to=zh&simple_means_flag=3';
         word = encodeURIComponent(word);
         let sign = this.generateSign(word);
         if (!sign) return;
@@ -61,8 +61,8 @@ class encn_Oxford_Baidu {
         let simple = data.dict_result.simple_means;
         let expression = T(simple.word_name);
         if (!expression) return [];
-        let reading_uk = T(title.querySelectorAll('.phonetic-transcription')[0]) || ''
-        let reading_us = T(title.querySelectorAll('.phonetic-transcription')[1]) || ''
+        let reading_uk = T(title.querySelectorAll('.phonetic-transcription')[0]) || '';
+        let reading_us = T(title.querySelectorAll('.phonetic-transcription')[1]) || '';
         let reading = reading_uk && reading_us ? `UK${reading_uk} US${reading_us}` : '';
 
         let audios = [];

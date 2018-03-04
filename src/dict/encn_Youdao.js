@@ -1,3 +1,4 @@
+/* global api */
 class encn_Youdao {
     constructor() {
         this.options = null;
@@ -31,7 +32,7 @@ class encn_Youdao {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try {
@@ -47,7 +48,7 @@ class encn_Youdao {
         let extrainfo = '';
         let types = data.ec.exam_type || [];
         for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`
+            extrainfo += `<span class="examtype">${type}</span>`;
         }
 
         let definition = '<ul class="ec">';

@@ -1,3 +1,4 @@
+/* global api */
 class frcn_Youdao {
     constructor(options) {
         this.options = options;
@@ -33,20 +34,19 @@ class frcn_Youdao {
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/xml");
+            doc = parser.parseFromString(data, 'text/xml');
         } catch (err) {
             return null;
         }
         
-        let xmlroot = doc.getElementsByTagName("yodaodict")[0];
-        let trans = xmlroot.getElementsByTagName("translation");
-        let transarr = Array.from(trans);
-        let definition = "";
+        let xmlroot = doc.getElementsByTagName('yodaodict')[0];
+        let trans = xmlroot.getElementsByTagName('translation');
+        let definition = '';
         if (!trans[0] || !trans[0].childNodes[0])
             return null;
 
         for (let i = 0; i < trans.length; i++) {
-            definition += trans[i].getElementsByTagName("content")[0].childNodes[0].nodeValue + "<br>";
+            definition += trans[i].getElementsByTagName('content')[0].childNodes[0].nodeValue + '<br>';
         }
         return definition;
     }

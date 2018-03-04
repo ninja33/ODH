@@ -1,3 +1,4 @@
+/* global api */
 class encn_Cambridge {
     constructor(options) {
         this.options = options;
@@ -36,13 +37,13 @@ class encn_Cambridge {
             else
                 return node.innerText.trim();
         }
-        let base = 'https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q='
+        let base = 'https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/html");
+            doc = parser.parseFromString(data, 'text/html');
         } catch (err) {
             return [];
         }
@@ -54,7 +55,7 @@ class encn_Cambridge {
 
             let expression = T(entry.querySelector('.headword'));
             let reading = '';
-            let readings = entry.querySelectorAll('.pron-info .ipa')
+            let readings = entry.querySelectorAll('.pron-info .ipa');
             if (readings) {
                 let reading_uk = T(readings[0]);
                 let reading_us = T(readings[1]);
@@ -77,10 +78,10 @@ class encn_Cambridge {
                         phrasehead = T(sensblock.querySelector('.phrase-title'));
                         phrasehead = phrasehead ? `<div class="phrasehead">${phrasehead}</div>` : '';
                         defblocks = sensblock.querySelectorAll('.def-block') || [];
-                    };
+                    }
                     if (sensblock.classList && sensblock.classList.contains('def-block')) {
                         defblocks = [sensblock];
-                    };
+                    }
                     if (defblocks.length <= 0) continue;
 
                     // make definition segement
@@ -127,7 +128,7 @@ class encn_Cambridge {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
@@ -143,7 +144,7 @@ class encn_Cambridge {
         let extrainfo = '';
         let types = data.ec.exam_type || [];
         for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`
+            extrainfo += `<span class="examtype">${type}</span>`;
         }
 
         let definition = '<ul class="ec">';

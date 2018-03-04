@@ -1,3 +1,4 @@
+/* global api */
 class encn_Collins {
     constructor(options) {
         this.options = options;
@@ -31,7 +32,7 @@ class encn_Collins {
         let notes = [];
 
         if (!word) return notes;
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","collins"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","collins"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
@@ -48,12 +49,12 @@ class encn_Collins {
             let expression = collins_entry.headword; //headword
             let reading = collins_entry.phonetic || ''; // phonetic
 
-            let extra_star = "";
-            let extra_cet = "";
+            let extra_star = '';
+            let extra_cet = '';
             let cets = collins_entry.basic_entries.basic_entry[0].cet || '';
             if (cets) {
                 for (const cet of cets.split(' ')) {
-                    extra_cet += `<span class="cet">${cet}</span>`
+                    extra_cet += `<span class="cet">${cet}</span>`;
                 }
             }
 
@@ -107,7 +108,7 @@ class encn_Collins {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
@@ -123,7 +124,7 @@ class encn_Collins {
         let extrainfo = '';
         let types = data.ec.exam_type || [];
         for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`
+            extrainfo += `<span class="examtype">${type}</span>`;
         }
 
         let definition = '<ul class="ec">';

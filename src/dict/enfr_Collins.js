@@ -1,3 +1,4 @@
+/* global api */
 class enfr_Collins {
     constructor(options) {
         this.options = options;
@@ -33,7 +34,7 @@ class enfr_Collins {
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/html");
+            doc = parser.parseFromString(data, 'text/html');
         } catch (err) {
             return null;
         }

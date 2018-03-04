@@ -1,3 +1,4 @@
+/* global api */
 class encn_Baicizhan {
     constructor(options) {
         this.options = options;
@@ -32,7 +33,7 @@ class encn_Baicizhan {
         let notes = [];
 
         if (!word) return notes;
-        let base = 'http://mall.baicizhan.com/ws/search?w='
+        let base = 'http://mall.baicizhan.com/ws/search?w=';
         let url = base + encodeURIComponent(word);
         let note = '';
         try {
@@ -47,12 +48,12 @@ class encn_Baicizhan {
         let expression = note.word || ''; //headword
         let reading = note.accent || ''; // phonetic
         audios[0] = `http://baicizhan.qiniucdn.com/word_audios/${expression}.mp3`;
-        let definition = `<ul class="bcz">`;
+        let definition = '<ul class="bcz">';
         let defs = note.mean_cn.split('\n');
         for (const def of defs) {
             definition += `<li class="bcz"><span class="bcz_chn">${def}</span></li>`;
         }
-        definition += `</ul>`;
+        definition += '</ul>';
         definition += note.df ? `<div class='bcz'><img src='${note.df}' /></div>` : '';
         definition += note.st && note.sttr ? `<ul class='sents'><li class='sent'><span class='eng_sent'>${note.st}</span><span class='chn_sent'>${note.sttr}</span></li></ul>` : '';
         definition += note.img ? `<div class='bcz'><img src='${note.img}' /></div>` : '';
@@ -74,7 +75,7 @@ class encn_Baicizhan {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try {
@@ -90,7 +91,7 @@ class encn_Baicizhan {
         let extrainfo = '';
         let types = data.ec.exam_type || [];
         for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`
+            extrainfo += `<span class="examtype">${type}</span>`;
         }
 
         let definition = '<ul class="ec">';

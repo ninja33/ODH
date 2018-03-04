@@ -1,3 +1,4 @@
+/* global api */
 class enfr_Cambridge {
     constructor(options) {
         this.options = options;
@@ -27,7 +28,7 @@ class enfr_Cambridge {
     removeTags(elem, name) {
         let tags = elem.querySelectorAll(name);
         tags.forEach(x => {
-            x.outerHTML = "";
+            x.outerHTML = '';
         });
     }
 
@@ -51,13 +52,13 @@ class enfr_Cambridge {
     async findCambridge(word) {
         if (!word) return null;
 
-        let base = 'https://dictionary.cambridge.org/search/english-french/direct/?q='
+        let base = 'https://dictionary.cambridge.org/search/english-french/direct/?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, "text/html");
+            doc = parser.parseFromString(data, 'text/html');
         } catch (err) {
             return null;
         }
