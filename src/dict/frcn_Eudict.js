@@ -1,5 +1,5 @@
 /* global api */
-class escn_Eudict {
+class frcn_Eudict {
     constructor(options) {
         this.options = options;
         this.maxexample = 2;
@@ -9,10 +9,10 @@ class escn_Eudict {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '西语助手';
+            return '法语助手';
         if (locale.indexOf('TW') != -1)
-            return '西语助手';
-        return 'escn_Eudict';
+            return '法语助手';
+        return 'frcn_Eudict';
     }
 
     setOptions(options) {
@@ -24,14 +24,14 @@ class escn_Eudict {
         this.word = word;
         if (!word) return null;
 
-        let base = 'http://www.esdict.cn/dicts/prefix/';
+        let base = 'http://www.frdic.com/dicts/prefix/';
         let url = base + encodeURIComponent(word);
         try {
             let terms = JSON.parse(await api.fetch(url));
             if (terms.length == 0) return null;
             terms = terms.filter(term => term.value && term.recordid && term.recordtype != 'CG');
             terms = terms.slice(0, 2); //max 2 results;
-            let queries = terms.map(term => this.findEudict(`http://www.esdict.cn/dicts/es/${term.value}?recordid=${term.recordid}`));
+            let queries = terms.map(term => this.findEudict(`http://www.frdic.com/dicts/fr/${term.value}?recordid=${term.recordid}`));
             let results = await Promise.all(queries);
             return [].concat(...results).filter(x => x);
         } catch (err) {
@@ -84,22 +84,24 @@ class escn_Eudict {
             audios = [];
         }
 
-        let content = doc.querySelector('#ExpFCChild') || '';
+        let content = doc.querySelector('#ExpFCChild') || doc.querySelector('#ExpSPECChild') || '';
         if (!content) return [];
+
         this.removeTags(content, 'script');
         this.removeTags(content, '#word-thumbnail-image');
         this.removeTags(content, '[style]');
         this.removeTags(content.parentNode, '#ExpFCChild>br');
-        let anchor = content.querySelector('a');
-        if (anchor) {
-            let link = 'http://www.esdict.cn' + anchor.getAttribute('href');
+        this.removeTags(content.parentNode, '#ExpSPECChild>br');
+        let anchors = content.querySelectorAll('a');
+        for (const anchor of anchors) {
+            let link = 'http://www.frdic.com' + anchor.getAttribute('href');
             anchor.setAttribute('href', link);
             anchor.setAttribute('target', '_blank');
         }
-        content.innerHTML = content.innerHTML.replace(/<p class="exp">(.+?)<\/p>/gi,'<span class="exp">$1</span>');
-        content.innerHTML = content.innerHTML.replace(/<span class="exp"><br>/gi,'<span class="exp">');
-        content.innerHTML = content.innerHTML.replace(/<span class="eg"><br>/gi,'<span class="eg">');
-        
+        content.innerHTML = content.innerHTML.replace(/<p class="exp">(.+?)<\/p>/gi, '<span class="exp">$1</span>');
+        content.innerHTML = content.innerHTML.replace(/<span class="exp"><br>/gi, '<span class="exp">');
+        content.innerHTML = content.innerHTML.replace(/<span class="eg"><br>/gi, '<span class="eg">');
+
         let css = this.renderCSS();
         notes.push({
             css,
