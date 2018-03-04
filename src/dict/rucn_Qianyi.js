@@ -47,11 +47,11 @@ class rucn_Qianyi {
             return [];
         }
 
-        let definition = '';
-        let expression = '';
-        let audios = [];
         let entries = doc.querySelectorAll('.baseword .view') || [];
         for (const entry of entries) {
+            let definition = '';
+            let expression = '';
+            let audios = [];
             if (!entry.querySelector('.keyword').dataset.guid) continue;
 
             expression = T(entry.querySelector('.keyword'));
@@ -66,26 +66,29 @@ class rucn_Qianyi {
                 definition += `<li class="exp"><span class="exp_chn">${defblock}</span></li>`;
             }
             definition += '</ul>';
-        }
-        // make exmaple segement
-        let examps = doc.querySelectorAll('.example .exp-item') || [];
-        if (examps.length > 0 && this.maxexample > 0) {
-            definition += '<ul class="sents">';
-            for (const [index, examp] of examps.entries()) {
-                if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                let eng_examp = T(examp.querySelector('.exam-a'));
-                let chn_examp = T(examp.querySelector('.exam-b'));
-                definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+
+            // make exmaple segement
+            let seq = entry.parentNode.id.slice(-1);
+            let examps = doc.querySelectorAll(`#example${seq} .exp-item`) || [];
+            if (examps.length > 0 && this.maxexample > 0) {
+                definition += '<ul class="sents">';
+                for (const [index, examp] of examps.entries()) {
+                    if (index > this.maxexample - 1) break; // to control only 2 example sentence.
+                    let eng_examp = T(examp.querySelector('.exam-a'));
+                    let chn_examp = T(examp.querySelector('.exam-b'));
+                    definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                }
+                definition += '</ul>';
             }
-            definition += '</ul>';
+
+            let css = this.renderCSS();
+            notes.push({
+                css,
+                expression,
+                definitions:[definition],
+                audios
+            });
         }
-        let css = this.renderCSS();
-        notes.push({
-            css,
-            expression,
-            definitions:[definition],
-            audios
-        });
         return notes;
     }
 
