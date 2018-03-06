@@ -4,6 +4,7 @@ class frcn_Eudict {
         this.options = options;
         this.maxexample = 2;
         this.word = '';
+        this.popup = null;
     }
 
     async displayName() {
@@ -24,10 +25,46 @@ class frcn_Eudict {
         this.word = word;
         if (!word) return null;
 
+        async function getURL(str) {
+            return new Promise((resolve, reject) => {
+                function msg_handler(e) {
+                    document.body.removeChild(popup);
+                    window.removeEventListener('message', msg_handler);
+                    resolve(e.data);
+                }
+                try {
+                    window.addEventListener('message', msg_handler);
+                    var popup = document.createElement('iframe');
+                    popup.id = 'eudict-popup';
+
+                    let eval_var = str.match(/new Array\(\),(.+>?);function/)[1] || '';
+                    let inject = `if(${eval_var}.indexOf("window.open")!=-1){url=eval(${eval_var}.slice(12,${eval_var}.length-9))};if(${eval_var}.indexOf("window.location=")!=-1){url=eval(${eval_var}.slice(16))};window.parent.postMessage(url,"*");</script><script>`;
+                    str = str.replace('</script><script>', inject);
+                    str = str.replace(RegExp(eval_var + '="(.*?)";', 'g'), eval_var + '=\`$1\`;');
+                    str = str.replace('\x10', '\n');
+
+                    popup.srcdoc = str;
+                    document.body.appendChild(popup);
+                } catch (err) {
+                    if (popup){
+                        document.body.removeChild(popup);
+                        window.removeEventListener('message', msg_handler);
+                    }
+                    reject(err.toString ? err.toString() : 'Error Happened.');
+                }
+            });
+        }
+
         let base = 'http://www.frdic.com/dicts/prefix/';
         let url = base + encodeURIComponent(word);
         try {
-            let terms = JSON.parse(await api.fetch(url));
+            let respons = await api.fetch(url);
+            if (respons.indexOf('<html><body><script>') != -1) {
+                respons = respons.replace('`','\\\`').replace('\n','\x10');
+                let newurl = 'http://www.frdic.com' + await getURL(respons);
+                respons = await api.fetch(newurl);
+            }
+            let terms = JSON.parse(respons);
             if (terms.length == 0) return null;
             terms = terms.filter(term => term.value && term.recordid && term.recordtype != 'CG');
             terms = terms.slice(0, 2); //max 2 results;
