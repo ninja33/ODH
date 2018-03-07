@@ -7,14 +7,14 @@ function isShortandNum(word) {
     return (word.length < 3 || numReg.test(word));
 }
 
-function isEnglish(word) {
-    let enReg = /^[^\u4e00-\u9fa5]+$/i;
-    return (enReg.test(word));
+function isChinese(word) {
+    let cnReg = /[\u4e00-\u9fa5]+/gi;
+    return (cnReg.test(word));
 }
 
 function isInvalid(word) {
-    //return (isEmpty(word) || isShortandNum(word) || !isEnglish(word)); //for English language.
-    return (isEmpty(word) || isShortandNum(word)); // for non-English language.
+    if (isChinese(word)) return false;
+    return (isChinese(word) && isEmpty(word) || isShortandNum(word));
 }
 
 function cutSentence(word, sentence, sentenceNum) {
