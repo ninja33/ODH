@@ -11,11 +11,19 @@ class ODHFront {
         this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.maxContext = 1; //max context sentence #
         this.popup = new Popup();
+        this.lastword = null;
+        this.content = null;
         this.timeout = null;
+        this.keypressed = null;
+        this.mousemoved = null;
+        this.dblclicked = null;
 
         window.addEventListener('mousemove', e => this.onMouseMove(e));
         window.addEventListener('mousedown', e => this.onMouseDown(e));
+        window.addEventListener('dblclick', e => this.onDoubleClick(e));
+
         window.addEventListener('keydown', e => this.onKeyDown(e));
+        window.addEventListener('keyup', e => this.onKeyUp(e));
 
         chrome.runtime.onMessage.addListener(this.onBgMessage.bind(this));
         window.addEventListener('message', e => this.onFrameMessage(e));
@@ -24,37 +32,54 @@ class ODHFront {
     }
 
     onKeyDown(e) {
-
         if (!this.activateKey)
             return;
 
-        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
+        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey) && this.mousemoved) {
             const range = document.caretRangeFromPoint(this.point.x, this.point.y);
-            if (range !== null) {
-                let textSource = new TextSourceRange(range);
-                textSource.selectText();
-            }
+            if (range == null) return;
+            let textSource = new TextSourceRange(range);
+            textSource.selectText();
+            if (this.timeout)
+                clearTimeout(this.timeout);
+            this.keypressed = true;
+            this.mousemoved = false;
+            this.onSelectionEnd(e);
         }
     }
 
+    onKeyUp(e) {
+        if (e.keyCode === this.activateKey || e.charCode === this.activateKey)
+            this.keypressed = false;
+    }
+
+    onDoubleClick(e) {
+        if (!this.enabled) return;
+        if (this.timeout)
+            clearTimeout(this.timeout);
+        this.dblclicked = true;
+        this.onSelectionEnd(e);
+    }
+
     onMouseDown(e) {
+        this.dbclicked = false;
         this.popup.hide();
     }
 
     onMouseMove(e) {
+        this.mousemoved = true;
         this.point = { x: e.clientX, y: e.clientY, };
     }
 
     userSelectionChanged(e) {
 
-        if (!this.enabled)
-            return;
+        if (!this.enabled || this.keypressed || this.dblclicked) return;
 
-        // wait 500 ms after the last selection change event
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
-
+        
+        // wait 500 ms after the last selection change event
         this.timeout = setTimeout(() => {
             var selEndEvent = new CustomEvent('selectionend');
             window.dispatchEvent(selEndEvent);
@@ -74,6 +99,13 @@ class ODHFront {
             return;
         }
 
+        if (expression == this.lastword && this.content){
+            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, this.content);
+            return;
+        } else {
+            this.lastword = expression;
+        }
+
         let request = {
             action: 'getTranslation',
             params: { expression },
@@ -84,8 +116,8 @@ class ODHFront {
 
             this.notes = this.buildNote(result);
 
-            let content = this.renderPopup(this.notes);
-            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, content);
+            this.content = this.renderPopup(this.notes);
+            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, this.content);
         });
 
     }
