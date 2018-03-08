@@ -14,21 +14,18 @@ class ODHFront {
         this.lastword = null;
         this.content = null;
         this.timeout = null;
-        this.keypressed = null;
+
         this.mousemoved = null;
-        this.dblclicked = null;
 
         window.addEventListener('mousemove', e => this.onMouseMove(e));
         window.addEventListener('mousedown', e => this.onMouseDown(e));
         window.addEventListener('dblclick', e => this.onDoubleClick(e));
-
         window.addEventListener('keydown', e => this.onKeyDown(e));
-        window.addEventListener('keyup', e => this.onKeyUp(e));
 
         chrome.runtime.onMessage.addListener(this.onBgMessage.bind(this));
         window.addEventListener('message', e => this.onFrameMessage(e));
         document.addEventListener('selectionchange', e => this.userSelectionChanged(e));
-        window.addEventListener('selectionend', e => this.onSelectionEnd(e));
+        //window.addEventListener('selectionend', e => this.onSelectionEnd(e));
     }
 
     onKeyDown(e) {
@@ -42,27 +39,18 @@ class ODHFront {
             textSource.selectText();
             if (this.timeout)
                 clearTimeout(this.timeout);
-            this.keypressed = true;
-            this.mousemoved = false;
             this.onSelectionEnd(e);
         }
-    }
-
-    onKeyUp(e) {
-        if (e.keyCode === this.activateKey || e.charCode === this.activateKey)
-            this.keypressed = false;
     }
 
     onDoubleClick(e) {
         if (!this.enabled) return;
         if (this.timeout)
             clearTimeout(this.timeout);
-        this.dblclicked = true;
         this.onSelectionEnd(e);
     }
 
     onMouseDown(e) {
-        this.dbclicked = false;
         this.popup.hide();
     }
 
@@ -73,7 +61,7 @@ class ODHFront {
 
     userSelectionChanged(e) {
 
-        if (!this.enabled || this.keypressed || this.dblclicked) return;
+        if (!this.enabled || !this.mousemoved) return;
 
         if (this.timeout) {
             clearTimeout(this.timeout);
@@ -81,8 +69,9 @@ class ODHFront {
         
         // wait 500 ms after the last selection change event
         this.timeout = setTimeout(() => {
-            var selEndEvent = new CustomEvent('selectionend');
-            window.dispatchEvent(selEndEvent);
+            this.onSelectionEnd(e);
+            //var selEndEvent = new CustomEvent('selectionend');
+            //window.dispatchEvent(selEndEvent);
         }, 500);
     }
 
@@ -91,6 +80,7 @@ class ODHFront {
         if (!this.enabled)
             return;
 
+        this.mousemoved = false;
         // reset selection timeout
         this.timeout = null;
 
@@ -102,9 +92,8 @@ class ODHFront {
         if (expression == this.lastword && this.content){
             this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, this.content);
             return;
-        } else {
-            this.lastword = expression;
-        }
+        } 
+        this.lastword = expression;
 
         let request = {
             action: 'getTranslation',
