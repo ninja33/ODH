@@ -13,9 +13,13 @@ Here is existing dictionaries script list. You can copy script name in name colu
 |EN|CN|Baicizhan|encn_Baicizhan|
 |EN|CN|Oxford|encn_Oxford|
 |EN|CN|Longman|encn_Longman|
-|EN|CN|Collins|encn_Collinsn|
+|EN|CN|Collins|encn_Collins|
 |EN|CN|Cambridge|encn_Cambridge|
 |FR|CN|Youdao|frcn_Youdao|
+|FR|CN|Eudict|frcn_Eduict|
+|ES|CN|Eudict|escn_Eduict|
+|RU|CN|Qianyi|rucn_Qianyi|
+|CN|CN|Zdic|cncn_Zdic|
 
 ## Target Language: English
 

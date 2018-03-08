@@ -23,6 +23,10 @@
         "message": "词典选项",
         "description": "label text for 'Dictionary Option' title."
     },
+    "optScriptList":{
+        "message": "脚本清单 >>>",
+        "description": "label text for 'Dictionary Option > Script List'."
+    },
     "optEnabled":{
         "message": "打开关闭插件",
         "description": "label text for 'Enabled/Disable' checkbox on optipon page."

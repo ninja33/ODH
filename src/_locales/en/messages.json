@@ -23,6 +23,10 @@
         "message": "Dictionary Options",
         "description": "label text for 'Dictionary Option' title."
     },
+    "optScriptList":{
+        "message": "Script List >>>",
+        "description": "label text for 'Dictionary Option > Script List'."
+    },
     "optEnabled":{
         "message": "Enabled",
         "description": "label text for 'Enabled/Disable' checkbox."

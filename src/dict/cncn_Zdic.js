@@ -59,6 +59,16 @@ class cncn_Zdic {
             }
         }
 
+        function gif(url) {
+            let obj = {};
+
+            function seq(str) {
+                return Math.ceil(parseInt(str, 16) / 1000).toString(16);
+            }
+            url.substring(url.indexOf('?') + 1).split('&').map(s => { let kv = s.split('=');obj[kv[0]] = kv[1]; });
+            return `http://pic.zdic.net/kai/jt_bh/gif/${seq(obj.u)}/${obj.u}.gif`;
+        }
+
         let doc = '';
         try {
             let url = `http://www.zdic.net/search/?q=${encodeURIComponent(word)}&c=2`;
@@ -69,11 +79,13 @@ class cncn_Zdic {
             return [];
         }
         let inlinestyle = '';
+        let bihuaimage = '';
         let style = doc.documentElement.querySelector('head style');
         if (style) {
             let background = style.innerHTML.match(/url\((.+?)\)/);
             inlinestyle = background ? style.innerHTML.replace(/url\((.+?)\)/, 'url(' + convert(background[1]) + ')') : '';
-    
+            bihuaimage = background ? `<img src='${gif(background[1])}'>`:'';
+
             let signs = style.innerHTML.match(/\.zdct.+\n.+?display: none;/g);
             for (const sign of signs) {
                 let signtag = sign.substring(0, sign.indexOf(' '));
@@ -114,6 +126,7 @@ class cncn_Zdic {
             for (const tagContent of tagContents) {
                 definitions.push(tagContent.innerHTML);
             }
+            definitions.push(bihuaimage);
             let css = `<style>${inlinestyle}${this.renderCSS('ziCSS')}</style>`;
             notes.push({ css, definitions });
             return notes;

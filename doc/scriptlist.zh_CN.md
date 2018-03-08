@@ -6,14 +6,20 @@
 
 |源语言|目标语言|描述|脚本名称|
 |---|---|---|---|
-|EN|CN|OLCC四合一词典|encn_List|
+|EN|CN|OLCC(*)四合一词典|encn_List|
 |EN|CN|有道英汉简明词典|encn_Youdao|
 |EN|CN|百词斩英汉图文词典|encn_Baicizhan|
 |EN|CN|牛津英汉双解词典|encn_Oxford|
 |EN|CN|朗文英汉双解词典|encn_Longman|
-|EN|CN|柯林斯英汉双解词典|encn_Collinsn|
+|EN|CN|柯林斯英汉双解词典|encn_Collins|
 |EN|CN|剑桥英汉双解词典|encn_Cambridge|
 |FR|CN|有道法汉简明词典|frcn_Youdao|
+|FR|CN|欧路法语助手词典|frcn_Eduict|
+|ES|CN|欧路西语助手词典|escn_Eduict|
+|RU|CN|千亿俄汉简明词典|rucn_Qianyi|
+|CN|CN|汉典汉语字典辞典|cncn_Zdic|
+
+(*) OLCC 指 Oxford, Longman, Cambridge, Collins
 
 ## 目标语言：英语
 
