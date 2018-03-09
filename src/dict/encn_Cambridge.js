@@ -90,7 +90,7 @@ class encn_Cambridge {
                         let chn_tran = T(defblock.querySelector('.def-body .trans'));
                         if (!eng_tran || !chn_tran) continue;
                         let definition = '';
-                        eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
+                        eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>`;
                         chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
                         let tran = `<span class='tran'>${eng_tran}${chn_tran}</span>`;
                         definition += phrasehead ? `${phrasehead}${tran}` : `${pos}${tran}`;
@@ -103,7 +103,7 @@ class encn_Cambridge {
                                 if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                                 let eng_examp = T(examp.querySelector('.eg'));
                                 let chn_examp = T(examp.querySelector('.trans'));
-                                definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                                definition += `<li class='sent'><span class='eng_sent'>${eng_examp.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span><span class='chn_sent'>${chn_examp}</span></li>`;
                             }
                             definition += '</ul>';
                         }

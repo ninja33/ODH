@@ -96,7 +96,7 @@ class encn_Oxford {
                     informal = informal ? `<span class="informal">${informal}</span>` : '';
                     let complement = T(segement.querySelector('.comple'));
                     complement = complement ? `<span class="complement">${complement}</span>` : '';
-                    eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
+                    eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>`;
                     chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
                     definition += `${dis}${pos}${grammar}${complement}${informal}<span class='tran'>${eng_tran}${chn_tran}</span>`;
                 }
@@ -108,7 +108,7 @@ class encn_Oxford {
                             if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                             let eng_examp = T(examp.querySelector('.val_ex'));
                             let chn_examp = T(examp.querySelector('.bil_ex'));
-                            definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                            definition += `<li class='sent'><span class='eng_sent'>${eng_examp.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span><span class='chn_sent'>${chn_examp}</span></li>`;
                         }
                         definition += '</ul>';
                     }

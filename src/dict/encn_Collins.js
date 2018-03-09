@@ -74,7 +74,7 @@ class encn_Collins {
                     let chn_tran = tran_entry.tran.match(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi).join(' ').trim();
                     let eng_tran = tran_entry.tran.replace(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi, '').trim();
                     chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
-                    eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
+                    eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>` : '';
                     definition += `${pos}<span clas="tran">${eng_tran}${chn_tran}</span>`;
                     // make exmaple sentence segement
                     let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
@@ -82,7 +82,7 @@ class encn_Collins {
                         definition += '<ul class="sents">';
                         for (const [index, sent] of sents.entries()) {
                             if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                            definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
+                            definition += `<li class='sent'><span class='eng_sent'>${sent.eng_sent.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span><span class='chn_sent'>${sent.chn_sent}</span></li>`;
                         }
                         definition += '</ul>';
                     }

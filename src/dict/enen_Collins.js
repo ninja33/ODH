@@ -71,7 +71,7 @@ class enen_Collins {
             let eng_tran = T(defblock.querySelector('.sense .def'));
             if (!eng_tran) continue;
             let definition = '';
-            eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
+            eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>`;
             let tran = `<span class='tran'>${eng_tran}</span>`;
             definition += `${pos}${tran}`;
 
@@ -81,7 +81,7 @@ class enen_Collins {
                 definition += '<ul class="sents">';
                 for (const [index, examp] of examps.entries()) {
                     if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                    definition += T(examp) ? `<li class='sent'><span class='eng_sent'>${T(examp)}</span></li>` : '';
+                    definition += T(examp) ? `<li class='sent'><span class='eng_sent'>${T(examp).replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span></li>` : '';
                 }
                 definition += '</ul>';
             }

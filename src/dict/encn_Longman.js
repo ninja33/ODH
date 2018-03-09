@@ -82,7 +82,7 @@ class encn_Longman {
                 let subsenses = sense.Subsense || [sense];
                 for (const subsense of subsenses) {
                     let chn_tran = subsense.TRAN ? `<span class='chn_tran'>${T(subsense.TRAN)}</span>` : '';
-                    let eng_tran = subsense.DEF ? `<span class='eng_tran'>${T(subsense.DEF)}</span>` : '';
+                    let eng_tran = subsense.DEF ? `<span class='eng_tran'>${T(subsense.DEF).replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>` : '';
                     if (!chn_tran || !eng_tran) continue;
                     let definition = '';
                     definition += `${sign}${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
@@ -93,7 +93,7 @@ class encn_Longman {
                         definition += '<ul class="sents">';
                         for (const [index, example] of eng_examples.entries()) {
                             if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                            definition += `<li class='sent'><span class='eng_sent'>${eng_examples[index]}</span><span class='chn_sent'>${chn_examples[index]}</span></li>`;
+                            definition += `<li class='sent'><span class='eng_sent'>${eng_examples[index].replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span><span class='chn_sent'>${chn_examples[index]}</span></li>`;
                         }
                         definition += '</ul>';
                     }
@@ -106,7 +106,7 @@ class encn_Longman {
                         if (!eng_gram_form && !eng_gram_prep) continue;
                         let eng_gram_gloss = T(gram.GLOSS) ? `<span class="eng_gram_gloss">${T(gram.GLOSS)}</span>` : '';
                         definition += `<span class="gram_extra">${eng_gram_form}${eng_gram_prep}${eng_gram_gloss}${chn_gram_tran}</span>`;
-                        let eng_gram_examp = T(gram.EXAMPLE) ? `<span class="eng_gram_examp">${T(gram.EXAMPLE)}</span>` : '';
+                        let eng_gram_examp = T(gram.EXAMPLE) ? `<span class="eng_gram_examp">${T(gram.EXAMPLE).replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>` : '';
                         let chn_gram_examp = T(gram.EXAMPLETRAN) ? `<span class="chn_gram_examp">${T(gram.EXAMPLETRAN)}</span>` : '';
                         if (eng_gram_examp && chn_gram_examp && this.maxexample > 0)
                             definition += `<ul class="gram_examps"><li class="gram_examp">${eng_gram_examp}${chn_gram_examp}</li></ul>`;
