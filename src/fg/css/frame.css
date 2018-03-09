@@ -53,6 +53,7 @@
   padding: 5px;
   margin-top: 5px;
   word-wrap: break-word;
+  overflow: auto;  
 }
 
 .odh-sentence {
