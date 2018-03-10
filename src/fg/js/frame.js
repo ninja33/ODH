@@ -35,9 +35,26 @@ function registerAudioLinks() {
     }
 }
 
+function registerSoundLinks() {
+    for (let link of document.getElementsByClassName('odh-playsound')) {
+        link.setAttribute('src', getImageSource('play'));
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const ds = e.currentTarget.dataset;
+            window.parent.postMessage({
+                action: 'playSound',
+                params: {
+                    sound: ds.sound,
+                }
+            }, '*');
+        });
+    }
+}
+
 function onDomContentLoaded() {
     registerAddNoteLinks();
     registerAudioLinks();
+    registerSoundLinks();
 }
 
 function onMessage(e) {

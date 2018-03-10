@@ -78,6 +78,11 @@
   margin: 0 3px;
 }
 
+.odh-playsound {
+  vertical-align: text-bottom;
+  margin: 0 3px;
+}
+
 hr {
   border: 1px;
   margin: 5px 0;

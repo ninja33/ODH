@@ -172,6 +172,21 @@ class ODHFront {
         this.audio[url] = audio;
     }
 
+    api_playSound(params) {
+        let { sound } = params;
+        let url = sound;
+
+        for (let key in this.audio) {
+            this.audio[key].pause();
+        }
+
+        const audio = this.audio[url] || new Audio(url);
+        audio.currentTime = 0;
+        audio.play();
+
+        this.audio[url] = audio;
+    }
+
     buildNote(result) {
         //get 1 sentence around the expression.
         const expression = selectedText();
@@ -252,6 +267,7 @@ class ODHFront {
                 <img id="load" src="${chrome.runtime.getURL('fg/img/load.gif')}"/>
                 <img id="good" src="${chrome.runtime.getURL('fg/img/good.png')}"/>
                 <img id="fail" src="${chrome.runtime.getURL('fg/img/fail.png')}"/>
+                <img id="play" src="${chrome.runtime.getURL('fg/img/play.png')}"/>
             </div>
             <script src="${chrome.runtime.getURL('fg/js/frame.js')}"></script>
             </body>
