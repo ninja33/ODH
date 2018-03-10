@@ -1,3 +1,4 @@
+/* global api */
 class encn_Longman {
     constructor(options) {
         this.options = options;
@@ -40,7 +41,7 @@ class encn_Longman {
                 return node;
         }
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","longman"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","longman"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
@@ -49,14 +50,20 @@ class encn_Longman {
             return [];
         }
 
+        let allentries = [];
         if (!data.longman) return notes;
         for (const entry of data.longman.wordList) {
+            allentries.push(entry.Entry);
+            if (entry.Entry.PhrVbEntry)
+                allentries = allentries.concat(entry.Entry.PhrVbEntry);
+        }
+        for (const entry of allentries) {
             let definitions = [];
 
-            let header = entry.Entry.Head[0];
-            //let tailer = entry.Entry.Tail;
+            let header = entry.Head[0];
+            //let tailer = entry.Tail;
 
-            let expression = T(header.HWD); //headword
+            let expression = T(header.HWD) || T(header.PHRVBHWD)  ; //headword
             let reading = header.PronCodes ? header.PronCodes[0].PRON.join('/') : ''; // phonetic
 
             let audios = T(header.VIDEOCAL) ? [T(header.VIDEOCAL)] : [];
@@ -66,26 +73,25 @@ class encn_Longman {
             for (const freq of freqs) {
                 extrainfo += `<span class="head_freq">${freq}</span>`;
             }
-
             let pos = T(header.POS) ? `<span class='pos'>${T(header.POS)}</span>` : '';
 
-            let PhrHead = entry.Entry.PhrVbEntry ? entry.Entry.PhrVbEntry[0].Head[0] : '';
-            expression = PhrHead ? T(PhrHead.PHRVBHWD) : expression;
-            pos = PhrHead ? `<span class='pos'>${T(PhrHead.POS)}</span>` : pos;
-
-            let senses = entry.Entry.Sense || (PhrHead ? entry.Entry.PhrVbEntry[0].Sense : '');
+            let senses = entry.Sense;
             for (const sense of senses) {
                 let signpost = T(sense.SIGNPOST);
                 let signtran = T(sense.SIGNTRAN);
                 let sign = signpost && signtran ? `<div class="sign"><span class="eng_sign">${signpost}</span><span class="chn_sign">${signtran}</span></div>` : '';
 
+                let lexunit = T(sense.LEXUNIT);
+                let lex = lexunit ? `<div class="sign"><span class="eng_sign">${lexunit}</span></div>` : '';
+
                 let subsenses = sense.Subsense || [sense];
                 for (const subsense of subsenses) {
+                    let gram = subsense.GRAM ? `[${T(subsense.GRAM)}]` : '';
                     let chn_tran = subsense.TRAN ? `<span class='chn_tran'>${T(subsense.TRAN)}</span>` : '';
                     let eng_tran = subsense.DEF ? `<span class='eng_tran'>${T(subsense.DEF)}</span>` : '';
                     if (!chn_tran || !eng_tran) continue;
                     let definition = '';
-                    definition += `${sign}${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
+                    definition += `${lex}${sign}${pos}<span class="tran">${gram} ${eng_tran}${chn_tran}</span>`;
                     // make exmaple sentence segement
                     let eng_examples = subsense.EXAMPLE || [];
                     let chn_examples = subsense.EXAMPLETRAN || [];
@@ -133,7 +139,7 @@ class encn_Longman {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q='
+        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try{
@@ -149,7 +155,7 @@ class encn_Longman {
         let extrainfo = '';
         let types = data.ec.exam_type || [];
         for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`
+            extrainfo += `<span class="examtype">${type}</span>`;
         }
 
         let definition = '<ul class="ec">';

@@ -55,14 +55,20 @@ class encn_LDOCE6MDX {
         }
 
         let entries = doc.querySelectorAll('.entry');
+        let allentries = [];
         if (!entries) return notes;
         for (const entry of entries) {
+            allentries.push(entry);
+            let phrvbentries = entry.querySelectorAll('.phrvbentry');
+            allentries = allentries.concat(...phrvbentries);
+        }
+        for (const entry of allentries) {
             let definitions = [];
 
             let header = entry.querySelector('.entryhead');
             //let tailer = entry.querySelector('.tail');
 
-            let expression = T(header.querySelector('.hwd')); //headword
+            let expression = T(header.querySelector('.hwd')) || T(header.querySelector('.phrvbhwd')) ; //headword
             let reading = T(header.querySelector('.pron')); // phonetic
 
             let audios = [];
@@ -82,20 +88,16 @@ class encn_LDOCE6MDX {
 
             let pos = T(header.querySelector('.pos')) ? `<span class='pos'>${T(header.querySelector('.pos'))}</span>` : '';
 
-            //let PhrHead = entry.Entry.PhrVbEntry ? entry.Entry.PhrVbEntry[0].Head[0] : '';
-            //expression = PhrHead ? T(PhrHead.PHRVBHWD) : expression;
-            //pos = PhrHead ? `<span class='pos'>${T(PhrHead.POS)}</span>` : pos;
-            //let senses = entry.Entry.Sense || (PhrHead ? entry.Entry.PhrVbEntry[0].Sense : '');
             let senses = entry.querySelectorAll('.sense');
             for (const sense of senses) {
-                let signpost = T(sense.querySelector('.signpost'));
+                let signpost = T(sense.querySelector('.signpost')) || T(sense.querySelector('.lexunit'));
                 let sign = signpost ? `<div class="sign"><span class="eng_sign">${signpost}</span></div>` : '';
-
                 let subsenses = sense.querySelectorAll('.subsense');
                 if (subsenses.length == 0)
                     subsenses = [sense];
                 for (const subsense of subsenses) {
-                    let eng_tran = T(subsense.querySelector('.def')) ? `<span class='eng_tran'>${T(subsense.querySelector('.def'))}</span>` : '';
+                    let subgram = T(subsense.querySelector('.gram'));
+                    let eng_tran = T(subsense.querySelector('.def')) ? `<span class='eng_tran'>${subgram}${T(subsense.querySelector('.def'))}</span>` : '';
                     if (!eng_tran) continue;
                     let definition = '';
                     definition += `${sign}${pos}<span class="tran">${eng_tran}</span>`;
@@ -218,10 +220,6 @@ class encn_LDOCE6MDX {
                 span.eng_gram_gloss{margin-right: 3px;padding: 0;}
                 span.eng_gram_form,
                 span.eng_gram_prep{font-weight: bold;display: block;}
-                span.eng_gram_prep::before {content: "[+";}
-                span.eng_gram_prep::after  {content: "]";}
-                span.eng_gram_gloss::before{content: "(=";}
-                span.eng_gram_gloss::after {content: ")";}
                 span.eng_gram_gloss{font-style: italic;}
                 span.chn_tran,
                 span.chn_gram_tran{color: #0d47a1;}
