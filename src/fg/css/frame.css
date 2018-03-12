@@ -53,6 +53,7 @@
   padding: 5px;
   margin-top: 5px;
   word-wrap: break-word;
+  overflow: auto;  
 }
 
 .odh-sentence {
@@ -74,6 +75,11 @@
 
 .odh-playaudio {
   cursor: pointer;
+  margin: 0 3px;
+}
+
+.odh-playsound {
+  vertical-align: text-bottom;
   margin: 0 3px;
 }
 

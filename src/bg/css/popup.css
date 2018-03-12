@@ -4,7 +4,7 @@ body {
     width: 158px;
     border-radius: 8px;
     margin: 2px 4px;
-    padding:0;
+    padding: 0;
 }
 
 .container {
@@ -37,6 +37,10 @@ section {
     padding: 5px;
 }
 
+section+section {
+    margin-top: 5px;
+}
+
 label,
 input[type=text],
 select {
@@ -50,6 +54,7 @@ select {
     box-sizing: border-box;
 }
 
+.anki-options select,
 .dictionary-options select {
     width: 140px;
 }

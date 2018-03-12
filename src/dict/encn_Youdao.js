@@ -44,12 +44,17 @@ class encn_Youdao {
         if (!data.ec) return notes;
         let expression = data.ec.word[0]['return-phrase'].l.i;
         let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
+        //let reading = putSoundTag(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`);
 
         let extrainfo = '';
         let types = data.ec.exam_type || [];
         for (const type of types) {
             extrainfo += `<span class="examtype">${type}</span>`;
         }
+
+        let audios = [];
+        audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+        audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
         let definition = '<ul class="ec">';
         const trs = data.ec.word ? data.ec.word[0].trs : [];
@@ -68,6 +73,7 @@ class encn_Youdao {
             reading,
             extrainfo,
             definitions: [definition],
+            audios
         });
         return notes;
     }
