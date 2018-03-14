@@ -12,6 +12,7 @@ class ODHBack {
         this.agent = new Agent();
 
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
+        window.addEventListener('message', e => this.onSandboxMessage(e));
         chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
         chrome.tabs.onCreated.addListener((tab) => this.onTabReady(tab.id));
         chrome.tabs.onUpdated.addListener(this.onTabReady.bind(this));
@@ -43,14 +44,20 @@ class ODHBack {
         this.options = options;
 
         switch (options.enabled) {
-        case false:
-            chrome.browserAction.setBadgeText({ text: 'off' });
-            break;
-        case true:
-            chrome.browserAction.setBadgeText({ text: '' });
-            break;
+            case false:
+                chrome.browserAction.setBadgeText({
+                    text: 'off'
+                });
+                break;
+            case true:
+                chrome.browserAction.setBadgeText({
+                    text: ''
+                });
+                break;
         }
-        this.tabInvokeAll('setOptions', { options: this.options });
+        this.tabInvokeAll('setOptions', {
+            options: this.options
+        });
     }
 
     tabInvokeAll(action, params) {
@@ -62,7 +69,10 @@ class ODHBack {
     }
 
     tabInvoke(tabId, action, params) {
-        chrome.tabs.sendMessage(tabId, { action, params }, () => null);
+        chrome.tabs.sendMessage(tabId, {
+            action,
+            params
+        }, () => null);
     }
 
     formatNote(notedef) {
@@ -158,37 +168,59 @@ class ODHBack {
         return true;
     }
 
+    onSandboxMessage(e) {
+        const {
+            action,
+            params
+        } = e.data;
+        const method = this['api_' + action];
+        if (typeof (method) === 'function') {
+            method.call(this, params);
+        }
+    }
+
     async api_sandboxLoaded(params) {
         let options = await optionsLoad();
         this.opt_optionsChanged(options);
     }
 
     async api_Fetch(params) {
-        let { url, callback } = params;
+        let {
+            url,
+            callbackId
+        } = params;
 
         let request = {
             url,
             type: 'GET',
             dataType: 'text',
             timeout: 5000,
-            error: (xhr, status, error) => callback(null),
-            success: (data, status) => callback(data)
+            error: (xhr, status, error) => this.callback(null, callbackId),
+            success: (data, status) => this.callback(data, callbackId)
         };
         $.ajax(request);
     }
 
     async api_Deinflect(params) {
-        let { word, callback } = params;
-        callback(this.deinflector.deinflect(word));
+        let {
+            word,
+            callbackId
+        } = params;
+        this.callback(this.deinflector.deinflect(word), callbackId);
     }
 
     async api_getLocale(params) {
-        let { callback } = params;
-        callback(chrome.i18n.getUILanguage());
+        let {
+            callbackId
+        } = params;
+        this.callback(chrome.i18n.getUILanguage(), callbackId);
     }
 
     async api_getTranslation(params) {
-        let { expression, callback } = params;
+        let {
+            expression,
+            callback
+        } = params;
 
         try {
             let result = await this.findTerm(expression);
@@ -199,7 +231,10 @@ class ODHBack {
     }
 
     api_addNote(params) {
-        let { notedef, callback } = params;
+        let {
+            notedef,
+            callback
+        } = params;
 
         const note = this.formatNote(notedef);
         this.target.addNote(note).then(result => {
@@ -240,21 +275,35 @@ class ODHBack {
 
     async loadDictionary(url) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('loadDictionary', { url }, result => resolve(result));
+            this.agent.postMessage('loadDictionary', {
+                url
+            }, result => resolve(result));
         });
     }
 
     async setDictOptions(options) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('setDictOptions', { options }, result => resolve(result));
+            this.agent.postMessage('setDictOptions', {
+                options
+            }, result => resolve(result));
         });
     }
 
     async findTerm(expression) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('findTerm', { expression }, result => resolve(result));
+            this.agent.postMessage('findTerm', {
+                expression
+            }, result => resolve(result));
         });
     }
+
+    callback(data, callbackId) {
+        this.agent.postMessage('callback', {
+            data,
+            callbackId
+        });
+    }
+
 
 }
 

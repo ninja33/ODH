@@ -1,12 +1,12 @@
 // --- Sandbox communication agent (with callback support) ---
-class Agent {
+class BGAgent {
     constructor() {
         this.callbacks = {};
         this.sandbox = null;
-        window.addEventListener('message', e => this.onSandboxMessage(e));
+        window.addEventListener('message', e => this.onBackendMessage(e));
     }
 
-    onSandboxMessage(e) {
+    onBackendMessage(e) {
         const { action, params } = e.data;
 
         if (action != 'callback' || !params || !params.callbackId)
@@ -18,14 +18,12 @@ class Agent {
         }
     }
 
-    postMessage(action, params, callback) {
+    postBGMessage(action, params, callback) {
         if (action != 'callback' && callback) {
             params.callbackId = Math.random();
             this.callbacks[params.callbackId] = callback;
         }
-        if (!this.sandbox)
-            this.sandbox = document.getElementById('sandbox').contentWindow;
-        this.sandbox.postMessage({ action, params, }, '*');
+        window.parent.postMessage({ action, params, }, '*');
     }
 
 }

@@ -1,12 +1,12 @@
 class SandboxAPI {
     constructor() {
-
+        this.bgagent = new BGAgent();
     }
 
-    async sendBGMessage(action, params) {
+    async postBGMessage(action, params) {
         return new Promise((resolve, reject) => {
             try {
-                chrome.runtime.sendMessage({ action, params }, result => resolve(result));
+                this.bgagent.postBGMessage(action, params, result => resolve(result));
             } catch (err) {
                 reject(null);
             }
@@ -14,23 +14,30 @@ class SandboxAPI {
     }
 
     async deinflect(word) {
-        return await this.sendBGMessage('Deinflect', { word });
+        return await this.postBGMessage('Deinflect', {
+            word
+        });
     }
 
     async fetch(url) {
-        return await this.sendBGMessage('Fetch', { url });
+        return await this.postBGMessage('Fetch', {
+            url
+        });
     }
 
     async locale() {
-        return await this.sendBGMessage('getLocale', {});
+        return await this.postBGMessage('getLocale', {});
     }
 
     callback(data, callbackId) {
-        this.sendBGMessage('callback', { data, callbackId });
+        this.postBGMessage('callback', {
+            data,
+            callbackId
+        });
     }
 
     sandboxLoaded() {
-        this.sendBGMessage('sandboxLoaded', {});
+        this.postBGMessage('sandboxLoaded', {});
     }
 
 }

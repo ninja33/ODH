@@ -18,6 +18,7 @@ function sanitizeOptions(options) {
         preferredaudio: '0',
 
         dictLibrary: 'encn_Oxford, encn_Longman, encn_Collins, encn_Cambridge',
+        //dictLibrary: '',
         dictSelected: '',
         dictNamelist: [],
     };
