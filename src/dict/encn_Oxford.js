@@ -9,9 +9,9 @@ class encn_Oxford {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '牛津英汉双解词典';
+            return '(在线)牛津英汉双解';
         if (locale.indexOf('TW') != -1)
-            return '牛津英漢雙解詞典';
+            return '(在線)牛津英漢雙解';
         return 'encn_Oxford';
     }
 
@@ -23,9 +23,20 @@ class encn_Oxford {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await api.deinflect(word);
-        let results = await Promise.all([this.findOxford(word), this.findOxford(deflection), this.findEC(word)]);
+        let word_stem = await api.deinflect(word);
+        let promises = [this.findOxford(word), this.findOxford(word_stem)];
+        let list = [];
+        if (word.toLowerCase() !=  word) {
+            let lowercase = word.toLowerCase();
+            let lowercase_stem = await api.deinflect(lowercase);
+            list = [word, word_stem, lowercase, lowercase_stem];
+        } else {
+            list = [word, word_stem];
+        }
+        promises = promises.concat(list.map((item) => this.findCollins(item)));
+        let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
+
     }
 
     async findOxford(word) {
@@ -155,48 +166,50 @@ class encn_Oxford {
         return notes;
     }
 
-    async findEC(word) {
+    async findCollins(word) {
         let notes = [];
 
         if (!word) return notes;
-
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
-        let url = base + encodeURIComponent(word);
-        let data = '';
+        let results = [];
         try {
-            data = JSON.parse(await api.fetch(url));
+            results = JSON.parse(await api.getCollins(word));
         } catch (err) {
             return [];
         }
 
-        if (!data.ec) return notes;
-        let expression = data.ec.word[0]['return-phrase'].l.i;
-        let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
+        //get Collins Data
+        if (!results || results.length < 0) return notes;
+        for (const result of results) {
+            let [expression, reading, extrainfo, defs] = result;
+            extrainfo = extrainfo ? `<span class="star">${extrainfo}</span>` : '';
+            let audios = [];
+            audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+            audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
-        let extrainfo = '';
-        let types = data.ec.exam_type || [];
-        for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`;
+            let definitions = [];
+            for (const def of defs) {
+                let definition = '';
+                let pos = def.substring(0, def.indexOf('.') + 1).trim();
+                let chn_tran = def.substring(def.indexOf('.') + 1, def.indexOf('<br>')).trim();
+                let eng_tran = def.substring(def.indexOf('<br>')+4,def.length).trim();
+                pos = pos ? `<span class="pos">${pos}</span>` : '';
+                chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
+                eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
+                definition = `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
+                definitions.push(definition);
+            }
+
+            let css = this.renderCSS();
+            notes.push({
+                css,
+                expression,
+                reading,
+                extrainfo,
+                definitions,
+                audios
+            });
         }
 
-        let definition = '<ul class="ec">';
-        const trs = data.ec.word ? data.ec.word[0].trs : [];
-        for (const tr of trs)
-            definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
-        definition += '</ul>';
-        let css = `
-            <style>
-                span.examtype {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
-                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
-                span.ec_chn {margin-left: -5px;}
-            </style>`;
-        notes.push({
-            css,
-            expression,
-            reading,
-            extrainfo,
-            definitions: [definition],
-        });
         return notes;
     }
 
@@ -208,6 +221,7 @@ class encn_Oxford {
                 span.informal   {margin: 0 2px;color: #0d47a1;}
                 span.complement {margin: 0 2px;font-weight: bold;}
                 div.idmphrase {font-weight: bold;margin: 0;padding: 0;}
+                span.star {color: #FFBB00;}
                 span.eng_dis  {margin-right: 5px;}
                 span.chn_dis  {margin: 0;padding: 0;}
                 span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}

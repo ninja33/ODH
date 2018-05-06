@@ -11,11 +11,7 @@ class ODHFront {
         this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.maxContext = 1; //max context sentence #
         this.popup = new Popup();
-        this.lastword = null;
-        this.content = null;
         this.timeout = null;
-
-        this.mousemoved = null;
 
         window.addEventListener('mousemove', e => this.onMouseMove(e));
         window.addEventListener('mousedown', e => this.onMouseDown(e));
@@ -32,7 +28,7 @@ class ODHFront {
         if (!this.activateKey)
             return;
 
-        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey) && this.mousemoved) {
+        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
             const range = document.caretRangeFromPoint(this.point.x, this.point.y);
             if (range == null) return;
             let textSource = new TextSourceRange(range);
@@ -55,7 +51,6 @@ class ODHFront {
     }
 
     onMouseMove(e) {
-        this.mousemoved = true;
         this.point = { x: e.clientX, y: e.clientY, };
     }
 
@@ -80,7 +75,6 @@ class ODHFront {
         if (!this.enabled)
             return;
 
-        this.mousemoved = false;
         // reset selection timeout
         this.timeout = null;
 
@@ -88,12 +82,6 @@ class ODHFront {
         if (isInvalid(expression)) {
             return;
         }
-
-        if (expression == this.lastword && this.content){
-            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, this.content);
-            return;
-        } 
-        this.lastword = expression;
 
         let request = {
             action: 'getTranslation',
@@ -104,9 +92,7 @@ class ODHFront {
                 return;
 
             this.notes = this.buildNote(result);
-
-            this.content = this.renderPopup(this.notes);
-            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, this.content);
+            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, this.renderPopup(this.notes));
         });
 
     }

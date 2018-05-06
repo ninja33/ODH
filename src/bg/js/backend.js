@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Agent, optionsLoad, optionsSave */
+/* global Ankiconnect, Deinflector, Builtin, Agent, optionsLoad, optionsSave */
 class ODHBack {
     constructor() {
         this.options = null;
@@ -7,6 +7,9 @@ class ODHBack {
         this.target = new Ankiconnect();
         this.deinflector = new Deinflector();
         this.deinflector.loadData();
+        //Setup builtin dictionary data
+        this.builtin = new Builtin();
+        this.builtin.loadData();
 
         this.list = [];
         this.agent = new Agent();
@@ -44,16 +47,16 @@ class ODHBack {
         this.options = options;
 
         switch (options.enabled) {
-            case false:
-                chrome.browserAction.setBadgeText({
-                    text: 'off'
-                });
-                break;
-            case true:
-                chrome.browserAction.setBadgeText({
-                    text: ''
-                });
-                break;
+        case false:
+            chrome.browserAction.setBadgeText({
+                text: 'off'
+            });
+            break;
+        case true:
+            chrome.browserAction.setBadgeText({
+                text: ''
+            });
+            break;
         }
         this.tabInvokeAll('setOptions', {
             options: this.options
@@ -109,11 +112,11 @@ class ODHBack {
     }
 
     async loadDict() {
-        let defaultdict = ['encn_Youdao'];
+        let defaultdict = ['builtin_encn_Collins'];
         let path = this.options.dictLibrary;
         //temporary path fix for v0.2
         if (path == 'encn_List') {
-            path = 'encn_Oxford, encn_Longman, encn_Collins, encn_Cambridge';
+            path = 'builtin_encn_Oxford, encn_Collins, encn_Oxford, encn_Cambridge, enen_Collins';
             this.options.dictLibrary = path;
         }
 
@@ -207,6 +210,22 @@ class ODHBack {
             callbackId
         } = params;
         this.callback(this.deinflector.deinflect(word), callbackId);
+    }
+
+    async api_getCollins(params) {
+        let {
+            word,
+            callbackId
+        } = params;
+        this.callback(this.builtin.getCollins(word), callbackId);
+    }
+
+    async api_getOxford(params) {
+        let {
+            word,
+            callbackId
+        } = params;
+        this.callback(this.builtin.getOxford(word), callbackId);
     }
 
     async api_getLocale(params) {

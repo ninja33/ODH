@@ -9,9 +9,9 @@ class encn_Baicizhan {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '百词斩英汉图文词典';
+            return '(在線)百词斩图文词典';
         if (locale.indexOf('TW') != -1)
-            return '百詞斬英漢圖文詞典';
+            return '(在線)百詞斬圖文词典';
         return 'encn_Baicizhan';
     }
 

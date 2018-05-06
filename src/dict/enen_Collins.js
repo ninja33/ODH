@@ -9,9 +9,9 @@ class enen_Collins {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '柯林斯英英词典';
+            return '(在线)柯林斯英英';
         if (locale.indexOf('TW') != -1)
-            return '柯林斯英英詞典';
+            return '(在線)柯林斯英英';
         return 'enen_Collins';
     }
 

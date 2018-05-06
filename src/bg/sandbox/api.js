@@ -1,3 +1,4 @@
+/*global BGAgent */
 class SandboxAPI {
     constructor() {
         this.bgagent = new BGAgent();
@@ -25,6 +26,18 @@ class SandboxAPI {
         });
     }
 
+    async getCollins(word) {
+        return await this.postBGMessage('getCollins', {
+            word
+        });
+    }
+
+    async getOxford(word) {
+        return await this.postBGMessage('getOxford', {
+            word
+        });
+    }
+    
     async locale() {
         return await this.postBGMessage('getLocale', {});
     }

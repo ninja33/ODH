@@ -9,9 +9,9 @@ class encn_Longman {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '朗文英汉双解词典';
+            return '(在线)朗文英汉双解';
         if (locale.indexOf('TW') != -1)
-            return '朗文英漢雙解詞典';
+            return '(在線)朗文英漢雙解';
         return 'encn_Longman';
     }
 
@@ -23,8 +23,8 @@ class encn_Longman {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await api.deinflect(word);
-        let results = await Promise.all([this.findLongman(word), this.findLongman(deflection), this.findEC(word)]);
+        //let deflection = await api.deinflect(word);
+        let results = await Promise.all([this.findLongman(word)]);
         return [].concat(...results).filter(x => x);
     }
 
@@ -50,8 +50,39 @@ class encn_Longman {
             return [];
         }
 
+        //get Youdao English-Chinese(EC) Dictionary data
+        if (!data || !data.ec) return notes;
+        let expression = data.ec.word[0]['return-phrase'].l.i;
+        let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
+
+        let extrainfo = '';
+        let types = data.ec.exam_type || [];
+        for (const type of types) {
+            extrainfo += `<span class="examtype">${type}</span>`;
+        }
+
+        let definition = '<ul class="ec">';
+        const trs = data.ec.word ? data.ec.word[0].trs : [];
+        for (const tr of trs)
+            definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
+        definition += '</ul>';
+        let css = `
+            <style>
+                span.examtype {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
+                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                span.ec_chn {margin-left: -5px;}
+            </style>`;
+        notes.push({
+            css,
+            expression,
+            reading,
+            extrainfo,
+            definitions: [definition],
+        });
+
         let allentries = [];
-        if (!data.longman) return notes;
+        //get Longman Dictionary data
+        if (!data || !data.longman) return notes;
         for (const entry of data.longman.wordList) {
             allentries.push(entry.Entry);
             if (entry.Entry.PhrVbEntry)
@@ -131,6 +162,7 @@ class encn_Longman {
                 audios
             });
         }
+
         return notes;
     }
 

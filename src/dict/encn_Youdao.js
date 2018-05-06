@@ -9,9 +9,9 @@ class encn_Youdao {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '有道英汉简明词典';
+            return '(在线)有道英汉简明';
         if (locale.indexOf('TW') != -1)
-            return '有道英漢簡明詞典';
+            return '(在線)有道英漢簡明';
         return 'encn_Youdao';
     }
 
@@ -22,8 +22,8 @@ class encn_Youdao {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await api.deinflect(word);
-        let results = await Promise.all([this.findEC(deflection), this.findEC(word)]);
+        //let deflection = await api.deinflect(word);
+        let results = await Promise.all([this.findEC(word)]);
         return [].concat(...results).filter(x => x);
     }
 
@@ -41,7 +41,7 @@ class encn_Youdao {
             return [];
         }
 
-        if (!data.ec) return notes;
+        if (!data || !data.ec) return notes;
         let expression = data.ec.word[0]['return-phrase'].l.i;
         let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
         //let reading = putSoundTag(`https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`);

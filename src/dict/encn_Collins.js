@@ -9,9 +9,9 @@ class encn_Collins {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '柯林斯英汉双解词典';
+            return '(在线)柯林斯英汉双解';
         if (locale.indexOf('TW') != -1)
-            return '柯林斯英漢雙解詞典';
+            return '(在線)柯林斯英漢雙解';
         return 'encn_Collins';
     }
 
@@ -24,7 +24,7 @@ class encn_Collins {
     async findTerm(word) {
         this.word = word;
         //let deflection = api.deinflect(word);
-        let results = await Promise.all([this.findCollins(word), this.findEC(word)]);
+        let results = await Promise.all([this.findCollins(word)]);
         return [].concat(...results).filter(x => x);
     }
 
@@ -41,7 +41,38 @@ class encn_Collins {
             return [];
         }
 
-        if (!data.collins) return notes;
+        //get Youdao English-Chinese(EC) Data
+        if (!data || !data.ec) return notes;
+        let expression = data.ec.word[0]['return-phrase'].l.i;
+        let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
+
+        let extrainfo = '';
+        let types = data.ec.exam_type || [];
+        for (const type of types) {
+            extrainfo += `<span class="examtype">${type}</span>`;
+        }
+
+        let definition = '<ul class="ec">';
+        const trs = data.ec.word ? data.ec.word[0].trs : [];
+        for (const tr of trs)
+            definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
+        definition += '</ul>';
+        let css = `
+            <style>
+                span.examtype {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
+                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                span.ec_chn {margin-left: -5px;}
+            </style>`;
+        notes.push({
+            css,
+            expression,
+            reading,
+            extrainfo,
+            definitions: [definition],
+        });
+
+        //get Collins Data
+        if (!data || !data.collins) return notes;
         for (const collins_entry of data.collins.collins_entries) {
             let definitions = [];
             let audios = [];
@@ -76,7 +107,7 @@ class encn_Collins {
                     chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
                     eng_tran = eng_tran ? eng_tran.replace(RegExp(expression,'gi'),'<b>$&</b>'):''; //surround expression with <b> in eng_translation.
                     eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
-                    definition += `${pos}<span clas="tran">${eng_tran}${chn_tran}</span>`;
+                    definition += `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
                     // make exmaple sentence segement
                     let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
                     if (sents.length > 0 && this.maxexample > 0) {
@@ -103,6 +134,7 @@ class encn_Collins {
                 audios
             });
         }
+
         return notes;
     }
 

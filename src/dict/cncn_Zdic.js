@@ -9,9 +9,9 @@ class cncn_Zdic {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '汉典汉语词典';
+            return '(在线)汉典汉语词典';
         if (locale.indexOf('TW') != -1)
-            return '汉典汉语词典';
+            return '(在線)汉典汉语词典';
         return 'cncn_Zdic';
     }
 
