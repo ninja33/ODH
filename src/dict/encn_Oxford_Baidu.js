@@ -9,10 +9,10 @@ class encn_Oxford_Baidu {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '牛津英汉双解(Baidu)';
+            return '(在线)牛津英汉双解(Baidu)';
         if (locale.indexOf('TW') != -1)
-            return '牛津英汉双解(Baidu)';
-        return 'encn_Oxford_Baidu';
+            return '(在线)牛津英汉双解(Baidu)';
+        return '(online)encn_Oxford_Baidu';
     }
 
 

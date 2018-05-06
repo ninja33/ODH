@@ -12,7 +12,7 @@ class enen_UrbanDict {
             return '(在线)Urban英英俚语';
         if (locale.indexOf('TW') != -1)
             return '(在線)Urban英英俚語';
-        return 'enen_UrbanDict';
+        return '(online)enen_UrbanDict';
     }
 
 

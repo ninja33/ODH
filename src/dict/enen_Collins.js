@@ -12,7 +12,7 @@ class enen_Collins {
             return '(在线)柯林斯英英';
         if (locale.indexOf('TW') != -1)
             return '(在線)柯林斯英英';
-        return 'enen_Collins';
+        return '(online)enen_Collins';
     }
 
 

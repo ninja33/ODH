@@ -12,7 +12,7 @@ class encn_Collins {
             return '(在线)柯林斯英汉双解';
         if (locale.indexOf('TW') != -1)
             return '(在線)柯林斯英漢雙解';
-        return 'encn_Collins';
+        return '(online)encn_Collins';
     }
 
 

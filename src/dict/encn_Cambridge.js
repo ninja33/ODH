@@ -12,7 +12,7 @@ class encn_Cambridge {
             return '(在线)剑桥英汉双解';
         if (locale.indexOf('TW') != -1)
             return '(在線)劍橋英漢雙解';
-        return 'encn_Cambridge';
+        return '(online)encn_Cambridge';
     }
 
     setOptions(options){

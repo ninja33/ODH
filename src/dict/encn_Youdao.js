@@ -12,7 +12,7 @@ class encn_Youdao {
             return '(在线)有道英汉简明';
         if (locale.indexOf('TW') != -1)
             return '(在線)有道英漢簡明';
-        return 'encn_Youdao';
+        return '(online)encn_Youdao';
     }
 
     setOptions(options) {

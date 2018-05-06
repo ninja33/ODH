@@ -12,7 +12,7 @@ class encn_Collins_Oxford_builtin {
             return '(内置)柯林斯牛津双典';
         if (locale.indexOf('TW') != -1)
             return '(內置)柯林斯牛津雙典';
-        return 'encn_Collins_builtin';
+        return '(builtin)encn_CollinsOxford';
     }
 
 

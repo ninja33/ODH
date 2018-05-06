@@ -12,7 +12,7 @@ class encn_Baicizhan {
             return '(在線)百词斩图文词典';
         if (locale.indexOf('TW') != -1)
             return '(在線)百詞斬圖文词典';
-        return 'encn_Baicizhan';
+        return '(online)encn_Baicizhan';
     }
 
 

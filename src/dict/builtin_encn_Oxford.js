@@ -12,7 +12,7 @@ class builtin_encn_Oxford {
             return '(内置)牛津英汉双解';
         if (locale.indexOf('TW') != -1)
             return '(內置)牛津英漢雙解';
-        return 'encn_Collins_builtin';
+        return '(builtin)encn_Oxford';
     }
 
 

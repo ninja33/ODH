@@ -12,7 +12,7 @@ class encn_Oxford {
             return '(在线)牛津英汉双解';
         if (locale.indexOf('TW') != -1)
             return '(在線)牛津英漢雙解';
-        return 'encn_Oxford';
+        return '(online)encn_Oxford';
     }
 
 

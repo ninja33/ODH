@@ -12,7 +12,7 @@ class cncn_Zdic {
             return '(在线)汉典汉语词典';
         if (locale.indexOf('TW') != -1)
             return '(在線)汉典汉语词典';
-        return 'cncn_Zdic';
+        return '(online)cncn_Zdic';
     }
 
 

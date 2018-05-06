@@ -12,7 +12,7 @@ class encn_Longman {
             return '(在线)朗文英汉双解';
         if (locale.indexOf('TW') != -1)
             return '(在線)朗文英漢雙解';
-        return 'encn_Longman';
+        return '(online)encn_Longman';
     }
 
 

@@ -9,10 +9,10 @@ class encn_LDOCE6MDX {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '朗文英英词典(MDX)';
+            return '(MDX)朗文英英词典';
         if (locale.indexOf('TW') != -1)
-            return '朗文英英词典(MDX)';
-        return 'enen_LDOCE6(MDX)';
+            return '(MDX)朗文英英词典';
+        return '(MDX)enen_LDOCE6';
     }
 
 
@@ -23,8 +23,17 @@ class encn_LDOCE6MDX {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await api.deinflect(word);
-        let results = await Promise.all([this.findLDOCE6(word), this.findLDOCE6(deflection), this.findEC(word)]);
+        let list = [];
+        let word_stem = await api.deinflect(word);
+        if (word.toLowerCase() !=  word) {
+            let lowercase = word.toLowerCase();
+            let lowercase_stem = await api.deinflect(lowercase);
+            list = [word, word_stem, lowercase, lowercase_stem];
+        } else {
+            list = [word, word_stem];
+        }
+        let promises = list.map((item) => this.findLDOCE6(item));
+        let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
     }
 

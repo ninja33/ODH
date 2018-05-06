@@ -12,7 +12,7 @@ class builtin_encn_Collins {
             return '(内置)柯林斯英汉双解';
         if (locale.indexOf('TW') != -1)
             return '(內置)柯林斯英漢雙解';
-        return 'encn_Collins_builtin';
+        return '(builtin)encn_Collins';
     }
 
 
