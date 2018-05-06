@@ -56,7 +56,7 @@ class ODHFront {
 
     userSelectionChanged(e) {
 
-        if (!this.enabled || !this.mousemoved) return;
+        if (!this.enabled) return;
 
         if (this.timeout) {
             clearTimeout(this.timeout);
