@@ -62,6 +62,11 @@ class builtin_encn_Oxford {
                 let definition = '';
                 let pos = def.substring(0, def.indexOf('.') + 1).trim();
                 let chn_tran = def.substring(def.indexOf('.') + 1, def.indexOf('<br>')).trim();
+                // 'phrase.'.length = 7 which means the longest position length is 7
+                if (pos.length > 7) {
+                    pos = '';
+                    chn_tran = def.substring(0, def.indexOf('<br>')).trim();
+                }
                 let eng_tran = def.substring(def.indexOf('<br>')+4,def.length).trim();
                 pos = pos ? `<span class="pos">${pos}</span>` : '';
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
