@@ -9,7 +9,7 @@ class encn_Baicizhan {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '(在線)百词斩图文词典';
+            return '(在线)百词斩图文词典';
         if (locale.indexOf('TW') != -1)
             return '(在線)百詞斬圖文词典';
         return '(online)encn_Baicizhan';
@@ -23,9 +23,17 @@ class encn_Baicizhan {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await api.deinflect(word);
-        deflection = deflection ? deflection : word;
-        let results = await Promise.all([this.findBaicizhan(deflection), this.findEC(word)]);
+        let list = [];
+        let word_stem = await api.deinflect(word);
+        if (word.toLowerCase() !=  word) {
+            let lowercase = word.toLowerCase();
+            let lowercase_stem = await api.deinflect(lowercase);
+            list = [word_stem, word, lowercase_stem, lowercase];
+        } else {
+            list = [word_stem, word];
+        }
+        let promises = list.map((item) => this.findBaicizhan(item));
+        let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
     }
 
