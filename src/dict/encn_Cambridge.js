@@ -91,7 +91,7 @@ class encn_Cambridge {
                     for (const defblock of defblocks) {
                         let eng_tran = T(defblock.querySelector('.def-head .def'));
                         let chn_tran = T(defblock.querySelector('.def-body .trans'));
-                        if (!eng_tran || !chn_tran) continue;
+                        if (!eng_tran) continue;
                         let definition = '';
                         eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>`;
                         chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
