@@ -116,7 +116,7 @@ class ODHBack {
         let path = this.options.dictLibrary;
         //temporary path fix for v0.2
         if (path == 'encn_List') {
-            path = 'builtin_encn_Oxford, encn_Collins, encn_Oxford, encn_Cambridge, enen_Collins';
+            path = 'builtin_encn_Collins, builtin_encn_Oxford, encn_Collins, encn_Oxford, encn_Cambridge, enen_Collins, cncn_Zdic';
             this.options.dictLibrary = path;
         }
 
@@ -197,7 +197,7 @@ class ODHBack {
             url,
             type: 'GET',
             dataType: 'text',
-            timeout: 5000,
+            timeout: 2000,
             error: (xhr, status, error) => this.callback(null, callbackId),
             success: (data, status) => this.callback(data, callbackId)
         };

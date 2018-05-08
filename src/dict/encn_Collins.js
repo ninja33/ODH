@@ -16,7 +16,7 @@ class encn_Collins {
     }
 
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
@@ -29,102 +29,105 @@ class encn_Collins {
     }
 
     async findCollins(word) {
-        let notes = [];
+        const maxexample = this.maxexample;
+        if (!word) return [];
 
-        if (!word) return notes;
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec","collins"]]}&xmlVersion=5.1&q=';
+        let base = 'http://dict.youdao.com/w/';
         let url = base + encodeURIComponent(word);
-        let data = '';
-        try{
-            data = JSON.parse(await api.fetch(url));
+        let doc = '';
+        try {
+            let data = await api.fetch(url);
+            let parser = new DOMParser();
+            doc = parser.parseFromString(data, 'text/html');
+            let collins = getCollins(doc);
+            let youdao = getYoudao(doc); //Combine Youdao Concise English-Chinese Dictionary to the end.
+            return [].concat(collins, youdao);
         } catch (err) {
             return [];
         }
 
-        //get Youdao English-Chinese(EC) Data
-        if (!data || !data.ec) return notes;
-        let expression = data.ec.word[0]['return-phrase'].l.i;
-        let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
+        function getCollins(doc) {
+            let notes = [];
 
-        let extrainfo = '';
-        let types = data.ec.exam_type || [];
-        for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`;
-        }
+            //get Collins data: check data availability
+            let defNodes = doc.querySelectorAll('#collinsResult .ol li');
+            if (!defNodes || !defNodes.length) return notes;
 
-        let definition = '<ul class="ec">';
-        const trs = data.ec.word ? data.ec.word[0].trs : [];
-        for (const tr of trs)
-            definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
-        definition += '</ul>';
-        let css = `
-            <style>
-                span.examtype {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
-                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
-                span.ec_chn {margin-left: -5px;}
-            </style>`;
-        notes.push({
-            css,
-            expression,
-            reading,
-            extrainfo,
-            definitions: [definition],
-        });
+            //get headword and phonetic
+            let expression = T(doc.querySelector('#collinsResult h4 .title')); //headword
+            let reading = T(doc.querySelector('#collinsResult h4 .phonetic')); // phonetic
 
-        //get Collins Data
-        if (!data || !data.collins) return notes;
-        for (const collins_entry of data.collins.collins_entries) {
-            let definitions = [];
-            let audios = [];
-
-            let expression = collins_entry.headword; //headword
-            let reading = collins_entry.phonetic || ''; // phonetic
-
-            let extra_star = '';
+            //get exam cert
             let extra_cet = '';
-            let cets = collins_entry.basic_entries.basic_entry[0].cet || '';
+            let cets = T(doc.querySelector('#collinsResult h4 .rank'));
             if (cets) {
                 for (const cet of cets.split(' ')) {
                     extra_cet += `<span class="cet">${cet}</span>`;
                 }
             }
 
-            let star = collins_entry.star || '';
+            //get Collins star
+            let extra_star = '';
+            let starNode = doc.querySelector('#collinsResult h4 .star');
+            let star = starNode ? starNode.className.split(' ')[1].substring(4, 5) : '';
             extra_star = star ? `<span class="star">${'\u2605'.repeat(Number(star))}</span>` : '';
+
             let extrainfo = extra_star + extra_cet;
 
+            //get audio
+            let audios = [];
             audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
             audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
-            if (!collins_entry.entries) continue;
-            for (const entry of collins_entry.entries.entry) {
-                for (const tran_entry of entry.tran_entry) {
-                    let definition = '';
-                    const pos = tran_entry.pos_entry ? `<span class='pos'>${tran_entry.pos_entry.pos}</span>` : '';
-                    if (!tran_entry.tran) continue;
-                    let chn_tran = tran_entry.tran.match(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi).join(' ').trim();
-                    let eng_tran = tran_entry.tran.replace(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi, '').trim();
-                    chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
-                    eng_tran = eng_tran ? eng_tran.replace(RegExp(expression,'gi'),'<b>$&</b>'):''; //surround expression with <b> in eng_translation.
-                    eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
-                    definition += `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
-                    // make exmaple sentence segement
-                    let sents = tran_entry.exam_sents ? tran_entry.exam_sents.sent : [];
-                    if (sents.length > 0 && this.maxexample > 0) {
-                        definition += '<ul class="sents">';
-                        for (const [index, sent] of sents.entries()) {
-                            if (index > this.maxexample - 1) break; // to control only n example sentences defined in option.
-                            let chn_sent = sent.chn_sent;
-                            let eng_sent = sent.eng_sent ? sent.eng_sent.replace(RegExp(expression,'gi'),'<b>$&</b>'):''; //surround expression with <b> in eng_example.
-                            definition += `<li class='sent'><span class='eng_sent'>${eng_sent}</span><span class='chn_sent'>${chn_sent}</span></li>`;
-                        }
-                        definition += '</ul>';
-                    }
-                    definition && definitions.push(definition);
+            //get definitions and examples
+            let definitions = [];
+            for (const defNode of defNodes) {
+                let definition = '';
+                let tranNode = defNode.querySelector('.collinsMajorTrans p');
+                if (!tranNode) continue;
+                let posNode = tranNode.querySelector('.additional');
+                let pos = '';
+                if (posNode) {
+                    pos = `<span class='pos'>${T(posNode)}</span>`;
+                    posNode.remove();
                 }
+                let tran = tranNode.innerHTML.trim();
+                let chn_tran = tran.match(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi).join(' ').trim();
+                let eng_tran = tran.replace(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi, '').trim();
+                chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
+                //eng_tran = eng_tran ? eng_tran.replace(RegExp(expression, 'gi'), '<b>$&</b>') : ''; //surround expression with <b> in eng_translation.
+                eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
+                definition += `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
+
+                // make exmaple sentence segement
+                let exampleNodes = defNode.querySelectorAll('.exampleLists');
+                if (exampleNodes && exampleNodes.length > 0 && maxexample > 0) {
+                    definition += '<ul class="sents">';
+                    for (const [index, example] of exampleNodes.entries()) {
+                        if (index > maxexample - 1) break; // to control only n example sentences defined in option.
+                        let chn_sent = T(example.querySelector('p+p'));
+                        let eng_sent = T(example.querySelector('p')) ? T(example.querySelector('p')).replace(RegExp(expression, 'gi'), '<b>$&</b>') : ''; //surround expression with <b> in eng_example.
+                        definition += `<li class='sent'><span class='eng_sent'>${eng_sent}</span><span class='chn_sent'>${chn_sent}</span></li>`;
+                    }
+                    definition += '</ul>';
+                }
+                definitions.push(definition);
             }
 
-            let css = this.renderCSS();
+            let css = `
+                <style>
+                    span.star {color: #FFBB00;}
+                    span.cet  {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
+                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                    span.tran {margin:0; padding:0;}
+                    span.eng_tran {margin-right:3px; padding:0;}
+                    span.chn_tran {color:#0d47a1;}
+                    ul.sents {font-size:0.8em; list-style:square inside; margin:3px 0;padding:5px;background:rgba(13,71,161,0.1); border-radius:5px;}
+                    li.sent  {margin:0; padding:0;}
+                    span.eng_sent {margin-right:5px;}
+                    span.chn_sent {color:#0d47a1;}
+                </style>`;
+
             notes.push({
                 css,
                 expression,
@@ -133,70 +136,54 @@ class encn_Collins {
                 definitions,
                 audios
             });
+
+            return notes;
         }
 
-        return notes;
-    }
+        function getYoudao(doc) {
+            let notes = [];
 
-    async findEC(word) {
-        let notes = [];
+            //get Youdao EC data: check data availability
+            let defNodes = doc.querySelectorAll('#phrsListTab .trans-container ul li');
+            if (!defNodes || !defNodes.length) return notes;
 
-        if (!word) return notes;
+            //get headword and phonetic
+            let expression = T(doc.querySelector('#phrsListTab .wordbook-js .keyword')); //headword
+            let reading = '';
+            let readings = doc.querySelectorAll('#phrsListTab .wordbook-js .pronounce');
+            if (readings) {
+                let reading_uk = T(readings[0]);
+                let reading_us = T(readings[1]);
+                reading = (reading_uk || reading_us) ? `${reading_uk} ${reading_us}` : '';
+            }
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
-        let url = base + encodeURIComponent(word);
-        let data = '';
-        try{
-            data = JSON.parse(await api.fetch(url));
-        } catch (err) {
-            return [];
+            let audios = [];
+            audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+            audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+
+            let definition = '<ul class="ec">';
+            for (const defNode of defNodes)
+                definition += `<li class="ec"><span class="ec_chn">${T(defNode)}</span></li>`;
+            definition += '</ul>';
+            let css = `
+                <style>
+                    ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                </style>`;
+            notes.push({
+                css,
+                expression,
+                reading,
+                definitions: [definition],
+                audios
+            });
+            return notes;
         }
 
-        if (!data.ec) return notes;
-        let expression = data.ec.word[0]['return-phrase'].l.i;
-        let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
-
-        let extrainfo = '';
-        let types = data.ec.exam_type || [];
-        for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`;
+        function T(node) {
+            if (!node)
+                return '';
+            else
+                return node.innerText.trim();
         }
-
-        let definition = '<ul class="ec">';
-        const trs = data.ec.word ? data.ec.word[0].trs : [];
-        for (const tr of trs)
-            definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
-        definition += '</ul>';
-        let css = `
-            <style>
-                span.examtype {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
-                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
-                span.ec_chn {margin-left: -5px;}
-            </style>`;
-        notes.push({
-            css,
-            expression,
-            reading,
-            extrainfo,
-            definitions: [definition],
-        });
-        return notes;
-    }
-
-    renderCSS() {
-        let css = `
-            <style>
-                span.star {color: #FFBB00;}
-                span.cet  {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
-                span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
-                span.tran {margin:0; padding:0;}
-                span.eng_tran {margin-right:3px; padding:0;}
-                span.chn_tran {color:#0d47a1;}
-                ul.sents {font-size:0.9em; list-style:square inside; margin:3px 0;padding:5px;background:rgba(13,71,161,0.1); border-radius:5px;}
-                li.sent  {margin:0; padding:0;}
-                span.eng_sent {margin-right:5px;}
-                span.chn_sent {color:#0d47a1;}
-            </style>`;
-        return css;
     }
 }

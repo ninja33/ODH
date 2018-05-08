@@ -237,7 +237,7 @@ class encn_Longman {
                 span.chn_tran,
                 span.chn_gram_tran{color: #0d47a1;}
                 ul.sents,
-                ul.gram_examps{font-size: 0.9em;list-style: square inside;margin: 3px 0;padding: 5px;background: rgba(13,71,161,0.1);border-radius: 3px;}
+                ul.gram_examps{font-size: 0.8em;list-style: square inside;margin: 3px 0;padding: 5px;background: rgba(13,71,161,0.1);border-radius: 3px;}
                 li.sent,
                 li.gram_examp{margin: 0;padding: 0;}
                 span.eng_sent,
