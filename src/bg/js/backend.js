@@ -197,7 +197,7 @@ class ODHBack {
             url,
             type: 'GET',
             dataType: 'text',
-            timeout: 2500,
+            timeout: 3000,
             error: (xhr, status, error) => this.callback(null, callbackId),
             success: (data, status) => this.callback(data, callbackId)
         };

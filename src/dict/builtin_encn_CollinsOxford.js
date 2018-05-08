@@ -107,8 +107,8 @@ class encn_Collins_Oxford_builtin {
             let [expression, reading, extrainfo, defs] = result;
             extrainfo = extrainfo ? `<span class="star">${extrainfo}</span>` : '';
             let audios = [];
-            audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-            audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+            audios[0] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+            audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
             let definitions = [];
             for (const def of defs) {

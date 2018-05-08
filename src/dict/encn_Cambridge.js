@@ -66,8 +66,10 @@ class encn_Cambridge {
             pos = pos ? `<span class='pos'>${pos}</span>` : '';
             audios[0] = entry.querySelector('.pron-info>.us .audio_play_button');
             audios[0] = audios[0] ? audios[0].getAttribute('data-src-mp3') : '';
+            audios[0] = audios[0].replace('https', 'http');
             audios[1] = entry.querySelector('.pron-info>.uk .audio_play_button');
             audios[1] = audios[1] ? audios[1].getAttribute('data-src-mp3') : '';
+            audios[1] = audios[1].replace('https', 'http');
 
             let sensbodys = entry.querySelectorAll('.sense-body') || [];
             for (const sensbody of sensbodys) {
@@ -163,8 +165,8 @@ class encn_Cambridge {
             }
 
             let audios = [];
-            audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-            audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+            audios[0] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+            audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
             let definition = '<ul class="ec">';
             for (const defNode of defNodes)
