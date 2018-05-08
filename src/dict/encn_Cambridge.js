@@ -22,17 +22,7 @@ class encn_Cambridge {
     
     async findTerm(word) {
         this.word = word;
-        let promises = [this.findCambridge(word)];
-        let list = [];
-        let word_stem = await api.deinflect(word);
-        if (word.toLowerCase() !=  word) {
-            let lowercase = word.toLowerCase();
-            let lowercase_stem = await api.deinflect(lowercase);
-            list = [word, word_stem, lowercase, lowercase_stem];
-        } else {
-            list = [word, word_stem];
-        }
-        promises = promises.concat(list.map((item) => this.findCollins(item)));
+        let promises = [this.findCambridge(word),this.findYoudao(word)];
         let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
     }
@@ -47,6 +37,7 @@ class encn_Cambridge {
             else
                 return node.innerText.trim();
         }
+        
         let base = 'https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
@@ -133,53 +124,67 @@ class encn_Cambridge {
         return notes;
     }
 
-    async findCollins(word) {
-        let notes = [];
+    async findYoudao(word) {
+        if (!word) return [];
 
-        if (!word) return notes;
-        let results = [];
+        let base = 'http://dict.youdao.com/w/';
+        let url = base + encodeURIComponent(word);
+        let doc = '';
         try {
-            results = JSON.parse(await api.getCollins(word));
+            let data = await api.fetch(url);
+            let parser = new DOMParser();
+            doc = parser.parseFromString(data, 'text/html');
+            return getYoudao(doc);
         } catch (err) {
             return [];
         }
 
-        //get Collins Data
-        if (!results || results.length < 0) return notes;
-        for (const result of results) {
-            let [expression, reading, extrainfo, defs] = result;
-            extrainfo = extrainfo ? `<span class="star">${extrainfo}</span>` : '';
+        function getYoudao(doc) {
+            let notes = [];
+
+            function T(node) {
+                if (!node)
+                    return '';
+                else
+                    return node.innerText.trim();
+            }
+            //get Youdao EC data: check data availability
+            let defNodes = doc.querySelectorAll('#phrsListTab .trans-container ul li');
+            if (!defNodes || !defNodes.length) return notes;
+
+            //get headword and phonetic
+            let expression = T(doc.querySelector('#phrsListTab .wordbook-js .keyword')); //headword
+            let reading = '';
+            let readings = doc.querySelectorAll('#phrsListTab .wordbook-js .pronounce');
+            if (readings) {
+                let reading_uk = T(readings[0]);
+                let reading_us = T(readings[1]);
+                reading = (reading_uk || reading_us) ? `${reading_uk} ${reading_us}` : '';
+            }
+
             let audios = [];
             audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
             audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
-            let definitions = [];
-            for (const def of defs) {
-                let definition = '';
-                let pos = def.substring(0, def.indexOf('.') + 1).trim();
-                let chn_tran = def.substring(def.indexOf('.') + 1, def.indexOf('<br>')).trim();
-                let eng_tran = def.substring(def.indexOf('<br>')+4,def.length).trim();
-                pos = pos ? `<span class="pos">${pos}</span>` : '';
-                chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
-                eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
-                definition = `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
-                definitions.push(definition);
-            }
-
-            let css = this.renderCSS();
+            let definition = '<ul class="ec">';
+            for (const defNode of defNodes)
+                definition += `<li class="ec"><span class="ec_chn">${T(defNode)}</span></li>`;
+            definition += '</ul>';
+            let css = `
+                <style>
+                    ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                </style>`;
             notes.push({
                 css,
                 expression,
                 reading,
-                extrainfo,
-                definitions,
+                definitions: [definition],
                 audios
             });
+            return notes;
         }
-
-        return notes;
     }
-
+    
     renderCSS() {
         let css = `
             <style>
@@ -189,7 +194,7 @@ class encn_Cambridge {
                 span.tran {margin:0; padding:0;}
                 span.eng_tran {margin-right:3px; padding:0;}
                 span.chn_tran {color:#0d47a1;}
-                ul.sents {font-size:0.9em; list-style:square inside; margin:3px 0;padding:5px;background:rgba(13,71,161,0.1); border-radius:5px;}
+                ul.sents {font-size:0.8em; list-style:square inside; margin:3px 0;padding:5px;background:rgba(13,71,161,0.1); border-radius:5px;}
                 li.sent  {margin:0; padding:0;}
                 span.eng_sent {margin-right:5px;}
                 span.chn_sent {color:#0d47a1;}
