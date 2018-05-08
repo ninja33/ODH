@@ -85,15 +85,16 @@ class encn_Collins {
                 let definition = '';
                 let tranNode = defNode.querySelector('.collinsMajorTrans p');
                 if (!tranNode) continue;
-                let posNode = tranNode.querySelector('.additional');
+                let posNodes = tranNode.querySelectorAll('.additional');
                 let pos = '';
-                if (posNode) {
-                    pos = `<span class='pos'>${T(posNode)}</span>`;
-                    posNode.remove();
+                if (posNodes && posNodes.length) {
+                    pos = `<span class='pos'>${T(posNodes[0])}</span>`;
+                    for (const posNode of posNodes)
+                        posNode.remove();
                 }
                 let tran = tranNode.innerHTML.trim();
-                let chn_tran = tran.match(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi).join(' ').trim();
-                let eng_tran = tran.replace(/([\u4e00-\u9fa5]|;|( ?\()|(\) ?))+/gi, '').trim();
+                let chn_tran = tran.match(/([\u4e00-\u9fa5]|…|、|;|\]|\[|( ?\()|(\) ?))+/gi).join(' ').trim();
+                let eng_tran = tran.replace(/([\u4e00-\u9fa5]|…|、|;|\]|\[|( ?\()|(\) ?))+/gi, '').trim();
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
                 //eng_tran = eng_tran ? eng_tran.replace(RegExp(expression, 'gi'), '<b>$&</b>') : ''; //surround expression with <b> in eng_translation.
                 eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
