@@ -12,6 +12,7 @@ class ODHFront {
         this.maxContext = 1; //max context sentence #
         this.popup = new Popup();
         this.timeout = null;
+        this.mousemoved = false;
 
         window.addEventListener('mousemove', e => this.onMouseMove(e));
         window.addEventListener('mousedown', e => this.onMouseDown(e));
@@ -33,16 +34,15 @@ class ODHFront {
             if (range == null) return;
             let textSource = new TextSourceRange(range);
             textSource.selectText();
-            if (this.timeout)
-                clearTimeout(this.timeout);
+            this.mousemoved = false;
             this.onSelectionEnd(e);
         }
     }
 
     onDoubleClick(e) {
-        if (!this.enabled) return;
         if (this.timeout)
             clearTimeout(this.timeout);
+        this.mousemoved = false;
         this.onSelectionEnd(e);
     }
 
@@ -51,12 +51,13 @@ class ODHFront {
     }
 
     onMouseMove(e) {
+        this.mousemoved = true;
         this.point = { x: e.clientX, y: e.clientY, };
     }
 
     userSelectionChanged(e) {
 
-        if (!this.enabled) return;
+        if (!this.enabled || !this.mousemoved) return;
 
         if (this.timeout) {
             clearTimeout(this.timeout);
