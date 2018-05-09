@@ -1,176 +1,160 @@
-urls = {
-    edit   : 'https://ankiweb.net/edit/',
-    save   : 'https://ankiweb.net/edit/save'
-}
+let id = '';
+let password = '';
 
-//Ankiweb API
-async function Logout(){
-    return new Promise((resolve, reject)=>{
-        let request = {
-            url: 'https://ankiweb.net/account/logout',
-            type: 'GET',
-            timeout: 3000,
-            error: (xhr, status, error) => reject(error),
-            success: (data, status) => {
-                let token = $('input[name=csrf_token]', $(data)).val();
-                if (token)
-                    resolve(token);
-                else
-                    reject(false);
+async function connect() {
+    return new Promise((resolve, reject) => {
+        $.get('https://ankiuser.net/edit/', (result) => {
+            let data = null;
+            let title = $('h1', $(result));
+            if (!title.length) return Promise.reject(false);
+            switch (title[0].innerText) {
+            case 'Add':
+                //console.log('(connect) already login: get deck and model');
+                data = getInfo(result);
+                resolve({ action: 'edit', data });
+                break;
+            case 'Log in':
+                //console.log('(connect) not login yet: try to get login token');
+                data = $('input[name=csrf_token]', $(result)).val();
+                resolve({ action: 'login', data });
+                break;
+            default:
+                //console.log('(connect) failed!');
+                reject(false);
             }
-        };
-        console.log("Logout to AnkiWeb");
-        $.ajax(request);
+
+        });
     });
 }
 
-async function Login(ID, Password, Token){
-    return new Promise((resolve, reject)=>{
-        let data = {
-            submitted  : "1",
-            csrf_token : Token,
-            username   : ID,
-            password   : Password
+async function login(id, password, token) {
+    return new Promise((resolve, reject) => {
+        let info = {
+            submitted: '1',
+            username: id,
+            password: password,
+            csrf_token: token
+        };
+        $.post('https://ankiweb.net/account/login', info, (result) => {
+            let title = $('h1', $(result));
+            if (!title.length) return Promise.reject(false);
+            if (title[0].innerText == 'Decks') {
+                //console.log('(login) success!');
+                resolve(true);
+            } else {
+                //console.log('(login) failed!');
+                reject(false);
+            }
+        });
+    });
+}
+
+function getInfo(response) {
+    //return {deck:'default', model:'basic'};
+    const token = /editor\.csrf_token2 = \'(.*)\';/.exec(response)[1];
+    const models = JSON.parse(/editor\.models = (.*}]);/.exec(response)[1]); //[0] = the matching text, [1] = first capture group (what's inside parentheses)
+    const decks = JSON.parse(/editor\.decks = (.*}});/.exec(response)[1]);
+
+    let decknames = [];
+    let modelnames = [];
+    let modelids = {};
+    let modelfieldnames = {};
+
+    for (const deck of Object.values(decks)) {
+        decknames.push(deck.name);
+    }
+
+    for (const model of models) {
+        modelnames.push(model.name);
+        modelids[model.name] = model.id;
+
+        let fieldnames = [];
+        for (let field of model.flds) {
+            fieldnames.push(field.name);
         }
-        let request = {
-            url: 'https://ankiweb.net/account/login',
-            type: 'POST',
+        modelfieldnames[model.name] = fieldnames;
+    }
+    return {decknames, modelnames, modelids, modelfieldnames, token};
+}
+
+async function save(note, info) {
+    let fields = [];
+    for (const field of info.modelfieldnames[note.modelName]) {
+        fields.push(note.fields[field]);
+    }
+
+    let data = [fields, note.tags.join(' ')];
+    return new Promise((resolve, reject) => {
+        var dict = {
+            csrf_token: info.token,
             data,
-            timeout: 3000,
-            error: (xhr, status, error) => reject(error),
-            success: (data, status) => {
-                let media = $("a[href$='/media/manage']", $(data)).length;
-                if (media) {
-                    console.log("Login Success");
-                    resolve(true);
-                }
-                else {
-                    console.log("Login Failed");
-                    reject(false);
-                }
-            }
+            mid: info.modelids[note.modelName],
+            deck: note.deckName
         };
-        console.log("Logging... to AnkiWeb");
-        $.ajax(request);
+        $.post('https://ankiuser.net/edit/save', dict, (result) => {
+            //TODO ...
+        });
     });
 }
 
-async function connect(){
-    ID = 'test@example.com';
-    Password = 'Secret';
-    let Token = await Logout();
-    if (Token)
-        setTimeout(async ()=>{
-            await Login(ID, Password, Token);
-        }, 2000);
-
-}
-
-connect();
-
-function retrieve(callback) {
-    var currentXhr = $.get(this.urls['edit'], (data, textStatus) => {
-        if (textStatus == 'error') {
-            this.connected = false;
-            callback(false);
-        } else {
-            const models = jQuery.parseJSON(/editor\.models = (.*}]);/.exec(data)[1]); //[0] = the matching text, [1] = first capture group (what's inside parentheses)
-            const decks = jQuery.parseJSON(/editor\.decks = (.*}});/.exec(data)[1]);
-
-            var decknames = [];
-            for (let d in decks) {
-                if (!(d == 1 && decks[d].mid == null && Object.keys(decks).length > 1)) {
-                    decknames.push(decks[d].name);
-                }
-            }
-            decknames.sort();
-            this.decks = decknames;
-
-            var modelnames = [];
-            var modelids = {};
-            for (let m in models) {
-                modelnames.push(models[m].name);
-                modelids[models[m].name] = models[m].id;
-            }
-            this.models = modelnames;
-            this.mids = modelids;
-
-            var modelfieldnames = {};
-            for (let m in models) {
-                var fieldnames = [];
-                for (let f in models[m].flds) {
-                    fieldnames.push(models[m].flds[f].name);
-                }
-                modelfieldnames[models[m].name] = fieldnames;
-            }
-            this.modelfields = modelfieldnames;
-            this.connected = true;
-            console.log("decks & models data loaded success");
-            callback(true);
-        }
-    });
-}
-
-
-function save(note, callback){
-
-    var fields = [];
-    for (let f of this.modelfields[note.modelName]){
-        fields.push(note.fields[f])
+async function checkAnkiweb() {
+    let resp = await connect();
+    switch (resp.action) {
+    case 'edit':
+        //console.log(resp.data);
+        break;
+    case 'login':
+        if (await login(id, password, resp.data))
+            resp = await connect();
+        break;
+    default:
     }
-
-    var note_data = [fields, note.tags.join(' ')];
-
-    var currentXhr = $.get(this.urls['edit'], (data, textStatus) => {
-        if (textStatus == 'error') {
-            this.connected = false;
-            callback(null);
-        } else {
-            const csrf_token_string = /editor\.csrf_token = \'(.*)\';/.exec(data)[1];
-
-            var dict = {
-                csrf_token: csrf_token_string,
-                data: JSON.stringify(note_data),
-                mid: this.mids[note.modelName],
-                deck: note.deckName
-            };
-
-            var currentXhr = $.post(this.urls['save'], dict, (data, textStatus) => {
-                if (textStatus == 'error') {
-                    callback(null);
-                }
-                callback(true);
-                console.log("save to ankiweb");
-            });
-        }
-    });
 }
 
-//Webrequest API.
-const targetPage = "https://putsreq.com/*";
-const ua = "Opera/9.80 (X11; Linux i686; Ubuntu/14.10) AnkiHelper 0.6.1";
-const filters = {urls: [targetPage]};
-const extraInfoSpec = ["blocking", "requestHeaders"];
+checkAnkiweb();
 
-function rewriteUserAgentHeader(e) {
-  e.requestHeaders.forEach(function(header){
-    if (header.name.toLowerCase() == "user-agent") {
-      header.value = ua;
-    }
-  });
-  return {requestHeaders: e.requestHeaders};
-}
+//--- Webrequest API.
+const targetPage = ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save'];
+const userAgent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
+const filters = { urls: targetPage };
+const extraInfoSpec = ['requestHeaders', 'blocking'];
 
-function rewriteRefererHeader(e){
-    var newValue = "http://example.com/path";
-    for(let header of e.requestHeaders){
-        if (header.name.toLowerCase() == "user-agent") {
-            header.value = ua;
+function rewriteHeader(e) {
+    for (let header of e.requestHeaders) {
+        if (header.name.toLowerCase() == 'user-agent') {
+            header.value = userAgent;
         }
     }
-    e.requestHeaders.push({name:"origin",value:newValue});
-    e.requestHeaders.push({name:"referrer",value:newValue});
-    return {requestHeaders:e.requestHeaders};
+    if (e.method == 'POST') {
+        let origin = 'https://ankiweb.net';
+        let referer = 'https://ankiweb.net';
+        if (e.url == 'https://ankiweb.net/account/login') {
+            origin = 'https://ankiweb.net';
+            referer = 'https://ankiweb.net/account/login';
+        }
+        if (e.url == 'https://ankiuser.net/edit/save') {
+            origin = 'https://ankiuser.net';
+            referer = 'https://ankiuser.net/edit/';
+        }
+        let hasOrigin = false;
+        let hasReferer = false;
+        for (let header of e.requestHeaders) {
+            if (header.name.toLowerCase() == 'origin') {
+                header.value = origin;
+                hasOrigin = true;
+            }
+            if (header.name.toLowerCase() == 'referer') {
+                header.value = referer;
+                hasReferer = true;
+            }
+        }
+        if (!hasOrigin)
+            e.requestHeaders.push({ name: 'origin', value: origin });
+        if (!hasReferer)
+            e.requestHeaders.push({ name: 'referer', value: referer });
+    }
+
+    return { requestHeaders: e.requestHeaders };
 }
 
-chrome.webRequest.onBeforeSendHeaders.addListener(rewriteRefererHeader, filters, extraInfoSpec);
+chrome.webRequest.onBeforeSendHeaders.addListener(rewriteHeader, filters, extraInfoSpec);
