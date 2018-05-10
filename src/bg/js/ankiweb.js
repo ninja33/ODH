@@ -1,6 +1,40 @@
-let id = '';
-let password = '';
+class Ankiweb {
+    constructor() {
+        this.connected = false;
+        this.profile = null;
+        chrome.webRequest.onBeforeSendHeaders.addListener(
+            this.rewriteHeader, 
+            {urls: ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save']}, 
+            ['requestHeaders', 'blocking']
+        );        
+    }
 
+    async addNote(note) {
+        if (note)
+            return await this.ankiInvoke('addNote', { note });
+        else
+            return Promise.resolve(null);
+    }
+
+    async getDeckNames() {
+        return await this.ankiInvoke('deckNames');
+    }
+
+    async getModelNames() {
+        return await this.ankiInvoke('modelNames');
+    }
+
+    async getModelFieldNames(modelName) {
+        return await this.ankiInvoke('modelFieldNames', { modelName });
+    }
+
+    async getVersion() {
+        return await this.ankiInvoke('version');
+    }
+
+}
+
+// --- ankiweb api
 async function connect() {
     return new Promise((resolve, reject) => {
         $.get('https://ankiuser.net/edit/', (result) => {
@@ -10,7 +44,7 @@ async function connect() {
             switch (title[0].innerText) {
             case 'Add':
                 //console.log('(connect) already login: get deck and model');
-                data = getInfo(result);
+                data = Ankiweb.parse(result);
                 resolve({ action: 'edit', data });
                 break;
             case 'Log in':
@@ -49,7 +83,27 @@ async function login(id, password, token) {
     });
 }
 
-function getInfo(response) {
+async function save(note, info) {
+    let fields = [];
+    for (const field of info.modelfieldnames[note.modelName]) {
+        fields.push(note.fields[field]);
+    }
+
+    let data = [fields, note.tags.join(' ')];
+    return new Promise((resolve, reject) => {
+        var dict = {
+            csrf_token: info.token,
+            data,
+            mid: info.modelids[note.modelName],
+            deck: note.deckName
+        };
+        $.post('https://ankiuser.net/edit/save', dict, (result) => {
+            //TODO ...
+        });
+    });
+}
+
+async function parse(response) {
     //return {deck:'default', model:'basic'};
     const token = /editor\.csrf_token2 = \'(.*)\';/.exec(response)[1];
     const models = JSON.parse(/editor\.models = (.*}]);/.exec(response)[1]); //[0] = the matching text, [1] = first capture group (what's inside parentheses)
@@ -77,49 +131,31 @@ function getInfo(response) {
     return {decknames, modelnames, modelids, modelfieldnames, token};
 }
 
-async function save(note, info) {
-    let fields = [];
-    for (const field of info.modelfieldnames[note.modelName]) {
-        fields.push(note.fields[field]);
-    }
-
-    let data = [fields, note.tags.join(' ')];
-    return new Promise((resolve, reject) => {
-        var dict = {
-            csrf_token: info.token,
-            data,
-            mid: info.modelids[note.modelName],
-            deck: note.deckName
-        };
-        $.post('https://ankiuser.net/edit/save', dict, (result) => {
-            //TODO ...
-        });
-    });
-}
-
-async function checkAnkiweb() {
-    let resp = await connect();
-    switch (resp.action) {
-    case 'edit':
-        //console.log(resp.data);
-        break;
-    case 'login':
-        if (await login(id, password, resp.data))
-            resp = await connect();
-        break;
-    default:
+async function getDeckModel(retry = 2) {
+    let resp = await Ankiweb.connect();
+    if (resp.action == 'edit') {
+        return resp.data;
+    } else if (retry > 0 && await Ankiweb.login(id, password, resp.data)){
+        return Ankiweb.getDeckModel(retry - 1);
+    } else {
+        return null;
     }
 }
 
-checkAnkiweb();
-
-//--- Webrequest API.
-const targetPage = ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save'];
-const userAgent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
-const filters = { urls: targetPage };
-const extraInfoSpec = ['requestHeaders', 'blocking'];
+async function saveNote(note, retry = 2){
+    let resp = await Ankiweb.connect();
+    if (resp.action == 'edit') {
+        return Ankiweb.save(note, resp.data);
+    } else if (retry > 0 && await login(id, password, resp.data)){
+        return Ankiweb.saveNote(note, retry - 1);
+    } else {
+        return null;
+    }
+}
 
 function rewriteHeader(e) {
+    const userAgent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
+
     for (let header of e.requestHeaders) {
         if (header.name.toLowerCase() == 'user-agent') {
             header.value = userAgent;
@@ -156,5 +192,3 @@ function rewriteHeader(e) {
 
     return { requestHeaders: e.requestHeaders };
 }
-
-chrome.webRequest.onBeforeSendHeaders.addListener(rewriteHeader, filters, extraInfoSpec);
