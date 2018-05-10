@@ -1,12 +1,17 @@
-/* global Ankiconnect, Deinflector, Builtin, Agent, optionsLoad, optionsSave */
+/* global Ankiconnect, Ankiweb, Deinflector, Builtin, Agent, optionsLoad, optionsSave */
 class ODHBack {
     constructor() {
         this.options = null;
         this.lastoptions = null;
 
-        this.target = new Ankiconnect();
+        this.ankiconnect = new Ankiconnect();
+        this.ankiweb = new Ankiweb();
+        this.target = this.ankiconnect;
+
+        //setup lemmatizer
         this.deinflector = new Deinflector();
         this.deinflector.loadData();
+
         //Setup builtin dictionary data
         this.builtin = new Builtin();
         this.builtin.loadData();
@@ -265,6 +270,7 @@ class ODHBack {
     async opt_optionsChanged(options) {
         this.setOptions(options);
         let newOptions = await this.loadDict();
+        //this.ankiweb.initConnection();
         await optionsSave(newOptions);
         return newOptions;
     }

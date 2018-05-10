@@ -34,7 +34,7 @@
     "options_ui": {
         "page": "bg/options.html"
     },
-    "permissions": ["file://*/*", "http://*/*", "https://*/*", "storage"],
+    "permissions": ["webRequest", "webRequestBlocking", "file://*/*", "http://*/*", "https://*/*", "storage"],
     "sandbox": {
         "pages": ["bg/sandbox/sandbox.html"]
     },
