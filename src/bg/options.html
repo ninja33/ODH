@@ -47,14 +47,38 @@
                 </select>
             </section>
 
-            <hr>
-
             <div class="option-head anki-option-head">
                     <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
                     <span class="option-helps"><a href="https://github.com/FooSoft/anki-connect" target="_blank">?</a></span>
             </div>
-            <section class="anki-options">
-                <div id="anki-options-params">
+
+            <section class="services-options">
+                <label for="services" data-i18n="optServices">Services</label>
+                <select id="services">
+                    <option value="none">None</option>
+                    <option value="ankiconnect">Ankiconnect</option>
+                    <option value="ankiweb">Ankiweb</option>
+                </select>
+                <label id="services-status">Anki Status</label>
+            </section>
+
+            <div id="user-options">
+                <hr>
+                <section class="user-options">
+                    <label for="id" data-i18n="optID">ID</label>
+                    <input type="text" id="id" name="repo" placeholder="Ankiweb ID">
+                    <label for="signup"><a href="https://ankiweb.net/account/register" target="_blank" data-i18n="optSignup">?</a></label>
+
+                    <label for="password" data-i18n="optPassword">Password</label>
+                    <input type="password" id="password" name="repo" placeholder="Ankiweb Password">
+                    <label class="button" id="login" data-i18n="optLogin">Login</label>
+
+                </section>
+            </div>
+
+            <div id="anki-options">
+                <hr>
+                <section class="anki-options">
                     <label for="deckname" data-i18n="optDeckName">Deck Name</label>
                     <select id="deckname">
                     </select>
@@ -100,12 +124,9 @@
                         <option value="0" data-i18n="optPreferredAudio_0">Audio# 0(if available)</option>
                         <option value="1" data-i18n="optPreferredAudio_1">Audio# 1(if available)</option>
                     </select>
-    
-                </div>
-                <label id="anki-options-status">Anki Status</label>
-            </section>
+                </section>
 
-            <hr>
+            </div>
 
             <div class="option-head dictionary-head">
                 <span class="dictionary-option-title" data-i18n="optDictionaryOptionTitle">Dictionary Options</span>

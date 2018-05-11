@@ -6,7 +6,7 @@ class ODHBack {
 
         this.ankiconnect = new Ankiconnect();
         this.ankiweb = new Ankiweb();
-        this.target = this.ankiconnect;
+        this.target = null;
 
         //setup lemmatizer
         this.deinflector = new Deinflector();
@@ -269,26 +269,39 @@ class ODHBack {
     // Option page and Brower Action page requests handlers.
     async opt_optionsChanged(options) {
         this.setOptions(options);
+        switch (options.services){
+        case 'none':
+            this.target = null;
+            break;
+        case 'ankiconnect':
+            this.target = this.ankiconnect;
+            break;
+        case 'ankiweb':
+            this.ankiweb.setUser(options);
+            this.target = this.ankiweb;
+            break;
+        default:
+            this.target = null;
+        }
+
         let newOptions = await this.loadDict();
-        //this.ankiweb.initConnection();
-        await optionsSave(newOptions);
         return newOptions;
     }
 
     async opt_getDeckNames() {
-        return await this.target.getDeckNames();
+        return this.target ? await this.target.getDeckNames() : null;
     }
 
     async opt_getModelNames() {
-        return await this.target.getModelNames();
+        return this.target ? await this.target.getModelNames() : null;
     }
 
     async opt_getModelFieldNames(modelName) {
-        return await this.target.getModelFieldNames(modelName);
+        return this.target ? await this.target.getModelFieldNames(modelName) : null;
     }
 
     async opt_getVersion() {
-        return await this.target.getVersion();
+        return this.target ? await this.target.getVersion() : null;
     }
 
     // Sandbox communication start here

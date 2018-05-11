@@ -1,12 +1,12 @@
 /* global odhback, localizeHtmlPage, utilAsync, optionsLoad, optionsSave */
-async function populateAnkiDeckAndModel(opts) {
+async function populateAnkiDeckAndModel(options) {
     let names = [];
     $('#deckname').empty();
     names = await odhback().opt_getDeckNames();
     if (names !== null) {
         names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
     }
-    $('#deckname').val(opts.deckname);
+    $('#deckname').val(options.deckname);
 }
 
 function populateDictionary(dicts) {
@@ -14,11 +14,12 @@ function populateDictionary(dicts) {
     dicts.forEach(name => $('#dict').append($('<option>', { value: name, text: name })));
 }
 
-async function updateAnkiStatus() {
+async function updateAnkiStatus(options) {
     let version = await odhback().opt_getVersion();
     if (version === null) {
         $('.anki-options').hide();
     } else {
+        populateAnkiDeckAndModel(options)
         $('.anki-options').show();
     }
 }
@@ -45,12 +46,12 @@ function onMoreOptions() {
 
 async function onReady() {
     localizeHtmlPage();
-    let opts = await optionsLoad();
-    $('#enabled').prop('checked', opts.enabled);
-    $('#hotkey').val(opts.hotkey);
-    $('#deckname').val(opts.deckname);
-    populateDictionary(opts.dictNamelist);
-    $('#dict').val(opts.dictSelected);
+    let options = await optionsLoad();
+    $('#enabled').prop('checked', options.enabled);
+    $('#hotkey').val(options.hotkey);
+    $('#deckname').val(options.deckname);
+    populateDictionary(options.dictNamelist);
+    $('#dict').val(options.dictSelected);
 
     $('#enabled').change(onOptionChanged);
     $('#hotkey').change(onOptionChanged);
@@ -59,8 +60,7 @@ async function onReady() {
     $('#more').click(onMoreOptions);
 
     $('.anki-options').hide();
-    updateAnkiStatus();
-    populateAnkiDeckAndModel(opts);
+    updateAnkiStatus(options);
 
 }
 

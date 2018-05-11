@@ -1,43 +1,41 @@
 class Ankiweb {
     constructor() {
-        this.connected = false;
-        this.id = null;
-        this.password = null;
         this.profile = null;
+        this.version = 'web';
+        this.id = '';
+        this.password = '';
         chrome.webRequest.onBeforeSendHeaders.addListener(
             this.rewriteHeader, 
             {urls: ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save']}, 
             ['requestHeaders', 'blocking']
-        );        
+        );
     }
 
-    async initConnection(){
-        this.profile = await this.getDeckModel();
+    async setUser(option) {
+        this.id = option.id;
+        this.password = option.password;
     }
 
     async addNote(note) {
-        if (note)
-            return await this.ankiInvoke('addNote', { note });
-        else
-            return Promise.resolve(null);
+        return (note && this.profile) ? await this.saveNote(note) : Promise.resolve(null);
     }
 
     async getDeckNames() {
-        return await this.ankiInvoke('deckNames');
+        return this.profile ? this.profile.decknames : null;
     }
 
     async getModelNames() {
-        return await this.ankiInvoke('modelNames');
+        return this.profile ? this.profile.modelnames : null;
     }
 
     async getModelFieldNames(modelName) {
-        return await this.ankiInvoke('modelFieldNames', { modelName });
+        return this.profile ? this.profile.modelfieldnames[modelName] : null;
     }
 
     async getVersion() {
-        return await this.ankiInvoke('version');
+        this.profile = await this.getDeckModel();
+        return this.profile ? this.version : null;
     }
-
 
     // --- Ankiweb API
     async api_connect() {
@@ -46,14 +44,20 @@ class Ankiweb {
                 let title = $('h1', $(result));
                 if (!title.length) return Promise.reject(false);
                 switch (title[0].innerText) {
-                case 'Add':
-                    resolve({ action: 'edit', data:this.parseData(result) });
-                    break;
-                case 'Log in':
-                    resolve({ action: 'login', data : $('input[name=csrf_token]', $(result)).val() });
-                    break;
-                default:
-                    reject(false);
+                    case 'Add':
+                        resolve({
+                            action: 'edit',
+                            data: this.parseData(result)
+                        });
+                        break;
+                    case 'Log in':
+                        resolve({
+                            action: 'login',
+                            data: $('input[name=csrf_token]', $(result)).val()
+                        });
+                        break;
+                    default:
+                        reject(false);
                 }
             });
         });
@@ -79,44 +83,53 @@ class Ankiweb {
         });
     }
 
-    async api_save(note, info) {
+    async api_save(note, profile) {
         let fields = [];
-        for (const field of info.modelfieldnames[note.modelName]) {
-            fields.push(note.fields[field]);
+        for (const field of profile.modelfieldnames[note.modelName]) {
+            let fielddata = note.fields[field] ? note.fields[field] : '';
+            fields.push(fielddata);
         }
 
         let data = [fields, note.tags.join(' ')];
         return new Promise((resolve, reject) => {
-            var dict = {
-                csrf_token: info.token,
-                data,
-                mid: info.modelids[note.modelName],
+            let dict = {
+                csrf_token: profile.token,
+                data: JSON.stringify(data),
+                mid: profile.modelids[note.modelName],
                 deck: note.deckName
             };
             $.post('https://ankiuser.net/edit/save', dict, (result) => {
-                //TODO ...
+                resolve(result);
             });
         });
     }
 
     async getDeckModel(retry = 2) {
-        let resp = await this.api_connect();
-        if (resp.action == 'edit') {
-            return resp.data;
-        } else if (retry > 0 && await this.api_login(this.id, this.password, resp.data)){
-            return this.getDeckModel(retry - 1);
-        } else {
+        try {
+            let resp = await this.api_connect();
+            if (resp.action == 'edit') {
+                return resp.data;
+            } else if (retry > 0 && await this.api_login(this.id, this.password, resp.data)) {
+                return this.getDeckModel(retry - 1);
+            } else {
+                return null;
+            }
+        } catch (err) {
             return null;
         }
     }
 
-    async saveNote(note, retry = 2){
-        let resp = await this.api_connect();
-        if (resp.action == 'edit') {
-            return this.api_save(note, resp.data);
-        } else if (retry > 0 && await this.api_login(this.id, this.password, resp.data)){
-            return this.saveNote(note, retry - 1);
-        } else {
+    async saveNote(note, retry = 2) {
+        try {
+            let resp = await this.api_connect();
+            if (resp.action == 'edit') {
+                return this.api_save(note, resp.data);
+            } else if (retry > 0 && await this.api_login(this.id, this.password, resp.data)) {
+                return this.saveNote(note, retry - 1);
+            } else {
+                return null;
+            }
+        } catch (err) {
             return null;
         }
     }
@@ -146,7 +159,13 @@ class Ankiweb {
             }
             modelfieldnames[model.name] = fieldnames;
         }
-        return {decknames, modelnames, modelids, modelfieldnames, token};
+        return {
+            decknames,
+            modelnames,
+            modelids,
+            modelfieldnames,
+            token
+        };
     }
 
     rewriteHeader(e) {
@@ -181,11 +200,19 @@ class Ankiweb {
                 }
             }
             if (!hasOrigin)
-                e.requestHeaders.push({ name: 'origin', value: origin });
+                e.requestHeaders.push({
+                    name: 'origin',
+                    value: origin
+                });
             if (!hasReferer)
-                e.requestHeaders.push({ name: 'referer', value: referer });
+                e.requestHeaders.push({
+                    name: 'referer',
+                    value: referer
+                });
         }
 
-        return { requestHeaders: e.requestHeaders };
+        return {
+            requestHeaders: e.requestHeaders
+        };
     }
 }

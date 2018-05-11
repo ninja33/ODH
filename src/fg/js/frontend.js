@@ -10,6 +10,7 @@ class ODHFront {
         this.enabled = true;
         this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.maxContext = 1; //max context sentence #
+        this.services = 'none';
         this.popup = new Popup();
         this.timeout = null;
         this.mousemoved = false;
@@ -52,7 +53,10 @@ class ODHFront {
 
     onMouseMove(e) {
         this.mousemoved = true;
-        this.point = { x: e.clientX, y: e.clientY, };
+        this.point = {
+            x: e.clientX,
+            y: e.clientY,
+        };
     }
 
     userSelectionChanged(e) {
@@ -62,7 +66,7 @@ class ODHFront {
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
-        
+
         // wait 500 ms after the last selection change event
         this.timeout = setTimeout(() => {
             this.onSelectionEnd(e);
@@ -86,23 +90,31 @@ class ODHFront {
 
         let request = {
             action: 'getTranslation',
-            params: { expression },
+            params: {
+                expression
+            },
         };
         chrome.runtime.sendMessage(request, result => {
             if (result == null || result.length == 0)
                 return;
 
             this.notes = this.buildNote(result);
-            this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, this.renderPopup(this.notes));
+            this.popup.showNextTo({
+                x: this.point.x,
+                y: this.point.y,
+            }, this.renderPopup(this.notes));
         });
 
     }
 
     onBgMessage(request, sender, callback) {
-        const { action, params } = request;
+        const {
+            action,
+            params
+        } = request;
         const method = this['api_' + action];
 
-        if (typeof(method) === 'function') {
+        if (typeof (method) === 'function') {
             params.callback = callback;
             method.call(this, params);
         }
@@ -111,24 +123,34 @@ class ODHFront {
     }
 
     api_setOptions(params) {
-        let { options, callback } = params;
+        let {
+            options,
+            callback
+        } = params;
         this.options = options;
         this.enabled = options.enabled;
         this.activateKey = Number(this.options.hotkey);
         this.maxContext = Number(this.options.maxcontext);
+        this.services = options.services;
         callback();
     }
 
     onFrameMessage(e) {
-        const { action, params } = e.data;
+        const {
+            action,
+            params
+        } = e.data;
         const method = this['api_' + action];
-        if (typeof(method) === 'function') {
+        if (typeof (method) === 'function') {
             method.call(this, params);
         }
     }
 
     api_addNote(params) {
-        let { nindex, dindex } = params;
+        let {
+            nindex,
+            dindex
+        } = params;
 
         let notedef = Object.assign({}, this.notes[nindex]);
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
@@ -136,16 +158,24 @@ class ODHFront {
         notedef.url = window.location.href;
         let request = {
             action: 'addNote',
-            params: { notedef },
+            params: {
+                notedef
+            },
         };
         chrome.runtime.sendMessage(request, (success) => {
-            let result = { success, params, };
+            let result = {
+                success,
+                params,
+            };
             this.popup.sendMessage('setActionState', result);
         });
     }
 
     api_playAudio(params) {
-        let { nindex, dindex } = params;
+        let {
+            nindex,
+            dindex
+        } = params;
         let url = this.notes[nindex].audios[dindex];
 
         for (let key in this.audio) {
@@ -160,7 +190,9 @@ class ODHFront {
     }
 
     api_playSound(params) {
-        let { sound } = params;
+        let {
+            sound
+        } = params;
         let url = sound;
 
         for (let key in this.audio) {
@@ -207,6 +239,8 @@ class ODHFront {
 
     renderPopup(notes) {
         let content = '';
+        let services = this.options.services
+
         for (const [nindex, note] of notes.entries()) {
             content += note.css + '<div class="odh-note">';
             let audiosegment = '';
@@ -224,16 +258,17 @@ class ODHFront {
                     <span class="odh-extra">${note.extrainfo}</span>
                 </div>`;
             for (const [dindex, definition] of note.definitions.entries()) {
-                content += `
-                    <div class="odh-definition">
-                        <img class="odh-addnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/plus.png')}" />
-                        ${definition}
-                    </div>`;
+                let button = '';
+                if (services != 'none') {
+                    let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
+                    button = `<img class="odh-addnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/'+ image)}" />`;
+                }
+                content += `<div class="odh-definition">${button}${definition}</div>`;
             }
             content += '</div>';
         }
         content += `<div class="odh-sentence">${this.sentence}</div>`;
-        return this.popupHeader() + content + this.popupFooter();
+        return this.popupHeader() + content + this.popupFooter(services);
     }
 
     popupHeader() {
@@ -246,11 +281,14 @@ class ODHFront {
             <div class="odh-notes">`;
     }
 
-    popupFooter() {
+    popupFooter(services) {
+        let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
+        let button = chrome.runtime.getURL('fg/img/' + image);
+
         return `
             </div>
             <div class="icons hidden"">
-                <img id="plus" src="${chrome.runtime.getURL('fg/img/plus.png')}"/>
+                <img id="plus" src="${button}"/>
                 <img id="load" src="${chrome.runtime.getURL('fg/img/load.gif')}"/>
                 <img id="good" src="${chrome.runtime.getURL('fg/img/good.png')}"/>
                 <img id="fail" src="${chrome.runtime.getURL('fg/img/fail.png')}"/>

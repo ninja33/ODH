@@ -4,6 +4,9 @@ function sanitizeOptions(options) {
         hotkey: '0', // 0:off , 16:shift, 17:ctrl, 18:alt
         maxcontext: '1',
         maxexample: '2',
+        services: 'none',
+        id:'',
+        password:'',
 
         deckname: 'Default',
         typename: 'Basic',

@@ -9,6 +9,10 @@ body {
     margin: 0 auto;
 }
 
+a {
+    text-decoration: none;
+}
+
 div.option-head {
     font-weight: bold;
     color: white;
@@ -25,7 +29,6 @@ div.option-head {
 
 .option-helps a {
     color: white;
-    text-decoration: none;
 }
 
 .general-option-title {
@@ -58,13 +61,10 @@ label {
     box-sizing: border-box;
 }
 
-label#anki-options-status {
-    width: 360px;
-}
-
 input[type=text],
+input[type=password],
 select {
-    width: 80px;
+    width: 152px;
     padding: 4px;
     margin: 3px;
     /*display: inline-block;*/
@@ -77,18 +77,8 @@ select {
     width: 65px;
 }
 
-.anki-options input[type=text],
 .anki-options select {
     width: 257px;
-}
-
-.anki-options label#anki-status {
-    width: 170px;
-}
-
-.dictionary-options input[type=text],
-.dictionary-options select {
-    width: 152px;
 }
 
 .button {

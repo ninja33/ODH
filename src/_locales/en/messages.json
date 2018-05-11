@@ -43,19 +43,39 @@
         "message": "Max. Example #",
         "description": "label text for 'Max Example  Number' option list."
     },
+    "optServices":{
+        "message": "Data Services",
+        "description": "label text for data services."
+    },
+    "optID":{
+        "message": "User Name",
+        "description": "label text for Ankiweb ID"
+    },
+    "optPassword":{
+        "message": "Password",
+        "description": "label text for Ankiweb Password"
+    },
+    "optSignup":{
+        "message": "Signup Ankiweb",
+        "description": "label text for Ankiweb signup"
+    },
+    "optLogin":{
+        "message": "Login",
+        "description": "label text for Ankiweb login button"
+    },
     "optAnkiConnecting":{
-        "message": "Status: Connecting to Anki ...",
+        "message": "Connecting...",
         "description": "label text for Anki status: Connecting."
     },
     "optAnkiConnectedFail":{
-        "message": "Status: Ankiconnect was not actived!",
+        "message": "Not Connected.",
         "description": "label text for Anki status: Failed."
     },
     "optAnkiConnectedSuccess":{
-        "message": "Status: Ankiconnect (version: $VERSION$) was actived.",
+        "message": "Connected ($INFORMATION$)",
         "description": "label text for Anki status: Success.",
         "placeholders": {
-            "version": {
+            "information": {
               "content": "$1",
               "example": "Ankiconnect version number, like 1, 2, 5 ..."
             }

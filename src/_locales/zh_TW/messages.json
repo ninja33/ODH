@@ -43,19 +43,39 @@
         "message": "最大例句數量",
         "description": "label text for 'Max Example  Number' option list."
     },
+    "optServices":{
+        "message": "數據服務",
+        "description": "label text for data services."
+    },
+    "optID":{
+        "message": "用戶郵箱",
+        "description": "label text for Ankiweb ID"
+    },
+    "optPassword":{
+        "message": "用戶密碼",
+        "description": "label text for Ankiweb Password"
+    },
+    "optSignup":{
+        "message": "註冊 Ankiweb",
+        "description": "label text for Ankiweb signup"
+    },
+    "optLogin":{
+        "message": "登錄",
+        "description": "label text for Ankiweb login button"
+    },
     "optAnkiConnecting":{
-        "message": "狀態: 嘗試連接Anki ...",
+        "message": "連接中 ...",
         "description": "label text for Anki status: Connecting."
     },
     "optAnkiConnectedFail":{
-        "message": "狀態: 連接Anki失敗，請打開Anki並安裝Ankiconnect",
+        "message": "未連接",
         "description": "label text for Anki status: Failed."
     },
     "optAnkiConnectedSuccess":{
-        "message": "狀態: 連接Ankiconnect(版本號:$VERSION$)成功。",
+        "message": "已連接($INFORMATION$)",
         "description": "label text for Anki status: Success.",
         "placeholders": {
-            "version": {
+            "information": {
               "content": "$1",
               "example": "Ankiconnect version number, like 1, 2, 5 ..."
             }
