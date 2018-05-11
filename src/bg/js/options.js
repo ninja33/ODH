@@ -71,7 +71,7 @@ async function onLoginClicked(e){
         updateAnkiStatus(newOptions);
         optionsSave(newOptions);
     }
-};
+}
 
 async function onServicesChanged(e) {
     if (e.originalEvent){

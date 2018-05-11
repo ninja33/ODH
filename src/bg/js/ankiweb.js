@@ -44,20 +44,20 @@ class Ankiweb {
                 let title = $('h1', $(result));
                 if (!title.length) return Promise.reject(false);
                 switch (title[0].innerText) {
-                    case 'Add':
-                        resolve({
-                            action: 'edit',
-                            data: this.parseData(result)
-                        });
-                        break;
-                    case 'Log in':
-                        resolve({
-                            action: 'login',
-                            data: $('input[name=csrf_token]', $(result)).val()
-                        });
-                        break;
-                    default:
-                        reject(false);
+                case 'Add':
+                    resolve({
+                        action: 'edit',
+                        data: this.parseData(result)
+                    });
+                    break;
+                case 'Log in':
+                    resolve({
+                        action: 'login',
+                        data: $('input[name=csrf_token]', $(result)).val()
+                    });
+                    break;
+                default:
+                    reject(false);
                 }
             });
         });

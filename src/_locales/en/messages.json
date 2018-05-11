@@ -36,11 +36,11 @@
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
     "optMaxContext":{
-        "message": "Max. Context #",
+        "message": "Max.Context#",
         "description": "label text for 'Max Context  Number' option list."
     },
     "optMaxExample":{
-        "message": "Max. Example #",
+        "message": "Max.Example#",
         "description": "label text for 'Max Example  Number' option list."
     },
     "optServices":{
@@ -56,7 +56,7 @@
         "description": "label text for Ankiweb Password"
     },
     "optSignup":{
-        "message": "Signup Ankiweb",
+        "message": "Signup",
         "description": "label text for Ankiweb signup"
     },
     "optLogin":{
@@ -68,11 +68,11 @@
         "description": "label text for Anki status: Connecting."
     },
     "optAnkiConnectedFail":{
-        "message": "Not Connected.",
+        "message": "Not Connect",
         "description": "label text for Anki status: Failed."
     },
     "optAnkiConnectedSuccess":{
-        "message": "Connected ($INFORMATION$)",
+        "message": "Connected:$INFORMATION$",
         "description": "label text for Anki status: Success.",
         "placeholders": {
             "information": {

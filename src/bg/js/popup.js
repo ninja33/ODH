@@ -19,7 +19,7 @@ async function updateAnkiStatus(options) {
     if (version === null) {
         $('.anki-options').hide();
     } else {
-        populateAnkiDeckAndModel(options)
+        populateAnkiDeckAndModel(options);
         $('.anki-options').show();
     }
 }
@@ -33,7 +33,8 @@ async function onOptionChanged(e) {
     options.hotkey = $('#hotkey').val();
     options.deckname = $('#deckname').val();
     options.dictSelected = $('#dict').val();
-    odhback().opt_optionsChanged(options);
+    let newOptions = await odhback().opt_optionsChanged(options);
+    optionsSave(newOptions);
 }
 
 function onMoreOptions() {
