@@ -88,7 +88,7 @@ class ODHFront {
         let result = await getTranslation(expression);
         if (result == null || result.length == 0) return;
         this.notes = this.buildNote(result);
-        this.popup.showNextTo({x: this.point.x,y: this.point.y,}, await this.renderPopup(this.notes));
+        this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, await this.renderPopup(this.notes));
 
     }
 
@@ -214,6 +214,12 @@ class ODHFront {
     async renderPopup(notes) {
         let content = '';
         let services = this.options.services;
+        let image = '';
+        let imageclass = '';
+        if (services != 'none') {
+            image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
+            imageclass = await isConnected() ? 'class="odh-addnote"' : 'class="odh-addnote-disabled"';
+        }
 
         for (const [nindex, note] of notes.entries()) {
             content += note.css + '<div class="odh-note">';
@@ -232,13 +238,7 @@ class ODHFront {
                     <span class="odh-extra">${note.extrainfo}</span>
                 </div>`;
             for (const [dindex, definition] of note.definitions.entries()) {
-                let button = '';
-                if (services != 'none') {
-                    let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
-                    let connected = await isConnected();
-                    let imageclass = connected ? 'class="odh-addnote"' : 'class="odh-addnote-disabled"';
-                    button = `<img ${imageclass} data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/'+ image)}" />`;
-                }
+                let button = services == 'none' ? '' : `<img ${imageclass} data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/'+ image)}" />`;
                 content += `<div class="odh-definition">${button}${definition}</div>`;
             }
             content += '</div>';
