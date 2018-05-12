@@ -23,6 +23,7 @@
     "content_scripts": [{
         "matches": ["*://*/*", "file://*/*"],
         "js": [
+            "fg/js/api.js",
             "fg/js/popup.js",
             "fg/js/range.js",
             "fg/js/text.js",

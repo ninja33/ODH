@@ -34,6 +34,7 @@ async function populateAnkiFields(options) {
 
 async function updateAnkiStatus(options) {
     $('#services-status').text(chrome.i18n.getMessage('optAnkiConnecting'));
+    $('#anki-options').hide();
     if (options.services == 'ankiweb')
         $('#user-options').show();
     else {
@@ -43,7 +44,6 @@ async function updateAnkiStatus(options) {
     let version = await odhback().opt_getVersion();
     if (version === null) {
         $('#services-status').text(chrome.i18n.getMessage('optAnkiConnectedFail'));
-        $('#anki-options').hide();
     } else {
         populateAnkiDeckAndModel(options);
         populateAnkiFields(options);

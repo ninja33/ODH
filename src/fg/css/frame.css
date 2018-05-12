@@ -60,11 +60,17 @@
   border: 2px dashed #d0d1d5;
 }
 
+.odh-addnote-disabled,
 .odh-addnote {
   margin: 3px;
   cursor: pointer;
   position: relative;
   float: right;
+}
+
+.odh-addnote-disabled{
+  cursor: not-allowed;
+  opacity:0.5;
 }
 
 .odh-audios {

@@ -182,7 +182,7 @@ class ODHBack {
             params
         } = e.data;
         const method = this['api_' + action];
-        if (typeof (method) === 'function') {
+        if (typeof(method) === 'function') {
             method.call(this, params);
         }
     }
@@ -241,6 +241,12 @@ class ODHBack {
         this.callback(chrome.i18n.getUILanguage(), callbackId);
     }
 
+    // front end message handler
+    async api_isConnected(params) {
+        let callback = params.callback;
+        callback(await this.opt_getVersion());
+    }
+
     async api_getTranslation(params) {
         let {
             expression,
@@ -270,7 +276,7 @@ class ODHBack {
     // Option page and Brower Action page requests handlers.
     async opt_optionsChanged(options) {
         this.setOptions(options);
-        switch (options.services){
+        switch (options.services) {
         case 'none':
             this.target = null;
             break;

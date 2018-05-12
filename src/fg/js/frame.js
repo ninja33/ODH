@@ -66,11 +66,11 @@ function onMessage(e) {
 }
 
 function api_setActionState(result) {
-    const { success, params } = result;
+    const { response, params } = result;
     const { nindex, dindex } = params;
 
     const match = document.querySelector(`.odh-addnote[data-nindex="${nindex}"].odh-addnote[data-dindex="${dindex}"]`);
-    if (success)
+    if (response)
         match.src = getImageSource('good');
     else
         match.src = getImageSource('fail');

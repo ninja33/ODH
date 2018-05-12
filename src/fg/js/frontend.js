@@ -1,4 +1,4 @@
-/* global Popup, TextSourceRange, selectedText, isInvalid, getSentence*/
+/* global Popup, TextSourceRange, selectedText, isInvalid, getSentence, isConnected, addNote, getTranslation*/
 class ODHFront {
 
     constructor() {
@@ -75,35 +75,20 @@ class ODHFront {
         }, 500);
     }
 
-    onSelectionEnd(e) {
+    async onSelectionEnd(e) {
 
         if (!this.enabled)
             return;
 
         // reset selection timeout
         this.timeout = null;
-
         const expression = selectedText();
-        if (isInvalid(expression)) {
-            return;
-        }
+        if (isInvalid(expression)) return;
 
-        let request = {
-            action: 'getTranslation',
-            params: {
-                expression
-            },
-        };
-        chrome.runtime.sendMessage(request, result => {
-            if (result == null || result.length == 0)
-                return;
-
-            this.notes = this.buildNote(result);
-            this.popup.showNextTo({
-                x: this.point.x,
-                y: this.point.y,
-            }, this.renderPopup(this.notes));
-        });
+        let result = await getTranslation(expression);
+        if (result == null || result.length == 0) return;
+        this.notes = this.buildNote(result);
+        this.popup.showNextTo({x: this.point.x,y: this.point.y,}, await this.renderPopup(this.notes));
 
     }
 
@@ -114,7 +99,7 @@ class ODHFront {
         } = request;
         const method = this['api_' + action];
 
-        if (typeof (method) === 'function') {
+        if (typeof(method) === 'function') {
             params.callback = callback;
             method.call(this, params);
         }
@@ -141,12 +126,12 @@ class ODHFront {
             params
         } = e.data;
         const method = this['api_' + action];
-        if (typeof (method) === 'function') {
+        if (typeof(method) === 'function') {
             method.call(this, params);
         }
     }
 
-    api_addNote(params) {
+    async api_addNote(params) {
         let {
             nindex,
             dindex
@@ -156,19 +141,8 @@ class ODHFront {
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
         notedef.definitions = this.notes[nindex].css + this.notes[nindex].definitions.join('<hr>');
         notedef.url = window.location.href;
-        let request = {
-            action: 'addNote',
-            params: {
-                notedef
-            },
-        };
-        chrome.runtime.sendMessage(request, (success) => {
-            let result = {
-                success,
-                params,
-            };
-            this.popup.sendMessage('setActionState', result);
-        });
+        let response = await addNote(notedef);
+        this.popup.sendMessage('setActionState', { response, params });
     }
 
     api_playAudio(params) {
@@ -237,9 +211,9 @@ class ODHFront {
 
     }
 
-    renderPopup(notes) {
+    async renderPopup(notes) {
         let content = '';
-        let services = this.options.services
+        let services = this.options.services;
 
         for (const [nindex, note] of notes.entries()) {
             content += note.css + '<div class="odh-note">';
@@ -261,7 +235,9 @@ class ODHFront {
                 let button = '';
                 if (services != 'none') {
                     let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
-                    button = `<img class="odh-addnote" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/'+ image)}" />`;
+                    let connected = await isConnected();
+                    let imageclass = connected ? 'class="odh-addnote"' : 'class="odh-addnote-disabled"';
+                    button = `<img ${imageclass} data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/'+ image)}" />`;
                 }
                 content += `<div class="odh-definition">${button}${definition}</div>`;
             }

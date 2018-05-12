@@ -1,13 +1,14 @@
 class Ankiconnect {
     constructor() {}
 
-    async ankiInvoke(action, params = {}) {
+    async ankiInvoke(action, params = {}, timeout = 1000) {
         let request = { action, params };
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: 'http://127.0.0.1:8765',
                 type: 'POST',
                 data: JSON.stringify(request),
+                timeout,
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: (data) => resolve(data),
@@ -36,6 +37,7 @@ class Ankiconnect {
     }
 
     async getVersion() {
-        return await this.ankiInvoke('version');
+        let version = await this.ankiInvoke('version', {}, 100);
+        return version ? 'ver:' + version : null;
     }
 }
