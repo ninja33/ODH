@@ -11,9 +11,12 @@ class Ankiweb {
         );
     }
 
-    async setUser(option) {
-        this.id = option.id;
-        this.password = option.password;
+    async initConnection(options, forceLogout = false) {
+        const retryCount = 1;
+        this.id = options.id;
+        this.password = options.password;
+        this.profile = await this.getProfile(retryCount, forceLogout);
+        return;
     }
 
     async addNote(note) {
@@ -33,14 +36,14 @@ class Ankiweb {
     }
 
     async getVersion() {
-        this.profile = await this.getDeckModel();
         return this.profile ? this.version : null;
     }
 
     // --- Ankiweb API
-    async api_connect() {
+    async api_connect(forceLogout = false) {
         return new Promise((resolve, reject) => {
-            $.get('https://ankiuser.net/edit/', (result) => {
+            let url = forceLogout ? 'https://ankiweb.net/account/logout' : 'https://ankiuser.net/edit/';
+            $.get(url, (result) => {
                 let title = $('h1', $(result));
                 if (!title.length) return Promise.reject(false);
                 switch (title[0].innerText) {
@@ -104,13 +107,13 @@ class Ankiweb {
         });
     }
 
-    async getDeckModel(retry = 2) {
+    async getProfile(retryCount = 1, forceLogout = false) {
         try {
-            let resp = await this.api_connect();
+            let resp = await this.api_connect(forceLogout);
             if (resp.action == 'edit') {
                 return resp.data;
-            } else if (retry > 0 && await this.api_login(this.id, this.password, resp.data)) {
-                return this.getDeckModel(retry - 1);
+            } else if (retryCount > 0 && resp.action == 'login' && await this.api_login(this.id, this.password, resp.data)) {
+                return this.getProfile(retryCount - 1);
             } else {
                 return null;
             }
@@ -119,13 +122,13 @@ class Ankiweb {
         }
     }
 
-    async saveNote(note, retry = 2) {
+    async saveNote(note, retryCount = 1) {
         try {
-            let resp = await this.api_connect();
-            if (resp.action == 'edit') {
-                return this.api_save(note, resp.data);
-            } else if (retry > 0 && await this.api_login(this.id, this.password, resp.data)) {
-                return this.saveNote(note, retry - 1);
+            let resp = await this.api_save(note, this.profile);
+            if (resp == 1) {
+                return true;
+            } else if (retryCount > 0 && (this.profile = await this.getProfile())) {
+                return this.saveNote(note, retryCount - 1);
             } else {
                 return null;
             }

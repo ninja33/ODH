@@ -67,6 +67,10 @@ async function onLoginClicked(e){
         let options = await optionsLoad();
         options.id = $('#id').val();
         options.password = $('#password').val();
+
+        $('#services-status').text(chrome.i18n.getMessage('optAnkiConnecting'));
+        await odhback().ankiweb.initConnection(options, true); // set param forceLogout = true
+
         let newOptions = await odhback().opt_optionsChanged(options);
         updateAnkiStatus(newOptions);
         optionsSave(newOptions);

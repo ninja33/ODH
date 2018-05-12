@@ -189,6 +189,7 @@ class ODHBack {
 
     async api_sandboxLoaded(params) {
         let options = await optionsLoad();
+        this.ankiweb.initConnection(options);
         this.opt_optionsChanged(options);
     }
 
@@ -277,7 +278,6 @@ class ODHBack {
             this.target = this.ankiconnect;
             break;
         case 'ankiweb':
-            this.ankiweb.setUser(options);
             this.target = this.ankiweb;
             break;
         default:
