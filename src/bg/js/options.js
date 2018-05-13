@@ -73,7 +73,6 @@ async function onLoginClicked(e){
 
         let newOptions = await odhback().opt_optionsChanged(options);
         updateAnkiStatus(newOptions);
-        optionsSave(newOptions);
     }
 }
 
@@ -83,7 +82,6 @@ async function onServicesChanged(e) {
         options.services = $('#services').val();
         let newOptions = await odhback().opt_optionsChanged(options);
         updateAnkiStatus(newOptions);
-        optionsSave(newOptions);
     }
 }
 
@@ -115,7 +113,6 @@ async function onOKClicked(e) {
     let newOptions = await odhback().opt_optionsChanged(options);
     populateDictionary(newOptions.dictNamelist);
     $('#dict').val(newOptions.dictSelected);
-    optionsSave(newOptions);
     
     if (e.target.id == 'ok')
         window.close();

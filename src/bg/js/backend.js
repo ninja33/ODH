@@ -291,6 +291,7 @@ class ODHBack {
         }
 
         let newOptions = await this.loadDict();
+        optionsSave(newOptions);
         return newOptions;
     }
 
