@@ -57,9 +57,12 @@ function populateDictionary(dicts) {
     dicts.forEach(name => $('#dict').append($('<option>', { value: name, text: name })));
 }
 
-function onAnkiTypeChanged(e) {
-    if (e.originalEvent)
-        populateAnkiFields();
+async function onAnkiTypeChanged(e) {
+    if (e.originalEvent){
+        let options = await optionsLoad();
+        populateAnkiFields(options);
+
+    }
 }
 
 async function onLoginClicked(e){
