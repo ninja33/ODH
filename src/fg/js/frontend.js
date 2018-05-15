@@ -213,7 +213,7 @@ class ODHFront {
 
     async renderPopup(notes) {
         let content = '';
-        let services = this.options.services;
+        let services = this.options? this.options.services:'';
         let image = '';
         let imageclass = '';
         if (services != 'none') {
@@ -244,7 +244,7 @@ class ODHFront {
             content += '</div>';
         }
         content += `<div class="odh-sentence">${this.sentence}</div>`;
-        return this.popupHeader() + content + this.popupFooter(services);
+        return this.popupHeader() + content + this.popupFooter();
     }
 
     popupHeader() {
@@ -257,7 +257,8 @@ class ODHFront {
             <div class="odh-notes">`;
     }
 
-    popupFooter(services) {
+    popupFooter() {
+        let services = this.options? this.options.services:'';
         let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
         let button = chrome.runtime.getURL('fg/img/' + image);
 
