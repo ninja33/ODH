@@ -93,8 +93,8 @@ class encn_Collins {
                         posNode.remove();
                 }
                 let tran = tranNode.innerHTML.trim();
-                let chn_tran = tran.match(/( ?\((?:[\u4e00-\u9fa5])|(?:[\u4e00-\u9fa5])\) ?|[\u4e00-\u9fa5]||;|…|，|、|\]|\[)+/gi).join(' ').trim()
-                let eng_tran = tran.replace(/( ?\((?:[\u4e00-\u9fa5])|(?:[\u4e00-\u9fa5])\) ?|[\u4e00-\u9fa5]||;|…|，|、|\]|\[)+/gi, '').trim();
+                let chn_tran = tran.match(/( ?\((?:([\u4e00-\u9fa5]|，|…|、)+)\) ?|[\u4e00-\u9fa5]||;|…|，|、|\]|\[)+/gi).join(' ').trim()
+                let eng_tran = tran.replace(/( ?\((?:([\u4e00-\u9fa5]|，|…|、)+)\) ?|[\u4e00-\u9fa5]|;|…|，|、|\]|\[)+/gi, '').trim();
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
                 //eng_tran = eng_tran ? eng_tran.replace(RegExp(expression, 'gi'), '<b>$&</b>') : ''; //surround expression with <b> in eng_translation.
                 eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
