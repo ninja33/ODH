@@ -44,7 +44,7 @@ class encn_Collins_Oxford_builtin {
         if (!word) return notes;
         let results = [];
         try {
-            results = JSON.parse(await api.getCollins(word));
+            results = JSON.parse(await api.getBuiltin('collins', word));
         } catch (err) {
             return [];
         }
@@ -96,7 +96,7 @@ class encn_Collins_Oxford_builtin {
         if (!word) return notes;
         let results = [];
         try {
-            results = JSON.parse(await api.getOxford(word));
+            results = JSON.parse(await api.getBuiltin('oxford', word));
         } catch (err) {
             return [];
         }

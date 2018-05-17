@@ -1,26 +1,15 @@
 class Builtin {
     constructor() {
-        this.collins = null;
-        this.oxford = null;
+        this.dicts = {};
     }
 
     async loadData() {
-        this.collins = await Builtin.loadData('data/collins.json');
-        this.oxford = await Builtin.loadData('data/oxford.json');
+        this.dicts['collins'] = await Builtin.loadData('data/collins.json');
+        this.dicts['oxford'] = await Builtin.loadData('data/oxford.json');
     }
 
-    getCollins(term) {
-        const dict = this.collins;
-        let results = [];
-        let indices = dict.indices[term] || [];
-        results = results.concat(indices.map(index => {
-            return dict.defs[index];
-        }));
-        return results.length ? JSON.stringify(results) : null;
-    }
-
-    getOxford(term) {
-        const dict = this.oxford;
+    findTerm(dictname, term) {
+        const dict = this.dicts[dictname];
         let results = [];
         let indices = dict.indices[term] || [];
         results = results.concat(indices.map(index => {

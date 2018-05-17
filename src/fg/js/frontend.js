@@ -93,10 +93,7 @@ class ODHFront {
     }
 
     onBgMessage(request, sender, callback) {
-        const {
-            action,
-            params
-        } = request;
+        const { action, params } = request;
         const method = this['api_' + action];
 
         if (typeof(method) === 'function') {
@@ -108,10 +105,7 @@ class ODHFront {
     }
 
     api_setOptions(params) {
-        let {
-            options,
-            callback
-        } = params;
+        let { options, callback } = params;
         this.options = options;
         this.enabled = options.enabled;
         this.activateKey = Number(this.options.hotkey);
@@ -121,10 +115,7 @@ class ODHFront {
     }
 
     onFrameMessage(e) {
-        const {
-            action,
-            params
-        } = e.data;
+        const { action, params } = e.data;
         const method = this['api_' + action];
         if (typeof(method) === 'function') {
             method.call(this, params);
@@ -132,10 +123,7 @@ class ODHFront {
     }
 
     async api_addNote(params) {
-        let {
-            nindex,
-            dindex
-        } = params;
+        let { nindex, dindex } = params;
 
         let notedef = Object.assign({}, this.notes[nindex]);
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
@@ -146,10 +134,7 @@ class ODHFront {
     }
 
     api_playAudio(params) {
-        let {
-            nindex,
-            dindex
-        } = params;
+        let { nindex, dindex } = params;
         let url = this.notes[nindex].audios[dindex];
 
         for (let key in this.audio) {
@@ -164,10 +149,7 @@ class ODHFront {
     }
 
     api_playSound(params) {
-        let {
-            sound
-        } = params;
-        let url = sound;
+        let url = params.sound;
 
         for (let key in this.audio) {
             this.audio[key].pause();
@@ -213,7 +195,7 @@ class ODHFront {
 
     async renderPopup(notes) {
         let content = '';
-        let services = this.options? this.options.services:'';
+        let services = this.options ? this.options.services : '';
         let image = '';
         let imageclass = '';
         if (services != 'none') {
@@ -258,7 +240,7 @@ class ODHFront {
     }
 
     popupFooter() {
-        let services = this.options? this.options.services:'';
+        let services = this.options ? this.options.services : '';
         let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
         let button = chrome.runtime.getURL('fg/img/' + image);
 

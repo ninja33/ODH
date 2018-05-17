@@ -45,17 +45,19 @@ class cncn_Zdic {
             function seq(str) {
                 return Math.ceil(parseInt(str, 16) / 1000).toString(16);
             }
-            url.substring(url.indexOf('?') + 1).split('&').map(s => { let kv = s.split('=');
-                obj[kv[0]] = kv[1]; });
+            url.substring(url.indexOf('?') + 1).split('&').map(s => {
+                let kv = s.split('=');
+                obj[kv[0]] = kv[1];
+            });
             switch (obj.l) {
-            case 'kj':
-                return `http://pic.zdic.net/kai/jt/${obj.s}/${seq(obj.u)}/${obj.u}.gif`;
-            case 'kx':
-                return `http://pic.zdic.net/kangxi/${obj.s}/${seq(obj.u)}/${obj.u}.gif`;
-            case 'xz':
-                return `http://pic.zdic.net/xz/${obj.s}/${seq(obj.u)}/${obj.u}.gif`;
-            default:
-                return url;
+                case 'kj':
+                    return `http://pic.zdic.net/kai/jt/${obj.s}/${seq(obj.u)}/${obj.u}.gif`;
+                case 'kx':
+                    return `http://pic.zdic.net/kangxi/${obj.s}/${seq(obj.u)}/${obj.u}.gif`;
+                case 'xz':
+                    return `http://pic.zdic.net/xz/${obj.s}/${seq(obj.u)}/${obj.u}.gif`;
+                default:
+                    return url;
             }
         }
 
@@ -65,7 +67,8 @@ class cncn_Zdic {
             function seq(str) {
                 return Math.ceil(parseInt(str, 16) / 1000).toString(16);
             }
-            url.substring(url.indexOf('?') + 1).split('&').map(s => { let kv = s.split('=');obj[kv[0]] = kv[1]; });
+            url.substring(url.indexOf('?') + 1).split('&').map(s => { let kv = s.split('=');
+                obj[kv[0]] = kv[1]; });
             return `http://pic.zdic.net/kai/jt_bh/gif/${seq(obj.u)}/${obj.u}.gif`;
         }
 
@@ -84,7 +87,7 @@ class cncn_Zdic {
         if (style) {
             let background = style.innerHTML.match(/url\((.+?)\)/);
             inlinestyle = background ? style.innerHTML.replace(/url\((.+?)\)/, 'url(' + convert(background[1]) + ')') : '';
-            bihuaimage = background ? `<img src='${gif(background[1])}'>`:'';
+            bihuaimage = background ? `<img src='${gif(background[1])}'>` : '';
 
             let signs = style.innerHTML.match(/\.zdct.+\n.+?display: none;/g);
             for (const sign of signs) {
@@ -103,9 +106,9 @@ class cncn_Zdic {
                 img.setAttribute('src', 'http://www.zdic.net' + src);
         }
 
-        for (const link of doc.body.querySelectorAll('a')){
+        for (const link of doc.body.querySelectorAll('a')) {
             let href = link.getAttribute('href');
-            if(href.substring(0,1) == '/'){
+            if (href.substring(0, 1) == '/') {
                 link.setAttribute('href', 'http://www.zdic.net' + href);
                 link.setAttribute('target', '_blank');
             }

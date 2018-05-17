@@ -25,7 +25,7 @@ class builtin_encn_Collins {
         this.word = word;
         let list = [];
         let word_stem = await api.deinflect(word);
-        if (word.toLowerCase() !=  word) {
+        if (word.toLowerCase() != word) {
             let lowercase = word.toLowerCase();
             let lowercase_stem = await api.deinflect(lowercase);
             list = [word, word_stem, lowercase, lowercase_stem];
@@ -43,7 +43,7 @@ class builtin_encn_Collins {
         if (!word) return notes;
         let results = [];
         try {
-            results = JSON.parse(await api.getCollins(word));
+            results = JSON.parse(await api.getBuiltin('collins', word));
         } catch (err) {
             return [];
         }
@@ -67,7 +67,7 @@ class builtin_encn_Collins {
                     pos = '';
                     chn_tran = def.substring(0, def.indexOf('<br>')).trim();
                 }
-                let eng_tran = def.substring(def.indexOf('<br>')+4,def.length).trim();
+                let eng_tran = def.substring(def.indexOf('<br>') + 4, def.length).trim();
                 pos = pos ? `<span class="pos">${pos}</span>` : '';
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
                 eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';

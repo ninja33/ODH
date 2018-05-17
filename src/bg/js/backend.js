@@ -17,7 +17,7 @@ class ODHBack {
         this.builtin.loadData();
 
         this.list = [];
-        this.agent = new Agent();
+        this.agent = new Agent(document.getElementById('sandbox').contentWindow);
 
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
         window.addEventListener('message', e => this.onSandboxMessage(e));
@@ -28,15 +28,11 @@ class ODHBack {
 
     onInstalled(details) {
         if (details.reason === 'install') {
-            chrome.tabs.create({
-                url: chrome.extension.getURL('bg/guide.html')
-            });
+            chrome.tabs.create({ url: chrome.extension.getURL('bg/guide.html') });
             return;
         }
         if (details.reason === 'update') {
-            chrome.tabs.create({
-                url: chrome.extension.getURL('bg/update.html')
-            });
+            chrome.tabs.create({ url: chrome.extension.getURL('bg/update.html') });
             return;
         }
     }
@@ -52,16 +48,12 @@ class ODHBack {
         this.options = options;
 
         switch (options.enabled) {
-        case false:
-            chrome.browserAction.setBadgeText({
-                text: 'off'
-            });
-            break;
-        case true:
-            chrome.browserAction.setBadgeText({
-                text: ''
-            });
-            break;
+            case false:
+                chrome.browserAction.setBadgeText({ text: 'off' });
+                break;
+            case true:
+                chrome.browserAction.setBadgeText({ text: '' });
+                break;
         }
         this.tabInvokeAll('setOptions', {
             options: this.options
@@ -194,10 +186,7 @@ class ODHBack {
     }
 
     async api_Fetch(params) {
-        let {
-            url,
-            callbackId
-        } = params;
+        let { url, callbackId } = params;
 
         let request = {
             url,
@@ -211,33 +200,17 @@ class ODHBack {
     }
 
     async api_Deinflect(params) {
-        let {
-            word,
-            callbackId
-        } = params;
+        let { word, callbackId } = params;
         this.callback(this.deinflector.deinflect(word), callbackId);
     }
 
-    async api_getCollins(params) {
-        let {
-            word,
-            callbackId
-        } = params;
-        this.callback(this.builtin.getCollins(word), callbackId);
-    }
-
-    async api_getOxford(params) {
-        let {
-            word,
-            callbackId
-        } = params;
-        this.callback(this.builtin.getOxford(word), callbackId);
+    async api_getBuiltin(params) {
+        let { dict, word, callbackId } = params;
+        this.callback(this.builtin.findTerm(dict, word), callbackId);
     }
 
     async api_getLocale(params) {
-        let {
-            callbackId
-        } = params;
+        let { callbackId } = params;
         this.callback(chrome.i18n.getUILanguage(), callbackId);
     }
 
@@ -248,10 +221,7 @@ class ODHBack {
     }
 
     async api_getTranslation(params) {
-        let {
-            expression,
-            callback
-        } = params;
+        let { expression, callback } = params;
 
         try {
             let result = await this.findTerm(expression);
@@ -262,10 +232,7 @@ class ODHBack {
     }
 
     api_addNote(params) {
-        let {
-            notedef,
-            callback
-        } = params;
+        let { notedef, callback } = params;
 
         const note = this.formatNote(notedef);
         this.target.addNote(note).then(result => {
@@ -277,17 +244,17 @@ class ODHBack {
     async opt_optionsChanged(options) {
         this.setOptions(options);
         switch (options.services) {
-        case 'none':
-            this.target = null;
-            break;
-        case 'ankiconnect':
-            this.target = this.ankiconnect;
-            break;
-        case 'ankiweb':
-            this.target = this.ankiweb;
-            break;
-        default:
-            this.target = null;
+            case 'none':
+                this.target = null;
+                break;
+            case 'ankiconnect':
+                this.target = this.ankiconnect;
+                break;
+            case 'ankiweb':
+                this.target = this.ankiweb;
+                break;
+            default:
+                this.target = null;
         }
 
         let newOptions = await this.loadDict();
@@ -320,33 +287,24 @@ class ODHBack {
 
     async loadDictionary(url) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('loadDictionary', {
-                url
-            }, result => resolve(result));
+            this.agent.postMessage('loadDictionary', { url }, result => resolve(result));
         });
     }
 
     async setDictOptions(options) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('setDictOptions', {
-                options
-            }, result => resolve(result));
+            this.agent.postMessage('setDictOptions', { options }, result => resolve(result));
         });
     }
 
     async findTerm(expression) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('findTerm', {
-                expression
-            }, result => resolve(result));
+            this.agent.postMessage('findTerm', { expression }, result => resolve(result));
         });
     }
 
     callback(data, callbackId) {
-        this.agent.postMessage('callback', {
-            data,
-            callbackId
-        });
+        this.agent.postMessage('callback', { data, callbackId });
     }
 
 

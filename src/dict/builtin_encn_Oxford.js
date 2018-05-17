@@ -43,7 +43,7 @@ class builtin_encn_Oxford {
         if (!word) return notes;
         let results = [];
         try {
-            results = JSON.parse(await api.getOxford(word));
+            results = JSON.parse(await api.getBuiltin('oxford', word));
         } catch (err) {
             return [];
         }

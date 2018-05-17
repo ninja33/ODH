@@ -1,13 +1,13 @@
-/*global BGAgent */
+/*global Agent */
 class SandboxAPI {
     constructor() {
-        this.bgagent = new BGAgent();
+        this.agent = new Agent(window.parent);
     }
 
-    async postBGMessage(action, params) {
+    async postMessage(action, params) {
         return new Promise((resolve, reject) => {
             try {
-                this.bgagent.postBGMessage(action, params, result => resolve(result));
+                this.agent.postMessage(action, params, result => resolve(result));
             } catch (err) {
                 reject(null);
             }
@@ -15,42 +15,35 @@ class SandboxAPI {
     }
 
     async deinflect(word) {
-        return await this.postBGMessage('Deinflect', {
-            word
-        });
+        return await this.postMessage('Deinflect', { word });
     }
 
     async fetch(url) {
-        return await this.postBGMessage('Fetch', {
-            url
-        });
+        return await this.postMessage('Fetch', { url });
+    }
+
+    async getBuiltin(dict, word) {
+        return await this.postMessage('getBuiltin', { dict, word });
     }
 
     async getCollins(word) {
-        return await this.postBGMessage('getCollins', {
-            word
-        });
+        return await this.postMessage('getCollins', { word });
     }
 
     async getOxford(word) {
-        return await this.postBGMessage('getOxford', {
-            word
-        });
+        return await this.postMessage('getOxford', { word });
     }
-    
+
     async locale() {
-        return await this.postBGMessage('getLocale', {});
+        return await this.postMessage('getLocale', {});
     }
 
     callback(data, callbackId) {
-        this.postBGMessage('callback', {
-            data,
-            callbackId
-        });
+        this.postMessage('callback', { data, callbackId });
     }
 
     sandboxLoaded() {
-        this.postBGMessage('sandboxLoaded', {});
+        this.postMessage('sandboxLoaded', {});
     }
 
 }

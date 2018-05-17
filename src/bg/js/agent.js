@@ -1,14 +1,13 @@
 // --- Sandbox communication agent (with callback support) ---
 class Agent {
-    constructor() {
+    constructor(target) {
         this.callbacks = {};
-        this.sandbox = null;
-        window.addEventListener('message', e => this.onSandboxMessage(e));
+        this.target = target;
+        window.addEventListener('message', e => this.onMessage(e));
     }
 
-    onSandboxMessage(e) {
+    onMessage(e) {
         const { action, params } = e.data;
-
         if (action != 'callback' || !params || !params.callbackId)
             return;
         // we are the sender getting the callback
@@ -23,9 +22,8 @@ class Agent {
             params.callbackId = Math.random();
             this.callbacks[params.callbackId] = callback;
         }
-        if (!this.sandbox)
-            this.sandbox = document.getElementById('sandbox').contentWindow;
-        this.sandbox.postMessage({ action, params, }, '*');
+        if (this.target)
+            this.target.postMessage({ action, params }, '*');
     }
 
 }
