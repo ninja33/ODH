@@ -44,7 +44,10 @@ class Ankiweb {
         return new Promise((resolve, reject) => {
             let url = forceLogout ? 'https://ankiweb.net/account/logout' : 'https://ankiuser.net/edit/';
             $.get(url, (result) => {
-                let title = $('h1', $(result));
+                //let title = $('h1', $(result));
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(result, 'text/html');
+                let title = doc.querySelectorAll('h1');
                 if (!title.length) return Promise.reject(false);
                 switch (title[0].innerText) {
                 case 'Add':
@@ -56,7 +59,8 @@ class Ankiweb {
                 case 'Log in':
                     resolve({
                         action: 'login',
-                        data: $('input[name=csrf_token]', $(result)).val()
+                        data: doc.querySelector('input[name=csrf_token]').getAttribute('value')
+                        //data:$('input[name=csrf_token]', $(result)).val()
                     });
                     break;
                 default:
@@ -75,7 +79,10 @@ class Ankiweb {
                 csrf_token: token
             };
             $.post('https://ankiweb.net/account/login', info, (result) => {
-                let title = $('h1', $(result));
+                //let title = $('h1', $(result));
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(result, 'text/html');
+                let title = doc.querySelectorAll('h1');
                 if (!title.length) return Promise.reject(false);
                 if (title[0].innerText == 'Decks') {
                     resolve(true);
@@ -101,9 +108,14 @@ class Ankiweb {
                 mid: profile.modelids[note.modelName],
                 deck: note.deckName
             };
-            $.post('https://ankiuser.net/edit/save', dict, (result) => {
-                resolve(result);
-            });
+            let request = {
+                url: 'https://ankiuser.net/edit/save',
+                type: 'POST',
+                data: dict,
+                error: (xhr, status, error) => resolve(null),
+                success: (data, status) => resolve(data)
+            };
+            $.ajax(request);
         });
     }
 
