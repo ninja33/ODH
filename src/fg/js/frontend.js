@@ -1,4 +1,4 @@
-/* global Popup, TextSourceRange, selectedText, isInvalid, getSentence, isConnected, addNote, getTranslation*/
+/* global Popup, TextSourceRange, selectedText, isInvalid, getSentence, isConnected, addNote, getTranslation, isValidElement*/
 class ODHFront {
 
     constructor() {
@@ -30,6 +30,9 @@ class ODHFront {
         if (!this.activateKey)
             return;
 
+        if (!isValidElement())
+            return;
+
         if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
             const range = document.caretRangeFromPoint(this.point.x, this.point.y);
             if (range == null) return;
@@ -41,6 +44,9 @@ class ODHFront {
     }
 
     onDoubleClick(e) {
+        if (!isValidElement())
+            return;
+
         if (this.timeout)
             clearTimeout(this.timeout);
         this.mousemoved = false;
@@ -78,6 +84,9 @@ class ODHFront {
     async onSelectionEnd(e) {
 
         if (!this.enabled)
+            return;
+
+        if (!isValidElement())
             return;
 
         // reset selection timeout

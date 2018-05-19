@@ -73,7 +73,8 @@ function getSentence(sentenceNum) {
 
 function getBlock(node, deep) {
     const blockTags = ['LI', 'P', 'DIV', 'BODY'];
-    if (blockTags.indexOf(node.nodeName.toUpperCase()) !== -1 || deep === 0) {
+    const nodeName = node.nodeName.toUpperCase();
+    if (blockTags.includes(nodeName) || deep === 0) {
         return node;
     } else {
         return getBlock(node.parentElement, deep - 1);
@@ -83,4 +84,14 @@ function getBlock(node, deep) {
 function selectedText(){
     const selection = window.getSelection();
     return (selection.toString() || '').trim();
+}
+
+function isValidElement(){
+    const invalidTags = ['INPUT', 'TEXTAREA'];
+    const nodeName = document.activeElement.nodeName.toUpperCase();
+    if (invalidTags.includes(nodeName)){
+        return false;
+    } else {
+        return true;
+    }
 }
