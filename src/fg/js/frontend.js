@@ -9,6 +9,7 @@ class ODHFront {
         this.audio = {};
         this.enabled = true;
         this.activateKey = 16; // shift 16, ctl 17, alt 18
+        this.exitKey = 27; // esc 27
         this.maxContext = 1; //max context sentence #
         this.services = 'none';
         this.popup = new Popup();
@@ -38,6 +39,9 @@ class ODHFront {
             this.mousemoved = false;
             this.onSelectionEnd(e);
         }
+
+        if (e.keyCode === this.exitKey || e.charCode === this.exitKey)
+            this.popup.hide();
     }
 
     onDoubleClick(e) {
