@@ -20,7 +20,7 @@ function sanitizeOptions(options) {
         audio: '',
         preferredaudio: '0',
 
-        dictLibrary: 'builtin_encn_Collins, builtin_encn_Oxford, encn_Collins, encn_Oxford, encn_Cambridge, enen_Collins, cncn_Zdic',
+        dictLibrary: 'builtin_encn_Collins, builtin_encn_Oxford, encn_Collins, encn_Oxford, encn_Baicizhan, cncn_Zdic, frcn_Eudict, escn_Eudict, rucn_Qianyi',
         //dictLibrary: '',
         dictSelected: '',
         dictNamelist: [],

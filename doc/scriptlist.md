@@ -16,8 +16,8 @@ Here is existing dictionaries script list. You can copy script name in name colu
 |EN|CN|Collins|encn_Collins|
 |EN|CN|Cambridge|encn_Cambridge|
 |FR|CN|Youdao|frcn_Youdao|
-|FR|CN|Eudict|frcn_Eduict|
-|ES|CN|Eudict|escn_Eduict|
+|FR|CN|Eudict|frcn_Eudict|
+|ES|CN|Eudict|escn_Eudict|
 |RU|CN|Qianyi|rucn_Qianyi|
 |CN|CN|Zdic|cncn_Zdic|
 

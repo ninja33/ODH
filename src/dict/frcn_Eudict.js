@@ -10,9 +10,9 @@ class frcn_Eudict {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '法语助手';
+            return '(在线)欧路词典法语助手';
         if (locale.indexOf('TW') != -1)
-            return '法语助手';
+            return '(在线)欧路词典法语助手';
         return 'frcn_Eudict';
     }
 

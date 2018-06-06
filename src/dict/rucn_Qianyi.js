@@ -9,9 +9,9 @@ class rucn_Qianyi {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '千亿俄汉词典';
+            return '(在线)千亿词霸俄汉词典';
         if (locale.indexOf('TW') != -1)
-            return '千亿俄汉词典';
+            return '(在线)千亿词霸俄汉词典';
         return 'rucn_Qianyi';
     }
 

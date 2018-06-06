@@ -9,9 +9,9 @@ class escn_Eudict {
     async displayName() {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1)
-            return '西语助手';
+            return '(在线)欧路词典西语助手';
         if (locale.indexOf('TW') != -1)
-            return '西语助手';
+            return '(在线)欧路词典西语助手';
         return 'escn_Eudict';
     }
 

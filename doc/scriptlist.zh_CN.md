@@ -14,9 +14,9 @@
 |EN|CN|柯林斯英汉双解词典|encn_Collins|
 |EN|CN|剑桥英汉双解词典|encn_Cambridge|
 |FR|CN|有道法汉简明词典|frcn_Youdao|
-|FR|CN|欧路法语助手词典|frcn_Eduict|
-|ES|CN|欧路西语助手词典|escn_Eduict|
-|RU|CN|千亿俄汉简明词典|rucn_Qianyi|
+|FR|CN|欧路词典法语助手|frcn_Eudict|
+|ES|CN|欧路词典西语助手|escn_Eudict|
+|RU|CN|千亿词霸俄汉词典|rucn_Qianyi|
 |CN|CN|汉典汉语字典辞典|cncn_Zdic|
 
 (*) OLCC 指 Oxford, Longman, Cambridge, Collins
