@@ -1,7 +1,7 @@
 class Ankiconnect {
     constructor() {}
 
-    async ankiInvoke(action, params = {}, timeout = 1000) {
+    async ankiInvoke(action, params = {}, timeout = 3000) {
         let request = { action, params };
         return new Promise((resolve, reject) => {
             $.ajax({
