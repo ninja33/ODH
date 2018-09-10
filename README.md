@@ -35,13 +35,17 @@ The extension option page is divided in three sections.
 
 ![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400_en.png)
 
-## Use existing script or develop by yourself
+## Development
+### Getting started
+The source code on github does not contain offline dictionary and English word deformation table data. You can go to the chrome store to download, or use the chrome extension downloader to download the plugin's crx file and extract the dictionary JSON file.
+
+### Use existing script or develop by yourself
 
 1. You can use exsiting dictionary scripts in the [dictionaries list](doc/scriptlist.md)
 2. Or develop the script by yourself based on [development guide](doc/development.md) 
 3. Or raise an [issue](https://github.com/ninja33/ODH/issues) here if you really need help.
 
-## Pull request
+### Pull request
 
 Welcome pull request if you want to enhance this extension, or put your own script in next release.
 
