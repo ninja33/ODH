@@ -188,12 +188,11 @@ class encn_Collins {
             let transNode = doc.querySelectorAll('#ydTrans .trans-container p')[1];
             if (!transNode) return notes;
 
-            let definition = '<ul class="ec">';
-            definition += `<li class="ec"><span class="ec_chn">${T(transNode)}</span></li>`;
-            definition += '</ul>';
+            let definition = `${T(transNode)}`;
             let css = `
                 <style>
-                    ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                    .odh-headsection,
+                    .odh-sentence {display:none}
                 </style>`;
             notes.push({
                 css,
