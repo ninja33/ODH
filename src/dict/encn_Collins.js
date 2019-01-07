@@ -41,7 +41,8 @@ class encn_Collins {
             doc = parser.parseFromString(data, 'text/html');
             let collins = getCollins(doc);
             let youdao = getYoudao(doc); //Combine Youdao Concise English-Chinese Dictionary to the end.
-            return [].concat(collins, youdao);
+            let ydtrans = getYDTrans(doc); //Combine Youdao Translation (if any) to the end.
+            return [].concat(collins, youdao, ydtrans);
         } catch (err) {
             return [];
         }
@@ -176,6 +177,27 @@ class encn_Collins {
                 reading,
                 definitions: [definition],
                 audios
+            });
+            return notes;
+        }
+
+        function getYDTrans(doc) {
+            let notes = [];
+
+            //get Youdao EC data: check data availability
+            let transNode = doc.querySelectorAll('#ydTrans .trans-container p')[1];
+            if (!transNode) return notes;
+
+            let definition = '<ul class="ec">';
+            definition += `<li class="ec"><span class="ec_chn">${T(transNode)}</span></li>`;
+            definition += '</ul>';
+            let css = `
+                <style>
+                    ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                </style>`;
+            notes.push({
+                css,
+                definitions: [definition],
             });
             return notes;
         }
