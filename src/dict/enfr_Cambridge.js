@@ -86,12 +86,13 @@ class enfr_Cambridge {
             .posgram {font-size: 0.8em;background-color: #959595;color: white;padding: 2px 5px;border-radius: 3px;}
             .epp-xref::after {content: ")";}
             .epp-xref::before {content: "(";}
-            .def-block, .phrase-block {border: 1px solid;
-                border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+            .def-block, .phrase-block {
+                /*border: 1px solid;*/
+                /*border-color: #e5e6e9 #dfe0e4 #d0d1d5;*/
                 border-radius: 3px;
                 padding: 5px;
-                margin: 8px 0;
-                /*background-color: #fbfbfb;*/
+                margin: 5px 0;
+                background-color: #f6f6f6;
             }
             .phrase-block .def-block{border: initial;padding: initial;}
             p.def-head {margin: auto;}

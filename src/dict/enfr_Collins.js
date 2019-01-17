@@ -64,11 +64,12 @@ class enfr_Collins {
                     font-weight: normal;
                 }
                 .sense {
-                    border: 1px solid;
-                    border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+                    /*border: 1px solid;*/
+                    /*border-color: #e5e6e9 #dfe0e4 #d0d1d5;*/
                     border-radius: 3px;
                     padding: 5px;
-                    margin-top: 3px;
+                    margin: 5px 0;
+                    background-color: #f6f6f6;
                 }
                 .sense .re {
                     font-size: 100%;
