@@ -12,7 +12,8 @@ function registerAddNoteLinks() {
                 action: 'addNote',
                 params: {
                     nindex: ds.nindex,
-                    dindex: ds.dindex
+                    dindex: ds.dindex,
+                    context: document.querySelector('#odh-context').value
                 }
             }, '*');
         });

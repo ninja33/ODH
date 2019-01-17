@@ -55,7 +55,13 @@
   word-wrap: break-word;
   overflow: auto;  
 }
-
+#odh-context{
+  font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
+  background:#ffffe0;
+  margin:0;
+  width: 96%;
+  height: 100px;
+}
 .odh-sentence {
   border: 2px dashed #d0d1d5;
 }

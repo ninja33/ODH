@@ -136,11 +136,12 @@ class ODHFront {
     }
 
     async api_addNote(params) {
-        let { nindex, dindex } = params;
+        let { nindex, dindex, context } = params;
 
         let notedef = Object.assign({}, this.notes[nindex]);
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
         notedef.definitions = this.notes[nindex].css + this.notes[nindex].definitions.join('<hr>');
+        notedef.sentence = context;
         notedef.url = window.location.href;
         let response = await addNote(notedef);
         this.popup.sendMessage('setActionState', { response, params });
@@ -238,7 +239,7 @@ class ODHFront {
             }
             content += '</div>';
         }
-        content += `<div class="odh-sentence">${this.sentence}</div>`;
+        content += `<textarea id="odh-context" class="odh-sentence">${this.sentence}</textarea>`;
         return this.popupHeader() + content + this.popupFooter();
     }
 
