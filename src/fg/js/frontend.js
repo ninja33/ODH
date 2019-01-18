@@ -239,7 +239,8 @@ class ODHFront {
             }
             content += '</div>';
         }
-        content += `<textarea id="odh-context" class="odh-sentence">${this.sentence}</textarea>`;
+        //content += `<textarea id="odh-context" class="odh-sentence">${this.sentence}</textarea>`;
+        content += `<div id="odh-container" class="odh-sentence"></div>`;
         return this.popupHeader() + content + this.popupFooter();
     }
 
@@ -248,6 +249,7 @@ class ODHFront {
         <html lang="en">
             <head><meta charset="UTF-8"><title></title>
                 <link rel="stylesheet" href="${chrome.runtime.getURL('fg/css/frame.css')}">
+                <link rel="stylesheet" href="${chrome.runtime.getURL('fg/css/spell.css')}">
             </head>
             <body style="margin:0px;">
             <div class="odh-notes">`;
@@ -268,6 +270,9 @@ class ODHFront {
                 <img id="play" src="${chrome.runtime.getURL('fg/img/play.png')}"/>
             </div>
             <script src="${chrome.runtime.getURL('fg/js/frame.js')}"></script>
+            <script src="${chrome.runtime.getURL('fg/js/spell.js')}"></script>
+            <script>document.querySelector('#odh-container').appendChild(spell())</script>
+            <script>document.querySelector('.spell-content').innerHTML="${this.sentence}"</script>
             </body>
         </html>`;
     }

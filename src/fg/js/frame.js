@@ -13,7 +13,7 @@ function registerAddNoteLinks() {
                 params: {
                     nindex: ds.nindex,
                     dindex: ds.dindex,
-                    context: document.querySelector('#odh-context').value
+                    context: document.querySelector('.spell-content').innerHTML
                 }
             }, '*');
         });

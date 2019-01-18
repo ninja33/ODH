@@ -1,0 +1,213 @@
+@charset "UTF-8";
+
+.spell {
+	border-radius: 5px;
+	box-shadow: 0 1px 3px rgba(10, 10, 10, 0.25);
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.spell-content {
+	box-sizing: border-box;
+	min-height: 100px;
+	resize: vertical;
+	outline: 0;
+	overflow-y: auto;
+	padding: 0.5em;
+	width: 100%;
+}
+
+.spell-bar {
+	display: table;
+	width: 100%;
+	height: 28px;
+	background-color: #f6f6f6;
+	box-shadow: inset 0 -1px 2px rgba(10, 10, 10, 0.1);
+	border: none;
+	border-top-left-radius:  5px;
+	border-top-right-radius: 5px;
+}
+
+.spell-zone {
+	display: table-cell;
+	text-align: center;
+	counter-reset: btn;
+}
+
+.spell-icon {
+	position: relative;
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	height: 22px;
+	width: 22px;
+	outline: 0;
+	font-size: 10px;
+	line-height: 0;
+}
+
+.spell-icon.selected {
+	background-color: rgba(0,0,0,0.1);
+}
+
+.spell-icon:hover {
+	background-color: rgba(0,0,0,0.2);
+}
+
+.spell-icon[title^="heading "]::after {
+	counter-increment: btn;
+	content: counter(btn);
+	font-size: 10px;
+	vertical-align: sub;
+}
+
+.spell-icon > *:nth-child(2) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 30px;
+	width: 30px;
+	opacity: 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	background: transparent;
+	cursor: pointer;
+	border: 0;
+	padding: 0;
+}
+
+@font-face {
+	font-family: "spell-icons";
+	src:url("chrome-extension://__MSG_@@extension_id__/fg/font/spell-icons.woff") format("woff"),
+	url("chrome-extension://__MSG_@@extension_id__/fg/font/spell-icons.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+
+}
+
+[data-icon]:before {
+	font-family: "spell-icons" !important;
+	content: attr(data-icon);
+	font-style: normal !important;
+	font-weight: normal !important;
+	font-variant: normal !important;
+	text-transform: none !important;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+	font-family: "spell-icons" !important;
+	font-style: normal !important;
+	font-weight: normal !important;
+	font-variant: normal !important;
+	text-transform: none !important;
+	speak: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-bold:before {
+	content: "\62";
+}
+.icon-italic:before {
+	content: "\69";
+}
+.icon-underline:before {
+	content: "\75";
+}
+.icon-strikethrough:before {
+	content: "\73";
+}
+.icon-subscript:before {
+	content: "\b2";
+}
+.icon-superscript:before {
+	content: "\5e";
+}
+.icon-justifycenter:before {
+	content: "\2d";
+}
+.icon-justifyfull:before {
+	content: "\2e";
+}
+.icon-justifyleft:before {
+	content: "\3c";
+}
+.icon-justifyright:before {
+	content: "\3e";
+}
+.icon-outdent:before {
+	content: "\29";
+}
+.icon-indent:before {
+	content: "\28";
+}
+[class*="icon-heading"]:before {
+	content: "\48";
+}
+.icon-paragraph:before {
+	content: "\a7";
+}
+.icon-quote:before {
+	content: "\22";
+}
+.icon-code:before {
+	content: "\7b";
+}
+.icon-insertorderedlist:before {
+	content: "\31";
+}
+.icon-insertunorderedlist:before {
+	content: "\72";
+}
+.icon-inserthorizontalrule:before {
+	content: "\5f";
+}
+.icon-copy:before {
+	content: "\63";
+}
+.icon-cut:before {
+	content: "\78";
+}
+.icon-paste:before {
+	content: "\76";
+}
+.icon-unlink:before {
+	content: "\5c";
+}
+.icon-link:before {
+	content: "\40";
+}
+.icon-forecolor:before {
+	content: "\61";
+}
+.icon-hilitecolor:before {
+	content: "\41";
+}
+.icon-removeformat:before {
+	content: "\74";
+}
+.icon-image:before {
+	content: "\70";
+}
+.icon-video:before {
+	content: "\6d";
+}
+.icon-fontname:before {
+	content: "\66";
+}
+.icon-undo:before {
+	content: "\7a";
+}
+.icon-redo:before {
+	content: "\79";
+}
+.icon-fontsize:before {
+	content: "\47";
+}

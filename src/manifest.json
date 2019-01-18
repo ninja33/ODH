@@ -41,7 +41,11 @@
     },
     "web_accessible_resources": [
         "fg/css/frame.css",
+        "fg/css/spell.css",
         "fg/js/frame.js",
+        "fg/js/spell.js",
+        "fg/font/spell-icons.ttf",
+        "fg/font/spell-icons.woff",
         "fg/img/play.png",
         "fg/img/plus.png",
         "fg/img/cloud.png",
