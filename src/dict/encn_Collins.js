@@ -191,8 +191,10 @@ class encn_Collins {
             let definition = `${T(transNode)}`;
             let css = `
                 <style>
-                    .odh-headsection,
-                    .odh-sentence {display:none}
+                    .odh-expression {
+                        font-size: 1em!important;
+                        font-weight: normal!important;
+                    }
                 </style>`;
             notes.push({
                 css,
