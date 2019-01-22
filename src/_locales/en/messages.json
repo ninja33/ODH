@@ -35,6 +35,10 @@
         "message": "AutoSel.Hotkey",
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
+    "optMonoBilingualDict":{
+        "message": "Mono/Bilingual",
+        "description": "label text for 'Mono/Bilingual Dict' option list."
+    },
     "optMaxContext":{
         "message": "Max.Context#",
         "description": "label text for 'Max Context  Number' option list."

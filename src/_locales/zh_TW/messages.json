@@ -35,6 +35,10 @@
         "message": "自動取詞熱鍵",
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
+    "optMonoBilingualDict":{
+        "message": "單語雙語詞典",
+        "description": "label text for 'Mono/Bilingual Dict' option list."
+    },
     "optMaxContext":{
         "message": "最大原句數量",
         "description": "label text for 'Max Context  Number' option list."

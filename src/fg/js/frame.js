@@ -5,6 +5,7 @@ function getImageSource(id) {
 function registerAddNoteLinks() {
     for (let link of document.getElementsByClassName('odh-addnote')) {
         link.addEventListener('click', (e) => {
+            e.stopPropagation();
             e.preventDefault();
             const ds = e.currentTarget.dataset;
             e.currentTarget.src = getImageSource('load');
@@ -23,6 +24,7 @@ function registerAddNoteLinks() {
 function registerAudioLinks() {
     for (let link of document.getElementsByClassName('odh-playaudio')) {
         link.addEventListener('click', (e) => {
+            e.stopPropagation();
             e.preventDefault();
             const ds = e.currentTarget.dataset;
             window.parent.postMessage({
@@ -40,6 +42,7 @@ function registerSoundLinks() {
     for (let link of document.getElementsByClassName('odh-playsound')) {
         link.setAttribute('src', getImageSource('play'));
         link.addEventListener('click', (e) => {
+            e.stopPropagation();
             e.preventDefault();
             const ds = e.currentTarget.dataset;
             window.parent.postMessage({
@@ -52,10 +55,27 @@ function registerSoundLinks() {
     }
 }
 
+function registerHiddenClass() {
+    for (let div of document.getElementsByClassName('odh-definition')) {
+        div.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            hideTranslation('span.chn_tran, span.chn_sent');
+        });
+    }
+}
+
+function hideTranslation(className){
+    for (let div of document.querySelectorAll(className)) {
+        div.classList.toggle('hidden');
+    }
+}
+
 function onDomContentLoaded() {
     registerAddNoteLinks();
     registerAudioLinks();
     registerSoundLinks();
+    registerHiddenClass();
 }
 
 function onMessage(e) {
