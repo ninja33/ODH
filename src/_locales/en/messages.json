@@ -39,6 +39,14 @@
         "message": "Mono/Bilingual",
         "description": "label text for 'Mono/Bilingual Dict' option list."
     },
+    "optMonolingual":{
+        "message": "Monolingual",
+        "description": "label text for 'Monolingual Dict' option."
+    },
+    "optBilingual":{
+        "message": "Bilingual",
+        "description": "label text for 'Bilingual Dict' option."
+    },
     "optMaxContext":{
         "message": "Max.Context#",
         "description": "label text for 'Max Context  Number' option list."
@@ -130,15 +138,15 @@
         "description": "label text for 'Audio'."
     },
     "optPreferredAudio":{
-        "message": "Preferred",
+        "message": "Audio Download",
         "description": "label text for 'Preferred Audio'."
     },
     "optPreferredAudio_0":{
-        "message": "Download Audio# 0(if available)",
+        "message": "#0(eg. UK)",
         "description": "label text for 'Preferred Audio# 0'."
     },
     "optPreferredAudio_1":{
-        "message": "Download Audio# 1(if available)",
+        "message": "#1(eg. US)",
         "description": "label text for 'Preferred Audio# 1'."
     },
     "optRepository":{

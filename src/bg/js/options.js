@@ -96,6 +96,8 @@ async function onOKClicked(e) {
 
     options.enabled = $('#enabled').prop('checked');
     options.hotkey = $('#hotkey').val();
+    options.monolingual = $('#monolingual').val();
+    options.preferredaudio = $('#anki-preferred-audio').val();
     options.maxcontext = $('#maxcontext').val();
     options.maxexample = $('#maxexample').val();
 
@@ -107,8 +109,6 @@ async function onOKClicked(e) {
     fields.forEach(field => {
         options[field] = $(`#${field}`).val() == null ? options[field] : $(`#${field}`).val();
     });
-
-    options.preferredaudio = $('#anki-preferred-audio').val();
 
     options.dictLibrary = $('#repo').val();
     options.dictSelected = $('#dict').val();
@@ -134,6 +134,8 @@ async function onReady() {
     let options = await optionsLoad();
     $('#enabled').prop('checked', options.enabled);
     $('#hotkey').val(options.hotkey);
+    $('#monolingual').val(options.monolingual);
+    $('#anki-preferred-audio').val(options.preferredaudio);
     $('#maxcontext').val(options.maxcontext);
     $('#maxexample').val(options.maxexample);
 
@@ -145,7 +147,6 @@ async function onReady() {
     fields.forEach(field => {
         $(`#${field}`).val(options[field]);
     });
-    $('#anki-preferred-audio').val(options.preferredaudio);
 
 
     $('#repo').val(options.dictLibrary);

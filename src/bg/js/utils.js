@@ -4,6 +4,8 @@ function sanitizeOptions(options) {
         hotkey: '0', // 0:off , 16:shift, 17:ctrl, 18:alt
         maxcontext: '1',
         maxexample: '2',
+        monolingual: '0', //0: bilingual 1:monolingual
+        preferredaudio: '0',
         services: 'none',
         id:'',
         password:'',
@@ -18,7 +20,6 @@ function sanitizeOptions(options) {
         sentence: '',
         url: '',
         audio: '',
-        preferredaudio: '0',
 
         dictLibrary: 'builtin_encn_Collins, builtin_encn_Oxford, encn_Collins, encn_Oxford, encn_Baicizhan, cncn_Zdic, frcn_Eudict, escn_Eudict, rucn_Qianyi',
         //dictLibrary: '',

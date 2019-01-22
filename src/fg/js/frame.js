@@ -60,12 +60,13 @@ function registerHiddenClass() {
         div.addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
-            hideTranslation('span.chn_tran, span.chn_sent');
+            hideTranslation();
         });
     }
 }
 
-function hideTranslation(className){
+function hideTranslation(){
+    let className = 'span.chn_dis, span.chn_tran, span.chn_sent, span.tgt_tran, span.tgt_sent'; // to add your bilingual translation div class name here.
     for (let div of document.querySelectorAll(className)) {
         div.classList.toggle('hidden');
     }

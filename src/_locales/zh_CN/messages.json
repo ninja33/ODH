@@ -39,6 +39,14 @@
         "message": "单语双语词典",
         "description": "label text for 'Mono/Bilingual Dict' option list."
     },
+    "optMonolingual":{
+        "message": "单语",
+        "description": "label text for 'Monolingual Dict' option."
+    },
+    "optBilingual":{
+        "message": "双语",
+        "description": "label text for 'Bilingual Dict' option."
+    },
     "optMaxContext":{
         "message": "最大原句数量",
         "description": "label text for 'Max Context  Number' option list."
@@ -126,15 +134,15 @@
         "description": "label text for 'Audio'."
     },
     "optPreferredAudio":{
-        "message": "音频偏好",
+        "message": "音频下载偏好",
         "description": "label text for 'Preferred Audio'."
     },
     "optPreferredAudio_0":{
-        "message": "优先下载#0音频(如有)",
+        "message": "英音",
         "description": "label text for 'Preferred Audio# 0'."
     },
     "optPreferredAudio_1":{
-        "message": "优先下载#1音频(如有)",
+        "message": "美音",
         "description": "label text for 'Preferred Audio# 1'."
     },
     "optRepository":{

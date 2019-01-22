@@ -30,13 +30,12 @@
                     <option value="2">2</option>
                 </select>
 
-                <label style="visibility:hidden">Max. Example #</label>
-                <select id="placeholder" style="visibility:hidden">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
+                <label for="anki-preferred-audio" data-i18n="optPreferredAudio">Pref. Audio</label>
+                <select id="anki-preferred-audio">
+                    <option value="0" data-i18n="optPreferredAudio_0">Audio# 0(if available)</option>
+                    <option value="1" data-i18n="optPreferredAudio_1">Audio# 1(if available)</option>
                 </select>
-            </section>
+        </section>
 
             <section class="general-options">
                 <label data-i18n="optEnabled">Enable/Disable</label>
@@ -54,9 +53,9 @@
                 </select>
 
                 <label data-i18n="optMonoBilingualDict">Mono/Bilingual Dict.</label>
-                <select id="monodict">
-                        <option value="0">Bilingual</option>
-                        <option value="1">Monolingual</option>
+                <select id="monolingual">
+                        <option value="0" data-i18n="optBilingual">Bilingual</option>
+                        <option value="1" data-i18n="optMonolingual">Monolingual</option>
                 </select>
 
             </section>
@@ -131,12 +130,6 @@
 
                     <label for="audio" data-i18n="optAudio">Audio</label>
                     <select id="audio">
-                    </select>
-
-                    <label for="anki-preferred-audio" data-i18n="optPreferredAudio">Pref. Audio</label>
-                    <select id="anki-preferred-audio">
-                        <option value="0" data-i18n="optPreferredAudio_0">Audio# 0(if available)</option>
-                        <option value="1" data-i18n="optPreferredAudio_1">Audio# 1(if available)</option>
                     </select>
                 </section>
 

@@ -259,6 +259,7 @@ class ODHFront {
         let services = this.options ? this.options.services : '';
         let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
         let button = chrome.runtime.getURL('fg/img/' + image);
+        let monolingual = this.options ? (this.options.monolingual == '1' ? 'hideTranslation()' : '') : '';
 
         return `
             </div>
@@ -273,6 +274,7 @@ class ODHFront {
             <script src="${chrome.runtime.getURL('fg/js/spell.js')}"></script>
             <script>document.querySelector('#odh-container').appendChild(spell())</script>
             <script>document.querySelector('.spell-content').innerHTML="${this.sentence}"</script>
+            <script>${monolingual}</script>
             </body>
         </html>`;
     }
