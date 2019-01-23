@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/tabmenu.css">
     <link rel="stylesheet" href="css/options.css">
     <link rel="stylesheet" href="css/checkbox.css">
     <title data-i18n="optTitle">Online Dictionary Helper</title>
@@ -10,146 +11,177 @@
 
 <body>
     <div class='container'>
+
+        <div class="tabmenus">
+            <a href="#" data-contentid="tab-1" class="tabmenu active" data-i18n="tabExtensionTitle">General</a>
+            <a href="#" data-contentid="tab-2" class="tabmenu" data-i18n="tabServicesTitle">Anki</a>
+        </div>
+
         <form>
-            <div class="option-head general-option-head">
-                <span class="general-option-title" data-i18n="optGeneralOptionTitle">General Options</span>
-                <span class="option-helps"><a href="https://github.com/ninja33/ODH/blob/master/README.md" target="_blank">?</a></span>
-            </div>
-            <section class="general-options right">
-                <label data-i18n="optMaxContext">Max. Context #</label>
-                <select id="maxcontext">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                </select>
-
-                <label data-i18n="optMaxExample">Max. Example #</label>
-                <select id="maxexample">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                </select>
-
-                <label for="anki-preferred-audio" data-i18n="optPreferredAudio">Pref. Audio</label>
-                <select id="anki-preferred-audio">
-                    <option value="0" data-i18n="optPreferredAudio_0">Audio# 0(if available)</option>
-                    <option value="1" data-i18n="optPreferredAudio_1">Audio# 1(if available)</option>
-                </select>
-        </section>
-
-            <section class="general-options">
-                <label data-i18n="optEnabled">Enable/Disable</label>
-                <div class="enabled">
-                    <input type="checkbox" value=true id="enabled">
-                    <label for="enabled"></label>
+            <div id="tab-1" class="tabcontent">
+                <div class="option-head general-option-head">
+                    <span class="general-option-title" data-i18n="optGeneralOptionTitle">General Options</span>
+                    <span class="option-helps">
+                        <a href="https://github.com/ninja33/ODH/blob/master/README.md" target="_blank">?</a>
+                    </span>
                 </div>
-
-                <label data-i18n="optAutoSelectionHotKey">AuoSel. HotKey</label>
-                <select id="hotkey">
+                <section class="general-options right">
+                    <label data-i18n="optAutoSelectionHotKey">AuoSel. HotKey</label>
+                    <select id="hotkey">
                         <option value="0">Off</option>
                         <option value="16">Shift</option>
                         <option value="17">Ctrl</option>
                         <option value="18">Alt</option>
-                </select>
+                    </select>
+                </section>
 
-                <label data-i18n="optMonoBilingualDict">Mono/Bilingual Dict.</label>
-                <select id="monolingual">
+                <section class="general-options">
+                    <label data-i18n="optEnabled">Enable/Disable</label>
+                    <div class="enabled">
+                        <input type="checkbox" value=true id="enabled">
+                        <label for="enabled"></label>
+                    </div>
+                </section>
+
+                <div class="option-head dictionary-head">
+                    <span class="dictionary-option-title" data-i18n="optDictionaryOptionTitle">Dictionary Options</span>
+                </div>
+                <section>
+                    <label for="dict" data-i18n="optDictionaries">Dictionary</label>
+                    <select id="dict" style="width:317px;">
+                        <option value="encn-Default">encn-Default</option>
+                    </select>
+                </section>
+                <hr>
+                <section class="dictionary-options right">
+                    <label data-i18n="optMaxContext">Max. Context #</label>
+                    <select id="maxcontext">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                    <label data-i18n="optMaxExample">Max. Example #</label>
+                    <select id="maxexample">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </section>
+                <section class="dictionary-options">
+                    <label data-i18n="optMonoBilingualDict">Mono/Bilingual Dict.</label>
+                    <select id="monolingual">
                         <option value="0" data-i18n="optBilingual">Bilingual</option>
                         <option value="1" data-i18n="optMonolingual">Monolingual</option>
-                </select>
+                    </select>
+                    <label for="anki-preferred-audio" data-i18n="optPreferredAudio">Pref. Audio</label>
+                    <select id="anki-preferred-audio">
+                        <option value="0" data-i18n="optPreferredAudio_0">Audio# 0(if available)</option>
+                        <option value="1" data-i18n="optPreferredAudio_1">Audio# 1(if available)</option>
+                    </select>
+                </section>
 
-            </section>
+                <div class="option-head scripts-head">
+                    <span class="dictionary-option-title" data-i18n="optScriptsOptionTitle">Dictionary Options</span>
+                    <span class="option-helps">
+                        <a href="https://github.com/ninja33/ODH/blob/master/doc/scriptlist.md" target="_blank" data-i18n="optScriptList">?</a>
+                    </span>
+                </div>
+                <section class="scripts-options">
+                    <label for="repo" data-i18n="optRepository">Repository</label>
+                    <input type="text" id="repo" name="repo" placeholder="User defined online dictionary">
+                    <label class="button" id="load" data-i18n="optLoad">Load Repos.</label>
+                </section>
+            </div>
 
-            <div class="option-head anki-option-head">
+            <div id="tab-2" class="tabcontent" style="display:none">
+                <div class="option-head anki-option-head">
                     <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
-                    <span class="option-helps"><a href="https://github.com/FooSoft/anki-connect" target="_blank">?</a></span>
-            </div>
+                    <span class="option-helps">
+                        <a href="https://github.com/FooSoft/anki-connect" target="_blank">?</a>
+                    </span>
+                </div>
 
-            <section class="services-options">
-                <label for="services" data-i18n="optServices">Services</label>
-                <select id="services">
-                    <option value="none">None</option>
-                    <option value="ankiconnect">Ankiconnect</option>
-                    <option value="ankiweb">Ankiweb</option>
-                </select>
-                <label id="services-status">Anki Status</label>
-            </section>
-
-            <div id="user-options">
-                <hr>
-                <section class="user-options">
-                    <label for="id" data-i18n="optID">ID</label>
-                    <input type="text" id="id" name="repo" placeholder="Ankiweb ID">
-                    <label for="signup"><a href="https://ankiweb.net/account/register" target="_blank" data-i18n="optSignup">?</a></label>
-
-                    <label for="password" data-i18n="optPassword">Password</label>
-                    <input type="password" id="password" name="repo" placeholder="Ankiweb Password">
-                    <label class="button" id="login" data-i18n="optLogin">Login</label>
-
-                </section>
-            </div>
-
-            <div id="anki-options">
-                <hr>
-                <section class="anki-options">
-                    <label for="deckname" data-i18n="optDeckName">Deck Name</label>
-                    <select id="deckname">
+                <section class="services-options">
+                    <label for="services" data-i18n="optServices">Services</label>
+                    <select id="services">
+                        <option value="none">None</option>
+                        <option value="ankiconnect">Ankiconnect</option>
+                        <option value="ankiweb">Ankiweb</option>
                     </select>
-
-                    <label for="typename" data-i18n="optTypeName">Type Name</label>
-                    <select id="typename">
-                    </select>
-
-                    <label for="expression" data-i18n="optExpression">Expression</label>
-                    <select id="expression">
-                    </select>
-
-                    <label for="reading" data-i18n="optReading">Reading</label>
-                    <select id="reading">
-                    </select>
-
-                    <label for="extrainfo" data-i18n="optExtraInfo">ExtraInfo</label>
-                    <select id="extrainfo">
-                    </select>
-
-                    <label for="definition" data-i18n="optDefinition">Definition</label>
-                    <select id="definition">
-                    </select>
-
-                    <label for="definitions" data-i18n="optDefinitions">Definition</label>
-                    <select id="definitions">
-                    </select>
-
-                    <label for="sentence" data-i18n="optSentence">Sentence</label>
-                    <select id="sentence">
-                    </select>
-
-                    <label for="url" data-i18n="optUrl">URL</label>
-                    <select id="url">
-                    </select>
-
-                    <label for="audio" data-i18n="optAudio">Audio</label>
-                    <select id="audio">
-                    </select>
+                    <label id="services-status">Anki Status</label>
                 </section>
 
-            </div>
+                <div id="user-options">
+                    <hr>
+                    <section class="user-options">
+                        <label for="id" data-i18n="optID">ID</label>
+                        <input type="text" id="id" name="repo" placeholder="Ankiweb ID">
+                        <label for="signup">
+                            <a href="https://ankiweb.net/account/register" target="_blank" data-i18n="optSignup">?</a>
+                        </label>
 
-            <div class="option-head dictionary-head">
-                <span class="dictionary-option-title" data-i18n="optDictionaryOptionTitle">Dictionary Options</span>
-                <span class="option-helps"><a href="https://github.com/ninja33/ODH/blob/master/doc/scriptlist.md" target="_blank" data-i18n="optScriptList">?</a></span>
-            </div>
-            <section class="dictionary-options">
-                <label for="repo" data-i18n="optRepository">Repository</label>
-                <input type="text" id="repo" name="repo" placeholder="User defined online dictionary">
-                <label class="button" id="load" data-i18n="optLoad">Load Repos.</label>
+                        <label for="password" data-i18n="optPassword">Password</label>
+                        <input type="password" id="password" name="repo" placeholder="Ankiweb Password">
+                        <label class="button" id="login" data-i18n="optLogin">Login</label>
 
-                <label for="dict" data-i18n="optDictionaries">Dictionary</label>
-                <select id="dict">
-                    <option value="encn-Default">encn-Default</option>
-                </select>
+                    </section>
+                </div>
+
+                <div id="anki-options">
+                    <hr>
+                    <section>
+                        <label for="deckname" data-i18n="optDeckName">Deck Name</label>
+                        <select id="deckname" style="width:317px;"></select>
+                        <label for="typename" data-i18n="optTypeName">Type Name</label>
+                        <select id="typename" style="width:317px;"></select>
+                    </section>
+                    <hr>
+
+                    <section class="anki-options right">
+                        <label for="sentence" data-i18n="optSentence">Sentence</label>
+                        <select id="sentence">
+                        </select>
+
+                        <label for="extrainfo" data-i18n="optExtraInfo">ExtraInfo</label>
+                        <select id="extrainfo">
+                        </select>
+
+                        <label for="url" data-i18n="optUrl">URL</label>
+                        <select id="url">
+                        </select>
+
+                        <label for="audio" data-i18n="optAudio">Audio</label>
+                        <select id="audio">
+                        </select>
+                    </section>
+
+                    <section class="anki-options">
+                        <label for="expression" data-i18n="optExpression">Expression</label>
+                        <select id="expression">
+                        </select>
+
+                        <label for="reading" data-i18n="optReading">Reading</label>
+                        <select id="reading">
+                        </select>
+
+
+                        <label for="definition" data-i18n="optDefinition">Definition</label>
+                        <select id="definition">
+                        </select>
+
+                        <label for="definitions" data-i18n="optDefinitions">Definition</label>
+                        <select id="definitions">
+                        </select>
+                    </section>
+
+                </div>
+            </div>
+            <hr>
+            <section style="text-align:center;">
                 <label class="button" id="ok" data-i18n="optOK">Save Option</label>
+                <label class="button" id="cancel" data-i18n="optCancel">Cancel</label>
             </section>
+
         </form>
     </div>
 
@@ -157,6 +189,7 @@
     <script src="../lib/jquery-2.2.2.min.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/options.js"></script>
+    <script src="js/tabmenu.js"></script>
 </body>
 
 </html>

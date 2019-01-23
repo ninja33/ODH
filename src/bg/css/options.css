@@ -1,7 +1,7 @@
 body {
     font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
     font-size: 12px;
-    width: 380px;
+    width: 440px;
     border-radius: 8px;
 }
 
@@ -41,11 +41,15 @@ section {
     padding: 5px;
 }
 
-section.general-options {
-    width: 178px;
+section.dictionary-options,
+section.general-options,
+section.anki-options {
+    width: 208px;
 }
 
-section.general-options.right {
+section.dictionary-options.right,
+section.general-options.right,
+section.anki-options.right  {
     float: right;
 }
 
@@ -56,7 +60,7 @@ label {
     display: inline-block;
     color: black;
     /*background-color: #93a085;*/
-    border: 1px solid #ccc;
+    border: 1px dashed #d5d5d5;
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -64,7 +68,7 @@ label {
 input[type=text],
 input[type=password],
 select {
-    width: 152px;
+    width: 212px;
     padding: 4px;
     margin: 3px;
     /*display: inline-block;*/
@@ -73,12 +77,10 @@ select {
     box-sizing: border-box;
 }
 
-.general-options select {
-    width: 65px;
-}
-
+.dictionary-options select,
+.general-options select,
 .anki-options select {
-    width: 257px;
+    width: 95px;
 }
 
 .button {
@@ -100,4 +102,14 @@ hr {
     border: 1px;
     margin: 4px 0;
     border-top: 1px solid #d5d5d5;
+}
+
+div.tabmenus {
+    border-bottom: 1px solid #d5d5d5;
+    margin-bottom: 0!important;
+    padding-bottom: 2px;
+}
+
+a.tabmenu {
+    font-weight: bold;
 }

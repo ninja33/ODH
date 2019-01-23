@@ -1,0 +1,20 @@
+div.tabmenus {
+    border-bottom: 1px solid grey;
+    margin-bottom: 10px;
+    padding-bottom: 2px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a.tabmenu {
+    color: #777777;
+    margin: 2px 8px 0;
+    padding: 0 8px;
+}
+
+a.tabmenu.active {
+    color: #dd4b39;
+    border-bottom: 3px solid #dd4b39;
+}

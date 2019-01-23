@@ -11,6 +11,14 @@
         "message": "Online Dictionary Helper",
         "description": "label text for 'Title' on optipon page."
     },
+    "tabExtensionTitle":{
+        "message": "Extension Options",
+        "description": "tab text for 'Extension Option' title."
+    },
+    "tabServicesTitle":{
+        "message": "Services Options",
+        "description": "tab text for 'Services Option' title."
+    },
     "optGeneralOptionTitle":{
         "message": "General Options",
         "description": "label text for 'General Option' title."
@@ -22,6 +30,10 @@
     "optDictionaryOptionTitle":{
         "message": "Dictionary Options",
         "description": "label text for 'Dictionary Option' title."
+    },
+    "optScriptsOptionTitle":{
+        "message": "Scripts",
+        "description": "label text for 'Dictionaries'."
     },
     "optScriptList":{
         "message": "Script List >>>",

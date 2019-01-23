@@ -11,6 +11,14 @@
         "message": "在線詞典助手",
         "description": "label text for 'Title' on optipon page."
     },
+    "tabExtensionTitle":{
+        "message": "插件選項",
+        "description": "tab text for 'Extension Option' title."
+    },
+    "tabServicesTitle":{
+        "message": "服務選項",
+        "description": "tab text for 'Services Option' title."
+    },
     "optGeneralOptionTitle":{
         "message": "通用選項",
         "description": "label text for 'General Option' title."
@@ -22,6 +30,10 @@
     "optDictionaryOptionTitle":{
         "message": "詞典選項",
         "description": "label text for 'Dictionary Option' title."
+    },
+    "optScriptsOptionTitle":{
+        "message": "腳本選項",
+        "description": "label text for 'Dictionaries'."
     },
     "optScriptList":{
         "message": "腳本清單 >>>",
