@@ -108,6 +108,10 @@ hr {
     border-bottom: 1px solid #999;
 }
 
+.sl-body {
+    height:180px;
+    overflow: auto;
+}
 
 .sl-row {
     margin: 3px 0;
@@ -129,18 +133,18 @@ hr {
     padding: 0;
 }
 
-.sl-col-active,
-.sl-col-remote {
+.sl-col-onoff,
+.sl-col-cloud {
     width: 40px;
     text-align: center;
 }
 
 .sl-col-name {
-    width: 150px;
+    width: 140px;
 }
 
 .sl-col-description {
-    width: 170px;
+    width: 160px;
 }
 
 div.tabmenus {

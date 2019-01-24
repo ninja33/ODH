@@ -58,19 +58,19 @@ function populateDictionary(dicts) {
 }
 
 function populateSysScriptsList(dictLibrary) {
-    let scriptslist = [
-        'general_Makenotes',
+    const optionscripts = Array.from(new Set(dictLibrary.split(',').filter(x => x).map(x => x.trim())));
+    let systemscripts = [
         'builtin_encn_Collins',
-        'builtin_encn_CollinsOxford',
         'builtin_encn_Oxford',
+        'general_Makenotes',
         'cncn_Zdic',
         'encn_Baicizhan',
         'encn_Cambridge',
         'encn_Collins',
-        'encn_LDOCE6MDX',
         'encn_Oxford',
         'encn_Youdao',
         'enen_Collins',
+        'enen_LDOCE6MDX',
         'enen_UrbanDict',
         'enfr_Cambridge',
         'enfr_Collins',
@@ -82,26 +82,35 @@ function populateSysScriptsList(dictLibrary) {
         'rucn_Qianyi',
     ];
     $('#scriptslistbody').empty();
-    scriptslist.forEach(script => {
+    systemscripts.forEach(script => {
         let row = '';
-        row += `<input class="sl-col sl-col-active" type="checkbox" ${script?"checked":""}>`;
-        row += `<input class="sl-col sl-col-remote" type="checkbox" ${script?"checked":""}>`;
+        row += `<input class="sl-col sl-col-onoff" type="checkbox" ${optionscripts.includes(script) || optionscripts.includes('lib://'+script)?'checked':''}>`;
+        row += `<input class="sl-col sl-col-cloud" type="checkbox" ${optionscripts.includes('lib://'+script)?'checked':''}>`;
         row += `<span class="sl-col sl-col-name">${script}</span>`;
-        row += `<span class="sl-col sl-col-description">${script}</span>`;
+        row += `<span class="sl-col sl-col-description">${chrome.i18n.getMessage(script)}</span>`;
         $('#scriptslistbody').append($(`<div class="sl-row">${row}</div>`));
     });
 }
 
+function onScriptListChange() {
+    let dictLibrary = [];
+    $('.sl-row').each(function() {
+        if ($('.sl-col-onoff', this).prop('checked') == true)
+            dictLibrary.push($('.sl-col-cloud', this).prop('checked') ? 'lib://' + $('.sl-col-name', this).text() : $('.sl-col-name', this).text());
+    });
+    $('#repo').val(dictLibrary.join());
+}
+
 async function onAnkiTypeChanged(e) {
-    if (e.originalEvent){
+    if (e.originalEvent) {
         let options = await optionsLoad();
         populateAnkiFields(options);
 
     }
 }
 
-async function onLoginClicked(e){
-    if (e.originalEvent){
+async function onLoginClicked(e) {
+    if (e.originalEvent) {
         let options = await optionsLoad();
         options.id = $('#id').val();
         options.password = $('#password').val();
@@ -115,7 +124,7 @@ async function onLoginClicked(e){
 }
 
 async function onServicesChanged(e) {
-    if (e.originalEvent){
+    if (e.originalEvent) {
         let options = await optionsLoad();
         options.services = $('#services').val();
         let newOptions = await odhback().opt_optionsChanged(options);
@@ -151,7 +160,7 @@ async function onOKClicked(e) {
     let newOptions = await odhback().opt_optionsChanged(options);
     populateDictionary(newOptions.dictNamelist);
     $('#dict').val(newOptions.dictSelected);
-    
+
     if (e.target.id == 'ok')
         window.close();
 }
@@ -195,6 +204,7 @@ async function onReady() {
     $('#cancel').click(onCancelClicked);
     $('#load').click(onLoadClicked);
 
+    $('.sl-col-onoff, .sl-col-cloud').click(onScriptListChange);
     $('#typename').change(onAnkiTypeChanged);
     $('#services').change(onServicesChanged);
 

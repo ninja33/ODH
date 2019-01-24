@@ -205,32 +205,24 @@
         "message": "AutoSel.",
         "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
-    "encn_Youdao":{
-        "message": "encn_Youdao",
-        "description": "Dictionary name displayed in option page."
-    },
-    "encn_Oxford":{
-        "message": "encn_Oxford",
-        "description": "Dictionary name displayed in option page."
-    },
-    "encn_Collins":{
-        "message": "encn_Collins",
-        "description": "Dictionary name displayed in option page."
-    },
-    "encn_Longman":{
-        "message": "encn_Longman",
-        "description": "Dictionary name displayed in option page."
-    },
-    "encn_Cambridge":{
-        "message": "encn_Cambridge",
-        "description": "Dictionary name displayed in option page."
-    },
-    "encn_Baicizhan":{
-        "message": "encn_Baicizhan",
-        "description": "Dictionary name displayed in option page."
-    },
-    "enen_UrbanDict":{
-        "message": "enen_UrbanDict",
-        "description": "Dictionary name displayed in option page."
-    }
+    "general_Makenotes": { "message": "Make notes for general purpose" },
+    "builtin_encn_Collins": { "message": "Collins EN->ZH Dict.(builtin)" },
+    "builtin_encn_Oxford": { "message": "Oxford EN->ZH Dict.(builtin)" },
+    "cncn_Zdic": { "message": "Zdic Chinese Dictionary" },
+    "encn_Baicizhan": { "message": "Baicizhan EN->CN Dictionary" },
+    "encn_Cambridge": { "message": "Cambridge EN->CN Dictionary" },
+    "encn_Collins": { "message": "Collins EN->CN Dict.(Youdao)" },
+    "encn_Oxford": { "message": "Oxford EN->CN Dict.(Bing)" },
+    "encn_Youdao": { "message": "Youdao Concise EN->CN Dict." },
+    "enen_Collins": { "message": "Collins EN->EN Dictionary" },
+    "enen_LDOCE6MDX": { "message": "LDOCE6 EN->CN Dict.(MDX version)" },
+    "enen_UrbanDict": { "message": "Urban EN->EN Dictionary" },
+    "enfr_Cambridge": { "message": "Cambridge EN->FR Dictionary" },
+    "enfr_Collins": { "message": "Collins EN->FR Dictionary" },
+    "escn_Eudict": { "message": "Eudict ES->CN Dictionary" },
+    "frcn_Eudict": { "message": "Eudict FR->CN Dictionary" },
+    "frcn_Youdao": { "message": "Youdao FR->CN Dictionary" },
+    "fren_Cambrige": { "message": "Cambridge FR->EN Dictionary" },
+    "fren_Collins": { "message": "Collins FR->EN Dictionary" },
+    "rucn_Qianyi": { "message": "Qianyi RU->CN Dictionary" }
 }
