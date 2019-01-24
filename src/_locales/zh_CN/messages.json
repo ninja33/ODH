@@ -19,6 +19,10 @@
         "message": "服务选项",
         "description": "tab text for 'Services Option' title."
     },
+    "tabScriptsTitle":{
+        "message": "脚本选项",
+        "description": "tab text for 'Scripts Option' title."
+    },
     "optGeneralOptionTitle":{
         "message": "通用选项",
         "description": "label text for 'General Option' title."
@@ -34,6 +38,14 @@
     "optScriptsOptionTitle":{
         "message": "脚本选项",
         "description": "label text for 'Dictionaries'."
+    },
+    "optSysScriptsOptionTitle":{
+        "message": "系统脚本",
+        "description": "label text for 'System Scripts'."
+    },
+    "optUdfScriptsOptionTitle":{
+        "message": "定制脚本",
+        "description": "label text for 'User Defined Scripts'."
     },
     "optScriptList":{
         "message": "脚本清单 >>>",
@@ -182,11 +194,11 @@
         "description": "option title on broswer action page."
     },
     "baEnabled":{
-        "message": "激活插件",
+        "message": "打开关闭插件",
         "description": "label text for 'enabled' checkbox on broswer action page."
     },
     "baHotkey":{
-        "message": "取词热键",
+        "message": "自动取词热键",
         "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
     "encn_Youdao":{

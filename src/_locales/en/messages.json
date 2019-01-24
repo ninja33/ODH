@@ -19,6 +19,10 @@
         "message": "Services Options",
         "description": "tab text for 'Services Option' title."
     },
+    "tabScriptsTitle":{
+        "message": "Scripts Options",
+        "description": "tab text for 'Scripts Option' title."
+    },
     "optGeneralOptionTitle":{
         "message": "General Options",
         "description": "label text for 'General Option' title."
@@ -33,7 +37,15 @@
     },
     "optScriptsOptionTitle":{
         "message": "Scripts",
-        "description": "label text for 'Dictionaries'."
+        "description": "label text for 'Scripts'."
+    },
+    "optSysScriptsOptionTitle":{
+        "message": "System Scripts",
+        "description": "label text for 'System Scripts'."
+    },
+    "optUdfScriptsOptionTitle":{
+        "message": "User Defined Scripts",
+        "description": "label text for 'User Defined Scripts'."
     },
     "optScriptList":{
         "message": "Script List >>>",

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -15,6 +15,7 @@
         <div class="tabmenus">
             <a href="#" data-contentid="tab-1" class="tabmenu active" data-i18n="tabExtensionTitle">General</a>
             <a href="#" data-contentid="tab-2" class="tabmenu" data-i18n="tabServicesTitle">Anki</a>
+            <a href="#" data-contentid="tab-3" class="tabmenu" data-i18n="tabScriptsTitle">Scripts</a>
         </div>
 
         <form>
@@ -23,7 +24,9 @@
                 <div class="grouppanel">
                     <div class="grouptitle">
                         <span class="general-option-title" data-i18n="optGeneralOptionTitle">General Options</span>
-                        <span class="option-helps"><a href="https://github.com/ninja33/ODH/blob/master/README.md" target="_blank">?</a></span>
+                        <span class="option-helps">
+                            <a href="https://github.com/ninja33/ODH/blob/master/README.md" target="_blank">?</a>
+                        </span>
                     </div>
                     <div class="leftpanel">
                         <label data-i18n="optEnabled">Enable/Disable</label>
@@ -83,28 +86,14 @@
                     </div>
                     <div class="clearfix"></div>
                 </div>
-
-                <div class="grouppanel">
-                    <div class="grouptitle">
-                        <span class="dictionary-option-title" data-i18n="optScriptsOptionTitle">Dictionary Options</span>
-                        <span class="option-helps">
-                            <a href="https://github.com/ninja33/ODH/blob/master/doc/scriptlist.md" target="_blank" data-i18n="optScriptList">?</a>
-                        </span>
-                    </div>
-                    <div class="crosspanel">
-                        <label for="repo" data-i18n="optRepository">Repository</label>
-                        <input type="text" id="repo" name="repo" placeholder="User defined online dictionary" class="col-2x">
-                        <label class="button" id="load" data-i18n="optLoad">Load Repos.</label>
-                    </div>
-                </div>
-
             </div>
-
             <div id="tab-2" class="tabcontent" style="display:none">
                 <div class="grouppanel">
                     <div class="grouptitle">
                         <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
-                        <span class="option-helps"><a href="https://github.com/FooSoft/anki-connect" target="_blank">?</a></span>
+                        <span class="option-helps">
+                            <a href="https://github.com/FooSoft/anki-connect" target="_blank">?</a>
+                        </span>
                     </div>
                     <div class="crosspanel">
                         <label for="services" data-i18n="optServices">Services</label>
@@ -120,7 +109,9 @@
                         <div class="crosspanel">
                             <label for="id" data-i18n="optID">ID</label>
                             <input type="text" id="id" name="repo" placeholder="Ankiweb ID" class="col-2x">
-                            <label for="signup"><a href="https://ankiweb.net/account/register" target="_blank" data-i18n="optSignup">?</a></label>
+                            <label for="signup">
+                                <a href="https://ankiweb.net/account/register" target="_blank" data-i18n="optSignup">?</a>
+                            </label>
                             <label for="password" data-i18n="optPassword">Password</label>
                             <input type="password" id="password" name="repo" placeholder="Ankiweb Password" class="col-2x">
                             <label class="button" id="login" data-i18n="optLogin">Login</label>
@@ -167,15 +158,41 @@
                     </div>
                 </div>
             </div>
+            <div id="tab-3" class="tabcontent" style="display:none">
+                <div class="grouppanel">
+                    <div class="grouptitle">
+                        <span class="dictionary-option-title" data-i18n="optUdfScriptsOptionTitle">User Defined Script</span>
+                    </div>
+                    <div class="crosspanel">
+                        <label for="repo" data-i18n="optRepository">Repository</label>
+                        <input type="text" id="repo" name="repo" placeholder="User defined online dictionary" class="col-2x">
+                        <label class="button" id="load" data-i18n="optLoad">Load Repos.</label>
+                    </div>
+                </div>
+                <div class="grouppanel">
+                    <div class="grouptitle">
+                        <span class="anki-option-title" data-i18n="optSysScriptsOptionTitle">System Script</span>
+                        <span class="option-helps">
+                            <a href="https://github.com/ninja33/ODH/blob/master/doc/scriptlist.md" target="_blank">?</a>
+                        </span>
+                    </div>
+                    <div class="crosspanel">
+                        <div id="scriptslisthead" class="sl-head">
+                            <span class="sl-col sl-col-active">激活</span><span class="sl-col sl-col-remote">远程</span><span class="sl-col sl-col-name">脚本名称</span><span class="sl-col sl-col-description">脚本描述</span>
+                        </div>
+                        <div id="scriptslistbody" class="sl-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
-    </div>
-    <hr>
-    <section style="text-align:center;">
-        <label class="button" id="ok" data-i18n="optOK">Save Option</label>
-        <label class="button" id="cancel" data-i18n="optCancel">Cancel</label>
-    </section>
-
-    </form>
+        <hr>
+        <div class="grouppanel">
+            <div class="crosspanel" style="text-align:center">
+                <label class="button" id="ok" data-i18n="optOK">Save Option</label>
+                <label class="button" id="cancel" data-i18n="optCancel">Cancel</label>
+            </div>
+        </div>
     </div>
 
     <!--script src="js/polyfill.js"></script-->

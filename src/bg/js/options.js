@@ -57,6 +57,41 @@ function populateDictionary(dicts) {
     dicts.forEach(name => $('#dict').append($('<option>', { value: name, text: name })));
 }
 
+function populateSysScriptsList(dictLibrary) {
+    let scriptslist = [
+        'general_Makenotes',
+        'builtin_encn_Collins',
+        'builtin_encn_CollinsOxford',
+        'builtin_encn_Oxford',
+        'cncn_Zdic',
+        'encn_Baicizhan',
+        'encn_Cambridge',
+        'encn_Collins',
+        'encn_LDOCE6MDX',
+        'encn_Oxford',
+        'encn_Youdao',
+        'enen_Collins',
+        'enen_UrbanDict',
+        'enfr_Cambridge',
+        'enfr_Collins',
+        'escn_Eudict',
+        'frcn_Eudict',
+        'frcn_Youdao',
+        'fren_Cambrige',
+        'fren_Collins',
+        'rucn_Qianyi',
+    ];
+    $('#scriptslistbody').empty();
+    scriptslist.forEach(script => {
+        let row = '';
+        row += `<input class="sl-col sl-col-active" type="checkbox" ${script?"checked":""}>`;
+        row += `<input class="sl-col sl-col-remote" type="checkbox" ${script?"checked":""}>`;
+        row += `<span class="sl-col sl-col-name">${script}</span>`;
+        row += `<span class="sl-col sl-col-description">${script}</span>`;
+        $('#scriptslistbody').append($(`<div class="sl-row">${row}</div>`));
+    });
+}
+
 async function onAnkiTypeChanged(e) {
     if (e.originalEvent){
         let options = await optionsLoad();
@@ -134,6 +169,8 @@ async function onReady() {
     let options = await optionsLoad();
     $('#enabled').prop('checked', options.enabled);
     $('#hotkey').val(options.hotkey);
+
+    $('#dict').val(options.dictSelected);
     $('#monolingual').val(options.monolingual);
     $('#anki-preferred-audio').val(options.preferredaudio);
     $('#maxcontext').val(options.maxcontext);
@@ -150,8 +187,8 @@ async function onReady() {
 
 
     $('#repo').val(options.dictLibrary);
+    populateSysScriptsList(options.dictLibrary);
     populateDictionary(options.dictNamelist);
-    $('#dict').val(options.dictSelected);
 
     $('#login').click(onLoginClicked);
     $('#ok').click(onOKClicked);

@@ -1,28 +1,44 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
     font-size: 12px;
-    width: 158px;
-    border-radius: 8px;
+    width: 220px;
+    border-radius: 5px;
     margin: 2px 4px;
     padding: 0;
 }
 
 .container {
     margin: 0;
+    padding: 0;
 }
 
-div.option-head {
+.grouppanel {
+    border-radius: 5px;
+    background-color: #f1f8e9;
+    margin: 5px 0;
+    padding: 0 0 3px;
+}
+
+.grouptitle {
     font-weight: bold;
     color: white;
     background-color: #93a085;
-    height: 20px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    padding: 2px 10px 1px;
+    border-radius: 5px 5px 0 0;
+    margin: 0 0 4px;
+    padding: 4px 15px;
 }
 
-.title {
-    margin: auto 0;
+.crosspanel {
+    padding: 0 6px;
+    width: 100%;
+}
+
+a {
+    text-decoration: none;
 }
 
 .more {
@@ -31,36 +47,27 @@ div.option-head {
     cursor: pointer;
 }
 
-section {
-    border-radius: 4px;
-    background-color: #f1f8e9;
-    padding: 5px;
-}
-
-section+section {
-    margin-top: 5px;
-}
-
 label,
-input[type=text],
 select {
-    width: 65px;
-    padding: 5px;
+    width: 95px;
+    padding: 4px 5px;
     margin: 3px;
-    color: black;
     display: inline-block;
-    border: 1px solid #ccc;
+    color: black;
+    border: 1px solid #d5d5d5;
     border-radius: 4px;
-    box-sizing: border-box;
 }
 
-.anki-options select,
-.dictionary-options select {
-    width: 140px;
+label {
+    border-style: dashed;
+}
+
+.col-2x {
+    width: 200px;
 }
 
 hr {
     border: 1px;
-    margin: 4px 0;
-    border-top: 1px solid #d5d5d5;
+    margin: 4px 5px;
+    border-top: 1px solid #e5e5e5;
 }
