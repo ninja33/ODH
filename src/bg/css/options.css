@@ -63,7 +63,7 @@ a {
 
 label, input, select {
     width: 95px;
-    padding: 4px 5px;
+    padding: 4px;
     margin: 3px;
     display: inline-block;
     color: black;
@@ -72,6 +72,7 @@ label, input, select {
 }
 
 label {
+    text-align: __MSG_labelAlignment__;
     border-style: dashed;
 }
 
@@ -88,8 +89,8 @@ label {
     width: 95px;
     background-color: #4CAF50;
     color: white;
-    padding: 5px;
-    margin: 3px 2px;
+    padding: 4px;
+    margin: 6px 3px 3px;
     border: none;
     cursor: pointer;
 }
@@ -135,7 +136,7 @@ hr {
 
 .sl-col-onoff,
 .sl-col-cloud {
-    width: 40px;
+    width: 30px;
     text-align: center;
 }
 
@@ -144,7 +145,7 @@ hr {
 }
 
 .sl-col-description {
-    width: 160px;
+    width: 180px;
 }
 
 div.tabmenus {

@@ -7,218 +7,282 @@
         "message": "顯示在線詞典內容的彈窗助手(支持Anki制卡)",
         "description": "The description of the application, displayed in the web store."
     },
-    "optTitle":{
+    "optTitle": {
         "message": "在線詞典助手",
         "description": "label text for 'Title' on optipon page."
     },
-    "tabExtensionTitle":{
+    "tabExtensionTitle": {
         "message": "插件選項",
         "description": "tab text for 'Extension Option' title."
     },
-    "tabServicesTitle":{
-        "message": "服務選項",
+    "tabServicesTitle": {
+        "message": "輸出選項",
         "description": "tab text for 'Services Option' title."
     },
-    "tabScriptsTitle":{
+    "tabScriptsTitle": {
         "message": "腳本選項",
         "description": "tab text for 'Scripts Option' title."
     },
-    "optGeneralOptionTitle":{
+    "optGeneralOptionTitle": {
         "message": "通用選項",
         "description": "label text for 'General Option' title."
     },
-    "optAnkiOptionTitle":{
+    "optAnkiOptionTitle": {
         "message": "Anki選項",
         "description": "label text for 'Anki Option' title."
     },
-    "optDictionaryOptionTitle":{
+    "optDictionaryOptionTitle": {
         "message": "詞典選項",
         "description": "label text for 'Dictionary Option' title."
     },
-    "optScriptsOptionTitle":{
+    "optScriptsOptionTitle": {
         "message": "腳本選項",
         "description": "label text for 'Dictionaries'."
     },
-    "optScriptList":{
-        "message": "腳本清單 >>>",
-        "description": "label text for 'Dictionary Option > Script List'."
-    },
-    "optSysScriptsOptionTitle":{
+    "optSysScriptsOptionTitle": {
         "message": "系統腳本",
         "description": "label text for 'System Scripts'."
     },
-    "optUdfScriptsOptionTitle":{
+    "optUdfScriptsOptionTitle": {
         "message": "定制腳本",
         "description": "label text for 'User Defined Scripts'."
     },
-    "optEnabled":{
+    "optScriptList": {
+        "message": "腳本清單 >>>",
+        "description": "label text for 'Dictionary Option > Script List'."
+    },
+    "optEnabled": {
         "message": "打開關閉插件",
         "description": "label text for 'Enabled/Disable' checkbox on optipon page."
     },
-    "optAutoSelectionHotKey":{
+    "optAutoSelectionHotKey": {
         "message": "自動取詞熱鍵",
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
-    "optMonoBilingualDict":{
+    "optSelectedDict": {
+        "message": "當前詞典名稱",
+        "description": "label text for 'Dictionaries' on optipon page."
+    },
+    "optMonoBilingualDict": {
         "message": "單語雙語詞典",
         "description": "label text for 'Mono/Bilingual Dict' option list."
     },
-    "optMonolingual":{
+    "optMonolingual": {
         "message": "單語",
         "description": "label text for 'Monolingual Dict' option."
     },
-    "optBilingual":{
+    "optBilingual": {
         "message": "雙語",
         "description": "label text for 'Bilingual Dict' option."
     },
-    "optMaxContext":{
+    "optMaxContext": {
         "message": "最大原句數量",
         "description": "label text for 'Max Context  Number' option list."
     },
-    "optMaxExample":{
+    "optMaxExample": {
         "message": "最大例句數量",
         "description": "label text for 'Max Example  Number' option list."
     },
-    "optServices":{
-        "message": "數據服務",
+    "optServices": {
+        "message": "數據輸出",
         "description": "label text for data services."
     },
-    "optID":{
+    "optID": {
         "message": "用戶郵箱",
         "description": "label text for Ankiweb ID"
     },
-    "optPassword":{
+    "optPassword": {
         "message": "用戶密碼",
         "description": "label text for Ankiweb Password"
     },
-    "optSignup":{
+    "optSignup": {
         "message": "註冊 Ankiweb",
         "description": "label text for Ankiweb signup"
     },
-    "optLogin":{
+    "optLogin": {
         "message": "登錄",
         "description": "label text for Ankiweb login button"
     },
-    "optAnkiConnecting":{
+    "optAnkiConnecting": {
         "message": "連接中 ...",
         "description": "label text for Anki status: Connecting."
     },
-    "optAnkiConnectedFail":{
+    "optAnkiConnectedFail": {
         "message": "未連接",
         "description": "label text for Anki status: Failed."
     },
-    "optAnkiConnectedSuccess":{
+    "optAnkiConnectedSuccess": {
         "message": "已連接($INFORMATION$)",
         "description": "label text for Anki status: Success.",
         "placeholders": {
             "information": {
-              "content": "$1",
-              "example": "Ankiconnect version number, like 1, 2, 5 ..."
+                "content": "$1",
+                "example": "Ankiconnect version number, like 1, 2, 5 ..."
             }
         }
     },
-    "optDeckName":{
+    "optDeckName": {
         "message": "牌組名稱",
         "description": "label text for 'Deck Name' on optipon page."
     },
-    "optTypeName":{
+    "optTypeName": {
         "message": "模板名稱",
         "description": "label text for 'Type Name' on optipon page."
     },
-    "optExpression":{
-        "message": "單字字段",
+    "optExpression": {
+        "message": "單詞字段",
         "description": "label text for 'Expression' on optipon page."
     },
-    "optReading":{
+    "optReading": {
         "message": "音標字段",
         "description": "label text for 'Reading'."
     },
-    "optExtraInfo":{
+    "optExtraInfo": {
         "message": "額外字段",
         "description": "label text for 'Extra Info'."
     },
-    "optDefinition":{
+    "optDefinition": {
         "message": "釋義字段",
         "description": "label text for 'Definition' on optipon page."
     },
-    "optDefinitions":{
+    "optDefinitions": {
         "message": "多義字段",
         "description": "label text for 'Definitions'."
     },
-    "optSentence":{
+    "optSentence": {
         "message": "原句字段",
         "description": "label text for 'Sentence' on optipon page."
     },
-    "optUrl":{
+    "optUrl": {
         "message": "網址字段",
         "description": "label text for 'URL'."
     },
-    "optAudio":{
+    "optAudio": {
         "message": "音頻字段",
         "description": "label text for 'Audio'."
     },
-    "optPreferredAudio":{
+    "optPreferredAudio": {
         "message": "音頻下載偏好",
         "description": "label text for 'Preferred Audio'."
     },
-    "optPreferredAudio_0":{
+    "optPreferredAudio_0": {
         "message": "英音",
         "description": "label text for 'Preferred Audio# 0'."
     },
-    "optPreferredAudio_1":{
+    "optPreferredAudio_1": {
         "message": "美音",
         "description": "label text for 'Preferred Audio# 1'."
     },
-    "optRepository":{
-        "message": "詞典腳本地址",
-        "description": "label text for 'Repository' on optipon page."
+
+    "optUdfScriptsLabel": {
+        "message": "自選腳本名稱"
     },
-    "optDictionaries":{
-        "message": "當前詞典名稱",
-        "description": "label text for 'Dictionaries' on optipon page."
+    "optLoadUdfScripts": {
+        "message": "加載腳本"
     },
-    "optLoad":{
-        "message": "加載腳本",
-        "description": "for 'Load' button on option page."
+    "optSysScriptsLabel": {
+        "message": "系統腳本名稱"
     },
-    "optOK":{
-        "message": "保存選項",
-        "description": "for 'OK' button on option page."
+    "optLoadSysScripts": {
+        "message": "加載系統腳本"
     },
-    "optCancel":{
-        "message": "取消",
-        "description": "for 'Cancel' button on option page."
+
+    "optListHeadOnoff": {
+        "message": "激活"
     },
-    "baTitle":{
+    "optListHeadCloud": {
+        "message": "雲端"
+    },
+    "optListHeadName": {
+        "message": "腳本名稱"
+    },
+    "optListHeadDescription": {
+        "message": "腳本描述"
+    },
+
+    "btnSaveLoad": {
+        "message": "加載腳本"
+    },
+    "btnSaveClose": {
+        "message": "保存退出"
+    },
+    "btnClose": {
+        "message": "關閉退出"
+    },
+
+    "baTitle": {
         "message": "快速選項",
         "description": "option title on broswer action page."
     },
-    "baEnabled":{
+    "baEnabled": {
         "message": "打開關閉插件",
         "description": "label text for 'enabled' checkbox on broswer action page."
     },
-    "baHotkey":{
+    "baHotkey": {
         "message": "自動取詞熱鍵",
         "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
-    "general_Makenotes": { "message": "通用筆記摘錄腳本" },
-    "builtin_encn_Collins": { "message": "柯林斯英漢詞典(內置)" },
-    "builtin_encn_Oxford": { "message": "牛津英漢詞典(內置)" },
-    "cncn_Zdic": { "message": "漢典漢語詞典" },
-    "encn_Baicizhan": { "message": "百詞斬英漢圖解詞典" },
-    "encn_Cambridge": { "message": "劍橋英漢雙解詞典" },
-    "encn_Collins": { "message": "柯林斯英漢雙解詞典" },
-    "encn_Oxford": { "message": "牛津英漢雙解詞典" },
-    "encn_Youdao": { "message": "有道簡明英漢詞典" },
-    "enen_Collins": { "message": "柯林斯英英詞典" },
-    "enen_LDOCE6MDX": { "message": "朗文6英英詞典" },
-    "enen_UrbanDict": { "message": "Urban英英俚語詞典" },
-    "enfr_Cambridge": { "message": "劍橋英法詞典" },
-    "enfr_Collins": { "message": "柯林斯英法詞典" },
-    "escn_Eudict": { "message": "歐路西語助手" },
-    "frcn_Eudict": { "message": "歐路法語助手" },
-    "frcn_Youdao": { "message": "有道法漢詞典" },
-    "fren_Cambrige": { "message": "劍橋法英詞典" },
-    "fren_Collins": { "message": "柯林斯法英詞典" },
-    "rucn_Qianyi": { "message": "千億俄漢詞典" }
+    "general_Makenotes": {
+        "message": "通用筆記摘錄腳本"
+    },
+    "builtin_encn_Collins": {
+        "message": "柯林斯英漢詞典(內置)"
+    },
+    "builtin_encn_Oxford": {
+        "message": "牛津英漢詞典(內置)"
+    },
+    "cncn_Zdic": {
+        "message": "漢典漢語詞典"
+    },
+    "encn_Baicizhan": {
+        "message": "百詞斬英漢圖解詞典"
+    },
+    "encn_Cambridge": {
+        "message": "劍橋英漢雙解詞典"
+    },
+    "encn_Collins": {
+        "message": "柯林斯英漢雙解詞典"
+    },
+    "encn_Oxford": {
+        "message": "牛津英漢雙解詞典"
+    },
+    "encn_Youdao": {
+        "message": "有道簡明英漢詞典"
+    },
+    "enen_Collins": {
+        "message": "柯林斯英英詞典"
+    },
+    "enen_LDOCE6MDX": {
+        "message": "朗文6英英詞典"
+    },
+    "enen_UrbanDict": {
+        "message": "Urban英英俚語詞典"
+    },
+    "enfr_Cambridge": {
+        "message": "劍橋英法詞典"
+    },
+    "enfr_Collins": {
+        "message": "柯林斯英法詞典"
+    },
+    "escn_Eudict": {
+        "message": "歐路西語助手"
+    },
+    "frcn_Eudict": {
+        "message": "歐路法語助手"
+    },
+    "frcn_Youdao": {
+        "message": "有道法漢詞典"
+    },
+    "fren_Cambrige": {
+        "message": "劍橋法英詞典"
+    },
+    "fren_Collins": {
+        "message": "柯林斯法英詞典"
+    },
+    "rucn_Qianyi": {
+        "message": "千億俄漢詞典"
+    },
+    "labelAlignment":{
+        "message": "center"
+    }
 }

@@ -7,222 +7,286 @@
         "message": "A translation popup tool to show online dictionary content (with anki support)",
         "description": "The description of the application, displayed in the web store."
     },
-    "optTitle":{
+    "optTitle": {
         "message": "Online Dictionary Helper",
         "description": "label text for 'Title' on optipon page."
     },
-    "tabExtensionTitle":{
+    "tabExtensionTitle": {
         "message": "Extension Options",
         "description": "tab text for 'Extension Option' title."
     },
-    "tabServicesTitle":{
+    "tabServicesTitle": {
         "message": "Services Options",
         "description": "tab text for 'Services Option' title."
     },
-    "tabScriptsTitle":{
+    "tabScriptsTitle": {
         "message": "Scripts Options",
         "description": "tab text for 'Scripts Option' title."
     },
-    "optGeneralOptionTitle":{
+    "optGeneralOptionTitle": {
         "message": "General Options",
         "description": "label text for 'General Option' title."
     },
-    "optAnkiOptionTitle":{
+    "optAnkiOptionTitle": {
         "message": "Ankiconnect Options",
         "description": "label text for 'Anki Option' title."
     },
-    "optDictionaryOptionTitle":{
+    "optDictionaryOptionTitle": {
         "message": "Dictionary Options",
         "description": "label text for 'Dictionary Option' title."
     },
-    "optScriptsOptionTitle":{
+    "optScriptsOptionTitle": {
         "message": "Scripts",
         "description": "label text for 'Scripts'."
     },
-    "optSysScriptsOptionTitle":{
+    "optSysScriptsOptionTitle": {
         "message": "System Scripts",
         "description": "label text for 'System Scripts'."
     },
-    "optUdfScriptsOptionTitle":{
+    "optUdfScriptsOptionTitle": {
         "message": "User Defined Scripts",
         "description": "label text for 'User Defined Scripts'."
     },
-    "optScriptList":{
+    "optScriptList": {
         "message": "Script List >>>",
         "description": "label text for 'Dictionary Option > Script List'."
     },
-    "optEnabled":{
+    "optEnabled": {
         "message": "Enabled",
         "description": "label text for 'Enabled/Disable' checkbox."
     },
-    "optAutoSelectionHotKey":{
+    "optAutoSelectionHotKey": {
         "message": "AutoSel.Hotkey",
         "description": "label text for 'Auto Selection Hotkey' option list."
     },
-    "optMonoBilingualDict":{
+    "optSelectedDict": {
+        "message": "Selected Dict.",
+        "description": "label text for 'Dictionaries' on optipon page."
+    },
+    "optMonoBilingualDict": {
         "message": "Mono/Bilingual",
         "description": "label text for 'Mono/Bilingual Dict' option list."
     },
-    "optMonolingual":{
+    "optMonolingual": {
         "message": "Monolingual",
         "description": "label text for 'Monolingual Dict' option."
     },
-    "optBilingual":{
+    "optBilingual": {
         "message": "Bilingual",
         "description": "label text for 'Bilingual Dict' option."
     },
-    "optMaxContext":{
+    "optMaxContext": {
         "message": "Max.Context#",
         "description": "label text for 'Max Context  Number' option list."
     },
-    "optMaxExample":{
+    "optMaxExample": {
         "message": "Max.Example#",
         "description": "label text for 'Max Example  Number' option list."
     },
-    "optServices":{
+    "optServices": {
         "message": "Data Services",
         "description": "label text for data services."
     },
-    "optID":{
+    "optID": {
         "message": "User Name",
         "description": "label text for Ankiweb ID"
     },
-    "optPassword":{
+    "optPassword": {
         "message": "Password",
         "description": "label text for Ankiweb Password"
     },
-    "optSignup":{
+    "optSignup": {
         "message": "Signup",
         "description": "label text for Ankiweb signup"
     },
-    "optLogin":{
+    "optLogin": {
         "message": "Login",
         "description": "label text for Ankiweb login button"
     },
-    "optAnkiConnecting":{
+    "optAnkiConnecting": {
         "message": "Connecting...",
         "description": "label text for Anki status: Connecting."
     },
-    "optAnkiConnectedFail":{
+    "optAnkiConnectedFail": {
         "message": "Not Connect",
         "description": "label text for Anki status: Failed."
     },
-    "optAnkiConnectedSuccess":{
+    "optAnkiConnectedSuccess": {
         "message": "Connected:$INFORMATION$",
         "description": "label text for Anki status: Success.",
         "placeholders": {
             "information": {
-              "content": "$1",
-              "example": "Ankiconnect version number, like 1, 2, 5 ..."
+                "content": "$1",
+                "example": "Ankiconnect version number, like 1, 2, 5 ..."
             }
         }
     },
-    "optDeckName":{
+    "optDeckName": {
         "message": "Deck Name",
         "description": "label text for 'Deck Name'."
     },
-    "optTypeName":{
+    "optTypeName": {
         "message": "Type Name",
         "description": "label text for 'Type Name'."
     },
-    "optAnkiStatus":{
+    "optAnkiStatus": {
         "message": "Anki Status",
         "description": "label text for 'Anki Status'."
     },
-    "optExpression":{
+    "optExpression": {
         "message": "Expression",
         "description": "label text for 'Expression'."
     },
-    "optReading":{
+    "optReading": {
         "message": "Reading",
         "description": "label text for 'Reading'."
     },
-    "optExtraInfo":{
+    "optExtraInfo": {
         "message": "ExtraInfo",
         "description": "label text for 'Extra Info'."
     },
-    "optDefinition":{
+    "optDefinition": {
         "message": "Definition",
         "description": "label text for 'Definition'."
     },
-    "optDefinitions":{
+    "optDefinitions": {
         "message": "Definitions",
         "description": "label text for 'Definitions'."
     },
-    "optSentence":{
+    "optSentence": {
         "message": "Sentence",
         "description": "label text for 'Sentence'."
     },
-    "optUrl":{
+    "optUrl": {
         "message": "URL",
         "description": "label text for 'URL'."
     },
-    "optAudio":{
+    "optAudio": {
         "message": "Audio",
         "description": "label text for 'Audio'."
     },
-    "optPreferredAudio":{
+    "optPreferredAudio": {
         "message": "Audio Download",
         "description": "label text for 'Preferred Audio'."
     },
-    "optPreferredAudio_0":{
+    "optPreferredAudio_0": {
         "message": "#0(eg. UK)",
         "description": "label text for 'Preferred Audio# 0'."
     },
-    "optPreferredAudio_1":{
+    "optPreferredAudio_1": {
         "message": "#1(eg. US)",
         "description": "label text for 'Preferred Audio# 1'."
     },
-    "optRepository":{
-        "message": "Dicts. Script",
-        "description": "label text for 'Repository'."
+
+    "optUdfScriptsLabel": {
+        "message": "UDF Script Name"
     },
-    "optDictionaries":{
-        "message": "Dictionaries",
-        "description": "label text for 'Dictionaries'."
+    "optLoadUdfScripts": {
+        "message": "Load UDF Script"
     },
-    "optLoad":{
-        "message": "Load Script",
-        "description": "for 'Load' button."
+    "optSysScriptsLabel": {
+        "message": "SYS Script Name"
     },
-    "optOK":{
-        "message": "Save Option",
-        "description": "for 'Save' button."
+    "optLoadSysScripts": {
+        "message": "Load SYS Script"
     },
-    "optCancel":{
-        "message": "Cancel",
-        "description": "for 'Cancel' button on option page."
+
+    "optListHeadOnoff": {
+        "message": "Active"
     },
-    "baTitle":{
+    "optListHeadCloud": {
+        "message": "Cloud"
+    },
+    "optListHeadName": {
+        "message": "Script Name"
+    },
+    "optListHeadDescription": {
+        "message": "Script Description"
+    },
+
+    "btnSaveLoad": {
+        "message": "Load Scripts"
+    },
+    "btnSaveClose": {
+        "message": "Save & Close"
+    },
+    "btnClose": {
+        "message": "Close"
+    },
+
+    "baTitle": {
         "message": "Quick Options",
         "description": "option title on broswer action page."
     },
-    "baEnabled":{
+    "baEnabled": {
         "message": "Enabled",
         "description": "label text for 'enabled' checkbox on broswer action page."
     },
-    "baHotkey":{
+    "baHotkey": {
         "message": "AutoSel.",
         "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
     },
-    "general_Makenotes": { "message": "Make notes for general purpose" },
-    "builtin_encn_Collins": { "message": "Collins EN->ZH Dict.(builtin)" },
-    "builtin_encn_Oxford": { "message": "Oxford EN->ZH Dict.(builtin)" },
-    "cncn_Zdic": { "message": "Zdic Chinese Dictionary" },
-    "encn_Baicizhan": { "message": "Baicizhan EN->CN Dictionary" },
-    "encn_Cambridge": { "message": "Cambridge EN->CN Dictionary" },
-    "encn_Collins": { "message": "Collins EN->CN Dict.(Youdao)" },
-    "encn_Oxford": { "message": "Oxford EN->CN Dict.(Bing)" },
-    "encn_Youdao": { "message": "Youdao Concise EN->CN Dict." },
-    "enen_Collins": { "message": "Collins EN->EN Dictionary" },
-    "enen_LDOCE6MDX": { "message": "LDOCE6 EN->CN Dict.(MDX version)" },
-    "enen_UrbanDict": { "message": "Urban EN->EN Dictionary" },
-    "enfr_Cambridge": { "message": "Cambridge EN->FR Dictionary" },
-    "enfr_Collins": { "message": "Collins EN->FR Dictionary" },
-    "escn_Eudict": { "message": "Eudict ES->CN Dictionary" },
-    "frcn_Eudict": { "message": "Eudict FR->CN Dictionary" },
-    "frcn_Youdao": { "message": "Youdao FR->CN Dictionary" },
-    "fren_Cambrige": { "message": "Cambridge FR->EN Dictionary" },
-    "fren_Collins": { "message": "Collins FR->EN Dictionary" },
-    "rucn_Qianyi": { "message": "Qianyi RU->CN Dictionary" }
+    "general_Makenotes": {
+        "message": "Make notes for general purpose"
+    },
+    "builtin_encn_Collins": {
+        "message": "Collins EN->ZH Dict.(builtin)"
+    },
+    "builtin_encn_Oxford": {
+        "message": "Oxford EN->ZH Dict.(builtin)"
+    },
+    "cncn_Zdic": {
+        "message": "Zdic Chinese Dictionary"
+    },
+    "encn_Baicizhan": {
+        "message": "Baicizhan EN->CN Dictionary"
+    },
+    "encn_Cambridge": {
+        "message": "Cambridge EN->CN Dictionary"
+    },
+    "encn_Collins": {
+        "message": "Collins EN->CN Dict.(Youdao)"
+    },
+    "encn_Oxford": {
+        "message": "Oxford EN->CN Dict.(Bing)"
+    },
+    "encn_Youdao": {
+        "message": "Youdao Concise EN->CN Dict."
+    },
+    "enen_Collins": {
+        "message": "Collins EN->EN Dictionary"
+    },
+    "enen_LDOCE6MDX": {
+        "message": "LDOCE6 EN->CN Dict.(MDX version)"
+    },
+    "enen_UrbanDict": {
+        "message": "Urban EN->EN Dictionary"
+    },
+    "enfr_Cambridge": {
+        "message": "Cambridge EN->FR Dictionary"
+    },
+    "enfr_Collins": {
+        "message": "Collins EN->FR Dictionary"
+    },
+    "escn_Eudict": {
+        "message": "Eudict ES->CN Dictionary"
+    },
+    "frcn_Eudict": {
+        "message": "Eudict FR->CN Dictionary"
+    },
+    "frcn_Youdao": {
+        "message": "Youdao FR->CN Dictionary"
+    },
+    "fren_Cambrige": {
+        "message": "Cambridge FR->EN Dictionary"
+    },
+    "fren_Collins": {
+        "message": "Collins FR->EN Dictionary"
+    },
+    "rucn_Qianyi": {
+        "message": "Qianyi RU->CN Dictionary"
+    },
+    "labelAlignment":{
+        "message": "initial"
+    }
 }

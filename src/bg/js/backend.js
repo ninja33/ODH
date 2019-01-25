@@ -109,17 +109,12 @@ class ODHBack {
     }
 
     async loadDict() {
-        let defaultdict = ['builtin_encn_Collins'];
-        let path = this.options.dictLibrary;
-        //temporary path fix for v0.2
-        if (path == 'encn_List') {
-            path = 'builtin_encn_Collins, builtin_encn_Oxford, encn_Collins, encn_Oxford, encn_Cambridge, enen_Collins, cncn_Zdic';
-            this.options.dictLibrary = path;
-        }
+        let defaultscripts = ['general_Makenotes'];
+        let newscripts = `${this.options.sysscripts},${this.options.udfscripts}`;
 
-        if (this.pathChanged(path)) {
-            const loadingpath = Array.from(new Set(defaultdict.concat(path.split(',').filter(x => x).map(x => x.trim()))));
-            this.list = await this.loadDictionaries(loadingpath.map(this.pathMapping));
+        if (!this.lastoptions || (`${this.lastoptions.sysscripts},${this.lastoptions.udfscripts}` != newscripts)) {
+            const scriptsset = Array.from(new Set(defaultscripts.concat(newscripts.split(',').filter(x => x).map(x => x.trim()))));
+            this.list = await this.loadDictionaries(scriptsset.map(this.scriptsMapping));
         }
         let selected = this.options.dictSelected;
         selected = this.list.includes(selected) ? selected : this.list[0];
@@ -130,7 +125,7 @@ class ODHBack {
     }
 
 
-    pathMapping(path) {
+    scriptsMapping(path) {
         let gitbase = 'https://raw.githubusercontent.com/';
 
         let paths = {
@@ -150,10 +145,6 @@ class ODHBack {
         //add .js suffix if missing.
         path = (path.indexOf('.js') == -1) ? path + '.js' : path;
         return path;
-    }
-
-    pathChanged(path) {
-        return !this.lastoptions || (this.lastoptions.dictLibrary != path);
     }
 
     // Message Hub and Handler start from here ...
@@ -182,6 +173,12 @@ class ODHBack {
     async api_sandboxLoaded(params) {
         let options = await optionsLoad();
         this.ankiweb.initConnection(options);
+
+        //to do: will remove it late after all users migrate to new version.
+        if (options.dictLibrary){ // to migrate legacy scripts list to new list.
+            options.sysscripts = options.dictLibrary;
+            options.dictLibrary = '';
+        }
         this.opt_optionsChanged(options);
     }
 

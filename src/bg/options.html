@@ -23,7 +23,7 @@
 
                 <div class="grouppanel">
                     <div class="grouptitle">
-                        <span class="general-option-title" data-i18n="optGeneralOptionTitle">General Options</span>
+                        <span data-i18n="optGeneralOptionTitle">General Options</span>
                         <span class="option-helps">
                             <a href="https://github.com/ninja33/ODH/blob/master/README.md" target="_blank">?</a>
                         </span>
@@ -49,10 +49,10 @@
 
                 <div class="grouppanel">
                     <div class="grouptitle">
-                        <span class="dictionary-option-title" data-i18n="optDictionaryOptionTitle">Dictionary Options</span>
+                        <span data-i18n="optDictionaryOptionTitle">Dictionary Options</span>
                     </div>
                     <div class="crosspanel">
-                        <label for="dict" data-i18n="optDictionaries">Dictionary</label>
+                        <label for="dict" data-i18n="optSelectedDict">Dictionary</label>
                         <select id="dict" class="col-3x">
                             <option value="encn-Default">encn-Default</option>
                         </select>
@@ -90,7 +90,7 @@
             <div id="tab-2" class="tabcontent" style="display:none">
                 <div class="grouppanel">
                     <div class="grouptitle">
-                        <span class="anki-option-title" data-i18n="optAnkiOptionTitle">Anki Options</span>
+                        <span data-i18n="optAnkiOptionTitle">Anki Options</span>
                         <span class="option-helps">
                             <a href="https://github.com/FooSoft/anki-connect" target="_blank">?</a>
                         </span>
@@ -161,24 +161,29 @@
             <div id="tab-3" class="tabcontent" style="display:none">
                 <div class="grouppanel">
                     <div class="grouptitle">
-                        <span class="dictionary-option-title" data-i18n="optUdfScriptsOptionTitle">User Defined Script</span>
+                        <span data-i18n="optUdfScriptsOptionTitle">User-Defined Script</span>
                     </div>
                     <div class="crosspanel">
-                        <label for="repo" data-i18n="optRepository">Repository</label>
-                        <input type="text" id="repo" name="repo" placeholder="User defined online dictionary" class="col-2x">
-                        <label class="button" id="load" data-i18n="optLoad">Load Repos.</label>
+                        <label for="udfscripts" data-i18n="optUdfScriptsLabel">UDF Scripts Name</label>
+                        <input type="text" id="udfscripts" name="udfscripts" placeholder="http(s)://your_host.com/your_script.js" class="col-3x">
                     </div>
                 </div>
                 <div class="grouppanel">
                     <div class="grouptitle">
-                        <span class="anki-option-title" data-i18n="optSysScriptsOptionTitle">System Script</span>
+                        <span data-i18n="optSysScriptsOptionTitle">System Script</span>
                         <span class="option-helps">
                             <a href="https://github.com/ninja33/ODH/blob/master/doc/scriptlist.md" target="_blank">?</a>
                         </span>
                     </div>
+                    <div class="crosspanel" style="display:none">
+                        <label for="sysscripts" data-i18n="optSysScriptsLabel">SYS Scripts Name</label>
+                        <input type="text" id="sysscripts" name="sysscripts" placeholder="System Scripts" class="col-2x">
+                        <label class="button" id="loadsysscripts" data-i18n="optLoadSysScripts">Load SYS Scripts</label>
+                    </div>
+                    <hr>
                     <div class="crosspanel">
                         <div id="scriptslisthead" class="sl-head">
-                            <span class="sl-col sl-col-onoff">激活</span><span class="sl-col sl-col-cloud">云端</span><span class="sl-col sl-col-name">脚本名称</span><span class="sl-col sl-col-description">脚本描述</span>
+                            <span class="sl-col sl-col-onoff" data-i18n="optListHeadOnoff">OnOff</span><span class="sl-col sl-col-cloud" data-i18n="optListHeadCloud">Cloud</span><span class="sl-col sl-col-name" data-i18n="optListHeadName">Script Name</span><span class="sl-col sl-col-description" data-i18n="optListHeadDescription">Script Description</span>
                         </div>
                         <div class="scriptlistwrapper">
                         <div id="scriptslistbody" class="sl-body">
@@ -189,11 +194,15 @@
             </div>
         </form>
         <hr>
-        <div class="grouppanel">
-            <div class="crosspanel" style="text-align:center">
-                <label class="button" id="ok" data-i18n="optOK">Save Option</label>
-                <label class="button" id="cancel" data-i18n="optCancel">Cancel</label>
+        <div class="grouppannel">
+            <div class="leftpanel" style="border-right:initial">
+                <label class="button" id="saveload" data-i18n="btnSaveLoad">Save and Load</label>
             </div>
+            <div class="rightpanel">
+                <label class="button" id="saveclose" data-i18n="btnSaveClose">Save and Close</label>
+                <label class="button" id="close" data-i18n="btnClose">Close</label>
+            </div>
+            <div class="clearfix"></div>
         </div>
     </div>
 
