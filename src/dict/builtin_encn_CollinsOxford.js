@@ -8,11 +8,9 @@ class encn_Collins_Oxford_builtin {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(内置)柯林斯牛津双典';
-        if (locale.indexOf('TW') != -1)
-            return '(內置)柯林斯牛津雙典';
-        return '(builtin)encn_CollinsOxford';
+        if (locale.indexOf('CN') != -1) return '(内置)柯林斯牛津双典';
+        if (locale.indexOf('TW') != -1) return '(內置)柯林斯牛津雙典';
+        return 'Collins & Oxford EN->CN Dictionary(builtin)';
     }
 
 
@@ -25,7 +23,7 @@ class encn_Collins_Oxford_builtin {
         this.word = word;
         let list = [];
         let word_stem = await api.deinflect(word);
-        if (word.toLowerCase() !=  word) {
+        if (word.toLowerCase() != word) {
             let lowercase = word.toLowerCase();
             let lowercase_stem = await api.deinflect(lowercase);
             list = [word, word_stem, lowercase, lowercase_stem];
@@ -68,7 +66,7 @@ class encn_Collins_Oxford_builtin {
                     pos = '';
                     chn_tran = def.substring(0, def.indexOf('<br>')).trim();
                 }
-                let eng_tran = def.substring(def.indexOf('<br>')+4,def.length).trim();
+                let eng_tran = def.substring(def.indexOf('<br>') + 4, def.length).trim();
                 pos = pos ? `<span class="pos">${pos}</span>` : '';
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
                 eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
@@ -120,7 +118,7 @@ class encn_Collins_Oxford_builtin {
                     pos = '';
                     chn_tran = def.substring(0, def.indexOf('<br>')).trim();
                 }
-                let eng_tran = def.substring(def.indexOf('<br>')+4,def.length).trim();
+                let eng_tran = def.substring(def.indexOf('<br>') + 4, def.length).trim();
                 pos = pos ? `<span class="pos">${pos}</span>` : '';
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
                 eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
@@ -141,7 +139,7 @@ class encn_Collins_Oxford_builtin {
 
         return notes;
     }
-    
+
     renderCSS() {
         let css = `
             <style>

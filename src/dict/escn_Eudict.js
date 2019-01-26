@@ -8,11 +8,9 @@ class escn_Eudict {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)欧路词典西语助手';
-        if (locale.indexOf('TW') != -1)
-            return '(在线)欧路词典西语助手';
-        return 'escn_Eudict';
+        if (locale.indexOf('CN') != -1) return '欧路西语助手';
+        if (locale.indexOf('TW') != -1) return '欧路西语助手';
+        return 'Eudict ES->CN Dictionary';
     }
 
     setOptions(options) {
@@ -96,10 +94,10 @@ class escn_Eudict {
             anchor.setAttribute('href', link);
             anchor.setAttribute('target', '_blank');
         }
-        content.innerHTML = content.innerHTML.replace(/<p class="exp">(.+?)<\/p>/gi,'<span class="exp">$1</span>');
-        content.innerHTML = content.innerHTML.replace(/<span class="exp"><br>/gi,'<span class="exp">');
-        content.innerHTML = content.innerHTML.replace(/<span class="eg"><br>/gi,'<span class="eg">');
-        
+        content.innerHTML = content.innerHTML.replace(/<p class="exp">(.+?)<\/p>/gi, '<span class="exp">$1</span>');
+        content.innerHTML = content.innerHTML.replace(/<span class="exp"><br>/gi, '<span class="exp">');
+        content.innerHTML = content.innerHTML.replace(/<span class="eg"><br>/gi, '<span class="eg">');
+
         let css = this.renderCSS();
         notes.push({
             css,

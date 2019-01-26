@@ -9,11 +9,9 @@ class frcn_Eudict {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)欧路词典法语助手';
-        if (locale.indexOf('TW') != -1)
-            return '(在线)欧路词典法语助手';
-        return 'frcn_Eudict';
+        if (locale.indexOf('CN') != -1) return '欧路法语助手';
+        if (locale.indexOf('TW') != -1) return '欧路法语助手';
+        return 'Eudict FR->CN Dictionary';
     }
 
     setOptions(options) {
@@ -46,7 +44,7 @@ class frcn_Eudict {
                     popup.srcdoc = str;
                     document.body.appendChild(popup);
                 } catch (err) {
-                    if (popup){
+                    if (popup) {
                         document.body.removeChild(popup);
                         window.removeEventListener('message', msg_handler);
                     }
@@ -60,7 +58,7 @@ class frcn_Eudict {
         try {
             let respons = await api.fetch(url);
             if (respons.indexOf('<html><body><script>') != -1) {
-                respons = respons.replace('`','\\\`').replace('\n','\x10');
+                respons = respons.replace('`', '\\\`').replace('\n', '\x10');
                 let newurl = 'http://www.frdic.com' + await getURL(respons);
                 respons = await api.fetch(newurl);
             }

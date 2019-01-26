@@ -8,11 +8,9 @@ class cncn_Zdic {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)汉典汉语词典';
-        if (locale.indexOf('TW') != -1)
-            return '(在線)汉典汉语词典';
-        return '(online)cncn_Zdic';
+        if (locale.indexOf('CN') != -1) return '汉典汉语词典';
+        if (locale.indexOf('TW') != -1) return '汉典汉语词典';
+        return 'Zdic Chinese Dictionary';
     }
 
 
@@ -67,8 +65,10 @@ class cncn_Zdic {
             function seq(str) {
                 return Math.ceil(parseInt(str, 16) / 1000).toString(16);
             }
-            url.substring(url.indexOf('?') + 1).split('&').map(s => { let kv = s.split('=');
-                obj[kv[0]] = kv[1]; });
+            url.substring(url.indexOf('?') + 1).split('&').map(s => {
+                let kv = s.split('=');
+                obj[kv[0]] = kv[1];
+            });
             return `http://pic.zdic.net/kai/jt_bh/gif/${seq(obj.u)}/${obj.u}.gif`;
         }
 

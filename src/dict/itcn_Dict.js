@@ -8,11 +8,9 @@ class itcn_Dict {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '意汉词典';
-        if (locale.indexOf('TW') != -1)
-            return '意汉词典';
-        return 'itcn_Dict';
+        if (locale.indexOf('CN') != -1) return '意汉词典';
+        if (locale.indexOf('TW') != -1) return '意汉词典';
+        return 'Local IT->CN Dictionary';
     }
 
 

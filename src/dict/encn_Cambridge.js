@@ -8,21 +8,19 @@ class encn_Cambridge {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)剑桥英汉双解';
-        if (locale.indexOf('TW') != -1)
-            return '(在線)劍橋英漢雙解';
-        return '(online)encn_Cambridge';
+        if (locale.indexOf('CN') != -1) return '剑桥英汉双解';
+        if (locale.indexOf('TW') != -1) return '劍橋英漢雙解';
+        return 'Cambridge EN->CN Dictionary';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
-    
+
     async findTerm(word) {
         this.word = word;
-        let promises = [this.findCambridge(word),this.findYoudao(word)];
+        let promises = [this.findCambridge(word), this.findYoudao(word)];
         let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
     }
@@ -37,7 +35,7 @@ class encn_Cambridge {
             else
                 return node.innerText.trim();
         }
-        
+
         let base = 'https://dictionary.cambridge.org/search/english-chinese-simplified/direct/?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
@@ -186,7 +184,7 @@ class encn_Cambridge {
             return notes;
         }
     }
-    
+
     renderCSS() {
         let css = `
             <style>

@@ -8,11 +8,9 @@ class encn_Baicizhan {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)百词斩图文词典';
-        if (locale.indexOf('TW') != -1)
-            return '(在線)百詞斬圖文词典';
-        return '(online)encn_Baicizhan';
+        if (locale.indexOf('CN') != -1) return '百词斩图文词典';
+        if (locale.indexOf('TW') != -1) return '百詞斬圖文词典';
+        return 'Baicizhan EN->CN Dictionary';
     }
 
 
@@ -25,7 +23,7 @@ class encn_Baicizhan {
         this.word = word;
         let list = [];
         let word_stem = await api.deinflect(word);
-        if (word.toLowerCase() !=  word) {
+        if (word.toLowerCase() != word) {
             let lowercase = word.toLowerCase();
             let lowercase_stem = await api.deinflect(lowercase);
             list = [word_stem, word, lowercase_stem, lowercase];

@@ -8,14 +8,12 @@ class fren_Cambridge {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '剑桥法英词典';
-        if (locale.indexOf('TW') != -1)
-            return '剑桥法英词典';
-        return 'fren_Cambridge';
+        if (locale.indexOf('CN') != -1) return '剑桥法英词典';
+        if (locale.indexOf('TW') != -1) return '剑桥法英词典';
+        return 'Cambridge FR->EN Dictionary';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }

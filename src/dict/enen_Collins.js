@@ -8,11 +8,9 @@ class enen_Collins {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)柯林斯英英词典';
-        if (locale.indexOf('TW') != -1)
-            return '(在線)柯林斯英英词典';
-        return '(online)enen_Collins';
+        if (locale.indexOf('CN') != -1) return '柯林斯英英词典';
+        if (locale.indexOf('TW') != -1) return '柯林斯英英词典';
+        return 'Collins English Dictionary';
     }
 
 
@@ -71,7 +69,7 @@ class enen_Collins {
             let eng_tran = T(defblock.querySelector('.sense .def'));
             if (!eng_tran) continue;
             let definition = '';
-            eng_tran = eng_tran.replace(RegExp(expression,'gi'),'<b>$&</b>'); 
+            eng_tran = eng_tran.replace(RegExp(expression, 'gi'), '<b>$&</b>');
             eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
             let tran = `<span class='tran'>${eng_tran}</span>`;
             definition += `${pos}${tran}`;
@@ -82,7 +80,7 @@ class enen_Collins {
                 definition += '<ul class="sents">';
                 for (const [index, examp] of examps.entries()) {
                     if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                    let eng_examp = T(examp) ? T(examp).replace(RegExp(expression,'gi'),'<b>$&</b>'):'';
+                    let eng_examp = T(examp) ? T(examp).replace(RegExp(expression, 'gi'), '<b>$&</b>') : '';
                     definition += eng_examp ? `<li class='sent'><span class='eng_sent'>${eng_examp}</span></li>` : '';
                 }
                 definition += '</ul>';

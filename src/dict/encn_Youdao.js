@@ -8,11 +8,9 @@ class encn_Youdao {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)有道英汉简明';
-        if (locale.indexOf('TW') != -1)
-            return '(在線)有道英漢簡明';
-        return '(online)encn_Youdao';
+        if (locale.indexOf('CN') != -1) return '有道英汉简明';
+        if (locale.indexOf('TW') != -1) return '有道英漢簡明';
+        return 'Youdao Concise EN->CN Dictionary';
     }
 
     setOptions(options) {

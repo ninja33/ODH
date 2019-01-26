@@ -8,14 +8,12 @@ class enfr_Collins {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '柯林斯英法词典';
-        if (locale.indexOf('TW') != -1)
-            return '柯林斯英法词典';
-        return 'enfr_Collins';
+        if (locale.indexOf('CN') != -1) return '柯林斯英法词典';
+        if (locale.indexOf('TW') != -1) return '柯林斯英法词典';
+        return 'Collins EN->FR Dictionary';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }

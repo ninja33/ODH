@@ -8,11 +8,9 @@ class encn_Oxford {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)牛津英汉双解';
-        if (locale.indexOf('TW') != -1)
-            return '(在線)牛津英漢雙解';
-        return '(online)encn_Oxford';
+        if (locale.indexOf('CN') != -1) return '牛津英汉双解(bing)';
+        if (locale.indexOf('TW') != -1) return '牛津英漢雙解(bing)';
+        return 'Oxford EN->CN Dictionary(bing)';
     }
 
 
@@ -24,7 +22,7 @@ class encn_Oxford {
     async findTerm(word) {
         this.word = word;
         let word_stem = await api.deinflect(word);
-        let promises = [this.findOxford(word), this.findOxford(word_stem),this.findYoudao(word)];
+        let promises = [this.findOxford(word), this.findOxford(word_stem), this.findYoudao(word)];
         let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
 
@@ -217,7 +215,7 @@ class encn_Oxford {
             return notes;
         }
     }
-    
+
     renderCSS() {
         let css = `
             <style>

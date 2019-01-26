@@ -1,288 +1,91 @@
 {
-    "appName": {
-        "message": "在线词典助手",
-        "description": "The title of the application, displayed in the web store."
-    },
-    "appDesc": {
-        "message": "显示在线词典内容的弹窗助手(支持Anki制卡)",
-        "description": "The description of the application, displayed in the web store."
-    },
-    "optTitle": {
-        "message": "在线词典助手",
-        "description": "label text for 'Title' on optipon page."
-    },
-    "tabExtensionTitle": {
-        "message": "插件选项",
-        "description": "tab text for 'Extension Option' title."
-    },
-    "tabServicesTitle": {
-        "message": "输出选项",
-        "description": "tab text for 'Services Option' title."
-    },
-    "tabScriptsTitle": {
-        "message": "脚本选项",
-        "description": "tab text for 'Scripts Option' title."
-    },
-    "optGeneralOptionTitle": {
-        "message": "通用选项",
-        "description": "label text for 'General Option' title."
-    },
-    "optAnkiOptionTitle": {
-        "message": "Anki选项",
-        "description": "label text for 'Anki Option' title."
-    },
-    "optDictionaryOptionTitle": {
-        "message": "词典选项",
-        "description": "label text for 'Dictionary Option' title."
-    },
-    "optScriptsOptionTitle": {
-        "message": "脚本选项",
-        "description": "label text for 'Dictionaries'."
-    },
-    "optSysScriptsOptionTitle": {
-        "message": "系统脚本",
-        "description": "label text for 'System Scripts'."
-    },
-    "optUdfScriptsOptionTitle": {
-        "message": "定制脚本",
-        "description": "label text for 'User Defined Scripts'."
-    },
-    "optScriptList": {
-        "message": "脚本清单 >>>",
-        "description": "label text for 'Dictionary Option > Script List'."
-    },
-    "optEnabled": {
-        "message": "打开关闭插件",
-        "description": "label text for 'Enabled/Disable' checkbox on optipon page."
-    },
-    "optAutoSelectionHotKey": {
-        "message": "自动取词热键",
-        "description": "label text for 'Auto Selection Hotkey' option list."
-    },
-    "optSelectedDict": {
-        "message": "当前词典名称",
-        "description": "label text for 'Dictionaries' on optipon page."
-    },
-    "optMonoBilingualDict": {
-        "message": "单语双语词典",
-        "description": "label text for 'Mono/Bilingual Dict' option list."
-    },
-    "optMonolingual": {
-        "message": "单语",
-        "description": "label text for 'Monolingual Dict' option."
-    },
-    "optBilingual": {
-        "message": "双语",
-        "description": "label text for 'Bilingual Dict' option."
-    },
-    "optMaxContext": {
-        "message": "最大原句数量",
-        "description": "label text for 'Max Context  Number' option list."
-    },
-    "optMaxExample": {
-        "message": "最大例句数量",
-        "description": "label text for 'Max Example  Number' option list."
-    },
-    "optServices": {
-        "message": "数据输出",
-        "description": "label text for data services."
-    },
-    "optID": {
-        "message": "用户邮箱",
-        "description": "label text for Ankiweb ID"
-    },
-    "optPassword": {
-        "message": "用户密码",
-        "description": "label text for Ankiweb Password"
-    },
-    "optSignup": {
-        "message": "注册 Ankiweb",
-        "description": "label text for Ankiweb signup"
-    },
-    "optLogin": {
-        "message": "登录",
-        "description": "label text for Ankiweb login button"
-    },
-    "optAnkiConnecting": {
-        "message": "连接中 ...",
-        "description": "label text for Anki status: Connecting."
-    },
-    "optAnkiConnectedFail": {
-        "message": "未连接",
-        "description": "label text for Anki status: Failed."
-    },
-    "optAnkiConnectedSuccess": {
-        "message": "已连接($INFORMATION$)",
-        "description": "label text for Anki status: Success.",
-        "placeholders": {
-            "information": {
-                "content": "$1",
-                "example": "Ankiconnect version number, like 1, 2, 5 ..."
-            }
-        }
-    },
-    "optDeckName": {
-        "message": "牌组名称",
-        "description": "label text for 'Deck Name' on optipon page."
-    },
-    "optTypeName": {
-        "message": "模板名称",
-        "description": "label text for 'Type Name' on optipon page."
-    },
-    "optExpression": {
-        "message": "单词字段",
-        "description": "label text for 'Expression' on optipon page."
-    },
-    "optReading": {
-        "message": "音标字段",
-        "description": "label text for 'Reading'."
-    },
-    "optExtraInfo": {
-        "message": "额外字段",
-        "description": "label text for 'Extra Info'."
-    },
-    "optDefinition": {
-        "message": "释义字段",
-        "description": "label text for 'Definition' on optipon page."
-    },
-    "optDefinitions": {
-        "message": "多义字段",
-        "description": "label text for 'Definitions'."
-    },
-    "optSentence": {
-        "message": "原句字段",
-        "description": "label text for 'Sentence' on optipon page."
-    },
-    "optUrl": {
-        "message": "网址字段",
-        "description": "label text for 'URL'."
-    },
-    "optAudio": {
-        "message": "音频字段",
-        "description": "label text for 'Audio'."
-    },
-    "optPreferredAudio": {
-        "message": "音频下载偏好",
-        "description": "label text for 'Preferred Audio'."
-    },
-    "optPreferredAudio_0": {
-        "message": "英音",
-        "description": "label text for 'Preferred Audio# 0'."
-    },
-    "optPreferredAudio_1": {
-        "message": "美音",
-        "description": "label text for 'Preferred Audio# 1'."
+    "appName": { "message": "在线词典助手" },
+    "appDesc": { "message": "显示在线词典内容的弹窗助手(支持Anki制卡)" },
+    "optTitle": { "message": "在线词典助手" },
+
+    "tabExtensionTitle": { "message": "插件选项" },
+    "tabServicesTitle": { "message": "输出选项" },
+    "tabScriptsTitle": { "message": "脚本选项" },
+
+    "grpGeneral": { "message": "通用选项" },
+    "grpDictionary": { "message": "词典选项" },
+    "grpAnki": { "message": "Anki选项" },
+    "grpSysScripts": { "message": "系统脚本" },
+    "grpUdfScripts": { "message": "自选脚本" },
+
+    "lblEnabled": { "message": "打开关闭插件" },
+    "lblHotkey": { "message": "自动取词热键" },
+    "lblCurrentDict": { "message": "当前词典名称" },
+    "lblLingualType": { "message": "单语双语词典" },
+    "selMonolingual": { "message": "单语" },
+    "selBilingual": { "message": "双语" },
+    "lblMaxContext": { "message": "最大原句数量" },
+    "lblMaxExample": { "message": "最大例句数量" },
+    "lblAudioPref": { "message": "音频下载偏好" },
+    "lblAudioPref0": { "message": "英音" },
+    "lblAudioPref1": { "message": "美音" },
+
+
+    "lblServices": { "message": "数据导出" },
+    "lblUsername": { "message": "用户邮箱" },
+    "lblPassword": { "message": "用户密码" },
+    "lblSignup": { "message": "注册" },
+    "lblSignin": { "message": "登录" },
+
+    "msgConnecting": { "message": "连接中..." },
+    "msgFailed": { "message": "未连接" },
+    "msgSuccess": {
+        "message": "已连接:$INFORMATION$",
+        "placeholders": { "information": { "content": "$1" } }
     },
 
-    "optUdfScriptsLabel": {
-        "message": "自选脚本名称"
-    },
-    "optLoadUdfScripts": {
-        "message": "加载脚本"
-    },
-    "optSysScriptsLabel": {
-        "message": "系统脚本名称"
-    },
-    "optLoadSysScripts": {
-        "message": "加载系统脚本"
-    },
+    "lblDeckname": { "message": "牌组名称" },
+    "lblTypename": { "message": "模板名称" },
+    "lblExpression": { "message": "单词词组" },
+    "lblReading": { "message": "发音音标" },
+    "lblExtrainfo": { "message": "额外信息" },
+    "lblDefinition": { "message": "单一释义" },
+    "lblDefinitions": { "message": "全部释义" },
+    "lblSentence": { "message": "原句笔记" },
+    "lblUrl": { "message": "来源网址" },
+    "lblAudio": { "message": "音频文件" },
 
-    "optListHeadOnoff": {
-        "message": "激活"
-    },
-    "optListHeadCloud": {
-        "message": "云端"
-    },
-    "optListHeadName": {
-        "message": "脚本名称"
-    },
-    "optListHeadDescription": {
-        "message": "脚本描述"
-    },
+    "lblUdfScripts": { "message": "自选脚本名称" },
+    "lblSysScripts": { "message": "系统脚本名称" },
 
-    "btnSaveLoad": {
-        "message": "加载脚本"
-    },
-    "btnSaveClose": {
-        "message": "保存退出"
-    },
-    "btnClose": {
-        "message": "关闭退出"
-    },
+    "lstOnoff": { "message": "激活" },
+    "lstCloud": { "message": "云端" },
+    "lstName": { "message": "脚本名称" },
+    "lstDescription": { "message": "脚本描述" },
 
-    "baTitle": {
-        "message": "快速选项",
-        "description": "option title on broswer action page."
-    },
-    "baEnabled": {
-        "message": "打开关闭插件",
-        "description": "label text for 'enabled' checkbox on broswer action page."
-    },
-    "baHotkey": {
-        "message": "自动取词热键",
-        "description": "label text for 'Autosel. Hotkey' checkbox on broswer action page."
-    },
-    "general_Makenotes": {
-        "message": "通用笔记摘录脚本"
-    },
-    "builtin_encn_Collins": {
-        "message": "柯林斯英汉词典(内置)"
-    },
-    "builtin_encn_Oxford": {
-        "message": "牛津英汉词典(内置)"
-    },
-    "cncn_Zdic": {
-        "message": "汉典汉语词典"
-    },
-    "encn_Baicizhan": {
-        "message": "百词斩英汉图解词典"
-    },
-    "encn_Cambridge": {
-        "message": "剑桥英汉双解词典"
-    },
-    "encn_Collins": {
-        "message": "柯林斯英汉双解词典"
-    },
-    "encn_Oxford": {
-        "message": "牛津英汉双解词典"
-    },
-    "encn_Youdao": {
-        "message": "有道简明英汉词典"
-    },
-    "enen_Collins": {
-        "message": "柯林斯英英词典"
-    },
-    "enen_LDOCE6MDX": {
-        "message": "朗文6英英词典"
-    },
-    "enen_UrbanDict": {
-        "message": "Urban英英俚语词典"
-    },
-    "enfr_Cambridge": {
-        "message": "剑桥英法词典"
-    },
-    "enfr_Collins": {
-        "message": "柯林斯英法词典"
-    },
-    "escn_Eudict": {
-        "message": "欧路西语助手"
-    },
-    "frcn_Eudict": {
-        "message": "欧路法语助手"
-    },
-    "frcn_Youdao": {
-        "message": "有道法汉词典"
-    },
-    "fren_Cambrige": {
-        "message": "剑桥法英词典"
-    },
-    "fren_Collins": {
-        "message": "柯林斯法英词典"
-    },
-    "rucn_Qianyi": {
-        "message": "千亿俄汉词典"
-    },
-    "labelAlignment":{
-        "message": "center"
-    }
+    "btnSaveLoad": { "message": "加载脚本" },
+    "btnSaveClose": { "message": "保存" },
+    "btnClose": { "message": "退出" },
+
+    "baTitle": { "message": "快速选项" },
+    "baEnabled": { "message": "打开关闭插件" },
+    "baHotkey": { "message": "自动取词热键" },
+
+    "general_Makenotes": { "message": "通用笔记摘录脚本" },
+    "builtin_encn_Collins": { "message": "柯林斯英汉词典(内置)" },
+    "builtin_encn_Oxford": { "message": "牛津英汉词典(内置)" },
+    "cncn_Zdic": { "message": "汉典汉语词典" },
+    "encn_Baicizhan": { "message": "百词斩英汉图解词典" },
+    "encn_Cambridge": { "message": "剑桥英汉双解词典" },
+    "encn_Collins": { "message": "柯林斯英汉双解词典(youdao)" },
+    "encn_Oxford": { "message": "牛津英汉双解词典(bing)" },
+    "encn_Youdao": { "message": "有道简明英汉词典" },
+    "enen_Collins": { "message": "柯林斯英英词典" },
+    "enen_LDOCE6MDX": { "message": "朗文6英英词典(mdx)" },
+    "enen_UrbanDict": { "message": "Urban英英俚语词典" },
+    "enfr_Cambridge": { "message": "剑桥英法词典" },
+    "enfr_Collins": { "message": "柯林斯英法词典" },
+    "escn_Eudict": { "message": "欧路西语助手" },
+    "frcn_Eudict": { "message": "欧路法语助手" },
+    "frcn_Youdao": { "message": "有道法汉词典" },
+    "fren_Cambrige": { "message": "剑桥法英词典" },
+    "fren_Collins": { "message": "柯林斯法英词典" },
+    "rucn_Qianyi": { "message": "千亿俄汉词典" },
+
+    "labelAlignment": { "message": "center" }
 }

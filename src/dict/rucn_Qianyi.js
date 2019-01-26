@@ -8,14 +8,12 @@ class rucn_Qianyi {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(在线)千亿词霸俄汉词典';
-        if (locale.indexOf('TW') != -1)
-            return '(在线)千亿词霸俄汉词典';
-        return 'rucn_Qianyi';
+        if (locale.indexOf('CN') != -1) return '千亿词霸俄汉词典';
+        if (locale.indexOf('TW') != -1) return '千亿词霸俄汉词典';
+        return 'Qianyi RU->CN Dictionary';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
@@ -57,7 +55,7 @@ class rucn_Qianyi {
             expression = T(entry.querySelector('.keyword'));
             audios = [];
             let audio = entry.querySelector('.speaker');
-            audios[0] = audio ? audio.dataset.url :'';
+            audios[0] = audio ? audio.dataset.url : '';
 
             // make definition segement
             definition = '<ul class="exp">';
@@ -85,7 +83,7 @@ class rucn_Qianyi {
             notes.push({
                 css,
                 expression,
-                definitions:[definition],
+                definitions: [definition],
                 audios
             });
         }

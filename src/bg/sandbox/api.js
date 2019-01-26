@@ -42,8 +42,8 @@ class SandboxAPI {
         this.postMessage('callback', { data, callbackId });
     }
 
-    sandboxLoaded() {
-        this.postMessage('sandboxLoaded', {});
+    initBackend() {
+        this.postMessage('initBackend', {});
     }
 
 }

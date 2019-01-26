@@ -8,11 +8,9 @@ class encn_LDOCE6MDX {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(MDX)朗文英英词典';
-        if (locale.indexOf('TW') != -1)
-            return '(MDX)朗文英英词典';
-        return '(MDX)enen_LDOCE6';
+        if (locale.indexOf('CN') != -1) return '朗文英英词典(mdx)';
+        if (locale.indexOf('TW') != -1) return '朗文英英词典(mdx)';
+        return 'Longman English Dictionary(mdx)';
     }
 
 
@@ -25,7 +23,7 @@ class encn_LDOCE6MDX {
         this.word = word;
         let list = [];
         let word_stem = await api.deinflect(word);
-        if (word.toLowerCase() !=  word) {
+        if (word.toLowerCase() != word) {
             let lowercase = word.toLowerCase();
             let lowercase_stem = await api.deinflect(lowercase);
             list = [word, word_stem, lowercase, lowercase_stem];
@@ -77,7 +75,7 @@ class encn_LDOCE6MDX {
             let header = entry.querySelector('.entryhead');
             //let tailer = entry.querySelector('.tail');
 
-            let expression = T(header.querySelector('.hwd')) || T(header.querySelector('.phrvbhwd')) ; //headword
+            let expression = T(header.querySelector('.hwd')) || T(header.querySelector('.phrvbhwd')); //headword
             let reading = T(header.querySelector('.pron')); // phonetic
 
             let audios = [];

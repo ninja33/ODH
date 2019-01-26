@@ -2,7 +2,6 @@
 class ODHBack {
     constructor() {
         this.options = null;
-        this.lastoptions = null;
 
         this.ankiconnect = new Ankiconnect();
         this.ankiweb = new Ankiweb();
@@ -16,7 +15,6 @@ class ODHBack {
         this.builtin = new Builtin();
         this.builtin.loadData();
 
-        this.list = [];
         this.agent = new Agent(document.getElementById('sandbox').contentWindow);
 
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
@@ -38,14 +36,10 @@ class ODHBack {
     }
 
     onTabReady(tabId) {
-        this.tabInvoke(tabId, 'setOptions', {
-            options: this.options
-        });
+        this.tabInvoke(tabId, 'setFrontendOptions', { options: this.options });
     }
 
-    setOptions(options) {
-        this.lastoptions = this.options;
-        this.options = options;
+    setFrontendOptions(options) {
 
         switch (options.enabled) {
             case false:
@@ -55,8 +49,8 @@ class ODHBack {
                 chrome.browserAction.setBadgeText({ text: '' });
                 break;
         }
-        this.tabInvokeAll('setOptions', {
-            options: this.options
+        this.tabInvokeAll('setFrontendOptions', {
+            options
         });
     }
 
@@ -69,10 +63,7 @@ class ODHBack {
     }
 
     tabInvoke(tabId, action, params) {
-        chrome.tabs.sendMessage(tabId, {
-            action,
-            params
-        }, () => null);
+        chrome.tabs.sendMessage(tabId, { action, params }, () => null);
     }
 
     formatNote(notedef) {
@@ -108,45 +99,6 @@ class ODHBack {
         return note;
     }
 
-    async loadDict() {
-        let defaultscripts = ['general_Makenotes'];
-        let newscripts = `${this.options.sysscripts},${this.options.udfscripts}`;
-
-        if (!this.lastoptions || (`${this.lastoptions.sysscripts},${this.lastoptions.udfscripts}` != newscripts)) {
-            const scriptsset = Array.from(new Set(defaultscripts.concat(newscripts.split(',').filter(x => x).map(x => x.trim()))));
-            this.list = await this.loadDictionaries(scriptsset.map(this.scriptsMapping));
-        }
-        let selected = this.options.dictSelected;
-        selected = this.list.includes(selected) ? selected : this.list[0];
-        this.options.dictSelected = selected;
-        this.options.dictNamelist = this.list;
-        await this.setDictOptions(this.options);
-        return this.options;
-    }
-
-
-    scriptsMapping(path) {
-        let gitbase = 'https://raw.githubusercontent.com/';
-
-        let paths = {
-            'loc://': 'http://127.0.0.1/',
-            'lib://': gitbase + 'ninja33/ODH/master/src/dict/',
-            'git://': gitbase,
-        };
-
-        //to shorten script URL.
-        for (const key of Object.keys(paths)) {
-            path = (path.indexOf(key) != -1) ? paths[key] + path.replace(key, '') : path;
-        }
-        //use local script if nothing specified in URL prefix.
-        if ((path.indexOf('https://') == -1) && (path.indexOf('http://') == -1)) {
-            path = chrome.runtime.getURL('dict/' + path);
-        }
-        //add .js suffix if missing.
-        path = (path.indexOf('.js') == -1) ? path + '.js' : path;
-        return path;
-    }
-
     // Message Hub and Handler start from here ...
     onMessage(request, sender, callback) {
         const { action, params } = request;
@@ -165,17 +117,17 @@ class ODHBack {
             params
         } = e.data;
         const method = this['api_' + action];
-        if (typeof(method) === 'function') {
+        if (typeof(method) === 'function')
             method.call(this, params);
-        }
+
     }
 
-    async api_sandboxLoaded(params) {
+    async api_initBackend(params) {
         let options = await optionsLoad();
         this.ankiweb.initConnection(options);
 
         //to do: will remove it late after all users migrate to new version.
-        if (options.dictLibrary){ // to migrate legacy scripts list to new list.
+        if (options.dictLibrary) { // to migrate legacy scripts list to new list.
             options.sysscripts = options.dictLibrary;
             options.dictLibrary = '';
         }
@@ -232,14 +184,13 @@ class ODHBack {
         let { notedef, callback } = params;
 
         const note = this.formatNote(notedef);
-        this.target.addNote(note).then(result => {
-            callback(result);
-        });
+        this.target.addNote(note).then(result => { callback(result); });
     }
 
     // Option page and Brower Action page requests handlers.
     async opt_optionsChanged(options) {
-        this.setOptions(options);
+        this.setFrontendOptions(options);
+
         switch (options.services) {
             case 'none':
                 this.target = null;
@@ -254,10 +205,23 @@ class ODHBack {
                 this.target = null;
         }
 
-        let newOptions = await this.loadDict();
-        optionsSave(newOptions);
-        return newOptions;
+        let defaultscripts = ['general_Makenotes'];
+        let newscripts = `${options.sysscripts},${options.udfscripts}`;
+        let loadresults = null;
+        if (!this.options || (`${this.options.sysscripts},${this.options.udfscripts}` != newscripts)) {
+            const scriptsset = Array.from(new Set(defaultscripts.concat(newscripts.split(',').filter(x => x).map(x => x.trim()))));
+            loadresults = await this.loadScripts(scriptsset);
+        }
+
+        this.options = options;
+        let namelist = loadresults ? loadresults.map(x=>x.result) : this.options.dictNamelist;
+        this.options.dictSelected = namelist.includes(options.dictSelected) ? options.dictSelected : namelist[0];
+        this.options.dictNamelist = namelist;
+        await this.setScriptsOptions(this.options);
+        optionsSave(this.options);
+        return this.options;
     }
+
 
     async opt_getDeckNames() {
         return this.target ? await this.target.getDeckNames() : null;
@@ -276,21 +240,21 @@ class ODHBack {
     }
 
     // Sandbox communication start here
-    async loadDictionaries(list) {
-        let promises = list.map((url) => this.loadDictionary(url));
+    async loadScripts(list) {
+        let promises = list.map((name) => this.loadScript(name));
         let results = await Promise.all(promises);
         return results.filter(x => x);
     }
 
-    async loadDictionary(url) {
+    async loadScript(name) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('loadDictionary', { url }, result => resolve(result));
+            this.agent.postMessage('loadScript', { name }, result => resolve({name, result}));
         });
     }
 
-    async setDictOptions(options) {
+    async setScriptsOptions(options) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('setDictOptions', { options }, result => resolve(result));
+            this.agent.postMessage('setScriptsOptions', { options }, result => resolve(result));
         });
     }
 

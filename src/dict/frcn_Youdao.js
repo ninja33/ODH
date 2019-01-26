@@ -8,14 +8,12 @@ class frcn_Youdao {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '有道法汉词典';
-        if (locale.indexOf('TW') != -1)
-            return '有道法汉词典';
-        return 'frcn_Youdao';
+        if (locale.indexOf('CN') != -1) return '有道法汉词典';
+        if (locale.indexOf('TW') != -1) return '有道法汉词典';
+        return 'Youdao FR->CN Dictionary';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
@@ -38,7 +36,7 @@ class frcn_Youdao {
         } catch (err) {
             return null;
         }
-        
+
         let xmlroot = doc.getElementsByTagName('yodaodict')[0];
         let trans = xmlroot.getElementsByTagName('translation');
         let definition = '';

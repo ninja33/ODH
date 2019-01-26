@@ -8,11 +8,9 @@ class builtin_encn_Oxford {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '(内置)牛津英汉双解';
-        if (locale.indexOf('TW') != -1)
-            return '(內置)牛津英漢雙解';
-        return '(builtin)encn_Oxford';
+        if (locale.indexOf('CN') != -1) return '牛津英汉双解(内置)';
+        if (locale.indexOf('TW') != -1) return '牛津英漢雙解(內置)';
+        return 'Oxford EN->CN Dictionary(builtin)';
     }
 
 
@@ -25,7 +23,7 @@ class builtin_encn_Oxford {
         this.word = word;
         let list = [];
         let word_stem = await api.deinflect(word);
-        if (word.toLowerCase() !=  word) {
+        if (word.toLowerCase() != word) {
             let lowercase = word.toLowerCase();
             let lowercase_stem = await api.deinflect(lowercase);
             list = [word, word_stem, lowercase, lowercase_stem];
@@ -67,7 +65,7 @@ class builtin_encn_Oxford {
                     pos = '';
                     chn_tran = def.substring(0, def.indexOf('<br>')).trim();
                 }
-                let eng_tran = def.substring(def.indexOf('<br>')+4,def.length).trim();
+                let eng_tran = def.substring(def.indexOf('<br>') + 4, def.length).trim();
                 pos = pos ? `<span class="pos">${pos}</span>` : '';
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
                 eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';

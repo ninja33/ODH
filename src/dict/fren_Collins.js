@@ -8,14 +8,12 @@ class fren_Collins {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '柯林斯法英词典';
-        if (locale.indexOf('TW') != -1)
-            return '柯林斯法英词典';
-        return 'fren_Collins';
+        if (locale.indexOf('CN') != -1) return '柯林斯法英词典';
+        if (locale.indexOf('TW') != -1) return '柯林斯法英词典';
+        return 'Collins FR->EN Dictionary';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }

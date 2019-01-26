@@ -117,7 +117,7 @@ class ODHFront {
         callback();
     }
 
-    api_setOptions(params) {
+    api_setFrontendOptions(params) {
         let { options, callback } = params;
         this.options = options;
         this.enabled = options.enabled;

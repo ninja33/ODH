@@ -8,18 +8,16 @@ class enfr_Cambridge {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '剑桥英法词典';
-        if (locale.indexOf('TW') != -1)
-            return '剑桥英法词典';
-        return 'enfr_Cambridge';
+        if (locale.indexOf('CN') != -1) return '剑桥英法词典';
+        if (locale.indexOf('TW') != -1) return '剑桥英法词典';
+        return 'Cambridge EN->FR Dictionary';
     }
 
-    setOptions(options){
+    setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
     }
-    
+
     async findTerm(word) {
         this.word = word;
         return await this.findCambridge(word);
@@ -73,7 +71,7 @@ class enfr_Cambridge {
             definition += content.innerHTML;
         }
         let css = this.renderCSS();
-        return definition? css + definition : null;
+        return definition ? css + definition : null;
     }
 
     renderCSS() {

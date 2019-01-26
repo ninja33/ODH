@@ -14,9 +14,26 @@ class Dictionary {
         }
     }
 
-    async backend_loadDictionary(params) {
-        let { url, callbackId } = params;
+    buildScriptURL(name) {
+        let gitbase = 'https://raw.githubusercontent.com/ninja33/ODH/master/src/dict/';
+        let url = name;
 
+        //build remote script url with gitbase(https://) if prefix lib:// existing.
+        url = (url.indexOf('lib://') != -1) ? gitbase + url.replace('lib://', '') : url;
+
+        //use local script if nothing specified in URL prefix.
+        if ((url.indexOf('https://') == -1) && (url.indexOf('http://') == -1)) {
+            url = '/dict/' + url;
+        }
+        //add .js suffix if missing.
+        url = (url.indexOf('.js') == -1) ? url + '.js' : url;
+        return url;
+    }
+
+    async backend_loadScript(params) {
+        let { name, callbackId } = params;
+
+        let url = this.buildScriptURL(name);
         let script = await api.fetch(url);
         if (!script) {
             api.callback(null, callbackId);
@@ -41,7 +58,7 @@ class Dictionary {
         api.callback(displayname, callbackId);
     }
 
-    backend_setDictOptions(params) {
+    backend_setScriptsOptions(params) {
         let { options, callbackId } = params;
 
         for (const dictionary of Object.values(this.dicts)) {
@@ -72,5 +89,5 @@ class Dictionary {
 
 window.sandbox = new Dictionary();
 document.addEventListener('DOMContentLoaded', () => {
-    api.sandboxLoaded();
+    api.initBackend();
 }, false);
