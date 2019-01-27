@@ -1,0 +1,44 @@
+
+.sl-head {
+    margin: 5px 0;
+    border-bottom: 1px solid #999;
+}
+
+.sl-body {
+    height: 220px;
+    overflow: auto;
+}
+
+.sl-row {
+    margin: 5px 0;
+}
+
+.sl-row+.sl-row {
+    border-top: 1px solid #e5e5e5;
+}
+
+.sl-col {
+    display: inline-block;
+    vertical-align: text-bottom;
+    margin: 3px;
+}
+
+.sl-col input[type=checkbox] {
+    width: initial;
+    border: initial;
+    margin: 0;
+    padding: 0;
+}
+
+.sl-col-onoff, .sl-col-cloud {
+    width: 30px;
+    text-align: center;
+}
+
+.sl-col-name {
+    width: 140px;
+}
+
+.sl-col-description {
+    width: 180px;
+}

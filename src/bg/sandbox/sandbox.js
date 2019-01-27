@@ -1,5 +1,5 @@
 /* global api */
-class Dictionary {
+class Sandbox {
     constructor() {
         this.dicts = {};
         this.current = null;
@@ -33,29 +33,20 @@ class Dictionary {
     async backend_loadScript(params) {
         let { name, callbackId } = params;
 
-        let url = this.buildScriptURL(name);
-        let script = await api.fetch(url);
-        if (!script) {
-            api.callback(null, callbackId);
-            return;
-        }
-
-        let DictObject = null;
-        let displayname = null;
+        let scripttext = await api.fetch(this.buildScriptURL(name));
+        if (!scripttext) api.callback({ name, result: null }, callbackId);
         try {
-            DictObject = eval(`(${script})`);
+            let SCRIPT = eval(`(${scripttext})`);
+            if (SCRIPT.name && typeof SCRIPT === 'function') {
+                let script = new SCRIPT();
+                if (!this.dicts[SCRIPT.name]) this.dicts[SCRIPT.name] = script;
+                let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
+                api.callback({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
+            }
         } catch (err) {
-            api.callback(null, callbackId);
+            api.callback({ name, result: null }, callbackId);
             return;
         }
-
-        if (DictObject.name && typeof DictObject === 'function') {
-            let dictionary = new DictObject();
-            displayname = typeof(dictionary.displayName) === 'function' ? await dictionary.displayName() : DictObject.name;
-            if (!this.dicts[displayname])
-                this.dicts[displayname] = dictionary;
-        }
-        api.callback(displayname, callbackId);
     }
 
     backend_setScriptsOptions(params) {
@@ -87,7 +78,7 @@ class Dictionary {
     }
 }
 
-window.sandbox = new Dictionary();
+window.sandbox = new Sandbox();
 document.addEventListener('DOMContentLoaded', () => {
     api.initBackend();
 }, false);

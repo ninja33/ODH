@@ -11,7 +11,7 @@ async function populateAnkiDeckAndModel(options) {
 
 function populateDictionary(dicts) {
     $('#dict').empty();
-    dicts.forEach(name => $('#dict').append($('<option>', { value: name, text: name })));
+    dicts.forEach(item => $('#dict').append($('<option>', { value: item.objectname, text: item.displayname })));
 }
 
 async function updateAnkiStatus(options) {

@@ -214,9 +214,11 @@ class ODHBack {
         }
 
         this.options = options;
-        let namelist = loadresults ? loadresults.map(x=>x.result) : this.options.dictNamelist;
-        this.options.dictSelected = namelist.includes(options.dictSelected) ? options.dictSelected : namelist[0];
-        this.options.dictNamelist = namelist;
+        if (loadresults) {
+            let namelist = loadresults.map(x=>x.result.objectname);
+            this.options.dictSelected = namelist.includes(options.dictSelected) ? options.dictSelected : namelist[0];
+            this.options.dictNamelist = loadresults.map(x=>x.result);
+        }
         await this.setScriptsOptions(this.options);
         optionsSave(this.options);
         return this.options;
@@ -243,12 +245,12 @@ class ODHBack {
     async loadScripts(list) {
         let promises = list.map((name) => this.loadScript(name));
         let results = await Promise.all(promises);
-        return results.filter(x => x);
+        return results.filter(x => {if (x.result) return x.result;});
     }
 
     async loadScript(name) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('loadScript', { name }, result => resolve({name, result}));
+            this.agent.postMessage('loadScript', { name }, result => resolve(result));
         });
     }
 
