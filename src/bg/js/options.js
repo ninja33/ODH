@@ -155,7 +155,11 @@ async function onSaveClicked(e) {
     options.sysscripts = $('#sysscripts').val();
     options.udfscripts = $('#udfscripts').val();
 
+    $('#gif-load').show();
     let newOptions = await odhback().opt_optionsChanged(options);
+    $('.gif').hide();
+    $('#gif-good').show(1000, () => { $('.gif').hide(); });
+
     populateDictionary(newOptions.dictNamelist);
     $('#dict').val(newOptions.dictSelected);
 
@@ -199,6 +203,7 @@ async function onReady() {
     $('#saveload').click(onSaveClicked);
     $('#saveclose').click(onSaveClicked);
     $('#close').click(onCloseClicked);
+    $('.gif').hide();
 
     $('.sl-col-onoff, .sl-col-cloud').click(onScriptListChange);
     $('#hidden').click(onHiddenClicked);

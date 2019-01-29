@@ -83,6 +83,14 @@ label {
     width: 317px;
 }
 
+.gifs {
+    display: inline-block;
+}
+
+.gif{
+    vertical-align: middle;
+}
+
 .button {
     text-align: center;
     width: 95px;
