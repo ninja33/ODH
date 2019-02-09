@@ -1,7 +1,22 @@
 String.prototype.replaceAll = function(search, replacement) {
-    var target = this;
+    let target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
+
+String.prototype.searchAll = function(search) {
+    let target = this;
+    var regex = new RegExp(search, 'gi');
+    let result = 0;
+    let indices = [];
+    while ((result = regex.exec(target))) {
+        indices.push(result.index);
+    }
+    return indices;
+};
+
+function isPDFJSPage() {
+    return (document.querySelectorAll('div#viewer.pdfViewer').length > 0);
+}
 
 function isEmpty(word) {
     return (!word);
@@ -38,7 +53,7 @@ function cutSentence(word, offset, sentence, sentenceNum) {
             arr = arr.filter(x => x.length);
         }
         let index = arr.findIndex(ele => {
-            if (ele.indexOf(word) !== -1 && ele.search(word) == offset)
+            if (ele.indexOf(word) !== -1 && ele.searchAll(word).indexOf(offset) != -1)
                 return true;
             else
                 offset -= ele.length;
@@ -78,6 +93,52 @@ function getSelectionOffset(node) {
 
 }
 
+function getPDFNode(node) {
+
+    let backwardindex = 0;
+    do {
+        node = node.parentNode;
+    } while (node.name && node.nodeName.toUpperCase() != 'SPAN' && node.nodeName.toUpperCase() != 'DIV');
+    let currentspan = node;
+
+    let sentenceNodes = [currentspan];
+    let previous = null;
+    while ((previous = node.previousSibling)) {
+        sentenceNodes.unshift(previous);
+        backwardindex += 1;
+        if (previous.innerText.search(/[.!?;:]['"]?(\s|.*$)/g) != -1)
+            break;
+        else
+            node = previous;
+    }
+
+    node = currentspan;
+    let next = null;
+    while ((next = node.nextSibling)) {
+        sentenceNodes.push(next);
+        if (node.nextSibling.innerText.search(/[.!?;:]['"]?(\s|.*$)/g) != -1)
+            break;
+        else
+            node = next;
+    }
+
+    let sentence = '';
+    let offset = 0;
+    sentenceNodes = sentenceNodes.filter(x => x.innerText != '' || x.innerText != '-');
+    for (const node of sentenceNodes) {
+        if (backwardindex == 0)
+            offset = sentence.length + window.getSelection().getRangeAt(0).startOffset;
+        backwardindex -= 1;
+        let nodetext = node.innerText;
+        if (nodetext == '-')
+            sentence = sentence.slice(0, sentence.length-1);
+        else
+            sentence += (nodetext[nodetext.length - 1] == '-') ? nodetext.slice(0, nodetext.length - 1) : nodetext + ' ';
+    }
+
+    return { sentence, offset };
+}
+
 function getSentence(sentenceNum) {
     let sentence = '';
     let offset = 0;
@@ -95,23 +156,29 @@ function getSentence(sentenceNum) {
         return;
     }
 
-    node = getBlock(node, upNum);
+    if (isPDFJSPage()) {
+        let pdfcontext = getPDFNode(node);
+        sentence = pdfcontext.sentence;
+        offset = pdfcontext.offset;
+    } else {
+        node = getWebNode(node, upNum);
 
-    if (node !== document) {
-        sentence = node.innerText;
-        offset = getSelectionOffset(node).start;
+        if (node !== document) {
+            sentence = node.innerText;
+            offset = getSelectionOffset(node).start;
+        }
     }
 
     return cutSentence(word, offset, sentence, sentenceNum);
 }
 
-function getBlock(node, deep) {
+function getWebNode(node, deep) {
     const blockTags = ['LI', 'P', 'DIV', 'BODY'];
     const nodeName = node.nodeName.toUpperCase();
     if (blockTags.includes(nodeName) || deep === 0) {
         return node;
     } else {
-        return getBlock(node.parentElement, deep - 1);
+        return getWebNode(node.parentElement, deep - 1);
     }
 }
 
