@@ -40,7 +40,7 @@ function isInvalid(word) {
 function cutSentence(word, offset, sentence, sentenceNum) {
 
     if (sentenceNum > 0) {
-        let arr = sentence.match(/((?![.!?;:。！？]['"’”]?\s?).)*[.!?;:。！？]['"’”]?(\s?|.*$)/g);
+        let arr = sentence.match(/((?![.!?;:。！？]['"’”]?\s).)*[.!?;:。！？]['"’”]?(\s|.*$)/g);
         if (arr.length > 1) {
             arr = arr.reduceRight((accumulation, current) => {
                 if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
@@ -111,7 +111,7 @@ function getPDFNode(node) {
     while ((previous = node.previousSibling)) {
         sentenceNodes.unshift(previous);
         backwardindex += 1;
-        if (previous.innerText.search(/[.!?;:。！？]['"’”]?(\s?|.*$)/g) != -1)
+        if (previous.innerText.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
             break;
         else
             node = previous;
@@ -121,7 +121,7 @@ function getPDFNode(node) {
     let next = null;
     while ((next = node.nextSibling)) {
         sentenceNodes.push(next);
-        if (node.nextSibling.innerText.search(/[.!?;:。！？]['"’”]?(\s?|.*$)/g) != -1)
+        if (node.nextSibling.innerText.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
             break;
         else
             node = next;
