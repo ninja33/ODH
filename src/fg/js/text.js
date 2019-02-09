@@ -1,3 +1,8 @@
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 function isEmpty(word) {
     return (!word);
 }
@@ -17,12 +22,27 @@ function isInvalid(word) {
     return (isChinese(word) && isEmpty(word) || isShortandNum(word));
 }
 
-function cutSentence(word, sentence, sentenceNum) {
+function cutSentence(word, offset, sentence, sentenceNum) {
 
     if (sentenceNum > 0) {
-        let puncts = sentence.match(/[\.\?!;]/g) || [];
-        let arr = sentence.split(/[\.\?!;]/).filter(s => s.trim() !== '').map((s, index) => s.trim() + `${puncts[index] || ''} `);
-        let index = arr.findIndex(s => s.indexOf(word) !== -1);
+        let arr = sentence.match(/((?![.!?;:]['"]?\s).)*[.!?;:]['"]?(\s|.*$)/g);
+        if (arr.length > 1) {
+            arr = arr.reduceRight((accumulation, current) => {
+                if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
+                    accumulation[0] = current + accumulation[0];
+                } else {
+                    accumulation.unshift(current);
+                }
+                return accumulation;
+            }, ['']);
+            arr = arr.filter(x => x.length);
+        }
+        let index = arr.findIndex(ele => {
+            if (ele.indexOf(word) !== -1 && ele.search(word) == offset)
+                return true;
+            else
+                offset -= ele.length;
+        });
         let left = Math.ceil((sentenceNum - 1) / 2);
         let start = index - left;
         let end = index + ((sentenceNum - 1) - left);
@@ -40,14 +60,27 @@ function cutSentence(word, sentence, sentenceNum) {
             }
         }
 
-        return arr.slice(start, end + 1).join('').replace(word, '<b>' + word + '</b>');
+        return arr.slice(start, end + 1).join('').replaceAll(word, '<b>' + word + '</b>');
     } else {
         return sentence.replace(word, '<b>' + word + '</b>');
     }
 }
 
+function getSelectionOffset(node) {
+    var range = window.getSelection().getRangeAt(0);
+    var clone = range.cloneRange();
+    clone.selectNodeContents(node);
+    clone.setEnd(range.startContainer, range.startOffset);
+    let start = clone.toString().length;
+    clone.setEnd(range.endContainer, range.endOffset);
+    let end = clone.toString().length;
+    return { start, end };
+
+}
+
 function getSentence(sentenceNum) {
     let sentence = '';
+    let offset = 0;
     const upNum = 4;
 
     const selection = window.getSelection();
@@ -66,9 +99,10 @@ function getSentence(sentenceNum) {
 
     if (node !== document) {
         sentence = node.innerText;
+        offset = getSelectionOffset(node).start;
     }
 
-    return cutSentence(word, sentence, sentenceNum);
+    return cutSentence(word, offset, sentence, sentenceNum);
 }
 
 function getBlock(node, deep) {
@@ -81,15 +115,15 @@ function getBlock(node, deep) {
     }
 }
 
-function selectedText(){
+function selectedText() {
     const selection = window.getSelection();
     return (selection.toString() || '').trim();
 }
 
-function isValidElement(){
+function isValidElement() {
     const invalidTags = ['INPUT', 'TEXTAREA'];
     const nodeName = document.activeElement.nodeName.toUpperCase();
-    if (invalidTags.includes(nodeName)){
+    if (invalidTags.includes(nodeName)) {
         return false;
     } else {
         return true;

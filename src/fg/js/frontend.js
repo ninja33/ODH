@@ -269,11 +269,12 @@ class ODHFront {
                 <img id="good" src="${chrome.runtime.getURL('fg/img/good.png')}"/>
                 <img id="fail" src="${chrome.runtime.getURL('fg/img/fail.png')}"/>
                 <img id="play" src="${chrome.runtime.getURL('fg/img/play.png')}"/>
+                <div id="context">${this.sentence}</div>
             </div>
             <script src="${chrome.runtime.getURL('fg/js/frame.js')}"></script>
             <script src="${chrome.runtime.getURL('fg/js/spell.js')}"></script>
             <script>document.querySelector('#odh-container').appendChild(spell())</script>
-            <script>document.querySelector('.spell-content').innerHTML="${this.sentence}"</script>
+            <script>document.querySelector('.spell-content').innerHTML=document.querySelector('#context').innerHTML</script>
             <script>${monolingual}</script>
             </body>
         </html>`;
