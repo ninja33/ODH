@@ -60,8 +60,7 @@ function populateDictionary(dicts) {
 function populateSysScriptsList(dictLibrary) {
     const optionscripts = Array.from(new Set(dictLibrary.split(',').filter(x => x).map(x => x.trim())));
     let systemscripts = [
-        'general_Makenotes', //default script
-        'builtin_encn_Collins', 'builtin_encn_Oxford', //builtin script
+        'builtin_encn_Collins', 'general_Makenotes', 'builtin_encn_Oxford', //default & builtin script
         'cncn_Zdic', //cn-cn dictionary
         'encn_Collins', 'encn_Cambridge', 'encn_Oxford', 'encn_Youdao', 'encn_Baicizhan', //en-cn dictionaries
         'enen_Collins', 'enen_LDOCE6MDX', 'enen_UrbanDict', //en-en dictionaries

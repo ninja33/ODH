@@ -21,9 +21,9 @@ function sanitizeOptions(options) {
         url: '',
         audio: '',
 
-        sysscripts: 'general_Makenotes,builtin_encn_Collins,cncn_Zdic,encn_Collins',
+        sysscripts: 'builtin_encn_Collins,general_Makenotes,cncn_Zdic,encn_Collins',
         udfscripts: '',
-        
+
         dictSelected: '',
         dictNamelist: [],
     };
@@ -52,7 +52,7 @@ async function optionsSave(options) {
 }
 
 function utilAsync(func) {
-    return function (...args) {
+    return function(...args) {
         func.apply(this, args);
     };
 }

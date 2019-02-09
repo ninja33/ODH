@@ -40,7 +40,7 @@ function isInvalid(word) {
 function cutSentence(word, offset, sentence, sentenceNum) {
 
     if (sentenceNum > 0) {
-        let arr = sentence.match(/((?![.!?;:]['"]?\s).)*[.!?;:]['"]?(\s|.*$)/g);
+        let arr = sentence.match(/((?![.!?;:。！？]['"’”]?\s?).)*[.!?;:。！？]['"’”]?(\s?|.*$)/g);
         if (arr.length > 1) {
             arr = arr.reduceRight((accumulation, current) => {
                 if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
@@ -52,12 +52,17 @@ function cutSentence(word, offset, sentence, sentenceNum) {
             }, ['']);
             arr = arr.filter(x => x.length);
         }
-        let index = arr.findIndex(ele => {
+
+        let index = arr.findIndex(ele => { //try to exactly match to word based on offset.
             if (ele.indexOf(word) !== -1 && ele.searchAll(word).indexOf(offset) != -1)
                 return true;
             else
                 offset -= ele.length;
         });
+
+        if (index == -1) // fallback if can not exactly find word.
+            index = arr.findIndex(ele => ele.indexOf(word) !== -1);
+
         let left = Math.ceil((sentenceNum - 1) / 2);
         let start = index - left;
         let end = index + ((sentenceNum - 1) - left);
@@ -106,7 +111,7 @@ function getPDFNode(node) {
     while ((previous = node.previousSibling)) {
         sentenceNodes.unshift(previous);
         backwardindex += 1;
-        if (previous.innerText.search(/[.!?;:]['"]?(\s|.*$)/g) != -1)
+        if (previous.innerText.search(/[.!?;:。！？]['"’”]?(\s?|.*$)/g) != -1)
             break;
         else
             node = previous;
@@ -116,7 +121,7 @@ function getPDFNode(node) {
     let next = null;
     while ((next = node.nextSibling)) {
         sentenceNodes.push(next);
-        if (node.nextSibling.innerText.search(/[.!?;:]['"]?(\s|.*$)/g) != -1)
+        if (node.nextSibling.innerText.search(/[.!?;:。！？]['"’”]?(\s?|.*$)/g) != -1)
             break;
         else
             node = next;

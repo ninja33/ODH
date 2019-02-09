@@ -240,7 +240,7 @@ class ODHFront {
             content += '</div>';
         }
         //content += `<textarea id="odh-context" class="odh-sentence">${this.sentence}</textarea>`;
-        content += `<div id="odh-container" class="odh-sentence"></div>`;
+        content += '<div id="odh-container" class="odh-sentence"></div>';
         return this.popupHeader() + content + this.popupFooter();
     }
 
@@ -259,7 +259,7 @@ class ODHFront {
         let services = this.options ? this.options.services : '';
         let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
         let button = chrome.runtime.getURL('fg/img/' + image);
-        let monolingual = this.options ? (this.options.monolingual == '1' ? 'hideTranslation()' : '') : '';
+        let monolingual = this.options ? (this.options.monolingual == '1' ? 1 : 0) : 0;
 
         return `
             </div>
@@ -270,12 +270,10 @@ class ODHFront {
                 <img id="fail" src="${chrome.runtime.getURL('fg/img/fail.png')}"/>
                 <img id="play" src="${chrome.runtime.getURL('fg/img/play.png')}"/>
                 <div id="context">${this.sentence}</div>
-            </div>
-            <script src="${chrome.runtime.getURL('fg/js/frame.js')}"></script>
+                <div id="monolingual">${monolingual}</div>
+                </div>
             <script src="${chrome.runtime.getURL('fg/js/spell.js')}"></script>
-            <script>document.querySelector('#odh-container').appendChild(spell())</script>
-            <script>document.querySelector('.spell-content').innerHTML=document.querySelector('#context').innerHTML</script>
-            <script>${monolingual}</script>
+            <script src="${chrome.runtime.getURL('fg/js/frame.js')}"></script>
             </body>
         </html>`;
     }
