@@ -41,7 +41,7 @@ function cutSentence(word, offset, sentence, sentenceNum) {
 
     if (sentenceNum > 0) {
         let arr = sentence.match(/((?![.!?;:。！？]['"’”]?\s).)*[.!?;:。！？]['"’”]?(\s|.*$)/g);
-        if (arr.length > 1) {
+        if (arr && arr.length > 1) {
             arr = arr.reduceRight((accumulation, current) => {
                 if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
                     accumulation[0] = current + accumulation[0];
@@ -51,6 +51,8 @@ function cutSentence(word, offset, sentence, sentenceNum) {
                 return accumulation;
             }, ['']);
             arr = arr.filter(x => x.length);
+        } else {
+            arr = [sentence];
         }
 
         let index = arr.findIndex(ele => { //try to exactly match to word based on offset.

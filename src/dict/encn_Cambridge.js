@@ -54,7 +54,7 @@ class encn_Cambridge {
 
             let expression = T(entry.querySelector('.headword'));
             let reading = '';
-            let readings = entry.querySelectorAll('.pron-info .ipa');
+            let readings = entry.querySelectorAll('.pron .ipa');
             if (readings) {
                 let reading_uk = T(readings[0]);
                 let reading_us = T(readings[1]);
@@ -62,10 +62,10 @@ class encn_Cambridge {
             }
             let pos = T(entry.querySelector('.posgram'));
             pos = pos ? `<span class='pos'>${pos}</span>` : '';
-            audios[0] = entry.querySelector('.pron-info>.us .audio_play_button');
+            audios[0] = entry.querySelector('.pos-header>.us .audio_play_button');
             audios[0] = audios[0] ? 'https://dictionary.cambridge.org' + audios[0].getAttribute('data-src-mp3') : '';
             audios[0] = audios[0].replace('https', 'http');
-            audios[1] = entry.querySelector('.pron-info>.uk .audio_play_button');
+            audios[1] = entry.querySelector('.pos-header>.uk .audio_play_button');
             audios[1] = audios[1] ? 'https://dictionary.cambridge.org' + audios[1].getAttribute('data-src-mp3') : '';
             audios[1] = audios[1].replace('https', 'http');
 
