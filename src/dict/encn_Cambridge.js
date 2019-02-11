@@ -62,12 +62,12 @@ class encn_Cambridge {
             }
             let pos = T(entry.querySelector('.posgram'));
             pos = pos ? `<span class='pos'>${pos}</span>` : '';
-            audios[0] = entry.querySelector('.pos-header>.us .audio_play_button');
-            audios[0] = audios[0] ? 'https://dictionary.cambridge.org' + audios[0].getAttribute('data-src-mp3') : '';
-            audios[0] = audios[0].replace('https', 'http');
-            audios[1] = entry.querySelector('.pos-header>.uk .audio_play_button');
-            audios[1] = audios[1] ? 'https://dictionary.cambridge.org' + audios[1].getAttribute('data-src-mp3') : '';
-            audios[1] = audios[1].replace('https', 'http');
+            audios[0] = entry.querySelector('.pos-header>.uk .audio_play_button');
+            audios[0] = audios[1] ? 'https://dictionary.cambridge.org' + audios[1].getAttribute('data-src-mp3') : '';
+            audios[0] = audios[1].replace('https', 'http');
+            audios[1] = entry.querySelector('.pos-header>.us .audio_play_button');
+            audios[1] = audios[0] ? 'https://dictionary.cambridge.org' + audios[0].getAttribute('data-src-mp3') : '';
+            audios[1] = audios[0].replace('https', 'http');
 
             let sensbodys = entry.querySelectorAll('.sense-body') || [];
             for (const sensbody of sensbodys) {
