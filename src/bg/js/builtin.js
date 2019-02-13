@@ -5,17 +5,11 @@ class Builtin {
 
     async loadData() {
         this.dicts['collins'] = await Builtin.loadData('data/collins.json');
-        this.dicts['oxford'] = await Builtin.loadData('data/oxford.json');
     }
 
     findTerm(dictname, term) {
         const dict = this.dicts[dictname];
-        let results = [];
-        let indices = dict.indices[term] || [];
-        results = results.concat(indices.map(index => {
-            return dict.defs[index];
-        }));
-        return results.length ? JSON.stringify(results) : null;
+        return dict.hasOwnProperty(term) ? JSON.stringify(dict[term]):null;
     }
 
     static async loadData(path) {

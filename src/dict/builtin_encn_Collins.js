@@ -36,53 +36,72 @@ class builtin_encn_Collins {
     }
 
     async findCollins(word) {
+        const maxexample = this.maxexample;
         let notes = [];
 
         if (!word) return notes;
-        let results = [];
+        let result = {};
         try {
-            results = JSON.parse(await api.getBuiltin('collins', word));
+            result = JSON.parse(await api.getBuiltin('collins', word));
         } catch (err) {
             return [];
         }
 
         //get Collins Data
-        if (!results || results.length < 0) return notes;
-        for (const result of results) {
-            let [expression, reading, extrainfo, defs] = result;
-            extrainfo = extrainfo ? `<span class="star">${extrainfo}</span>` : '';
-            let audios = [];
-            audios[0] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-            audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+        if (!result) return notes;
+        let expression = word;
+        let reading = '';
+        if (result.readings && result.readings.length > 0) {
+            reading = `/${result.readings[0]}/`;
+            //let lable = ['UK','US'];
+            //for (const [idx,rd] of result.readings.entries()){
+            //    if (idx > 1) break;
+            //    reading = reading + `${lable[idx]}[${rd}]`;
+            //}
+        }
+        let extrainfo = result.star;
+        let defs = result.defs;
 
-            let definitions = [];
-            for (const def of defs) {
-                let definition = '';
-                let pos = def.substring(0, def.indexOf('.') + 1).trim();
-                let chn_tran = def.substring(def.indexOf('.') + 1, def.indexOf('<br>')).trim();
-                // 'phrase.'.length = 7 which means the longest position length is 7
-                if (pos.length > 7) {
-                    pos = '';
-                    chn_tran = def.substring(0, def.indexOf('<br>')).trim();
+        extrainfo = extrainfo ? `<span class="star">${extrainfo}</span>` : '';
+        let audios = [];
+        audios[0] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+        audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+
+        let definitions = [];
+        for (const def of defs) {
+            let definition = '';
+            let pos = def.pos_en;
+            let chn_tran = def.def_cn;
+            let eng_tran = def.def_en;
+            pos = pos ? `<span class="pos">${pos}</span>` : '';
+            chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
+            eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
+            definition = `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
+
+            // make exmaple sentence segement
+            if (def.ext && def.ext.length > 0 && maxexample > 0) {
+                definition += '<ul class="sents">';
+                for (const [idx, ex] of def.ext.entries()) {
+                    if (idx > maxexample - 1) break; // to control only n example sentences defined in option.
+                    let chn_sent = ex.ext_cn;
+                    let eng_sent = ex.ext_en;
+                    definition += `<li class='sent'><span class='eng_sent'>${eng_sent}</span><span class='chn_sent'>${chn_sent}</span></li>`;
                 }
-                let eng_tran = def.substring(def.indexOf('<br>') + 4, def.length).trim();
-                pos = pos ? `<span class="pos">${pos}</span>` : '';
-                chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
-                eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
-                definition = `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
-                definitions.push(definition);
+                definition += '</ul>';
             }
 
-            let css = this.renderCSS();
-            notes.push({
-                css,
-                expression,
-                reading,
-                extrainfo,
-                definitions,
-                audios
-            });
+            definitions.push(definition);
         }
+
+        let css = this.renderCSS();
+        notes.push({
+            css,
+            expression,
+            reading,
+            extrainfo,
+            definitions,
+            audios
+        });
 
         return notes;
     }
