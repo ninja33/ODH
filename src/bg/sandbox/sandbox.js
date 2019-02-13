@@ -39,7 +39,8 @@ class Sandbox {
             let SCRIPT = eval(`(${scripttext})`);
             if (SCRIPT.name && typeof SCRIPT === 'function') {
                 let script = new SCRIPT();
-                if (!this.dicts[SCRIPT.name]) this.dicts[SCRIPT.name] = script;
+                //if (!this.dicts[SCRIPT.name]) 
+                this.dicts[SCRIPT.name] = script;
                 let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
                 api.callback({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
             }
