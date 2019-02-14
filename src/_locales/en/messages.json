@@ -75,7 +75,7 @@
     "encn_Baicizhan": { "message": "Baicizhan EN->CN Dictionary" },
     "encn_Cambridge": { "message": "Cambridge EN->CN Dictionary" },
     "encn_Collins": { "message": "Collins EN->CN Dict.(Youdao)" },
-    "encn_Oxford": { "message": "Oxford EN->CN Dict.(Bing)" },
+    "encn_Oxford": { "message": "Oxford EN->CN Dict.(Baidu)" },
     "encn_Youdao": { "message": "Youdao Concise EN->CN Dict." },
     "enen_Collins": { "message": "Collins EN->EN Dictionary" },
     "enen_LDOCE6MDX": { "message": "LDOCE6 EN->CN Dict.(MDX version)" },

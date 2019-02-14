@@ -31,13 +31,7 @@ class general_Makenotes {
     async makeNotes(word) {
         if (!word) return [];
         let notes = [];
-        let css = `
-            <style>
-                .odh-expression {
-                    font-size: 1em!important;
-                    font-weight: normal!important;
-                }
-            </style>`;
+        let css = '<style>.odh-expression {font-size: 1em!important;font-weight: normal!important;}</style>';
         notes.push({ css, definitions: [this.makenotes_lable] });
         return notes;
     }
