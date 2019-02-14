@@ -1,6 +1,8 @@
-/* global api */
+/* global api, hash */
 class encn_Oxford_Baidu {
     constructor(options) {
+        this.token = '';
+        this.gtk = '';
         this.options = options;
         this.maxexample = 2;
         this.word = '';
@@ -17,6 +19,19 @@ class encn_Oxford_Baidu {
     setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
+    }
+
+    async getToken() {
+        let homeurl = 'https://fanyi.baidu.com/'
+        let homepage = await api.fetch(homeurl);
+        let tmatch = /token: '(.+?)'/gi.exec(homepage);
+        if (!tmatch || tmatch.length < 2) return null;
+        let gmatch = /window.gtk = '(.+?)'/gi.exec(homepage);
+        if (!gmatch || gmatch.length < 2) return null;
+        return {
+            'token': tmatch[1],
+            'gtk': gmatch[1]
+        };
     }
 
     async findTerm(word) {
@@ -40,157 +55,129 @@ class encn_Oxford_Baidu {
                 return node;
         }
 
-        let base = 'http://fanyi.baidu.com/v2transapi?from=en&to=zh&simple_means_flag=3';
+        let base = 'https://fanyi.baidu.com/v2transapi?from=en&to=zh&simple_means_flag=3';
+
+        if (!this.token || !this.gtk) {
+            let common = await this.getToken();
+            if (!common) return [];
+            this.token = common.token;
+            this.gtk = common.gtk;
+        }
+
+        //let sign = this.generateSign(word);
         word = encodeURIComponent(word);
-        let sign = this.generateSign(word);
+        let sign = hash(word, this.gtk)
         if (!sign) return;
 
-        let token = 'f1b766ca9eacac98a582a177e487aa60';
-        let url = base + `&query=${word}&sign=${sign}&token=${token}`;
-
+        let dicturl = base + `&query=${word}&sign=${sign}&token=${this.token}`;
         let data = '';
         try {
-            data = JSON.parse(await api.fetch(url));
+            data = JSON.parse(await api.fetch(dicturl));
         } catch (err) {
             return [];
         }
 
-        if (!data.dict_result) return [];
+        if (!data.dict_result.oxford.entry[0]) return [];
         let simple = data.dict_result.simple_means;
         let expression = T(simple.word_name);
         if (!expression) return [];
-        let reading_uk = T(title.querySelectorAll('.phonetic-transcription')[0]) || '';
-        let reading_us = T(title.querySelectorAll('.phonetic-transcription')[1]) || '';
+
+        let symbols = simple.symbols[0];
+        let reading_uk = symbols.ph_en || '';
+        let reading_us = symbols.ph_am || '';
         let reading = reading_uk && reading_us ? `UK${reading_uk} US${reading_us}` : '';
 
         let audios = [];
         audios[0] = `http://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
         audios[1] = `http://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
 
-        let entries = doc.querySelectorAll('.oxford-entry .entry-pg');
+        let entries = data.dict_result.oxford.entry[0].data;
         if (!entries) return [];
 
+        let definitions = [];
         for (const entry of entries) {
-            let definitions = [];
-            let pos = T(entry.querySelector('.pg-p'));
-            pos = pos ? `<span class='pos'>${pos}</span>` : '';
-            // process definitions;
-            let segements = entry.querySelectorAll('.entry-sdg') || [];
-            if (!segements) continue;
-            for (const segement of segements) {
-                let definition = '';
-                let dis = T(segement.querySelector('.sdg-sd'));
-                if (!dis) continue;
-                let eng_dis = dis.match(/([\u4e00-\u9fa5]|；|、|（|）|，)+/gi).join(' ').trim();
-                let chn_dis = dis.replace(/([\u4e00-\u9fa5]|；|、|（|）|，)+/gi, '').trim();
-                dis = (chn_dis && eng_dis) ? `<div class="dis"><span class="eng_dis">${eng_dis}</span><span class="chn_dis">${chn_dis}</span></div>` : '';
-
-                let trans = T(segement.querySelector('.entry-d'));
-                let eng_trans = trans.match(/([\u4e00-\u9fa5]|；|、|（|）|，)+/gi).join(' ').trim();
-                let chn_trans = trans.replace(/([\u4e00-\u9fa5]|；|、|（|）|，)+/gi, '').trim();
-                if (!eng_tran || !chn_tran) continue;
-                eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
-                chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
-                definition += `${dis}${pos}<span class='tran'>${eng_tran}${chn_tran}</span>`;
-
-                let examps = segement.querySelectorAll('.entry-x') || [];
-                if (examps.length > 0 && this.maxexample > 0) {
-                    definition += '<ul class="sents">';
-                    for (const [index, examp] of examps.entries()) {
-                        if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                        let eng_examp = T(examp.querySelector('.entry-x-en'));
-                        let chn_examp = T(examp.querySelector('.entry-x-zh'));
-                        definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+            if (entry.tag == 'p-g') {
+                let pos = ''
+                for (const group of entry.data) {
+                    if (group.tag != 'p' && group.tag != 'sd-g' && group.tag != 'ids-g'&& group.tag != 'pvs-g') continue;
+                    if (group.tag == 'p') pos = group.p_text ? `<span class='pos'>${group.p_text}</span>` : ''
+                    if (group.tag == 'sd-g') {
+                        let definition = '';
+                        for (const item of group.data) {
+                            if (item.tag != 'sd' && item.tag != 'n-g') continue;
+                            let dis = ''
+                            if (item.tag == 'sd') {
+                                let eng_dis = item.enText;
+                                let chn_dis = item.chText;
+                                dis = (chn_dis && eng_dis) ? `<div class="dis"><span class="eng_dis">${eng_dis}</span><span class="chn_dis">${chn_dis}</span></div>` : '';
+                            }
+                            if (item.tag == 'n-g') {
+                                let enterext = false; //not enter example block at first.
+                                for (const def of item.data) {
+                                    if (def.tag != 'd' && def.tag != 'x') continue;
+                                    if (def.tag == 'd') {
+                                        let eng_tran = `<span class='eng_tran'>${def.enText}</span>`;
+                                        let chn_tran = `<span class='chn_tran'>${def.chText}</span>`;
+                                        definition += `${dis}${pos}<span class='tran'>${eng_tran}${chn_tran}</span>`;
+                                    }
+                                    if (def.tag == 'x') {
+                                        if (!enterext) {
+                                            definition += '<ul class="sents">';
+                                            enterext = true;
+                                        }
+                                        let eng_examp = def.enText;
+                                        let chn_examp = def.chText;
+                                        definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                                    }
+                                }
+                                definition += '</ul>';
+                            }
+                        }
+                        definitions.push(definition);
                     }
-                    definition += '</ul>';
-                }
-                definition && definitions.push(definition);
-            }
-
-            //process idiom
-            let idmsents = entry.querySelectorAll('.idg');
-            if (!idmsents) continue;
-            for (const idmsent of idmsents) {
-                let definition = '';
-                let idmphrase = T(idmsent.querySelector('.idg-id'));
-                idmphrase = idmphrase ? `<div class="idmphrase">${idmphrase}</div>` : '';
-
-                let trans = T(idmsent.querySelector('.entry-d'));
-                let eng_trans = trans.match(/([\u4e00-\u9fa5]|；|、|（|）|，)+/gi).join(' ').trim();
-                let chn_trans = trans.replace(/([\u4e00-\u9fa5]|；|、|（|）|，)+/gi, '').trim();
-                if (!eng_tran || !chn_tran) continue;
-                eng_tran = `<span class='eng_tran'>${eng_tran}</span>`;
-                chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
-                definition += `${idmphrase}<span class='tran'>${eng_tran}${chn_tran}</span>`;
-
-                let examps = idmsent.querySelectorAll('.entry-x') || [];
-                if (examps.length > 0 && this.maxexample > 0) {
-                    definition += '<ul class="sents">';
-                    for (const [index, examp] of examps.entries()) {
-                        if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                        let eng_examp = T(examp.querySelector('.entry-x-en'));
-                        let chn_examp = T(examp.querySelector('.entry-x-zh'));
-                        definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                    if (group.tag == 'ids-g' || group.tag == 'pvs-g') {
+                        let definition = '';
+                        for (const item of group.data) {
+                            if (item.tag != 'id-g' && item.tag != 'pv-g' && item.tag != 'vrs') continue;
+                            let defs = [];
+                            if (item.tag == 'id-g' || item.tag == 'pv-g') defs = item.data;
+                            if (item.tag == 'vrs') defs = item.data[0].data;
+                            let enterext = false; //not enter example block at first.
+                            for (const def of defs) {
+                                if (def.tag != 'id' && def.tag != 'pv' && def.tag != 'd'&& def.tag != 'x') continue;
+                                if (def.tag == 'id' || def.tag == 'pv') {
+                                    definition += def.enText ? `<div class="idmphrase">${def.enText}</div>` : '';
+                                }
+                                if (def.tag == 'd') {
+                                    let eng_tran = `<span class='eng_tran'>${def.enText}</span>`;
+                                    let chn_tran = `<span class='chn_tran'>${def.chText}</span>`;
+                                    definition += `<span class='tran'>${eng_tran}${chn_tran}</span>`;
+                                }
+                                if (def.tag == 'x') {
+                                    if (!enterext) {
+                                        definition += '<ul class="sents">';
+                                        enterext = true;
+                                    }
+                                    let eng_examp = def.enText;
+                                    let chn_examp = def.chText;
+                                    definition += `<li class='sent'><span class='eng_sent'>${eng_examp}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                                }
+                            }
+                            definition += '</ul>';
+                        }
+                        definitions.push(definition);
                     }
-                    definition += '</ul>';
                 }
-                if (definition)
-                    definitions.push(definition);
+                let css = this.renderCSS();
+                notes.push({
+                    css,
+                    expression,
+                    reading,
+                    definitions,
+                    audios
+                });
             }
-            let css = this.renderCSS();
-            notes.push({
-                css,
-                expression,
-                reading,
-                definitions,
-                audios
-            });
         }
-        return notes;
-    }
-
-    async findEC(word) {
-        let notes = [];
-
-        if (!word) return notes;
-
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
-        let url = base + encodeURIComponent(word);
-        let data = '';
-        try {
-            data = JSON.parse(await api.fetch(url));
-        } catch (err) {
-            return [];
-        }
-
-        if (!data.ec) return notes;
-        let expression = data.ec.word[0]['return-phrase'].l.i;
-        let reading = data.ec.word[0].phone || data.ec.word[0].ukphone;
-
-        let extrainfo = '';
-        let types = data.ec.exam_type || [];
-        for (const type of types) {
-            extrainfo += `<span class="examtype">${type}</span>`;
-        }
-
-        let definition = '<ul class="ec">';
-        const trs = data.ec.word ? data.ec.word[0].trs : [];
-        for (const tr of trs)
-            definition += `<li class="ec"><span class="ec_chn">${tr.tr[0].l.i[0]}</span></li>`;
-        definition += '</ul>';
-        let css = `
-            <style>
-                span.examtype {margin: 0 3px;padding: 0 3px;font-weight: normal;font-size: 0.8em;color: white;background-color: #5cb85c;border-radius: 3px;}
-                ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
-                span.ec_chn {margin-left: -5px;}
-            </style>`;
-        notes.push({
-            css,
-            expression,
-            reading,
-            extrainfo,
-            definitions: [definition],
-        });
         return notes;
     }
 
@@ -214,51 +201,5 @@ class encn_Oxford_Baidu {
                 span.chn_sent {color:#0d47a1;}
             </style>`;
         return css;
-    }
-
-    generateSign(r) {
-        var i = null;
-
-        function n(r, o) {
-            for (var t = 0; t < o.length - 2; t += 3) {
-                var a = o.charAt(t + 2);
-                a = a >= "a" ? a.charCodeAt(0) - 87 : Number(a),
-                    a = "+" === o.charAt(t + 1) ? r >>> a : r << a,
-                    r = "+" === o.charAt(t) ? r + a & 4294967295 : r ^ a
-            }
-            return r
-        }
-
-        if (!/[\uD800-\uDBFF][\uDC00-\uDFFF]/.test(r)) {
-            var t = r.length;
-            t > 30 && (r = "" + r.substr(0, 10) + r.substr(Math.floor(t / 2) - 5, 10) + r.substr(-10, 10))
-        } else
-            return null;
-
-        let m = 320305,
-            p = 320305,
-            s = 131321201,
-            S = [],
-            c = 0;
-        for (let v = 0; v < r.length; v++) {
-            let A = r.charCodeAt(v);
-            128 > A ? S[c++] = A : (2048 > A ? S[c++] = A >> 6 | 192 : (55296 === (64512 & A) && v + 1 < r.length && 56320 === (64512 & r.charCodeAt(v + 1)) ? (A = 65536 + ((1023 & A) << 10) + (1023 & r.charCodeAt(++v)),
-                        S[c++] = A >> 18 | 240,
-                        S[c++] = A >> 12 & 63 | 128) : S[c++] = A >> 12 | 224,
-                    S[c++] = A >> 6 & 63 | 128),
-                S[c++] = 63 & A | 128)
-        }
-        let F = "+-a^+6",
-            D = "+-3^+b+-f"
-        for (let b = 0; b < S.length; b++) {
-            p += S[b];
-            p = n(p, F);
-        }
-        p = n(p, D);
-        p ^= s;
-        if (0 > p)
-            p = (2147483647 & p) + 2147483648;
-        p %= 1e6;
-        return p.toString() + "." + (p ^ m);
     }
 }
