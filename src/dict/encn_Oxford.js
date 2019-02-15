@@ -10,9 +10,9 @@ class encn_Oxford {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1) return '牛津英汉双解(baidu)';
-        if (locale.indexOf('TW') != -1) return '牛津英汉双解(baidu)';
-        return 'Oxford EN->CN Dictionary(baidu)';
+        if (locale.indexOf('CN') != -1) return '牛津英汉双解';
+        if (locale.indexOf('TW') != -1) return '牛津英汉双解';
+        return 'Oxford EN->CN Dictionary';
     }
 
 
@@ -36,8 +36,9 @@ class encn_Oxford {
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await api.deinflect(word);
-        let results = await Promise.all([this.findOxford(deflection), this.findOxford(word)]);
+        let deflection = await api.deinflect(word) || [];
+        let promises = [...deflection, word].map(x => this.findOxford(x))
+        let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
     }
 
@@ -52,8 +53,8 @@ class encn_Oxford {
                 if (def.text) definition += `<span class='tran'><span class='eng_tran'>${def.text}</span></span>`;
                 if (def.tag == 'id' || def.tag == 'pv')
                     definition += def.enText ? `<div class="idmphrase">${def.enText}</div>` : '';
-                if (def.tag == 'xrs')
-                    definition += `<span class='tran'><span class='eng_tran'>${def.data[0].data[0].text}</span></span>`;
+                //if (def.tag == 'xrs')
+                //    definition += `<span class='tran'><span class='eng_tran'>${def.data[0].data[0].text}</span></span>`;
                 if (def.tag == 'd' || def.tag == 'ud')
                     definition += pos + `<span class='tran'><span class='eng_tran'>${def.enText}</span><span class='chn_tran'>${def.chText}</span></span>`;
                 if (def.tag == 'x' && sentnum < maxexample) {
@@ -76,7 +77,6 @@ class encn_Oxford {
             this.gtk = common.gtk;
         }
 
-        //word = encodeURIComponent(word);
         let sign = hash(word, this.gtk);
         if (!sign) return;
 
@@ -94,7 +94,6 @@ class encn_Oxford {
                 let expression = data.trans_result.data[0].src;
                 let definition = data.trans_result.data[0].dst;
                 return [{ css, expression, definitions: [definition] }];
-
             } else {
                 return [];
             }
@@ -114,18 +113,30 @@ class encn_Oxford {
         audios[1] = `http://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(expression)}&spd=3&source=web`;
 
         if (!data.dict_result.oxford || !data.dict_result.oxford.entry) {
-            let definition = '<ul class="ec">';
-            for (const def of simple.word_means)
-                definition += `<li class="ec"><span class="ec_chn">${def}</span></li>`;
-            definition += '</ul>';
-            notes.push({
-                css: '<style>ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}</style>',
-                expression,
-                reading,
-                definitions: [definition],
-                audios
-            });
-            return notes;
+            if (symbols.parts && symbols.parts.length > 0) {
+                let definition = '<ul class="ec">';
+                for (const def of symbols.parts)
+                    if (def.means && def.means.length > 0) {
+                        let pos = def.part || def.part_name || '';
+                        pos = pos ? `<span class="pos">${pos}</span>`:'';
+                        definition += `<li class="ec">${pos}<span class="ec_chn">${def.means.join()}</span></li>`;
+                    }
+                definition += '</ul>';
+                let css = `<style>
+                ul.ec, li.ec {margin:0; padding:0;}
+                span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                </style>`;
+                notes.push({
+                    css,
+                    expression,
+                    reading,
+                    definitions: [definition],
+                    audios
+                });
+                return notes;
+            } else {
+                return []
+            }
         }
 
         let entries = data.dict_result.oxford.entry[0].data;

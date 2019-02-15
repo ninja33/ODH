@@ -8,8 +8,8 @@ class encn_Collins {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1) return '柯林斯英汉双解(youdao)';
-        if (locale.indexOf('TW') != -1) return '柯林斯英漢雙解(youdao)';
+        if (locale.indexOf('CN') != -1) return '柯林斯英汉双解';
+        if (locale.indexOf('TW') != -1) return '柯林斯英漢雙解';
         return 'Collins EN->CN Dictionary';
     }
 
@@ -162,12 +162,22 @@ class encn_Collins {
             audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
             let definition = '<ul class="ec">';
-            for (const defNode of defNodes)
-                definition += `<li class="ec"><span class="ec_chn">${T(defNode)}</span></li>`;
+            for (const defNode of defNodes){
+                let pos = '';
+                let def = T(defNode);
+                let match = /(^.+?\.)\s/gi.exec(def);
+                if (match && match.length > 1){
+                    pos = match[1];
+                    def = def.replace(pos, '');
+                }
+                pos = pos ? `<span class="pos">${pos}</span>`:'';
+                definition += `<li class="ec">${pos}<span class="ec_chn">${def}</span></li>`;
+            }
             definition += '</ul>';
             let css = `
                 <style>
-                    ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                    ul.ec, li.ec {margin:0; padding:0;}
                 </style>`;
             notes.push({
                 css,

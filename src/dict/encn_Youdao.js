@@ -35,7 +35,9 @@ class encn_Youdao {
             let data = await api.fetch(url);
             let parser = new DOMParser();
             doc = parser.parseFromString(data, 'text/html');
-            return getYoudao(doc);
+            let youdao = getYoudao(doc); //Combine Youdao Concise English-Chinese Dictionary to the end.
+            let ydtrans = getYDTrans(doc); //Combine Youdao Translation (if any) to the end.
+            return [].concat(youdao, ydtrans);
         } catch (err) {
             return [];
         }
@@ -43,12 +45,6 @@ class encn_Youdao {
         function getYoudao(doc) {
             let notes = [];
 
-            function T(node) {
-                if (!node)
-                    return '';
-                else
-                    return node.innerText.trim();
-            }
             //get Youdao EC data: check data availability
             let defNodes = doc.querySelectorAll('#phrsListTab .trans-container ul li');
             if (!defNodes || !defNodes.length) return notes;
@@ -68,12 +64,22 @@ class encn_Youdao {
             audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
             let definition = '<ul class="ec">';
-            for (const defNode of defNodes)
-                definition += `<li class="ec"><span class="ec_chn">${T(defNode)}</span></li>`;
+            for (const defNode of defNodes){
+                let pos = '';
+                let def = T(defNode);
+                let match = /(^.+?\.)\s/gi.exec(def);
+                if (match && match.length > 1){
+                    pos = match[1];
+                    def = def.replace(pos, '');
+                }
+                pos = pos ? `<span class="pos">${pos}</span>`:'';
+                definition += `<li class="ec">${pos}<span class="ec_chn">${def}</span></li>`;
+            }
             definition += '</ul>';
             let css = `
                 <style>
-                    ul.ec, li.ec {list-style: square inside; margin:0; padding:0;}
+                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                    ul.ec, li.ec {margin:0; padding:0;}
                 </style>`;
             notes.push({
                 css,
@@ -84,5 +90,35 @@ class encn_Youdao {
             });
             return notes;
         }
+
+        function getYDTrans(doc) {
+            let notes = [];
+
+            //get Youdao EC data: check data availability
+            let transNode = doc.querySelectorAll('#ydTrans .trans-container p')[1];
+            if (!transNode) return notes;
+
+            let definition = `${T(transNode)}`;
+            let css = `
+                <style>
+                    .odh-expression {
+                        font-size: 1em!important;
+                        font-weight: normal!important;
+                    }
+                </style>`;
+            notes.push({
+                css,
+                definitions: [definition],
+            });
+            return notes;
+        }
+
+        function T(node) {
+            if (!node)
+                return '';
+            else
+                return node.innerText.trim();
+        }
+
     }
 }
