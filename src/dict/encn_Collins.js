@@ -38,8 +38,8 @@ class encn_Collins {
             let parser = new DOMParser();
             doc = parser.parseFromString(data, 'text/html');
             let collins = getCollins(doc);
-            let youdao = getYoudao(doc); //Combine Youdao Concise English-Chinese Dictionary to the end.
-            let ydtrans = getYDTrans(doc); //Combine Youdao Translation (if any) to the end.
+            let youdao = collins.length ? [] : getYoudao(doc); //downgrade to Youdao Concise English-Chinese Dictionary if not Collins.
+            let ydtrans = collins.length || youdao.length ? [] : getYDTrans(doc); //downgrade to Youdao Translation (if any) to the end.
             return [].concat(collins, youdao, ydtrans);
         } catch (err) {
             return [];
@@ -162,21 +162,21 @@ class encn_Collins {
             audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
             let definition = '<ul class="ec">';
-            for (const defNode of defNodes){
+            for (const defNode of defNodes) {
                 let pos = '';
                 let def = T(defNode);
                 let match = /(^.+?\.)\s/gi.exec(def);
-                if (match && match.length > 1){
+                if (match && match.length > 1) {
                     pos = match[1];
                     def = def.replace(pos, '');
                 }
-                pos = pos ? `<span class="pos">${pos}</span>`:'';
+                pos = pos ? `<span class="pos">${pos}</span>` : '';
                 definition += `<li class="ec">${pos}<span class="ec_chn">${def}</span></li>`;
             }
             definition += '</ul>';
             let css = `
                 <style>
-                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#999; border-radius:3px;}
                     ul.ec, li.ec {margin:0; padding:0;}
                 </style>`;
             notes.push({

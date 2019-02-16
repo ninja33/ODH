@@ -26,9 +26,9 @@ class builtin_encn_Collins {
         if (word.toLowerCase() != word) {
             let lowercase = word.toLowerCase();
             let lowercase_stem = await api.deinflect(lowercase) || [];
-            list = [word, ...word_stem, lowercase, ...lowercase_stem];
+            list = [word, word_stem, lowercase, lowercase_stem];
         } else {
-            list = [word, ...word_stem];
+            list = [word, word_stem];
         }
         let promises = list.map((item) => this.findCollins(item));
         let results = await Promise.all(promises);

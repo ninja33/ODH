@@ -37,7 +37,7 @@ class encn_Oxford {
     async findTerm(word) {
         this.word = word;
         let deflection = await api.deinflect(word) || [];
-        let promises = [...deflection, word].map(x => this.findOxford(x))
+        let promises = [word, deflection].map(x => this.findOxford(x));
         let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
     }
@@ -84,108 +84,131 @@ class encn_Oxford {
         let data = '';
         try {
             data = JSON.parse(await api.fetch(dicturl));
+            let oxford = getOxford(data);
+            let bdsimple = oxford.length ? [] : getBDSimple(data); //Combine Youdao Concise English-Chinese Dictionary to the end.
+            let bstrans = oxford.length || bdsimple.length ? [] : getBDTrans(data); //Combine Youdao Translation (if any) to the end.
+            return [].concat(oxford, bdsimple, bstrans);
+
         } catch (err) {
             return [];
         }
 
-        if (!data.dict_result || data.dict_result.length == 0)
-            if (data.trans_result && data.trans_result.data.length > 0) {
+        function getBDTrans(data) {
+            try {
+                if (data.dict_result && data.dict_result.length != 0) return [];
+                if (!data.trans_result || data.trans_result.data.length < 1) return [];
                 let css = '<style>.odh-expression {font-size: 1em!important;font-weight: normal!important;}</style>';
                 let expression = data.trans_result.data[0].src;
                 let definition = data.trans_result.data[0].dst;
                 return [{ css, expression, definitions: [definition] }];
-            } else {
+            } catch (error) {
                 return [];
             }
+        }
 
+        function getBDSimple(data) {
+            try {
+                let simple = data.dict_result.simple_means;
+                let expression = simple.word_name;
+                if (!expression) return [];
 
-        let simple = data.dict_result.simple_means;
-        let expression = simple.word_name;
-        if (!expression) return [];
+                let symbols = simple.symbols[0];
+                let reading_uk = symbols.ph_en || '';
+                let reading_us = symbols.ph_am || '';
+                let reading = reading_uk && reading_us ? `uk[${reading_uk}] us[${reading_us}]` : '';
 
-        let symbols = simple.symbols[0];
-        let reading_uk = symbols.ph_en || '';
-        let reading_us = symbols.ph_am || '';
-        let reading = reading_uk && reading_us ? `uk[${reading_uk}] us[${reading_us}]` : '';
+                let audios = [];
+                audios[0] = `http://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
+                audios[1] = `http://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(expression)}&spd=3&source=web`;
 
-        let audios = [];
-        audios[0] = `http://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
-        audios[1] = `http://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(expression)}&spd=3&source=web`;
-
-        if (!data.dict_result.oxford || !data.dict_result.oxford.entry) {
-            if (symbols.parts && symbols.parts.length > 0) {
+                if (!symbols.parts || symbols.parts.length < 1) return [];
                 let definition = '<ul class="ec">';
                 for (const def of symbols.parts)
                     if (def.means && def.means.length > 0) {
                         let pos = def.part || def.part_name || '';
-                        pos = pos ? `<span class="pos">${pos}</span>`:'';
+                        pos = pos ? `<span class="pos">${pos}</span>` : '';
                         definition += `<li class="ec">${pos}<span class="ec_chn">${def.means.join()}</span></li>`;
                     }
                 definition += '</ul>';
                 let css = `<style>
                 ul.ec, li.ec {margin:0; padding:0;}
-                span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#999; border-radius:3px;}
                 </style>`;
-                notes.push({
-                    css,
-                    expression,
-                    reading,
-                    definitions: [definition],
-                    audios
-                });
+                notes.push({ css, expression, reading, definitions: [definition], audios });
                 return notes;
-            } else {
-                return []
+            } catch (error) {
+                return [];
             }
         }
 
-        let entries = data.dict_result.oxford.entry[0].data;
-        if (!entries) return [];
+        function getOxford(data) {
+            try {
+                let simple = data.dict_result.simple_means;
+                let expression = simple.word_name;
+                if (!expression) return [];
 
-        let definitions = [];
-        for (const entry of entries) {
-            if (entry.tag == 'p-g' || entry.tag == 'h-g') {
-                let pos = '';
-                for (const group of entry.data) {
-                    let definition = '';
-                    if (group.tag == 'p') {
-                        pos = `<span class='pos'>${group.p_text}</span>`;
-                    }
-                    if (group.tag == 'd') {
-                        definition += pos + `<span class='tran'><span class='eng_tran'>${group.enText}</span><span class='chn_tran'>${group.chText}</span></span>`;
-                        definitions.push(definition);
-                    }
+                let symbols = simple.symbols[0];
+                let reading_uk = symbols.ph_en || '';
+                let reading_us = symbols.ph_am || '';
+                let reading = reading_uk && reading_us ? `uk[${reading_uk}] us[${reading_us}]` : '';
 
-                    if (group.tag == 'n-g') {
-                        definition += buildDefinitionBlock(pos, group.data);
-                        definitions.push(definition);
-                    }
+                let audios = [];
+                audios[0] = `http://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
+                audios[1] = `http://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(expression)}&spd=3&source=web`;
+
+                let entries = data.dict_result.oxford.entry[0].data;
+                if (!entries) return [];
+
+                let definitions = [];
+                for (const entry of entries) {
+                    if (entry.tag == 'p-g' || entry.tag == 'h-g') {
+                        let pos = '';
+                        for (const group of entry.data) {
+                            let definition = '';
+                            if (group.tag == 'p') {
+                                pos = `<span class='pos'>${group.p_text}</span>`;
+                            }
+                            if (group.tag == 'd') {
+                                definition += pos + `<span class='tran'><span class='eng_tran'>${group.enText}</span><span class='chn_tran'>${group.chText}</span></span>`;
+                                definitions.push(definition);
+                            }
+
+                            if (group.tag == 'n-g') {
+                                definition += buildDefinitionBlock(pos, group.data);
+                                definitions.push(definition);
+                            }
 
 
-                    //if (group.tag == 'xrs') {
-                    //    definition += buildDefinitionBlock(pos, group.data[0].data);
-                    //    definitions.push(definition);
-                    //}
+                            //if (group.tag == 'xrs') {
+                            //    definition += buildDefinitionBlock(pos, group.data[0].data);
+                            //    definitions.push(definition);
+                            //}
 
-                    if (group.tag == 'sd-g' || group.tag == 'ids-g' || group.tag == 'pvs-g') {
-                        for (const item of group.data) {
-                            if (item.tag == 'sd') definition = `<div class="dis"><span class="eng_dis">${item.enText}</span><span class="chn_dis">${item.chText}</span></div>` + definition;
-                            let defs = [];
-                            if (item.tag == 'n-g' || item.tag == 'id-g' || item.tag == 'pv-g') defs = item.data;
-                            if (item.tag == 'vrs' || item.tag == 'xrs') defs = item.data[0].data;
-                            definition += buildDefinitionBlock(pos, defs);
+                            if (group.tag == 'sd-g' || group.tag == 'ids-g' || group.tag == 'pvs-g') {
+                                for (const item of group.data) {
+                                    if (item.tag == 'sd') definition = `<div class="dis"><span class="eng_dis">${item.enText}</span><span class="chn_dis">${item.chText}</span></div>` + definition;
+                                    let defs = [];
+                                    if (item.tag == 'n-g' || item.tag == 'id-g' || item.tag == 'pv-g') defs = item.data;
+                                    if (item.tag == 'vrs' || item.tag == 'xrs') defs = item.data[0].data;
+                                    definition += buildDefinitionBlock(pos, defs);
+                                }
+                                definitions.push(definition);
+                            }
                         }
-                        definitions.push(definition);
                     }
                 }
+                let css = encn_Oxford.renderCSS();
+                notes.push({ css, expression, reading, definitions, audios });
+                return notes;
+            } catch (error) {
+                return [];
             }
+
         }
-        let css = this.renderCSS();
-        notes.push({ css, expression, reading, definitions, audios });
-        return notes;
+
     }
 
-    renderCSS() {
+    static renderCSS() {
         let css = `
             <style>
                 div.dis {font-weight: bold;margin-bottom:3px;padding:0;}
