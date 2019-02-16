@@ -21,7 +21,7 @@ function sanitizeOptions(options) {
         url: '',
         audio: '',
 
-        sysscripts: 'builtin_encn_Collins,general_Makenotes,cncn_Zdic,encn_Collins',
+        sysscripts: 'builtin_encn_Collins, encn_Collins, encn_Oxford, encn_Cambridge, encn_Youdao, cncn_Zdic, general_Makenotes',
         udfscripts: '',
 
         dictSelected: '',

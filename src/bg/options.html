@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/tabmenu.css">
     <link rel="stylesheet" href="css/checkbox.css">
     <link rel="stylesheet" href="css/scriptlist.css">
@@ -16,7 +15,7 @@
         <div class="tabmenus">
             <a href="#" data-contentid="tab-1" class="tabmenu active" data-i18n="tabExtensionTitle">General</a>
             <a href="#" data-contentid="tab-2" class="tabmenu" data-i18n="tabServicesTitle">Anki</a>
-            <a href="#" data-contentid="tab-3" class="tabmenu" data-i18n="tabScriptsTitle">Scripts</a>
+            <!--<a href="#" data-contentid="tab-3" class="tabmenu hidden" data-i18n="tabScriptsTitle">Scripts</a>-->
         </div>
 
         <form>
@@ -178,15 +177,15 @@
         </form>
         <hr>
         <div class="grouppannel">
-            <div class="leftpanel" style="border-right:initial">
-                <label class="button" id="saveload" data-i18n="btnSaveLoad">Save and Load</label>
+            <div class="crosspanel">
+                <label class="button" id="saveload" data-i18n="btnSaveLoad">Save Options</label>
                 <div class="gifs">
                     <span class="gif" id="gif-load"><img src="/fg/img/load.gif" alt=""></span>
                     <span class="gif" id="gif-good"><img src="/fg/img/good.png" alt=""></span>
                     <span class="gif" id="gif-fail"><img src="/fg/img/fail.png" alt=""></span>
                 </div>
             </div>
-            <div class="rightpanel">
+            <div class="rightpanel hidden">
                 <label class="button" id="saveclose" data-i18n="btnSaveClose">Save and Close</label>
                 <label class="button" id="close" data-i18n="btnClose">Close</label>
             </div>

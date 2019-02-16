@@ -58,7 +58,7 @@
     "lstName": { "message": "脚本名称" },
     "lstDescription": { "message": "脚本描述" },
 
-    "btnSaveLoad": { "message": "加载脚本" },
+    "btnSaveLoad": { "message": "保存选项" },
     "btnSaveClose": { "message": "保存" },
     "btnClose": { "message": "退出" },
 

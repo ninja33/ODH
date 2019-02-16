@@ -40,7 +40,6 @@ class ODHBack {
     }
 
     setFrontendOptions(options) {
-
         switch (options.enabled) {
             case false:
                 chrome.browserAction.setBadgeText({ text: 'off' });
@@ -188,7 +187,8 @@ class ODHBack {
     }
 
     // Option page and Brower Action page requests handlers.
-    async opt_optionsChanged(options) {
+    async opt_optionsChanged(newoptions) {
+        let options = JSON.parse(JSON.stringify(newoptions)); //to remove obj reference from incoming option.
         this.setFrontendOptions(options);
 
         switch (options.services) {
@@ -215,9 +215,9 @@ class ODHBack {
 
         this.options = options;
         if (loadresults) {
-            let namelist = loadresults.map(x=>x.result.objectname);
+            let namelist = loadresults.map(x => x.result.objectname);
             this.options.dictSelected = namelist.includes(options.dictSelected) ? options.dictSelected : namelist[0];
-            this.options.dictNamelist = loadresults.map(x=>x.result);
+            this.options.dictNamelist = loadresults.map(x => x.result);
         }
         await this.setScriptsOptions(this.options);
         optionsSave(this.options);
@@ -245,7 +245,7 @@ class ODHBack {
     async loadScripts(list) {
         let promises = list.map((name) => this.loadScript(name));
         let results = await Promise.all(promises);
-        return results.filter(x => {if (x.result) return x.result;});
+        return results.filter(x => { if (x.result) return x.result; });
     }
 
     async loadScript(name) {

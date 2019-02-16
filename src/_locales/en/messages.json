@@ -60,7 +60,7 @@
     "lstName": { "message": "Name" },
     "lstDescription": { "message": "Description" },
 
-    "btnSaveLoad": { "message": "Load Scripts" },
+    "btnSaveLoad": { "message": "Save Options" },
     "btnSaveClose": { "message": "Save & Close" },
     "btnClose": { "message": "Close" },
 

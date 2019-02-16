@@ -58,7 +58,7 @@
     "lstName": { "message": "腳本名稱" },
     "lstDescription": { "message": "腳本描述" },
 
-    "btnSaveLoad": { "message": "加載腳本" },
+    "btnSaveLoad": { "message": "保存選項" },
     "btnSaveClose": { "message": "保存" },
     "btnClose": { "message": "退出" },
 

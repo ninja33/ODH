@@ -79,8 +79,8 @@
 
 @font-face {
 	font-family: "spell-icons";
-	src:url("chrome-extension://__MSG_@@extension_id__/fg/font/spell-icons.woff") format("woff"),
-	url("chrome-extension://__MSG_@@extension_id__/fg/font/spell-icons.ttf") format("truetype");
+	src:url("moz-extension://__MSG_@@extension_id__/fg/font/spell-icons.woff") format("woff"),
+	url("moz-extension://__MSG_@@extension_id__/fg/font/spell-icons.ttf") format("truetype");
 	font-weight: normal;
 	font-style: normal;
 

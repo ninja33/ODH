@@ -247,8 +247,10 @@ class ODHFront {
     popupHeader() {
         let root = chrome.runtime.getURL('/');
         return `
-        <html lang="en">
-            <head><meta charset="UTF-8"><title></title>
+        <!DOCTYPE html>
+            <html>
+            <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
                 <link rel="stylesheet" href="${root+'fg/css/frame.css'}">
                 <link rel="stylesheet" href="${root+'fg/css/spell.css'}">
             </head>

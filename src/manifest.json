@@ -36,9 +36,6 @@
         "page": "bg/options.html"
     },
     "permissions": ["webRequest", "webRequestBlocking", "file://*/*", "http://*/*", "https://*/*", "storage"],
-    "sandbox": {
-        "pages": ["bg/sandbox/sandbox.html"]
-    },
     "web_accessible_resources": [
         "fg/css/frame.css",
         "fg/css/spell.css",

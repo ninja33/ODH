@@ -1,3 +1,17 @@
+// Polyfill caretRangeFromPoint() using the newer caretPositionFromPoint()
+if (!document.caretRangeFromPoint){
+    document.caretRangeFromPoint = function polyfillcaretRangeFromPoint(x,y){
+        let range = document.createRange();
+        let position = document.caretPositionFromPoint(x,y);
+        if (!position) {
+            return null;
+        }
+        range.setStart(position.offsetNode, position.offset);
+        range.setEnd(position.offsetNode, position.offset);
+        return range;
+    };
+}
+
 class TextSourceRange {
     constructor(range) {
         this.rng = range;

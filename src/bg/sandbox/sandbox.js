@@ -1,7 +1,15 @@
-/* global api */
+/* global api, builtin_encn_Collins, general_Makenotes, cncn_Zdic, encn_Collins, encn_Cambridge, encn_Oxford, encn_Youdao*/
 class Sandbox {
     constructor() {
-        this.dicts = {};
+        this.dicts = {
+            builtin_encn_Collins: new builtin_encn_Collins(),
+            encn_Collins: new encn_Collins(),
+            encn_Cambridge: new encn_Cambridge(),
+            encn_Oxford: new encn_Oxford(),
+            encn_Youdao: new encn_Youdao(),
+            cncn_Zdic: new cncn_Zdic(),
+            general_Makenotes: new general_Makenotes()
+        };
         this.current = null;
         window.addEventListener('message', e => this.onBackendMessage(e));
     }
@@ -32,19 +40,13 @@ class Sandbox {
 
     async backend_loadScript(params) {
         let { name, callbackId } = params;
+        let script = null;
+        if (this.dicts.hasOwnProperty(name)) {
+            script = this.dicts[name];
+            let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : name;
+            api.callback({ name, result: { objectname: name, displayname } }, callbackId);
 
-        let scripttext = await api.fetch(this.buildScriptURL(name));
-        if (!scripttext) api.callback({ name, result: null }, callbackId);
-        try {
-            let SCRIPT = eval(`(${scripttext})`);
-            if (SCRIPT.name && typeof SCRIPT === 'function') {
-                let script = new SCRIPT();
-                //if (!this.dicts[SCRIPT.name]) 
-                this.dicts[SCRIPT.name] = script;
-                let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
-                api.callback({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
-            }
-        } catch (err) {
+        } else {
             api.callback({ name, result: null }, callbackId);
             return;
         }

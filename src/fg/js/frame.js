@@ -112,8 +112,11 @@ function api_setActionState(result) {
 }
 
 function onMouseWheel(e) {
-    document.querySelector('html').scrollTop -= e.wheelDeltaY / 3;
-    document.querySelector('body').scrollTop -= e.wheelDeltaY / 3;
+    let html = document.documentElement;
+    let body = document.body;
+    let startingY = window.pageYOffset || body.scrollTop || html.scrollTop;
+    var newY = startingY + e.deltaY*15;
+    window.scrollTo(0, newY);
     e.preventDefault();
 }
 
