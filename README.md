@@ -12,9 +12,11 @@ What might set this extension apart is that the users can grab online dictionary
 
 ## How to use
 
-[[Chrome Web Store Link](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)]
+- [Download from Chrome Web Store](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
 
-1. Install the extension first from Chrome Web store. Setup Option and turn on the extension if you want. (Details could be found under the option page section)
+- [Download from Firefox Addons Page](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
+
+1. Install the extension first from Chrome Web store or Firefox Addons page. Setup Option and turn on the extension if you want. (Details could be found under the option page section)
 2. Open any given web page, move mouse cursor to the word.
 3. Click-drag/Double click to select word, or press **Hotkey**(defined in options page) to automatically select word in case it's a link.
 4. A popup window will show up displaying the word definition.
