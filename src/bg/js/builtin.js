@@ -4,12 +4,20 @@ class Builtin {
     }
 
     async loadData() {
-        this.dicts['collins'] = await Builtin.loadData('data/collins.json');
+        let parts = [1,2,3,4,5,6,7,8,9];
+        let promises = parts.map(x=>Builtin.loadData(`data/part${x}.json`));
+        this.dicts['collins'] = await Promise.all(promises);
+
+        //this.dicts['collins'] = await Builtin.loadData('data/collins.json');
     }
 
     findTerm(dictname, term) {
         const dict = this.dicts[dictname];
-        return dict.hasOwnProperty(term) ? JSON.stringify(dict[term]):null;
+        for (const def of dict)
+            if (def.hasOwnProperty(term)) 
+                return JSON.stringify(def[term]);
+        
+        return null;
     }
 
     static async loadData(path) {
