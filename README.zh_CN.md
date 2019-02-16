@@ -10,9 +10,11 @@
 
 ## 使用说明
 
-[[Chrome商店插件链接](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)]
+- [Chrome插件下载链接](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
 
-1. 从Chrome商店下载安装插件后，从选项页激活插件。
+- [Firefox扩展下载链接](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
+
+1. 从Chrome商店或者Firefox扩展页下载安装插件后，从选项页激活插件。
 2. 打开任意想要取词翻译的网页，将鼠标放在单词上，拖动选择或者双击选择该单词。
 3. 如果单词本身是一个链接不宜点击，可按**取词热键**(在选项中设定)自动选取单词。
 4. 根据选项中所选词典，一个含释义的弹窗将会显示在上述选中单词的旁边。
