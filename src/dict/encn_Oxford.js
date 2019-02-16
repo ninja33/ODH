@@ -44,7 +44,7 @@ class encn_Oxford {
 
     async findOxford(word) {
         // helper function
-        function buildDefinitionBlock(pos, defs) {
+        function buildDefinitionBlock(exp, pos, defs) {
             if (!defs || !Array.isArray(defs) || defs.length < 0) return '';
             let definition = '';
             let sentence = '';
@@ -59,7 +59,8 @@ class encn_Oxford {
                     definition += pos + `<span class='tran'><span class='eng_tran'>${def.enText}</span><span class='chn_tran'>${def.chText}</span></span>`;
                 if (def.tag == 'x' && sentnum < maxexample) {
                     sentnum += 1;
-                    sentence += `<li class='sent'><span class='eng_sent'>${def.enText}</span><span class='chn_sent'>${def.chText}</span></li>`;
+                    let enText = def.enText.replace(RegExp(exp, 'gi'), `<b>${exp}</b>`);
+                    sentence += `<li class='sent'><span class='eng_sent'>${enText}</span><span class='chn_sent'>${def.chText}</span></li>`;
                 }
             }
             definition += sentence ? `<ul class="sents">${sentence}</ul>` : '';
@@ -126,13 +127,14 @@ class encn_Oxford {
                 for (const def of symbols.parts)
                     if (def.means && def.means.length > 0) {
                         let pos = def.part || def.part_name || '';
-                        pos = pos ? `<span class="pos">${pos}</span>` : '';
+                        pos = pos ? `<span class="pos simple">${pos}</span>` : '';
                         definition += `<li class="ec">${pos}<span class="ec_chn">${def.means.join()}</span></li>`;
                     }
                 definition += '</ul>';
                 let css = `<style>
                 ul.ec, li.ec {margin:0; padding:0;}
-                span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#999; border-radius:3px;}
+                span.simple {background-color: #999!important}
+                span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
                 </style>`;
                 notes.push({ css, expression, reading, definitions: [definition], audios });
                 return notes;
@@ -174,7 +176,7 @@ class encn_Oxford {
                             }
 
                             if (group.tag == 'n-g') {
-                                definition += buildDefinitionBlock(pos, group.data);
+                                definition += buildDefinitionBlock(expression, pos, group.data);
                                 definitions.push(definition);
                             }
 
@@ -190,7 +192,7 @@ class encn_Oxford {
                                     let defs = [];
                                     if (item.tag == 'n-g' || item.tag == 'id-g' || item.tag == 'pv-g') defs = item.data;
                                     if (item.tag == 'vrs' || item.tag == 'xrs') defs = item.data[0].data;
-                                    definition += buildDefinitionBlock(pos, defs);
+                                    definition += buildDefinitionBlock(expression, pos, defs);
                                 }
                                 definitions.push(definition);
                             }

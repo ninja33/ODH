@@ -245,17 +245,19 @@ class ODHFront {
     }
 
     popupHeader() {
+        let root = chrome.runtime.getURL('/');
         return `
         <html lang="en">
             <head><meta charset="UTF-8"><title></title>
-                <link rel="stylesheet" href="${chrome.runtime.getURL('fg/css/frame.css')}">
-                <link rel="stylesheet" href="${chrome.runtime.getURL('fg/css/spell.css')}">
+                <link rel="stylesheet" href="${root+'fg/css/frame.css'}">
+                <link rel="stylesheet" href="${root+'fg/css/spell.css'}">
             </head>
             <body style="margin:0px;">
             <div class="odh-notes">`;
     }
 
     popupFooter() {
+        let root = chrome.runtime.getURL('/');
         let services = this.options ? this.options.services : '';
         let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
         let button = chrome.runtime.getURL('fg/img/' + image);
@@ -265,15 +267,15 @@ class ODHFront {
             </div>
             <div class="icons hidden"">
                 <img id="plus" src="${button}"/>
-                <img id="load" src="${chrome.runtime.getURL('fg/img/load.gif')}"/>
-                <img id="good" src="${chrome.runtime.getURL('fg/img/good.png')}"/>
-                <img id="fail" src="${chrome.runtime.getURL('fg/img/fail.png')}"/>
-                <img id="play" src="${chrome.runtime.getURL('fg/img/play.png')}"/>
+                <img id="load" src="${root+'fg/img/load.gif'}"/>
+                <img id="good" src="${root+'fg/img/good.png'}"/>
+                <img id="fail" src="${root+'fg/img/fail.png'}"/>
+                <img id="play" src="${root+'fg/img/play.png'}"/>
                 <div id="context">${this.sentence}</div>
                 <div id="monolingual">${monolingual}</div>
                 </div>
-            <script src="${chrome.runtime.getURL('fg/js/spell.js')}"></script>
-            <script src="${chrome.runtime.getURL('fg/js/frame.js')}"></script>
+            <script src="${root+'fg/js/spell.js'}"></script>
+            <script src="${root+'fg/js/frame.js'}"></script>
             </body>
         </html>`;
     }

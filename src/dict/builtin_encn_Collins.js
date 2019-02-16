@@ -84,7 +84,7 @@ class builtin_encn_Collins {
                 for (const [idx, ex] of def.ext.entries()) {
                     if (idx > maxexample - 1) break; // to control only n example sentences defined in option.
                     let chn_sent = ex.ext_cn;
-                    let eng_sent = ex.ext_en;
+                    let eng_sent = ex.ext_en.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`);
                     definition += `<li class='sent'><span class='eng_sent'>${eng_sent}</span><span class='chn_sent'>${chn_sent}</span></li>`;
                 }
                 definition += '</ul>';

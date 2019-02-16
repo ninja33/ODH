@@ -170,13 +170,14 @@ class encn_Collins {
                     pos = match[1];
                     def = def.replace(pos, '');
                 }
-                pos = pos ? `<span class="pos">${pos}</span>` : '';
+                pos = pos ? `<span class="pos simple">${pos}</span>` : '';
                 definition += `<li class="ec">${pos}<span class="ec_chn">${def}</span></li>`;
             }
             definition += '</ul>';
             let css = `
                 <style>
-                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#999; border-radius:3px;}
+                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
+                    span.simple {background-color: #999!important}
                     ul.ec, li.ec {margin:0; padding:0;}
                 </style>`;
             notes.push({
