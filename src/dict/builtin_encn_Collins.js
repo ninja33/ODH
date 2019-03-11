@@ -75,7 +75,7 @@ class builtin_encn_Collins {
             let eng_tran = def.def_en;
             pos = pos ? `<span class="pos">${pos}</span>` : '';
             chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
-            eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
+            eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>` : '';
             definition = `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
 
             // make exmaple sentence segement
