@@ -1,4 +1,4 @@
-/* global Popup, TextSourceRange, selectedText, isInvalid, getSentence, isConnected, addNote, getTranslation, isValidElement*/
+/* global Popup, TextSourceRange, selectedText, isEmpty, getSentence, isConnected, addNote, getTranslation, isValidElement*/
 class ODHFront {
 
     constructor() {
@@ -96,7 +96,7 @@ class ODHFront {
         // reset selection timeout
         this.timeout = null;
         const expression = selectedText();
-        if (isInvalid(expression)) return;
+        if (isEmpty(expression)) return;
 
         let result = await getTranslation(expression);
         if (result == null || result.length == 0) return;
