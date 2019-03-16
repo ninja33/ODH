@@ -1,15 +1,18 @@
-// Polyfill caretRangeFromPoint() using the newer caretPositionFromPoint()
-if (!document.caretRangeFromPoint){
-    document.caretRangeFromPoint = function polyfillcaretRangeFromPoint(x,y){
-        let range = document.createRange();
-        let position = document.caretPositionFromPoint(x,y);
-        if (!position) {
+function rangeFromPoint(point) {
+    if (!document.caretRangeFromPoint) {
+        document.caretRangeFromPoint = (x, y) => {
+            const position = document.caretPositionFromPoint(x,y);
+            if (position && position.offsetNode && position.offsetNode.nodeType === Node.TEXT_NODE) {
+                const range = document.createRange();
+                range.setStart(position.offsetNode, position.offset);
+                range.setEnd(position.offsetNode, position.offset);
+                return range;
+            }
             return null;
-        }
-        range.setStart(position.offsetNode, position.offset);
-        range.setEnd(position.offsetNode, position.offset);
-        return range;
-    };
+        };
+    }
+
+    return document.caretRangeFromPoint(point.x, point.y);
 }
 
 class TextSourceRange {
