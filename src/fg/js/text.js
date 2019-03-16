@@ -195,6 +195,9 @@ function selectedText() {
 }
 
 function isValidElement() {
+    if (document.activeElement.getAttribute('contenteditable')) 
+        return false;
+
     const invalidTags = ['INPUT', 'TEXTAREA'];
     const nodeName = document.activeElement.nodeName.toUpperCase();
     if (invalidTags.includes(nodeName)) {
