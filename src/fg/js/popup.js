@@ -1,3 +1,5 @@
+/* global rangeFromPoint */
+
 class Popup {
     constructor() {
         this.popup = null;
@@ -54,7 +56,7 @@ class Popup {
     }
 
     getRangeRect(point) {
-        return document.caretRangeFromPoint(point.x, point.y).getBoundingClientRect();
+        return rangeFromPoint(point).getBoundingClientRect();
     }
 
     sendMessage(action, params, callback) {
