@@ -155,8 +155,8 @@ class encn_Oxford {
                 let reading = reading_uk && reading_us ? `uk[${reading_uk}] us[${reading_us}]` : '';
 
                 let audios = [];
-                audios[0] = `http://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
-                audios[1] = `http://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(expression)}&spd=3&source=web`;
+                audios[0] = `https://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
+                audios[1] = `https://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(expression)}&spd=3&source=web`;
 
                 let entries = data.dict_result.oxford.entry[0].data;
                 if (!entries) return [];
