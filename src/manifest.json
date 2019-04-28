@@ -52,5 +52,13 @@
         "fg/img/load.gif",
         "fg/img/fail.png",
         "fg/img/good.png"
-    ]
+    ],
+    "commands": {
+          "enabled": {
+            "suggested_key": {
+              "default": "Alt+Q"
+            },
+            "description": "__MSG_lblEnabled__"
+          }
+    }
 }

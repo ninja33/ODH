@@ -14,7 +14,7 @@ String.prototype.searchAll = function(search) {
     let regex = new RegExp(search, 'gi');
     let result = 0;
     let indices = [];
-    while ((result = regex.exec(target)) && result != "") {
+    while ((result = regex.exec(target)) && result != '') {
         indices.push(result.index);
     }
     return indices;

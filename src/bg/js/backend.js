@@ -22,8 +22,17 @@ class ODHBack {
         chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
         chrome.tabs.onCreated.addListener((tab) => this.onTabReady(tab.id));
         chrome.tabs.onUpdated.addListener(this.onTabReady.bind(this));
+        chrome.commands.onCommand.addListener((command)=>this.onCommand(command));
+
     }
 
+    onCommand(command) {
+        if (command != 'enabled') return;
+        this.options.enabled = !this.options.enabled;
+        this.setFrontendOptions(this.options);
+        optionsSave(this.options);
+    }         
+    
     onInstalled(details) {
         if (details.reason === 'install') {
             chrome.tabs.create({ url: chrome.extension.getURL('bg/guide.html') });
