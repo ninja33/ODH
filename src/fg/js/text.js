@@ -1,14 +1,20 @@
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 String.prototype.replaceAll = function(search, replacement) {
     let target = this;
+    search = escapeRegExp(search);
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
 String.prototype.searchAll = function(search) {
     let target = this;
-    var regex = new RegExp(search, 'gi');
+    search = escapeRegExp(search);
+    let regex = new RegExp(search, 'gi');
     let result = 0;
     let indices = [];
-    while ((result = regex.exec(target))) {
+    while ((result = regex.exec(target)) && result != '') {
         indices.push(result.index);
     }
     return indices;
@@ -195,8 +201,8 @@ function selectedText() {
 }
 
 function isValidElement() {
-    if (document.activeElement.getAttribute('contenteditable')) 
-        return false;
+    // if (document.activeElement.getAttribute('contenteditable')) 
+    //     return false;
 
     const invalidTags = ['INPUT', 'TEXTAREA'];
     const nodeName = document.activeElement.nodeName.toUpperCase();
