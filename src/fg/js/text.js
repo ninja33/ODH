@@ -119,7 +119,7 @@ function getPDFNode(node) {
     while ((previous = node.previousSibling)) {
         sentenceNodes.unshift(previous);
         backwardindex += 1;
-        if (previous.innerText.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
+        if (previous.textContent.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
             break;
         else
             node = previous;
@@ -129,7 +129,7 @@ function getPDFNode(node) {
     let next = null;
     while ((next = node.nextSibling)) {
         sentenceNodes.push(next);
-        if (node.nextSibling.innerText.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
+        if (node.nextSibling.textContent.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
             break;
         else
             node = next;
@@ -137,12 +137,12 @@ function getPDFNode(node) {
 
     let sentence = '';
     let offset = 0;
-    sentenceNodes = sentenceNodes.filter(x => x.innerText != '' || x.innerText != '-');
+    sentenceNodes = sentenceNodes.filter(x => x.textContent != '' || x.textContent != '-');
     for (const node of sentenceNodes) {
         if (backwardindex == 0)
             offset = sentence.length + window.getSelection().getRangeAt(0).startOffset;
         backwardindex -= 1;
-        let nodetext = node.innerText;
+        let nodetext = node.textContent;
         if (nodetext == '-')
             sentence = sentence.slice(0, sentence.length-1);
         else
@@ -177,7 +177,7 @@ function getSentence(sentenceNum) {
         node = getWebNode(node, upNum);
 
         if (node !== document) {
-            sentence = node.innerText;
+            sentence = node.textContent;
             offset = getSelectionOffset(node).start;
         }
     }
