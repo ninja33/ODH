@@ -122,4 +122,4 @@ function onMouseWheel(e) {
 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded, false);
 window.addEventListener('message', onMessage);
-window.addEventListener('wheel', onMouseWheel);
+window.addEventListener('wheel', onMouseWheel, {passive: false});
