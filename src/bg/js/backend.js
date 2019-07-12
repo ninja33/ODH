@@ -31,8 +31,8 @@ class ODHBack {
         this.options.enabled = !this.options.enabled;
         this.setFrontendOptions(this.options);
         optionsSave(this.options);
-    }         
-    
+    }
+
     onInstalled(details) {
         if (details.reason === 'install') {
             chrome.tabs.create({ url: chrome.extension.getURL('bg/guide.html') });
@@ -180,6 +180,11 @@ class ODHBack {
 
     async api_getTranslation(params) {
         let { expression, callback } = params;
+
+        // Fix https://github.com/ninja33/ODH/issues/97
+        if (expression.endsWith(".")) {
+            expression = expression.slice(0, -1);
+        }
 
         try {
             let result = await this.findTerm(expression);
