@@ -1,5 +1,5 @@
 /* global api */
-class enfr_Cambridge {
+class esen_Spanishdict {
     constructor(options) {
         this.options = options;
         this.maxexample = 2;
@@ -8,9 +8,9 @@ class enfr_Cambridge {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1) return '剑桥英法词典';
-        if (locale.indexOf('TW') != -1) return '剑桥英法词典';
-        return 'Cambridge EN->FR Dictionary';
+        if (locale.indexOf('CN') != -1) return 'spanishdict西英词典';
+        if (locale.indexOf('TW') != -1) return 'spanishdict西英词典';
+        return 'spanishdict.com ES->EN Dictionary';
     }
 
     setOptions(options) {
@@ -33,7 +33,7 @@ class enfr_Cambridge {
     removelinks(elem) {
         let tags = elem.querySelectorAll('a');
         tags.forEach(x => {
-            x.outerHTML = x.innerText;
+            x.outerHTML = `<span class='link'>${x.innerText}</span>`;
         });
 
         tags = elem.querySelectorAll('h2');
@@ -50,7 +50,7 @@ class enfr_Cambridge {
     async findCambridge(word) {
         if (!word) return null;
 
-        let base = 'https://dictionary.cambridge.org/search/english-french/direct/?q=';
+        let base = 'https://www.spanishdict.com/translate/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
@@ -61,16 +61,13 @@ class enfr_Cambridge {
             return null;
         }
 
-        let contents = doc.querySelectorAll('.pr .dictionary') || [];
+        let contents = doc.querySelectorAll('#dictionary-neodict-es') || [];
         if (contents.length == 0) return null;
 
         let definition = '';
         for (const content of contents) {
-            this.removeTags(content, '.extraexamps');
-            this.removeTags(content, '.definition-src');
-            this.removeTags(content, 'h2');
-            this.removeTags(content, '.d_br');
-            this.removeTags(content, '.freq.dfreq');
+            this.removeTags(content, '.bubble--3j0Ro');
+            this.removeTags(content, '.copyright--2TbNS');
             this.removelinks(content);
             definition += content.innerHTML;
         }
@@ -81,25 +78,36 @@ class enfr_Cambridge {
     renderCSS() {
         let css = `
             <style>
-            .entry-body__el{margin-bottom:10px;}
-            .head2{font-size: 1.2em;font-weight:bold;}
-            .pos-header{border-bottom: 1px solid;}
-            .head3 {display:none;}
-            .posgram {font-size: 0.8em;background-color: #959595;color: white;padding: 2px 5px;border-radius: 3px;}
-            .epp-xref::after {content: ")";}
-            .epp-xref::before {content: "(";}
-            .def-block, .phrase-block {
-                /*border: 1px solid;*/
-                /*border-color: #e5e6e9 #dfe0e4 #d0d1d5;*/
-                border-radius: 3px;
-                padding: 5px;
-                margin: 5px 0;
-                background-color: #f6f6f6;
+            .link { color: #1b85e5; }
+            .containerDesktop--2_5JC, .containerMobile--1sbY7 {
+                line-height: 24px;
+                font-family: -apple-system,system-ui,BlinkMacSystemFont,’Segoe UI’,Roboto,Ubuntu,’Helvetica Neue’,Arial,sans-serif;
             }
-            .phrase-block .def-block{border: initial;padding: initial;}
-            p.def-head {margin: auto;}
-            .phrase-head {vertical-align: middle;color: #1683ea;font-weight: bold;}
-            .trans {color: #5079bb;}
+            .entry--3tNUi { margin-top: 3px; }
+            .posContainer--2xs-U { margin-top: 3px; }
+            .inline--CJsLA { display: inline; }
+            .indent--FyTYr { margin-left: 5px; }
+            .context--1vspK { color: #58b40b; }
+            .order--1TgBO { font-weight: 700; }
+            .neodictTranslation--C2TP2 {
+                color: #1b85e5;
+                text-decoration: none;
+                font-weight: 700;
+            }
+            .dash--SIa20 {
+                display: inline-block;
+                border-top-color: #a6a6a6;
+                border-top-style: solid;
+                border-top-width: 1px;
+                width: 13px;
+                height: 4px;
+                margin-left: 8px;
+                margin-right: 10px;
+            }
+            .exampleDesktop--3n1hN {
+                color: #7b7b7b;
+                font-style: normal;
+            }
             </style>`;
 
         return css;

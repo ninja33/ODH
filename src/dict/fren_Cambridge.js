@@ -45,7 +45,7 @@ class fren_Cambridge {
             return [];
         }
 
-        let entries = doc.querySelectorAll('.cdo-dblclick-area .entry-body__el') || [];
+        let entries = doc.querySelectorAll('.pr .dictionary') || [];
         for (const entry of entries) {
             let definitions = [];
             let audios = [];
