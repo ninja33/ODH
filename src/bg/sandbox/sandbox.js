@@ -1,14 +1,47 @@
-/* global api, builtin_encn_Collins, general_Makenotes, cncn_Zdic, encn_Collins, encn_Cambridge, encn_Oxford, encn_Youdao*/
+/*  global api, 
+    builtin_encn_Collins,
+    general_Makenotes,
+    cncn_Zdic,
+    encn_Collins,
+    encn_Cambridge,
+    encn_Cambridge_tc,
+    encn_Oxford,
+    encn_Youdao,
+    encn_Baicizhan,
+    enen_Collins,
+    enfr_Cambridge,
+    enfr_Collins,
+    fren_Cambridge,
+    fren_Collins,
+    esen_Spanishdict,
+    decn_Eudict,
+    escn_Eudict,
+    frcn_Eudict,
+    rucn_Qianyi
+*/
+
 class Sandbox {
     constructor() {
         this.dicts = {
             builtin_encn_Collins: new builtin_encn_Collins(),
+            general_Makenotes: new general_Makenotes(),
+            cncn_Zdic: new cncn_Zdic(),
             encn_Collins: new encn_Collins(),
             encn_Cambridge: new encn_Cambridge(),
+            encn_Cambridge_tc: new encn_Cambridge_tc(),
             encn_Oxford: new encn_Oxford(),
             encn_Youdao: new encn_Youdao(),
-            cncn_Zdic: new cncn_Zdic(),
-            general_Makenotes: new general_Makenotes()
+            encn_Baicizhan: new encn_Baicizhan(),
+            enen_Collins: new enen_Collins(),
+            enfr_Cambridge: new enfr_Cambridge(),
+            enfr_Collins: new enfr_Collins(),
+            fren_Cambridge: new fren_Cambridge(),
+            fren_Collins: new fren_Collins(),
+            esen_Spanishdict: new esen_Spanishdict(),
+            decn_Eudict: new decn_Eudict(),
+            escn_Eudict: new escn_Eudict(),
+            frcn_Eudict: new frcn_Eudict(),
+            rucn_Qianyi: new rucn_Qianyi()
         };
         this.current = null;
         window.addEventListener('message', e => this.onBackendMessage(e));
