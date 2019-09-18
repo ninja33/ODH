@@ -88,9 +88,9 @@ function cutSentence(word, offset, sentence, sentenceNum) {
             }
         }
 
-        return arr.slice(start, end + 1).join('').replaceAll(word, '<b>' + word + '</b>');
+        return arr.slice(start, end + 1).join('').replaceAll(word, word.replace(/[^\s]+/g,'<b>\$&</b>'));
     } else {
-        return sentence.replace(word, '<b>' + word + '</b>');
+        return sentence.replace(word, word.replace(/[^\s]+/g,'<b>\$&</b>'));
     }
 }
 
