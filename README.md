@@ -28,22 +28,22 @@ What might set this extension apart is that the users can grab online dictionary
 The extension option page is divided in three sections.
 
 1. General Option: Turn on or turn off the extension if you want.
-2. Anki Options: Setup Anki deck/type name, and which fields you are going to put **word**, **reading**, **extrainfo**, **definiton**, **sentence**.
+2. Anki Options: Setup Anki deck/type name, and which fields you are going to put **word**, **reading**, **extrainfo**, **definition**, **sentence**.
 
 3. Dictionary Options:
 
-    - Dictioanry Scrip: Input your own script name here, and click <kbd>Load Script</kbd> button to load it.
-    - Selected Dictionary: Here will display all available dictionaries (buildin or loaded), and please select what current dictionary you want to use.
+    - Dictionary Script: Input your own script name here, and click <kbd>Load Script</kbd> button to load it.
+    - Selected Dictionary: Here will display all available dictionaries (builtin or loaded), and please select what current dictionary you want to use.
 
 ![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400_en.png)
 
 ## Development
 ### Getting started
-The source code on github does not contain offline dictionary and English word deformation table data. You can go to the chrome store to download, or use the chrome extension downloader to download the plugin's crx file and extract the dictionary JSON file.
+The source code on Github does not contain offline dictionary and English word deformation table data. You can go to the chrome store to download, or use the chrome extension downloader to download the plugin's crx file and extract the dictionary JSON file.
 
 ### Use existing script or develop by yourself
 
-1. You can use exsiting dictionary scripts in the [dictionaries list](doc/scriptlist.md)
+1. You can use existing dictionary scripts in the [dictionaries list](doc/scriptlist.md)
 2. Or develop the script by yourself based on [development guide](doc/development.md) 
 3. Or raise an [issue](https://github.com/ninja33/ODH/issues) here if you really need help.
 
@@ -51,5 +51,5 @@ The source code on github does not contain offline dictionary and English word d
 
 Welcome pull request if you want to enhance this extension, or put your own script in next release.
 
-- the exntension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
+- the extension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
 - the dictionary script will go to [/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)
