@@ -15,7 +15,7 @@ The dictionary script contains three parts:
 
 1. Form an online dictionary query url pattern. In most cases, it's like `http(s)://example.online.dictionary.com/search?word={your-word}`
 2. Perform online query by sending the url above, and get the web page content.
-3. You may need to use Element/CSS selector (`getEelement(s)byXXX or querySelector(All)`) to get the definition part you want.
+3. You may need to use Element/CSS selector (`getElement(s)byXXX or querySelector(All)`) to get the definition part you want.
 
 ### Coding convention
 
