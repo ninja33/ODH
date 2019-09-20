@@ -8,13 +8,13 @@ Details on the reasons for making this extension can be found in the [background
 
 ![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_001_640x400.png)
 
-What might set this extension apart is that users can grab online dictionary content with their own customized script (running under extension development mode). For development details, please check the [development guide](doc/development.md)
+What might set this extension apart is that users can grab online dictionary content with their own customized script (running under extension development mode). For development details, please check the [development guide](doc/development.md).
 
 ## How to use
 
-- [Download from Chrome Web Store](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
+- [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
 
-- [Download from Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
+- [Install from Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
 
 1. Install the extension first from Chrome Web Store or Firefox Add-ons, then configure and activate the extension on your demands in the options page.
 2. Open any webpage, move your mouse cursor over the word that you want to select and translate, drag and select/double-click/press **Hotkey** (defined in options page) to select the word or phrase.
@@ -47,8 +47,8 @@ The source code of this extension on Github does not contain offline dictionary 
 
 ### Use existing script or develop by yourself
 
-1. You can use existing dictionary scripts in the [dictionaries list](doc/scriptlist.md)
-2. Or develop the script by yourself based on [development guide](doc/development.md) 
+1. You can use existing dictionary scripts in the [dictionaries list](doc/scriptlist.md).
+2. Or develop the script by yourself based on [development guide](doc/development.md).
 3. Or open an [issue](https://github.com/ninja33/ODH/issues) in this repo if you really need help.
 
 ### Pull request
