@@ -2,7 +2,7 @@
 
 [[简体中文版](scriptlist.zh_CN.md)]
 
-Here is existing dictionaries script list. You can copy script name in name column and paste it in option page **Dicts. Script** field. Click <kbd>Load Script</kbd> button to load.
+Here is a list of the existing dictionary scripts. You can copy the script name in the name column, paste it in the **Dicts. Script** field at the options page, and click <kbd>Load Script</kbd> button to load.
 
 ## Target Language: Chinese
 
