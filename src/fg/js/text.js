@@ -46,7 +46,7 @@ function isInvalid(word) {
 function cutSentence(word, offset, sentence, sentenceNum) {
 
     if (sentenceNum > 0) {
-        let arr = sentence.replace(/\n/g,'').match(/((?![.!?;:。！？]['"’”]?\s).)*[.!?;:。！？]['"’”]?(\s|.*$)/g);
+        let arr = sentence.match(/((?![.!?;:。！？]['"’”]?\s).|\n)*[.!?;:。！？]['"’”]?(\s|.*$)/g);
         if (arr && arr.length > 1) {
             arr = arr.reduceRight((accumulation, current) => {
                 if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
