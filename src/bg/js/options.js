@@ -49,6 +49,12 @@ async function updateAnkiStatus(options) {
         populateAnkiFields(options);
         $('#services-status').text(chrome.i18n.getMessage('msgSuccess', [version]));
         $('#anki-options').show();
+        if (options.services == 'ankiconnect')
+            $('#duplicate-option').show();
+        else {
+            $('#duplicate-option').hide();
+    }
+
     }
 }
 
@@ -145,6 +151,8 @@ async function onSaveClicked(e) {
     options.services = $('#services').val();
     options.id = $('#id').val();
     options.password = $('#password').val();
+    
+    options.duplicate = $('#duplicate').val();
 
     let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
     fields.forEach(field => {
@@ -187,6 +195,8 @@ async function onReady() {
     $('#services').val(options.services);
     $('#id').val(options.id);
     $('#password').val(options.password);
+
+    $('#duplicate').val(options.duplicate);
 
     let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
     fields.forEach(field => {

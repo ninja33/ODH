@@ -39,6 +39,10 @@
         "placeholders": { "information": { "content": "$1" } }
     },
 
+    "lblAllowDuplicate": { "message": "重複製卡" },
+    "selNotAllowed": { "message": "不允許" },
+    "selAllowed": { "message": "允許" },
+    
     "lblDeckname": { "message": "牌組名稱" },
     "lblTypename": { "message": "模板名稱" },
     "lblExpression": { "message": "單詞詞組" },
