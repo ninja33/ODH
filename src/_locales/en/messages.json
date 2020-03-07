@@ -41,6 +41,10 @@
 
     "lblAnkiStatus": { "message": "Anki Status" },
 
+    "lblAllowDuplicate": { "message": "Allow Duplicate" },
+    "selNotAllowed": { "message": "Not Allowed" },
+    "selAllowed": { "message": "Allowed" },
+
     "lblDeckname": { "message": "Deck Name" },
     "lblTypename": { "message": "Type Name" },
     "lblExpression": { "message": "Expression" },
