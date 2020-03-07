@@ -35,7 +35,7 @@
     "options_ui": {
         "page": "bg/options.html"
     },
-    "permissions": ["webRequest", "webRequestBlocking", "activeTab", "storage"],
+    "permissions": ["webRequest", "webRequestBlocking", "activeTab", "https://ankiweb.net/*", "https://ankiuser.net/*", "storage"],
     "sandbox": {
         "pages": ["bg/sandbox/sandbox.html"]
     },
