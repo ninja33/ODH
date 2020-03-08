@@ -63,6 +63,10 @@ class ODHBack {
         });
     }
 
+    checkLastError(){
+        // NOP
+    }
+
     tabInvokeAll(action, params) {
         chrome.tabs.query({}, (tabs) => {
             for (let tab of tabs) {
@@ -72,7 +76,8 @@ class ODHBack {
     }
 
     tabInvoke(tabId, action, params) {
-        chrome.tabs.sendMessage(tabId, { action, params }, () => null);
+        const callback = () => this.checkLastError(chrome.runtime.lastError);
+        chrome.tabs.sendMessage(tabId, { action, params }, callback);
     }
 
     formatNote(notedef) {
