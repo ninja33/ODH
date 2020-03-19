@@ -7,7 +7,7 @@ class Ankiweb {
         chrome.webRequest.onBeforeSendHeaders.addListener(
             this.rewriteHeader, 
             {urls: ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save']}, 
-            ['requestHeaders', 'blocking', 'extraHeaders']
+            ['requestHeaders', 'blocking']
         );
     }
 
