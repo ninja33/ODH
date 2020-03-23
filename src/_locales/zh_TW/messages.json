@@ -68,6 +68,7 @@
 
     "general_Makenotes": { "message": "通用筆記摘錄腳本" },
     "builtin_encn_Collins": { "message": "柯林斯英漢詞典(內置)" },
+    "builtin_enen_Collins": { "message": "柯林斯英英詞典(內置)" },
     "builtin_encn_Oxford": { "message": "牛津英漢詞典(內置)" },
     "cncn_Zdic": { "message": "漢典漢語詞典" },
     "encn_Baicizhan": { "message": "百詞斬英漢圖解詞典" },
@@ -76,7 +77,6 @@
     "encn_Collins": { "message": "柯林斯英漢雙解詞典" },
     "encn_Oxford": { "message": "牛津英漢雙解詞典" },
     "encn_Youdao": { "message": "有道簡明英漢詞典" },
-    "enen_Collins": { "message": "柯林斯英英詞典" },
     "enen_LDOCE6MDX": { "message": "朗文6英英詞典(mdx)" },
     "enen_UrbanDict": { "message": "Urban英英俚語詞典" },
     "enfr_Cambridge": { "message": "劍橋英法詞典" },

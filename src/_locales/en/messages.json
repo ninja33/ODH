@@ -70,6 +70,7 @@
 
     "general_Makenotes": { "message": "Make notes for general purpose" },
     "builtin_encn_Collins": { "message": "Collins EN->ZH Dict.(builtin)" },
+    "builtin_enen_Collins": { "message": "Collins EN->EN Dict.(builtin)" },
     "builtin_encn_Oxford": { "message": "Oxford EN->ZH Dict.(builtin)" },
     "cncn_Zdic": { "message": "Zdic Chinese Dictionary" },
     "encn_Baicizhan": { "message": "Baicizhan EN->CN Dictionary" },
@@ -78,7 +79,6 @@
     "encn_Collins": { "message": "Collins EN->CN Dictionary" },
     "encn_Oxford": { "message": "Oxford EN->CN Dictionary" },
     "encn_Youdao": { "message": "Youdao Concise EN->CN Dictionary" },
-    "enen_Collins": { "message": "Collins EN->EN Dictionary" },
     "enen_LDOCE6MDX": { "message": "LDOCE6 EN->CN Dict.(MDX version)" },
     "enen_UrbanDict": { "message": "Urban EN->EN Dictionary" },
     "enfr_Cambridge": { "message": "Cambridge EN->FR Dictionary" },
