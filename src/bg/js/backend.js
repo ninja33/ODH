@@ -22,7 +22,7 @@ class ODHBack {
         chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
         chrome.tabs.onCreated.addListener((tab) => this.onTabReady(tab.id));
         chrome.tabs.onUpdated.addListener(this.onTabReady.bind(this));
-        chrome.commands.onCommand.addListener((command)=>this.onCommand(command));
+        chrome.commands.onCommand.addListener((command) => this.onCommand(command));
 
     }
 
@@ -63,6 +63,10 @@ class ODHBack {
         });
     }
 
+    checkLastError(){
+        // NOP
+    }
+
     tabInvokeAll(action, params) {
         chrome.tabs.query({}, (tabs) => {
             for (let tab of tabs) {
@@ -72,7 +76,8 @@ class ODHBack {
     }
 
     tabInvoke(tabId, action, params) {
-        chrome.tabs.sendMessage(tabId, { action, params }, () => null);
+        const callback = () => this.checkLastError(chrome.runtime.lastError);
+        chrome.tabs.sendMessage(tabId, { action, params }, callback);
     }
 
     formatNote(notedef) {
@@ -83,6 +88,7 @@ class ODHBack {
         let note = {
             deckName: options.deckname,
             modelName: options.typename,
+            options: { allowDuplicate: options.duplicate == '1' ? true : false },
             fields: {},
             tags: ['ODH']
         };
@@ -190,15 +196,22 @@ class ODHBack {
             let result = await this.findTerm(expression);
             callback(result);
         } catch (err) {
+            console.error(err);
             callback(null);
         }
     }
 
-    api_addNote(params) {
+    async api_addNote(params) {
         let { notedef, callback } = params;
 
         const note = this.formatNote(notedef);
-        this.target.addNote(note).then(result => { callback(result); });
+        try {
+            let result = await this.target.addNote(note);
+            callback(result);
+        } catch (err) {
+            console.error(err);
+            callback(null);
+        }
     }
 
     // Option page and Brower Action page requests handlers.
@@ -229,9 +242,9 @@ class ODHBack {
 
         this.options = options;
         if (loadresults) {
-            let namelist = loadresults.map(x=>x.result.objectname);
+            let namelist = loadresults.map(x => x.result.objectname);
             this.options.dictSelected = namelist.includes(options.dictSelected) ? options.dictSelected : namelist[0];
-            this.options.dictNamelist = loadresults.map(x=>x.result);
+            this.options.dictNamelist = loadresults.map(x => x.result);
         }
         await this.setScriptsOptions(this.options);
         optionsSave(this.options);
@@ -259,7 +272,7 @@ class ODHBack {
     async loadScripts(list) {
         let promises = list.map((name) => this.loadScript(name));
         let results = await Promise.all(promises);
-        return results.filter(x => {if (x.result) return x.result;});
+        return results.filter(x => { if (x.result) return x.result; });
     }
 
     async loadScript(name) {

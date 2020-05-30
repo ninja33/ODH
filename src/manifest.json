@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "__MSG_appName__",
-    "version": "0.8.7",
+    "version": "0.8.9",
     "default_locale": "en",
     "description": "__MSG_appDesc__",
     "icons": {
@@ -35,7 +35,7 @@
     "options_ui": {
         "page": "bg/options.html"
     },
-    "permissions": ["webRequest", "webRequestBlocking", "file://*/*", "http://*/*", "https://*/*", "storage"],
+    "permissions": ["webRequest", "webRequestBlocking", "activeTab", "https://ankiweb.net/*", "https://ankiuser.net/*", "storage"],
     "sandbox": {
         "pages": ["bg/sandbox/sandbox.html"]
     },
