@@ -27,6 +27,7 @@
             "fg/js/popup.js",
             "fg/js/range.js",
             "fg/js/text.js",
+            "lib/sanitize-html-es2015.js",
             "fg/js/frontend.js"
         ],
         "css": ["fg/css/client.css"]
