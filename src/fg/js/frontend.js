@@ -1,4 +1,17 @@
 /* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isConnected, addNote, getTranslation, isValidElement*/
+
+const defaults = {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+    allowedAttributes: {
+        a: ['href', 'name', 'target'],
+        // We don't currently allow img itself by default, but this
+        // would make sense if we did. You could add srcset here,
+        // and if you do the URL is checked for safety
+        '*': ['style'],
+        img: ['src']
+    }
+  }
+  
 class ODHFront {
 
     constructor() {
@@ -18,6 +31,7 @@ class ODHFront {
 
         window.addEventListener('mousemove', e => this.onMouseMove(e));
         window.addEventListener('mousedown', e => this.onMouseDown(e));
+        // TODO
         window.addEventListener('dblclick', e => this.onDoubleClick(e));
         window.addEventListener('keydown', e => this.onKeyDown(e));
 
@@ -141,7 +155,7 @@ class ODHFront {
         let notedef = Object.assign({}, this.notes[nindex]);
         notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
         notedef.definitions = this.notes[nindex].css + this.notes[nindex].definitions.join('<hr>');
-        notedef.sentence = context;
+        notedef.sentence = sanitizeHtml(context, defaults);
         notedef.url = window.location.href;
         let response = await addNote(notedef);
         this.popup.sendMessage('setActionState', { response, params });
