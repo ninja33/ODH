@@ -112,6 +112,10 @@ class esen_Spanishdict {
             ._1TNZVHD7, .DuSbDKLr, _3_OedT5w, button {
                 display: none;
             }
+
+            button {
+                display: none;
+            }
             </style>`;
 
         return css;
