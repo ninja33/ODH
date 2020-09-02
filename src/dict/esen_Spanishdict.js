@@ -116,6 +116,11 @@ class esen_Spanishdict {
             button {
                 display: none;
             }
+
+            .DuSbDKLr._3_OedT5w {
+                display: none;
+            }
+
             </style>`;
 
         return css;
