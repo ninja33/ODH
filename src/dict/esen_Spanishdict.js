@@ -109,7 +109,7 @@ class esen_Spanishdict {
                 font-style: normal;
             }
 
-            ._1TNZVHD7, ._3_OedT5w {
+            ._1TNZVHD7, .DuSbDKLr {
                 display: none;
             }
             </style>`;
