@@ -1,5 +1,5 @@
 /* global api */
-class encn_Youdao {
+class envi_glosbe {
     constructor() {
         this.options = null;
         this.maxexample = 2;
@@ -28,7 +28,7 @@ class encn_Youdao {
     async findYoudao(word) {
         if (!word) return [];
 
-        let base = 'http://dict.youdao.com/w/';
+        let base = 'https://glosbe.com/en/vi/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
