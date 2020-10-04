@@ -1,5 +1,5 @@
 /* global api */
-class encn_Cambridge {
+class enen_Cambridge {
     constructor(options) {
         this.options = options;
         this.maxexample = 2;
@@ -10,7 +10,7 @@ class encn_Cambridge {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1) return '剑桥英汉双解(简体)';
         if (locale.indexOf('TW') != -1) return '劍橋英漢雙解(簡體)';
-        return 'Cambridge EN->CN Dictionary (SC)';
+        return 'Cambridge EN->EN Dictionary (SC)';
     }
 
     setOptions(options) {
