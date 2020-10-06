@@ -1,5 +1,5 @@
 /* global api */
-class enen_Collins {
+class enen_Longman {
     constructor(options) {
         this.options = options;
         this.maxexample = 2;
@@ -10,7 +10,7 @@ class enen_Collins {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1) return '柯林斯英英词典';
         if (locale.indexOf('TW') != -1) return '柯林斯英英词典';
-        return 'Collins English Dictionary';
+        return 'Longman English Dictionary';
     }
 
 
@@ -26,7 +26,7 @@ class enen_Collins {
         return [].concat(...results).filter(x => x);
     }
 
-    async findCollins(word) {
+    async findLongman(word) {
         let notes = [];
         if (!word) return notes; // return empty notes
 
@@ -37,7 +37,7 @@ class enen_Collins {
                 return node.innerText.trim();
         }
 
-        let base = 'https://www.collinsdictionary.com/dictionary/english/';
+        let base = 'https://www.ldoceonline.com/dictionary/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
