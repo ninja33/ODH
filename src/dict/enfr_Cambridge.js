@@ -1,5 +1,5 @@
 /* global api */
-class enfr_Cambridge {
+class envi_Cambridge {
     constructor(options) {
         this.options = options;
         this.maxexample = 2;
@@ -10,7 +10,7 @@ class enfr_Cambridge {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1) return '剑桥英法词典';
         if (locale.indexOf('TW') != -1) return '剑桥英法词典';
-        return 'Cambridge EN->FR Dictionary';
+        return 'Cambridge EN->VI Dictionary';
     }
 
     setOptions(options) {
@@ -50,7 +50,7 @@ class enfr_Cambridge {
     async findCambridge(word) {
         if (!word) return null;
 
-        let base = 'https://dictionary.cambridge.org/search/english-french/direct/?q=';
+        let base = 'https://dictionary.cambridge.org/search/english-vietnamese/direct/?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
