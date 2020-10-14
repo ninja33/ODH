@@ -1,5 +1,5 @@
 /* global api */
-class envi_Cambridge {
+class envi_Glosbe {
     constructor(options) {
         this.options = options;
         this.maxexample = 2;
@@ -10,7 +10,7 @@ class envi_Cambridge {
         let locale = await api.locale();
         if (locale.indexOf('CN') != -1) return '剑桥英法词典';
         if (locale.indexOf('TW') != -1) return '剑桥英法词典';
-        return 'Cambridge EN->VI Dictionary';
+        return 'Glosbe EN->VI Dictionary';
     }
 
     setOptions(options) {
@@ -20,7 +20,7 @@ class envi_Cambridge {
 
     async findTerm(word) {
         this.word = word;
-        return await this.findCambridge(word);
+        return await this.findGlosbe(word);
     }
 
     removeTags(elem, name) {
@@ -50,7 +50,7 @@ class envi_Cambridge {
     async findCambridge(word) {
         if (!word) return null;
 
-        let base = 'https://dictionary.cambridge.org/search/english-vietnamese/direct/?q=';
+        let base = 'https://vi.glosbe.com/en/vi/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
