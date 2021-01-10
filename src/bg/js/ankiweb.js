@@ -5,8 +5,8 @@ class Ankiweb {
         this.id = '';
         this.password = '';
         chrome.webRequest.onBeforeSendHeaders.addListener(
-            this.rewriteHeader, 
-            {urls: ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save']}, 
+            this.rewriteHeader,
+            { urls: ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save'] },
             ['requestHeaders', 'blocking', 'extraHeaders']
         );
     }
@@ -50,21 +50,21 @@ class Ankiweb {
                 let title = doc.querySelectorAll('h1');
                 if (!title.length) return Promise.reject(false);
                 switch (title[0].innerText) {
-                case 'Add':
-                    resolve({
-                        action: 'edit',
-                        data: this.parseData(result)
-                    });
-                    break;
-                case 'Log in':
-                    resolve({
-                        action: 'login',
-                        data: doc.querySelector('input[name=csrf_token]').getAttribute('value')
-                        //data:$('input[name=csrf_token]', $(result)).val()
-                    });
-                    break;
-                default:
-                    reject(false);
+                    case 'Add':
+                        resolve({
+                            action: 'edit',
+                            data: this.parseData(result)
+                        });
+                        break;
+                    case 'Log in':
+                        resolve({
+                            action: 'login',
+                            data: doc.querySelector('input[name=csrf_token]').getAttribute('value')
+                            //data:$('input[name=csrf_token]', $(result)).val()
+                        });
+                        break;
+                    default:
+                        reject(false);
                 }
             });
         });
@@ -151,9 +151,8 @@ class Ankiweb {
 
     parseData(response) {
         //return {deck:'default', model:'basic'};
-        const token = /editor\.csrf_token2 = \'(.*)\';/.exec(response)[1];
-        const models = JSON.parse(/editor\.models = (.*}]);/.exec(response)[1]); //[0] = the matching text, [1] = first capture group (what's inside parentheses)
-        const decks = JSON.parse(/editor\.decks = (.*}});/.exec(response)[1]);
+        const token = /anki\.Editor\('(.*)'/.exec(response)[1];
+        const [models, decks, curModelID] = JSON.parse('[' + /new anki\.EditorAddMode\((.*)\);/.exec(response)[1] + ']');
 
         let decknames = [];
         let modelnames = [];
