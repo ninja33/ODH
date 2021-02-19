@@ -20,7 +20,7 @@ class encn_Cambridge {
 
     async findTerm(word) {
         this.word = word;
-        let promises = [this.findCambridge(word), this.findYoudao(word)];
+        let promises = [this.findCambridge(word)];
         let results = await Promise.all(promises);
         return [].concat(...results).filter(x => x);
     }
@@ -48,26 +48,31 @@ class encn_Cambridge {
         }
 
         let entries = doc.querySelectorAll('.pr .entry-body__el') || [];
-        for (const entry of entries) {
-            let definitions = [];
-            let audios = [];
+        let expression = '';
+        let reading = '';
+        let definitions = [];
+        let audios = [];
+        for (const [index, entry] of entries.entries()) {
+            if (index === 0) {
+                expression = T(entry.querySelector('.headword'));
+                let readings_uk = entry.querySelectorAll('.uk .pron .ipa');
+                let readings_us = entry.querySelectorAll('.us .pron .ipa');
+                if (readings_uk) {
+                    reading += `UK[${T(readings_uk[0])}] `;
+                }
+                if (readings_us){
+                    reading += `US[${T(readings_us[0])}] `;
+                }
 
-            let expression = T(entry.querySelector('.headword'));
-            let reading = '';
-            let readings = entry.querySelectorAll('.pron .ipa');
-            if (readings) {
-                let reading_uk = T(readings[0]);
-                let reading_us = T(readings[1]);
-                reading = (reading_uk || reading_us) ? `UK[${reading_uk}] US[${reading_us}] ` : '';
+                audios[0] = entry.querySelector(".uk.dpron-i source");
+                audios[0] = audios[0] ? 'https://dictionary.cambridge.org' + audios[0].getAttribute('src') : '';
+                //audios[0] = audios[0].replace('https', 'http');
+                audios[1] = entry.querySelector(".us.dpron-i source");
+                audios[1] = audios[1] ? 'https://dictionary.cambridge.org' + audios[1].getAttribute('src') : '';
+                //audios[1] = audios[1].replace('https', 'http');
             }
             let pos = T(entry.querySelector('.posgram'));
             pos = pos ? `<span class='pos'>${pos}</span>` : '';
-            audios[0] = entry.querySelector(".uk.dpron-i source");
-            audios[0] = audios[0] ? 'https://dictionary.cambridge.org' + audios[0].getAttribute('src') : '';
-            //audios[0] = audios[0].replace('https', 'http');
-            audios[1] = entry.querySelector(".us.dpron-i source");
-            audios[1] = audios[1] ? 'https://dictionary.cambridge.org' + audios[1].getAttribute('src') : '';
-            //audios[1] = audios[1].replace('https', 'http');
 
             let sensbodys = entry.querySelectorAll('.sense-body') || [];
             for (const sensbody of sensbodys) {
@@ -112,113 +117,16 @@ class encn_Cambridge {
                     }
                 }
             }
-            let css = this.renderCSS();
-            notes.push({
-                css,
-                expression,
-                reading,
-                definitions,
-                audios
-            });
         }
+        let css = this.renderCSS();
+        notes.push({
+            css,
+            expression,
+            reading,
+            definitions,
+            audios
+        });
         return notes;
-    }
-
-    async findYoudao(word) {
-        if (!word) return [];
-
-        let base = 'http://dict.youdao.com/w/';
-        let url = base + encodeURIComponent(word);
-        let doc = '';
-        try {
-            let data = await api.fetch(url);
-            let parser = new DOMParser();
-            doc = parser.parseFromString(data, 'text/html');
-            let youdao = getYoudao(doc); //Combine Youdao Concise English-Chinese Dictionary to the end.
-            let ydtrans = getYDTrans(doc); //Combine Youdao Translation (if any) to the end.
-            return [].concat(youdao, ydtrans);
-        } catch (err) {
-            return [];
-        }
-
-        function getYoudao(doc) {
-            let notes = [];
-
-            //get Youdao EC data: check data availability
-            let defNodes = doc.querySelectorAll('#phrsListTab .trans-container ul li');
-            if (!defNodes || !defNodes.length) return notes;
-
-            //get headword and phonetic
-            let expression = T(doc.querySelector('#phrsListTab .wordbook-js .keyword')); //headword
-            let reading = '';
-            let readings = doc.querySelectorAll('#phrsListTab .wordbook-js .pronounce');
-            if (readings) {
-                let reading_uk = T(readings[0]);
-                let reading_us = T(readings[1]);
-                reading = (reading_uk || reading_us) ? `${reading_uk} ${reading_us}` : '';
-            }
-
-            let audios = [];
-            audios[0] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-            audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
-
-            let definition = '<ul class="ec">';
-            for (const defNode of defNodes){
-                let pos = '';
-                let def = T(defNode);
-                let match = /(^.+?\.)\s/gi.exec(def);
-                if (match && match.length > 1){
-                    pos = match[1];
-                    def = def.replace(pos, '');
-                }
-                pos = pos ? `<span class="pos simple">${pos}</span>`:'';
-                definition += `<li class="ec">${pos}<span class="ec_chn">${def}</span></li>`;
-            }
-            definition += '</ul>';
-            let css = `
-                <style>
-                    span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
-                    span.simple {background-color: #999!important}
-                    ul.ec, li.ec {margin:0; padding:0;}
-                </style>`;
-            notes.push({
-                css,
-                expression,
-                reading,
-                definitions: [definition],
-                audios
-            });
-            return notes;
-        }
-
-        function getYDTrans(doc) {
-            let notes = [];
-
-            //get Youdao EC data: check data availability
-            let transNode = doc.querySelectorAll('#ydTrans .trans-container p')[1];
-            if (!transNode) return notes;
-
-            let definition = `${T(transNode)}`;
-            let css = `
-                <style>
-                    .odh-expression {
-                        font-size: 1em!important;
-                        font-weight: normal!important;
-                    }
-                </style>`;
-            notes.push({
-                css,
-                definitions: [definition],
-            });
-            return notes;
-        }
-
-        function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
-        }
     }
 
     renderCSS() {
