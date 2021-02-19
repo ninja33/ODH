@@ -53,24 +53,29 @@ class encn_Cambridge {
         let definitions = [];
         let audios = [];
         for (const [index, entry] of entries.entries()) {
+            let reading_entry = ''
+            let reading_uk = entry.querySelectorAll('.uk .pron .ipa');
+            let reading_us = entry.querySelectorAll('.us .pron .ipa');
+            if (reading_uk) {
+                reading_entry += `UK /<span class="phonetic">${T(reading_uk[0])}</span>/ `;
+            }
+            if (reading_us) {
+                reading_entry += `US /<span class="phonetic">${T(reading_us[0])}</span>/ `;
+            }
+
             if (index === 0) {
                 expression = T(entry.querySelector('.headword'));
-                let readings_uk = entry.querySelectorAll('.uk .pron .ipa');
-                let readings_us = entry.querySelectorAll('.us .pron .ipa');
-                if (readings_uk) {
-                    reading += `UK[${T(readings_uk[0])}] `;
-                }
-                if (readings_us){
-                    reading += `US[${T(readings_us[0])}] `;
-                }
-
+                reading = reading_entry;
                 audios[0] = entry.querySelector(".uk.dpron-i source");
                 audios[0] = audios[0] ? 'https://dictionary.cambridge.org' + audios[0].getAttribute('src') : '';
                 //audios[0] = audios[0].replace('https', 'http');
                 audios[1] = entry.querySelector(".us.dpron-i source");
                 audios[1] = audios[1] ? 'https://dictionary.cambridge.org' + audios[1].getAttribute('src') : '';
                 //audios[1] = audios[1].replace('https', 'http');
+            } else {
+                definitions.push(`<span class='phonetics'>${reading_entry}</span>`);
             }
+
             let pos = T(entry.querySelector('.posgram'));
             pos = pos ? `<span class='pos'>${pos}</span>` : '';
 
