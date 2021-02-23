@@ -33,7 +33,7 @@
     "lblSignin": { "message": "Signin" },
 
     "msgConnecting": { "message": "Connecting..." },
-    "msgFailed": { "message": "Not Connect" },
+    "msgFailed": { "message": "Not Connected" },
     "msgSuccess": {
         "message": "Connected:$INFORMATION$",
         "placeholders": { "information": { "content": "$1" } }
