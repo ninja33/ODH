@@ -137,7 +137,7 @@ class Ankiweb {
     async saveNote(note, retryCount = 1) {
         try {
             let resp = await this.api_save(note, this.profile);
-            if (resp == 1) {
+            if (resp >= 1) {
                 return true;
             } else if (retryCount > 0 && (this.profile = await this.getProfile())) {
                 return this.saveNote(note, retryCount - 1);
