@@ -106,7 +106,7 @@ class Ankiweb {
                 csrf_token: profile.token,
                 data: JSON.stringify(data),
                 mid: profile.modelids[note.modelName],
-                deck: note.deckName
+                deck: profile.deckids[note.deckName]
             };
             let request = {
                 url: 'https://ankiuser.net/edit/save',
@@ -137,7 +137,7 @@ class Ankiweb {
     async saveNote(note, retryCount = 1) {
         try {
             let resp = await this.api_save(note, this.profile);
-            if (resp == 1) {
+            if (resp != null) {
                 return true;
             } else if (retryCount > 0 && (this.profile = await this.getProfile())) {
                 return this.saveNote(note, retryCount - 1);
@@ -149,32 +149,63 @@ class Ankiweb {
         }
     }
 
-    parseData(response) {
+    async getAddInfo(){
+        return new Promise((resolve, reject) => {
+            let request = {
+                url: 'https://ankiuser.net/edit/getAddInfo',
+                dataType: "json",
+                error: (xhr, status, error) => resolve(null),
+                success: (data, status) => resolve(data)
+            };
+            $.ajax(request);
+        });
+    }
+
+    async getNotetypeFields(nid){
+        return new Promise((resolve, reject) => {
+            let request = {
+                url: 'https://ankiuser.net/edit/getNotetypeFields?ntid=' + nid,
+                dataType: "json",
+                error: (xhr, status, error) => resolve(null),
+                success: (data, status) => resolve(data)
+            };
+            $.ajax(request);
+        });
+    }
+
+    async parseData(response) {
         //return {deck:'default', model:'basic'};
         const token = /anki\.Editor\('(.*)'/.exec(response)[1];
-        const [models, decks, curModelID] = JSON.parse('[' + /new anki\.EditorAddMode\((.*)\);/.exec(response)[1] + ']');
+        //const [models, decks, curModelID] = JSON.parse('[' + /new anki\.EditorAddMode\((.*)\);/.exec(response)[1] + ']');
+        const Addinfo = await this.getAddInfo();
 
         let decknames = [];
+        let deckids= {};
         let modelnames = [];
         let modelids = {};
         let modelfieldnames = {};
 
-        for (const deck of Object.values(decks)) {
+        
+
+        for (const deck of Addinfo.decks) {
             decknames.push(deck.name);
+            deckids[deck.name]=deck.id;
         }
 
-        for (const model of models) {
-            modelnames.push(model.name);
-            modelids[model.name] = model.id;
+        for (const notetype of Addinfo.notetypes) {
+            modelnames.push(notetype.name);
+            modelids[notetype.name] = notetype.id;
 
+            const NotetypeFields = await this.getNotetypeFields(notetype.id);
             let fieldnames = [];
-            for (let field of model.flds) {
+            for (let field of NotetypeFields.fields) {
                 fieldnames.push(field.name);
             }
-            modelfieldnames[model.name] = fieldnames;
+            modelfieldnames[notetype.name] = fieldnames;
         }
         return {
             decknames,
+            deckids,
             modelnames,
             modelids,
             modelfieldnames,
