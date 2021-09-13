@@ -34,7 +34,7 @@ class rucn_Qianyi {
                 return node.innerText.trim();
         }
 
-        let base = 'http://w.qianyix.com/index.php?q=';
+        let base = 'https://w.qianyix.com/index.php?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {

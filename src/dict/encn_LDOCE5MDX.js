@@ -62,7 +62,7 @@ class encn_LDOCE5MDX {
             return value;
         }
 
-        let base = 'http://127.0.0.1:8000/';
+        let base = 'https://127.0.0.1:8000/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
@@ -190,7 +190,7 @@ class encn_LDOCE5MDX {
 
         if (!word) return notes;
 
-        let base = 'http://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
+        let base = 'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try {

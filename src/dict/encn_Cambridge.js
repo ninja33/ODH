@@ -127,7 +127,7 @@ class encn_Cambridge {
     async findYoudao(word) {
         if (!word) return [];
 
-        let base = 'http://dict.youdao.com/w/';
+        let base = 'https://dict.youdao.com/w/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
@@ -159,8 +159,8 @@ class encn_Cambridge {
             }
 
             let audios = [];
-            audios[0] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
-            audios[1] = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
+            audios[0] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=1`;
+            audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
             let definition = '<ul class="ec">';
             for (const defNode of defNodes){

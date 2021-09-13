@@ -26,7 +26,7 @@ class frcn_Youdao {
     async findYoudao(word) {
         if (!word) return null;
 
-        let base = 'http://dict.youdao.com/fsearch?client=deskdict&keyfrom=chrome.extension&pos=-1&doctype=xml&xmlVersion=3.2&dogVersion=1.0&vendor=unknown&appVer=3.1.17.4208&le=fr&q=';
+        let base = 'https://dict.youdao.com/fsearch?client=deskdict&keyfrom=chrome.extension&pos=-1&doctype=xml&xmlVersion=3.2&dogVersion=1.0&vendor=unknown&appVer=3.1.17.4208&le=fr&q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {

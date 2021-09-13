@@ -22,7 +22,7 @@ class Sandbox {
         url = (url.indexOf('lib://') != -1) ? gitbase + url.replace('lib://', '') : url;
 
         //use local script if nothing specified in URL prefix.
-        if ((url.indexOf('https://') == -1) && (url.indexOf('http://') == -1)) {
+        if ((url.indexOf('https://') == -1) && (url.indexOf('https://') == -1)) {
             url = '/dict/' + url;
         }
         //add .js suffix if missing.

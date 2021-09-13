@@ -22,14 +22,14 @@ class escn_Eudict {
         this.word = word;
         if (!word) return null;
 
-        let base = 'http://www.esdict.cn/dicts/prefix/';
+        let base = 'https://www.esdict.cn/dicts/prefix/';
         let url = base + encodeURIComponent(word);
         try {
             let terms = JSON.parse(await api.fetch(url));
             if (terms.length == 0) return null;
             terms = terms.filter(term => term.value && term.recordid && term.recordtype != 'CG');
             terms = terms.slice(0, 2); //max 2 results;
-            let queries = terms.map(term => this.findEudict(`http://www.esdict.cn/dicts/es/${term.value}?recordid=${term.recordid}`));
+            let queries = terms.map(term => this.findEudict(`https://www.esdict.cn/dicts/es/${term.value}?recordid=${term.recordid}`));
             let results = await Promise.all(queries);
             return [].concat(...results).filter(x => x);
         } catch (err) {
@@ -77,7 +77,7 @@ class escn_Eudict {
 
         let audios = [];
         try {
-            audios[0] = 'http://api.frdic.com/api/v2/speech/speakweb?' + headsection.querySelector('.voice-js').dataset.rel;
+            audios[0] = 'https://api.frdic.com/api/v2/speech/speakweb?' + headsection.querySelector('.voice-js').dataset.rel;
         } catch (err) {
             audios = [];
         }
@@ -90,7 +90,7 @@ class escn_Eudict {
         this.removeTags(content.parentNode, '#ExpFCChild>br');
         let anchor = content.querySelector('a');
         if (anchor) {
-            let link = 'http://www.esdict.cn' + anchor.getAttribute('href');
+            let link = 'https://www.esdict.cn' + anchor.getAttribute('href');
             anchor.setAttribute('href', link);
             anchor.setAttribute('target', '_blank');
         }

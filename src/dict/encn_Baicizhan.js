@@ -39,7 +39,7 @@ class encn_Baicizhan {
         let notes = [];
 
         if (!word) return notes;
-        let base = 'http://mall.baicizhan.com/ws/search?w=';
+        let base = 'https://mall.baicizhan.com/ws/search?w=';
         let url = base + encodeURIComponent(word);
         let note = '';
         try {
@@ -53,7 +53,7 @@ class encn_Baicizhan {
         let audios = [];
         let expression = note.word || ''; //headword
         let reading = note.accent || ''; // phonetic
-        audios[0] = `http://baicizhan.qiniucdn.com/word_audios/${expression}.mp3`;
+        audios[0] = `https://baicizhan.qiniucdn.com/word_audios/${expression}.mp3`;
         let definition = '<ul class="bcz">';
         let defs = note.mean_cn.split('\n');
         for (const def of defs) {

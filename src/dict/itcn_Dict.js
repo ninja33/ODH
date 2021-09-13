@@ -30,7 +30,7 @@ class itcn_Dict {
         let notes = [];
         if (!word) return notes; // return empty notes
 
-        let base = 'http://127.0.0.1:8000/';
+        let base = 'https://127.0.0.1:8000/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
