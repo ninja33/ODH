@@ -1,6 +1,7 @@
 function sanitizeOptions(options) {
     const defaults = {
         enabled: true,
+        mouseselection: true,
         hotkey: '16', // 0:off , 16:shift, 17:ctrl, 18:alt
         maxcontext: '1',
         maxexample: '2',

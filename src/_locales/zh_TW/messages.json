@@ -14,6 +14,7 @@
     "grpUdfScripts": { "message": "自選腳本" },
 
     "lblEnabled": { "message": "打開關閉插件" },
+    "lblMouseselection": { "message": "啟用鼠標選詞" },
     "lblHotkey": { "message": "自動取詞熱鍵" },
     "lblCurrentDict": { "message": "當前詞典名稱" },
     "lblLingualType": { "message": "單語雙語詞典" },
@@ -68,6 +69,7 @@
 
     "baTitle": { "message": "快速選項" },
     "baEnabled": { "message": "打開關閉插件" },
+    "baMouseselection": { "message": "啟用鼠標選詞" },
     "baHotkey": { "message": "自動取詞熱鍵" },
 
     "general_Makenotes": { "message": "通用筆記摘錄腳本" },
