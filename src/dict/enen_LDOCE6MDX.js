@@ -50,7 +50,7 @@ class encn_LDOCE6MDX {
                 return node.innerText.trim();
         }
 
-        let base = 'https://127.0.0.1:8000/';
+        let base = 'http://127.0.0.1:8000/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {

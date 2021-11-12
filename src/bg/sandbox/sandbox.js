@@ -21,10 +21,6 @@ class Sandbox {
         //build remote script url with gitbase(https://) if prefix lib:// existing.
         url = (url.indexOf('lib://') != -1) ? gitbase + url.replace('lib://', '') : url;
 
-        //use local script if nothing specified in URL prefix.
-        if ((url.indexOf('https://') == -1) && (url.indexOf('https://') == -1)) {
-            url = '/dict/' + url;
-        }
         //add .js suffix if missing.
         url = (url.indexOf('.js') == -1) ? url + '.js' : url;
         return url;
