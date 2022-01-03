@@ -1,6 +1,6 @@
 # Background
 
-Reading is among the most important tasks for any dedicated language learner. I have written an English-Chinese learning/card-marking chrome extension - [Anki Dict Helper](https://github.com/ninja33/anki-dict-helper) in 2016, which was inspired by [readlang.com](http://readlang.com/) and [Foosoft/yomichan](https://github.com/FooSoft/yomichan).
+Reading is among the most important tasks for any dedicated language learner. I have written an English-Chinese learning/card-marking chrome extension - [Anki Dict Helper](https://github.com/ninja33/anki-dict-helper) in 2016, which was inspired by [readlang.com](https://readlang.com/) and [Foosoft/yomichan](https://github.com/FooSoft/yomichan).
 Here is how that extension works. Reading through a web page via Google Chrome or Firefox, the user can move the mouse cursor to any given word, press <kbd>shift</kbd> key. A pop-up window would subsequently show up with the word's En-Chinese dictionary definitions on display. It supports the making of an Anki flashcard note filling fields with **word**, **definition** and **context** (the sentence in its original web page context with the selected word included). In a word, it's a personalized  web vocabulary builder which also serves as a En-Ch dictionary.
 
 ## The idea

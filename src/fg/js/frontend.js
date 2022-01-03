@@ -8,6 +8,7 @@ class ODHFront {
         this.sentence = null;
         this.audio = {};
         this.enabled = true;
+        this.mouseselection = true;
         this.activateKey = 16; // shift 16, ctl 17, alt 18
         this.exitKey = 27; // esc 27
         this.maxContext = 1; //max context sentence #
@@ -48,6 +49,9 @@ class ODHFront {
     }
 
     onDoubleClick(e) {
+        if (!this.mouseselection)
+            return;
+
         if (!isValidElement())
             return;
 
@@ -71,7 +75,7 @@ class ODHFront {
 
     userSelectionChanged(e) {
 
-        if (!this.enabled || !this.mousemoved) return;
+        if (!this.enabled || !this.mousemoved || !this.mouseselection) return;
 
         if (this.timeout) {
             clearTimeout(this.timeout);
@@ -121,6 +125,7 @@ class ODHFront {
         let { options, callback } = params;
         this.options = options;
         this.enabled = options.enabled;
+        this.mouseselection = options.mouseselection;
         this.activateKey = Number(this.options.hotkey);
         this.maxContext = Number(this.options.maxcontext);
         this.services = options.services;

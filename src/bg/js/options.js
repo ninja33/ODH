@@ -140,6 +140,7 @@ async function onSaveClicked(e) {
     let options = $.extend(true, {}, optionsOld);
 
     options.enabled = $('#enabled').prop('checked');
+    options.mouseselection = $('#mouseselection').prop('checked');
     options.hotkey = $('#hotkey').val();
 
     options.dictSelected = $('#dict').val();
@@ -182,6 +183,7 @@ async function onReady() {
     localizeHtmlPage();
     let options = await optionsLoad();
     $('#enabled').prop('checked', options.enabled);
+    $('#mouseselection').prop('checked', options.mouseselection);
     $('#hotkey').val(options.hotkey);
 
     populateDictionary(options.dictNamelist);

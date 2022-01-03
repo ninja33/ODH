@@ -53,20 +53,20 @@ class frcn_Eudict {
             });
         }
 
-        let base = 'http://www.frdic.com/dicts/prefix/';
+        let base = 'https://www.frdic.com/dicts/prefix/';
         let url = base + encodeURIComponent(word);
         try {
             let respons = await api.fetch(url);
             if (respons.indexOf('<html><body><script>') != -1) {
                 respons = respons.replace('`', '\\\`').replace('\n', '\x10');
-                let newurl = 'http://www.frdic.com' + await getURL(respons);
+                let newurl = 'https://www.frdic.com' + await getURL(respons);
                 respons = await api.fetch(newurl);
             }
             let terms = JSON.parse(respons);
             if (terms.length == 0) return null;
             terms = terms.filter(term => term.value && term.recordid && term.recordtype != 'CG');
             terms = terms.slice(0, 2); //max 2 results;
-            let queries = terms.map(term => this.findEudict(`http://www.frdic.com/dicts/fr/${term.value}?recordid=${term.recordid}`));
+            let queries = terms.map(term => this.findEudict(`https://www.frdic.com/dicts/fr/${term.value}?recordid=${term.recordid}`));
             let results = await Promise.all(queries);
             return [].concat(...results).filter(x => x);
         } catch (err) {
@@ -114,7 +114,7 @@ class frcn_Eudict {
 
         let audios = [];
         try {
-            audios[0] = 'http://api.frdic.com/api/v2/speech/speakweb?' + headsection.querySelector('.voice-js').dataset.rel;
+            audios[0] = 'https://api.frdic.com/api/v2/speech/speakweb?' + headsection.querySelector('.voice-js').dataset.rel;
         } catch (err) {
             audios = [];
         }
@@ -129,7 +129,7 @@ class frcn_Eudict {
         this.removeTags(content.parentNode, '#ExpSPECChild>br');
         let anchors = content.querySelectorAll('a');
         for (const anchor of anchors) {
-            let link = 'http://www.frdic.com' + anchor.getAttribute('href');
+            let link = 'https://www.frdic.com' + anchor.getAttribute('href');
             anchor.setAttribute('href', link);
             anchor.setAttribute('target', '_blank');
         }

@@ -1,6 +1,6 @@
 function spell() {
 	let exec = (command, value=null) => document.execCommand(command, false, value)
-	let ensureHTTP = url => /^https?:\//.test(url) ? url : `http://${url}`
+	let ensureHTTP = url => /^https?:\//.test(url) ? url : `https://${url}`
 	let $ = (tag, props, children=[], elm=document.createElement(tag)) =>
 		children.map(child => child && elm.appendChild(child)) && Object.assign(elm, props)
 

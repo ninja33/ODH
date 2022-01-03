@@ -59,13 +59,13 @@ class Sandbox {
         let gitbase = 'https://raw.githubusercontent.com/ninja33/ODH/master/src/dict/';
         let url = name;
 
-        //build remote script url with gitbase(https://) if prefix lib:// existing.
-        url = (url.indexOf('lib://') != -1) ? gitbase + url.replace('lib://', '') : url;
-
-        //use local script if nothing specified in URL prefix.
-        if ((url.indexOf('https://') == -1) && (url.indexOf('http://') == -1)) {
+        if (url.indexOf('://') == -1) {
             url = '/dict/' + url;
+        } else {
+            //build remote script url with gitbase(https://) if prefix lib:// existing.
+            url = (url.indexOf('lib://') != -1) ? gitbase + url.replace('lib://', '') : url;            
         }
+
         //add .js suffix if missing.
         url = (url.indexOf('.js') == -1) ? url + '.js' : url;
         return url;

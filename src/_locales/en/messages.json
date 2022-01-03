@@ -14,6 +14,7 @@
     "grpUdfScripts": { "message": "User Defined Scripts" },
 
     "lblEnabled": { "message": "Enabled" },
+    "lblMouseselection": { "message": "Mouse Sel." },
     "lblHotkey": { "message": "AutoSel.Hotkey" },
     "lblCurrentDict": { "message": "Selected Dict." },
     "lblLingualType": { "message": "Mono/Bilingual" },
@@ -70,6 +71,7 @@
 
     "baTitle": { "message": "Quick options" },
     "baEnabled": { "message": "Enabled" },
+    "baMouseselection": { "message": "Mouse Sel." },
     "baHotkey": { "message": "AutoSel." },
 
     "general_Makenotes": { "message": "Make notes for general purpose" },

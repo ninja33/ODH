@@ -28,7 +28,7 @@ class encn_Youdao {
     async findYoudao(word) {
         if (!word) return [];
 
-        let base = 'http://dict.youdao.com/w/';
+        let base = 'https://dict.youdao.com/w/';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
