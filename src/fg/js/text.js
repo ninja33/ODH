@@ -165,7 +165,7 @@ function getSentence(sentenceNum) {
 
     let node = selection.getRangeAt(0).commonAncestorContainer;
 
-    if (['INPUT', 'TEXTAREA'].indexOf(node.tagName) !== -1) {
+    if (!isValidElement(node)) {
         return;
     }
 
@@ -200,13 +200,10 @@ function selectedText() {
     return (selection.toString() || '').trim();
 }
 
-function isValidElement() {
-    // if (document.activeElement.getAttribute('contenteditable')) 
-    //     return false;
-
+function isValidElement(node) {
     const invalidTags = ['INPUT', 'TEXTAREA'];
-    const nodeName = document.activeElement.nodeName.toUpperCase();
-    if (invalidTags.includes(nodeName)) {
+    const nodeName = node.nodeName.toUpperCase();
+    if (invalidTags.includes(nodeName) || node.isContentEditable) {
         return false;
     } else {
         return true;

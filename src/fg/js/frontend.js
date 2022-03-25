@@ -29,13 +29,16 @@ class ODHFront {
     }
 
     onKeyDown(e) {
-        if (!this.activateKey)
+        if (!this.enabled)
             return;
 
-        if (!isValidElement())
+        if (!this.activateKey || !(e.keyCode === this.activateKey || e.charCode === this.activateKey))
             return;
 
-        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
+        if (!isValidElement(document.activeElement))
+            return;
+
+        if (this.point !== null) {
             const range = rangeFromPoint(this.point);
             if (range == null) return;
             let textSource = new TextSourceRange(range);
@@ -49,11 +52,14 @@ class ODHFront {
     }
 
     onDoubleClick(e) {
+        if (!this.enabled)
+            return;
+
         if (!this.mouseselection)
             return;
 
-        if (!isValidElement())
-            return;
+        // if (!isValidElement(document.activeElement))
+        //     return;
 
         if (this.timeout)
             clearTimeout(this.timeout);
@@ -94,18 +100,21 @@ class ODHFront {
         if (!this.enabled)
             return;
 
-        if (!isValidElement())
-            return;
+        // if (!isValidElement(document.activeElement))
+        //     return;
 
         // reset selection timeout
         this.timeout = null;
         const expression = selectedText();
         if (isEmpty(expression)) return;
 
+        // save the current point before sending translation request
+        const point = this.point;
+
         let result = await getTranslation(expression);
         if (result == null || result.length == 0) return;
         this.notes = this.buildNote(result);
-        this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, await this.renderPopup(this.notes));
+        this.popup.showNextTo({ x: point.x, y: point.y, }, await this.renderPopup(this.notes));
 
     }
 
