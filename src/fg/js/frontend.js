@@ -31,6 +31,9 @@ class ODHFront {
     onKeyDown(e) {
         if (!this.enabled)
             return;
+        
+        if (e.keyCode === this.exitKey || e.charCode === this.exitKey)
+            this.popup.hide();
 
         if (!this.activateKey || !(e.keyCode === this.activateKey || e.charCode === this.activateKey))
             return;
@@ -46,9 +49,6 @@ class ODHFront {
             this.mousemoved = false;
             this.onSelectionEnd(e);
         }
-
-        if (e.keyCode === this.exitKey || e.charCode === this.exitKey)
-            this.popup.hide();
     }
 
     onDoubleClick(e) {
@@ -87,6 +87,11 @@ class ODHFront {
             clearTimeout(this.timeout);
         }
 
+        // if there's no text selected
+        if (window.getSelection().isCollapsed) {
+            return;
+        }
+
         // wait 500 ms after the last selection change event
         this.timeout = setTimeout(() => {
             this.onSelectionEnd(e);
@@ -108,7 +113,7 @@ class ODHFront {
         const expression = selectedText();
         if (isEmpty(expression)) return;
 
-        // save the current point before sending translation request
+        // save the current point before sending the request
         const point = this.point;
 
         let result = await getTranslation(expression);
