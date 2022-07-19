@@ -13,16 +13,16 @@
     "grpSysScripts": { "message": "系統腳本" },
     "grpUdfScripts": { "message": "自選腳本" },
 
-    "lblEnabled": { "message": "打開關閉插件" },
-    "lblMouseselection": { "message": "啟用鼠標選詞" },
-    "lblHotkey": { "message": "自動取詞熱鍵" },
-    "lblCurrentDict": { "message": "當前詞典名稱" },
-    "lblLingualType": { "message": "單語雙語詞典" },
+    "lblEnabled": { "message": "開關插件" },
+    "lblMouseselection": { "message": "啟用鼠標" },
+    "lblHotkey": { "message": "取詞熱鍵" },
+    "lblCurrentDict": { "message": "詞典名稱" },
+    "lblLingualType": { "message": "單語雙語" },
     "selMonolingual": { "message": "單語" },
     "selBilingual": { "message": "雙語" },
-    "lblMaxContext": { "message": "最大原句數量" },
-    "lblMaxExample": { "message": "最大例句數量" },
-    "lblAudioPref": { "message": "音頻下載偏好" },
+    "lblMaxContext": { "message": "原句數量" },
+    "lblMaxExample": { "message": "例句數量" },
+    "lblAudioPref": { "message": "音頻偏好" },
     "lblAudioPref0": { "message": "英音" },
     "lblAudioPref1": { "message": "美音" },
 
@@ -40,6 +40,7 @@
         "placeholders": { "information": { "content": "$1" } }
     },
 
+    "lblTags": { "message": "筆記標籤" },
     "lblAllowDuplicate": { "message": "重複製卡" },
     "selNotAllowed": { "message": "不允許" },
     "selAllowed": { "message": "允許" },
@@ -68,9 +69,12 @@
     "btnClose": { "message": "退出" },
 
     "baTitle": { "message": "快速選項" },
-    "baEnabled": { "message": "打開關閉插件" },
-    "baMouseselection": { "message": "啟用鼠標選詞" },
-    "baHotkey": { "message": "自動取詞熱鍵" },
+    "baEnabled": { "message": "開關插件" },
+    "baMouseselection": { "message": "啟用鼠標" },
+    "baHotkey": { "message": "取詞熱鍵" },
+    "baCurrentDict": { "message": "詞典名稱" },
+    "baDeckname": { "message": "牌組名稱" },
+    "baTags": { "message": "筆記標籤" },
 
     "general_Makenotes": { "message": "通用筆記摘錄腳本" },
     "builtin_encn_Collins": { "message": "柯林斯英漢詞典(內置)" },

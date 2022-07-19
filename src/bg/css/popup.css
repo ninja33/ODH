@@ -48,8 +48,9 @@ a {
 }
 
 label,
+input,
 select {
-    width: 95px;
+    width: 65px;
     padding: 4px 5px;
     margin: 3px;
     display: inline-block;
@@ -63,7 +64,7 @@ label {
 }
 
 .col-2x {
-    width: 200px;
+    width: 125px;
 }
 
 hr {

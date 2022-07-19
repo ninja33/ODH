@@ -153,6 +153,7 @@ async function onSaveClicked(e) {
     options.id = $('#id').val();
     options.password = $('#password').val();
     
+    options.tags = $('#tags').val();
     options.duplicate = $('#duplicate').val();
 
     let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
@@ -198,6 +199,7 @@ async function onReady() {
     $('#id').val(options.id);
     $('#password').val(options.password);
 
+    $('#tags').val(options.tags);
     $('#duplicate').val(options.duplicate);
 
     let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
