@@ -90,7 +90,7 @@ class ODHBack {
             modelName: options.typename,
             options: { allowDuplicate: options.duplicate == '1' ? true : false },
             fields: {},
-            tags: ['ODH']
+            tags: []
         };
 
         let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url'];
@@ -98,6 +98,10 @@ class ODHBack {
             if (!options[fieldname]) continue;
             note.fields[options[fieldname]] = notedef[fieldname];
         }
+
+        let tags = options.tags.trim();
+        if (tags.length > 0) 
+            note.tags = tags.split(' ');
 
         if (options.audio && notedef.audios.length > 0) {
             note.fields[options.audio] = '';
