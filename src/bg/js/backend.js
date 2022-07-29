@@ -1,6 +1,7 @@
 /* global Ankiconnect, Ankiweb, Deinflector, Builtin, Agent, optionsLoad, optionsSave */
 class ODHBack {
     constructor() {
+        this.audios = {};
         this.options = null;
 
         this.ankiconnect = new Ankiconnect();
@@ -211,6 +212,25 @@ class ODHBack {
         try {
             let result = await this.target.addNote(note);
             callback(result);
+        } catch (err) {
+            console.error(err);
+            callback(null);
+        }
+    }
+
+    async api_playAudio(params) {
+        let { url, callback } = params;
+        
+        for (let key in this.audios) {
+            this.audios[key].pause();
+        }
+
+        try {
+            const audio = this.audios[url] || new Audio(url);
+            audio.currentTime = 0;
+            audio.play();
+            this.audios[url] = audio;
+            callback(true);
         } catch (err) {
             console.error(err);
             callback(null);
