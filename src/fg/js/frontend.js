@@ -1,4 +1,4 @@
-/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isConnected, addNote, getTranslation, isValidElement*/
+/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isConnected, addNote, getTranslation, playAudio, isValidElement*/
 class ODHFront {
 
     constructor() {
@@ -152,19 +152,10 @@ class ODHFront {
         this.popup.sendMessage('setActionState', { response, params });
     }
 
-    api_playAudio(params) {
+    async api_playAudio(params) {
         let { nindex, dindex } = params;
         let url = this.notes[nindex].audios[dindex];
-
-        for (let key in this.audio) {
-            this.audio[key].pause();
-        }
-
-        const audio = this.audio[url] || new Audio(url);
-        audio.currentTime = 0;
-        audio.play();
-
-        this.audio[url] = audio;
+        let response = await playAudio(url);
     }
 
     api_playSound(params) {
