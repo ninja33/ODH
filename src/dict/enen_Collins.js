@@ -58,7 +58,6 @@ class enen_Collins {
         let bandnum = band ? band.dataset.band : '';
         let extrainfo = bandnum ? `<span class="band">${'\u25CF'.repeat(Number(bandnum))}</span>` : '';
 
-        let sound = dictionary.querySelector('a.hwd_sound');
         let sound = dictionary.querySelector('a.hwd_sound.sound.audio_play_button.icon-volume-up.ptr');
         let audios = sound ? [sound.dataset.srcMp3] : [];
         // make definition segement
