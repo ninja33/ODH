@@ -1,0 +1,97 @@
+/* global api */
+class enes_WordReference {
+  constructor(options) {
+    this.options = options;
+    this.maxexample = 2;
+    this.word = '';
+  }
+
+  async displayName() {
+    let locale = await api.locale();
+    if (locale.indexOf('CN') !== -1) return 'WordReference英汉词典';
+    if (locale.indexOf('TW') !== -1) return 'WordReference英汉词典';
+    return 'wordreference.com EN->ES Dictionary';
+  }
+
+  setOptions(options) {
+    this.options = options;
+    this.maxexample = options.maxexample;
+  }
+
+  async findTerm(word) {
+    this.word = word;
+    return await this.findWordReference(word);
+  }
+
+  removeTags(elem, name) {
+    let tags = elem.querySelectorAll(name);
+    tags.forEach((x) => {
+      x.outerHTML = '';
+    });
+  }
+
+  removelinks(elem) {
+    let tags = elem.querySelectorAll('a');
+    tags.forEach((x) => {
+      x.outerHTML = `<span class='link'>${x.innerText}</span>`;
+    });
+
+    tags = elem.querySelectorAll('h2');
+    tags.forEach((x) => {
+      x.outerHTML = `<div class='head2'>${x.innerHTML}</div>`;
+    });
+
+    tags = elem.querySelectorAll('h3');
+    tags.forEach((x) => {
+      x.outerHTML = `<div class='head3'>${x.innerHTML}</div>`;
+    });
+  }
+
+  async findWordReference(word) {
+    if (!word) return null;
+
+    let base = 'https://www.wordreference.com/es/translation.asp?tranword=';
+    let url = base + encodeURIComponent(word);
+    let doc = '';
+    try {
+      let data = await api.fetch(url);
+      let parser = new DOMParser();
+      doc = parser.parseFromString(data, 'text/html');
+    } catch (err) {
+      return null;
+    }
+
+    let contents = doc.querySelectorAll('.ToWrd') || [];
+    if (contents.length === 0) return null;
+
+    let definition = '';
+    for (const content of contents) {
+      this.removeTags(content, '.WRD');
+      this.removeTags(content, '.FrEx');
+      this.removelinks(content);
+      definition += content.innerHTML;
+    }
+    let css = this.renderCSS();
+    return definition ? css + definition : null;
+  }
+
+  renderCSS() {
+    let css = `
+      <style>
+      .link { color: #1b85e5; }
+      .containerDesktop--2_5JC, .containerMobile--1sbY7 {
+          line-height: 24px;
+          font-family: -apple-system,system-ui,BlinkMacSystemFont,’Segoe UI’,Roboto,Ubuntu,’Helvetica Neue’,Arial,sans-serif;
+      }
+      .entry--3tNUi { margin-top: 3px; }
+      .posContainer--2xs-U { margin-top: 3px; }
+      .inline--CJsLA { display: inline; }
+      .indent--FyTYr { margin-left: 5px; }
+      .context--1vspK { color: #58b40b; }
+      .order--1TgBO { font-weight: 700; }
+      .neodictTranslation--C2TP2 {
+          color: #1b85e5;
+          text-decoration: none;
+          font-weight: 700;
+      }
+     
