@@ -93,6 +93,7 @@
     "enen_UrbanDict": { "message": "Urban EN->EN Dictionary" },
     "enfr_Cambridge": { "message": "Cambridge EN->FR Dictionary" },
     "enfr_Collins": { "message": "Collins EN->FR Dictionary" },
+    "enjp_Cambridge": { "message": "Cambridge EN->JP Dictionary" },
     "esen_Spanishdict": { "message": "Spanishdict.com ES->CN Dictionary" },
     "decn_Eudict": { "message": "Eudict DE->CN Dictionary" },
     "escn_Eudict": { "message": "Eudict ES->CN Dictionary" },
@@ -101,6 +102,6 @@
     "fren_Cambridge": { "message": "Cambridge FR->EN Dictionary" },
     "fren_Collins": { "message": "Collins FR->EN Dictionary" },
     "rucn_Qianyi": { "message": "Qianyi RU->CN Dictionary" },
-
+   
     "labelAlignment": { "message": "initial" }
 }
