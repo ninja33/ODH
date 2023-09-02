@@ -9,6 +9,7 @@ class SandboxAPI {
             try {
                 this.agent.postMessage(action, params, result => resolve(result));
             } catch (err) {
+                console.log(err)
                 reject(null);
             }
         });

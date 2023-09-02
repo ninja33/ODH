@@ -48,7 +48,7 @@ class Ankiweb {
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(result, 'text/html');
                 let title = doc.querySelectorAll('h1');
-                if (!title.length) return Promise.reject(false);
+                if (!title.length) return reject(false);
                 switch (title[0].innerText) {
                     case 'Add':
                         resolve({
