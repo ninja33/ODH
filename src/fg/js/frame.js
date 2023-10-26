@@ -115,7 +115,7 @@ function onMouseWheel(e) {
     let html = document.documentElement;
     let body = document.body;
     let startingY = window.pageYOffset || body.scrollTop || html.scrollTop;
-    var newY = startingY + e.deltaY*15;
+    var newY = startingY + e.deltaY*2;
     window.scrollTo(0, newY);
     e.preventDefault();
 }
