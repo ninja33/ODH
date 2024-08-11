@@ -1,15 +1,15 @@
-.enabled input[type=checkbox] {
+.enabled input[type='checkbox'] {
     visibility: hidden;
 }
 
 .enabled {
     width: 65px;
     height: 26px;
-    display:inline-block;
+    display: inline-block;
     background: #555;
     margin: 3px;
     border-radius: 25px;
-    top:-2px;
+    top: -2px;
     position: relative;
 }
 
@@ -39,7 +39,7 @@
     height: 16px;
     border: none;
     border-radius: 37px;
-    transition: all .5s ease;
+    transition: all 0.5s ease;
     cursor: pointer;
     position: absolute;
     top: 2px;
@@ -48,7 +48,7 @@
     background: #ddd;
 }
 
-.enabled input[type=checkbox]:checked+label {
+.enabled input[type='checkbox']:checked + label {
     left: 28px;
     background: #76ff03;
 }

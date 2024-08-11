@@ -3,46 +3,52 @@ class Sandbox {
     constructor() {
         this.dicts = {};
         this.current = null;
-        window.addEventListener('message', e => this.onBackendMessage(e));
+        window.addEventListener('message', (e) => this.onBackendMessage(e));
     }
 
     onBackendMessage(e) {
         const { action, params } = e.data;
         const method = this['backend_' + action];
-        if (typeof(method) === 'function') {
+        if (typeof method === 'function') {
             method.call(this, params);
         }
     }
 
     buildScriptURL(name) {
-        let gitbase = 'https://raw.githubusercontent.com/ninja33/ODH/master/src/dict/';
+        let gitBase =
+            'https://raw.githubusercontent.com/ninja33/ODH/master/src/dict/';
         let url = name;
 
         if (url.indexOf('://') == -1) {
             url = '/dict/' + url;
-        } else {
-            //build remote script url with gitbase(https://) if prefix lib:// existing.
-            url = (url.indexOf('lib://') != -1) ? gitbase + url.replace('lib://', '') : url;            
+        } else if (url.indexOf('lib://') != -1) {
+            //build remote script url with gitBase(https://) if prefix lib:// existing.
+            url = gitBase + url.replace('lib://', '');
         }
-
         //add .js suffix if missing.
-        url = (url.indexOf('.js') == -1) ? url + '.js' : url;
+        url = url.indexOf('.js') == -1 ? url + '.js' : url;
         return url;
     }
 
     async backend_loadScript(params) {
         let { name, callbackId } = params;
 
-        let scripttext = await api.fetch(this.buildScriptURL(name));
-        if (!scripttext) api.callback({ name, result: null }, callbackId);
+        let scriptText = await api.fetch(this.buildScriptURL(name));
+        if (!scriptText) api.callback({ name, result: null }, callbackId);
         try {
-            let SCRIPT = eval(`(${scripttext})`);
+            let SCRIPT = eval(`(${scriptText})`);
             if (SCRIPT.name && typeof SCRIPT === 'function') {
                 let script = new SCRIPT();
-                //if (!this.dicts[SCRIPT.name]) 
+                //if (!this.dicts[SCRIPT.name])
                 this.dicts[SCRIPT.name] = script;
-                let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
-                api.callback({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
+                let displayname =
+                    typeof script.displayName === 'function'
+                        ? await script.displayName()
+                        : SCRIPT.name;
+                api.callback(
+                    { name, result: { objectname: SCRIPT.name, displayname } },
+                    callbackId
+                );
             }
         } catch (err) {
             api.callback({ name, result: null }, callbackId);
@@ -54,7 +60,7 @@ class Sandbox {
         let { options, callbackId } = params;
 
         for (const dictionary of Object.values(this.dicts)) {
-            if (typeof(dictionary.setOptions) === 'function')
+            if (typeof dictionary.setOptions === 'function')
                 dictionary.setOptions(options);
         }
 
@@ -70,7 +76,10 @@ class Sandbox {
     async backend_findTerm(params) {
         let { expression, callbackId } = params;
 
-        if (this.dicts[this.current] && typeof(this.dicts[this.current].findTerm) === 'function') {
+        if (
+            this.dicts[this.current] &&
+            typeof this.dicts[this.current].findTerm === 'function'
+        ) {
             let notes = await this.dicts[this.current].findTerm(expression);
             api.callback(notes, callbackId);
             return;
@@ -80,6 +89,10 @@ class Sandbox {
 }
 
 window.sandbox = new Sandbox();
-document.addEventListener('DOMContentLoaded', () => {
-    api.initBackend();
-}, false);
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+        api.initBackend();
+    },
+    false
+);

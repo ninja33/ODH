@@ -8,13 +8,10 @@ class encn_LDOCE5MDX {
 
     async displayName() {
         let locale = await api.locale();
-        if (locale.indexOf('CN') != -1)
-            return '朗文英汉5词典(MDX)';
-        if (locale.indexOf('TW') != -1)
-            return '朗文英英5词典(MDX)';
+        if (locale.indexOf('CN') != -1) return '朗文英汉5词典(MDX)';
+        if (locale.indexOf('TW') != -1) return '朗文英英5词典(MDX)';
         return 'enen_LDOCE5(MDX)';
     }
-
 
     setOptions(options) {
         this.options = options;
@@ -26,7 +23,7 @@ class encn_LDOCE5MDX {
         // let deflection = await api.deinflect(word);
         // let results = await Promise.all([this.findLDOCE5(word), this.findLDOCE5(deflection), this.findEC(word)]);
         let results = await Promise.all([this.findLDOCE5(word)]);
-        return [].concat(...results).filter(x => x);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findLDOCE5(word) {
@@ -38,26 +35,21 @@ class encn_LDOCE5MDX {
         }
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
 
         function THtml(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerHTML.trim();
+            if (!node) return '';
+            else return node.innerHTML.trim();
         }
 
         function TAllHtml(nodes) {
-            if (!nodes)
-                return '';
-            let value = "";
+            if (!nodes) return '';
+            let value = '';
             let i = 0;
-            for(i = 0; i < nodes.length; ++i) {
-              value += THtml(nodes[i]);
+            for (i = 0; i < nodes.length; ++i) {
+                value += THtml(nodes[i]);
             }
             return value;
         }
@@ -94,17 +86,21 @@ class encn_LDOCE5MDX {
             }
 
             let extrainfo = T(header.querySelector('.gram'));
-            extrainfo = extrainfo ? `<span class='head_gram'>${extrainfo}</span>` : '';
+            extrainfo = extrainfo
+                ? `<span class='head_gram'>${extrainfo}</span>`
+                : '';
             let freqs = header.querySelectorAll('.freq') || [];
             for (const freq of freqs) {
                 extrainfo += `<span class="head_freq">${T(freq)}</span>`;
             }
             let wfamily = doc.querySelectorAll('.LDOCE_word_family');
             if (wfamily.length > 0) {
-              extrainfo += '<br/>' + wfamily[0].innerHTML;
+                extrainfo += '<br/>' + wfamily[0].innerHTML;
             }
 
-            let pos = T(header.querySelector('.lm5pp_POS')) ? `<span class='lm5pp_POS'>${T(header.querySelector('.lm5pp_POS'))}</span>` : '';
+            let pos = T(header.querySelector('.lm5pp_POS'))
+                ? `<span class='lm5pp_POS'>${T(header.querySelector('.lm5pp_POS'))}</span>`
+                : '';
 
             //let PhrHead = entry.Entry.PhrVbEntry ? entry.Entry.PhrVbEntry[0].Head[0] : '';
             //expression = PhrHead ? T(PhrHead.PHRVBHWD) : expression;
@@ -115,29 +111,44 @@ class encn_LDOCE5MDX {
                 let signpost = T(sense.querySelector('.signpost'));
                 let mergesense = T(sense.querySelector('.merge_sense'));
                 signpost = signpost ? signpost : mergesense;
-                let sign = signpost ? `<div class="sign"><span class="eng_sign"><span class="sensenum">${idx++}.</span> ${signpost}</span></div>` : '';
+                let sign = signpost
+                    ? `<div class="sign"><span class="eng_sign"><span class="sensenum">${idx++}.</span> ${signpost}</span></div>`
+                    : '';
 
                 let subsenses = sense.querySelectorAll('.Subsense');
-                if (subsenses.length == 0)
-                    subsenses = [sense];
+                if (subsenses.length == 0) subsenses = [sense];
                 for (const subsense of subsenses) {
-                    let eng_tran = TAllHtml(subsense.querySelectorAll('.DEF')) ? `<span class='eng_tran'>${TAllHtml(subsense.querySelectorAll('.DEF'))}</span>` : '';
+                    let eng_tran = TAllHtml(subsense.querySelectorAll('.DEF'))
+                        ? `<span class='eng_tran'>${TAllHtml(subsense.querySelectorAll('.DEF'))}</span>`
+                        : '';
                     if (!eng_tran) continue;
                     var regex = /href="\/\w+"/gi;
                     eng_tran = eng_tran.replace(regex, ' ');
                     let definition = '';
                     definition += `${sign}${pos}<span class="tran">${eng_tran}</span>`;
                     // make exmaple sentence segement
-                    let sense_examples = subsense.querySelectorAll('.sense>.example');
-                    let subse_examples = subsense.querySelectorAll('.subsense>.example');
+                    let sense_examples =
+                        subsense.querySelectorAll('.sense>.example');
+                    let subse_examples =
+                        subsense.querySelectorAll('.subsense>.example');
                     let examples = [...sense_examples, ...subse_examples];
                     if (examples.length > 0 && this.maxexample > 0) {
                         definition += '<ul class="sents">';
                         for (const [index, example] of examples.entries()) {
                             if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                             let soundlink = example.querySelector('a') || '';
-                            if (soundlink && soundlink.getAttribute('href').indexOf('sound://') != -1)
-                                soundlink = putSoundTag(base + soundlink.getAttribute('href').substring(8)); // 8 = 'sound://'.length
+                            if (
+                                soundlink &&
+                                soundlink
+                                    .getAttribute('href')
+                                    .indexOf('sound://') != -1
+                            )
+                                soundlink = putSoundTag(
+                                    base +
+                                        soundlink
+                                            .getAttribute('href')
+                                            .substring(8)
+                                ); // 8 = 'sound://'.length
                             definition += `<li class='sent'>${soundlink}<span class='eng_sent'>${THtml(example)}</span></li>`;
                         }
                         definition += '</ul>';
@@ -147,22 +158,38 @@ class encn_LDOCE5MDX {
                     let collos = subsense.querySelectorAll('.colloexa') || [];
                     let extras = [...grams, ...collos];
                     for (const extra of extras) {
-                        let eng_gramprep = T(extra.querySelector('.propformprep'));
+                        let eng_gramprep = T(
+                            extra.querySelector('.propformprep')
+                        );
                         let eng_gram = T(extra.querySelector('.propform'));
                         eng_gram = eng_gramprep + eng_gram;
                         let eng_collo = T(extra.querySelector('.collo'));
                         if (!eng_gram && !eng_collo) continue;
-                        eng_gram = eng_gram ? `<span class="eng_gram_prep">${eng_gram}` : '';
-                        eng_collo = eng_collo ? `<span class="eng_gram_form">${eng_collo}</span>` : '';
+                        eng_gram = eng_gram
+                            ? `<span class="eng_gram_prep">${eng_gram}`
+                            : '';
+                        eng_collo = eng_collo
+                            ? `<span class="eng_gram_form">${eng_collo}</span>`
+                            : '';
                         let eng_gloss = T(extra.querySelector('.gloss'));
-                        eng_gloss = eng_gloss ? `<span class="eng_gram_gloss">${eng_gloss}</span>` : '';
+                        eng_gloss = eng_gloss
+                            ? `<span class="eng_gram_gloss">${eng_gloss}</span>`
+                            : '';
                         definition += `<span class="gram_extra">${eng_gram}${eng_collo}${eng_gloss}</span>`;
 
                         let examp = extra.querySelector('.example') || '';
                         if (!examp) continue;
                         let soundlink = examp.querySelector('a') || '';
-                        if (soundlink && soundlink.getAttribute('href').indexOf('sound://') != -1)
-                            soundlink = putSoundTag(base + soundlink.getAttribute('href').substring(8)); // 8 = 'sound://'.length
+                        if (
+                            soundlink &&
+                            soundlink
+                                .getAttribute('href')
+                                .indexOf('sound://') != -1
+                        )
+                            soundlink = putSoundTag(
+                                base +
+                                    soundlink.getAttribute('href').substring(8)
+                            ); // 8 = 'sound://'.length
 
                         let gram_collo_examp = `<span class="eng_gram_examp">${THtml(examp)}</span>`;
                         if (gram_collo_examp && this.maxexample > 0)
@@ -179,7 +206,7 @@ class encn_LDOCE5MDX {
                 reading,
                 extrainfo,
                 definitions,
-                audios
+                audios,
             });
         }
         return notes;
@@ -190,7 +217,8 @@ class encn_LDOCE5MDX {
 
         if (!word) return notes;
 
-        let base = 'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
+        let base =
+            'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try {
@@ -229,7 +257,6 @@ class encn_LDOCE5MDX {
         });
         return notes;
     }
-
 
     renderCSS() {
         let css = `

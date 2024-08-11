@@ -26,7 +26,6 @@
     "lblAudioPref0": { "message": "英音" },
     "lblAudioPref1": { "message": "美音" },
 
-
     "lblServices": { "message": "數據導出" },
     "lblUsername": { "message": "用戶郵箱" },
     "lblPassword": { "message": "用戶密碼" },
@@ -44,7 +43,7 @@
     "lblAllowDuplicate": { "message": "重複製卡" },
     "selNotAllowed": { "message": "不允許" },
     "selAllowed": { "message": "允許" },
-    
+
     "lblDeckname": { "message": "牌組名稱" },
     "lblTypename": { "message": "模板名稱" },
     "lblExpression": { "message": "單詞詞組" },

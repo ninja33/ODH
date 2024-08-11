@@ -25,24 +25,24 @@ class esen_Spanishdict {
 
     removeTags(elem, name) {
         let tags = elem.querySelectorAll(name);
-        tags.forEach(x => {
+        tags.forEach((x) => {
             x.outerHTML = '';
         });
     }
 
     removelinks(elem) {
         let tags = elem.querySelectorAll('a');
-        tags.forEach(x => {
+        tags.forEach((x) => {
             x.outerHTML = `<span class='link'>${x.innerText}</span>`;
         });
 
         tags = elem.querySelectorAll('h2');
-        tags.forEach(x => {
+        tags.forEach((x) => {
             x.outerHTML = `<div class='head2'>${x.innerHTML}</div>`;
         });
 
         tags = elem.querySelectorAll('h3');
-        tags.forEach(x => {
+        tags.forEach((x) => {
             x.outerHTML = `<div class='head3'>${x.innerHTML}</div>`;
         });
     }

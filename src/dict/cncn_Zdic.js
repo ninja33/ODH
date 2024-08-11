@@ -13,7 +13,6 @@ class cncn_Zdic {
         return 'Zdic Chinese Dictionary';
     }
 
-
     setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
@@ -28,7 +27,7 @@ class cncn_Zdic {
 
     removeTags(elem, name) {
         let tags = elem.querySelectorAll(name);
-        tags.forEach(x => {
+        tags.forEach((x) => {
             x.outerHTML = '';
         });
     }
@@ -50,9 +49,9 @@ class cncn_Zdic {
         let jbjs = doc.querySelector('.jbjs') || ''; // basic explaination
         //let xxjsContent = doc.querySelector('.res_c_center') || '';
         if (jbjs) {
-            this.removeTags(jbjs,'.zib-title'); 
-            this.removeTags(jbjs,'.h2_entry'); 
-            this.removeTags(jbjs,'.am-default.contentslot');
+            this.removeTags(jbjs, '.zib-title');
+            this.removeTags(jbjs, '.h2_entry');
+            this.removeTags(jbjs, '.am-default.contentslot');
             return jbjs.innerHTML;
         } else {
             return [];

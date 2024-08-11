@@ -4,14 +4,20 @@ async function populateAnkiDeckAndModel(options) {
     $('#deckname').empty();
     names = await odhback().opt_getDeckNames();
     if (names !== null) {
-        names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
+        names.forEach((name) =>
+            $('#deckname').append($('<option>', { value: name, text: name }))
+        );
     }
     $('#deckname').val(options.deckname);
 }
 
 function populateDictionary(dicts) {
     $('#dict').empty();
-    dicts.forEach(item => $('#dict').append($('<option>', { value: item.objectname, text: item.displayname })));
+    dicts.forEach((item) =>
+        $('#dict').append(
+            $('<option>', { value: item.objectname, text: item.displayname })
+        )
+    );
 }
 
 async function updateAnkiStatus(options) {
@@ -72,7 +78,6 @@ async function onReady() {
 
     $('.anki-options').hide();
     updateAnkiStatus(options);
-
 }
 
 $(document).ready(utilAsync(onReady));

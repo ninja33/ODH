@@ -7,8 +7,11 @@ class SandboxAPI {
     async postMessage(action, params) {
         return new Promise((resolve, reject) => {
             try {
-                this.agent.postMessage(action, params, result => resolve(result));
+                this.agent.postMessage(action, params, (result) =>
+                    resolve(result)
+                );
             } catch (err) {
+                console.log(err);
                 reject(null);
             }
         });
@@ -45,7 +48,6 @@ class SandboxAPI {
     initBackend() {
         this.postMessage('initBackend', {});
     }
-
 }
 
 window.api = new SandboxAPI();

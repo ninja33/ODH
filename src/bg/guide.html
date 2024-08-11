@@ -1,77 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh_CN">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="css/tabmenu.css" />
+        <link rel="stylesheet" href="css/guide.css" />
+        <title>在线词典助手使用说明</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/tabmenu.css">
-    <link rel="stylesheet" href="css/guide.css">
-    <title>在线词典助手使用说明</title>
-</head>
+    <body>
+        <div class="container">
+            <div class="tabmenus">
+                <a href="#" data-contentid="tab-1" class="tabmenu active"
+                    >简体中文</a
+                >
+                <a href="#" data-contentid="tab-2" class="tabmenu">English</a>
+            </div>
 
-<body>
-    <div class="container">
-        <div class="tabmenus">
-            <a href="#" data-contentid="tab-1" class="tabmenu active">简体中文</a>
-            <a href="#" data-contentid="tab-2" class="tabmenu">English</a>
+            <div id="tab-1" class="tabcontent">
+                <h3>在线词典助手-使用说明</h3>
+                <p>
+                    欢迎使用本插件，以下是插件简要说明，如需完整文档或插件最新信息，请访问
+                    <a
+                        class="notice"
+                        href="https://github.com/ninja33/ODH"
+                        target="_blank"
+                        >项目主页</a
+                    >
+                </p>
+                <ol>
+                    <li>打开任意网页，将鼠标移动到想要查询的单词上。</li>
+                    <li>
+                        点击拖动或者双击鼠标选取单词或者短语。如果单词文本是一个链接，可按下<b>取词热键</b>自动取词。
+                    </li>
+                    <li>选词后，插件会弹出释义窗口显示在单词旁边。</li>
+                    <li>
+                        左击<img
+                            src="../img/icon16.png"
+                            alt
+                        />图标，可以快速<b>启用/禁用</b>插件，选择<b>取词热键</b>，或者选择当前词典。
+                    </li>
+                    <li>
+                        右击<img
+                            src="../img/icon16.png"
+                            alt
+                        />图标，然后选择<b>"选项"</b>可打开选项页，以进一步定制化插件。
+                    </li>
+                </ol>
+                <p>
+                    本插件主要以脚本获取在线词典信息，下面是部分脚本支持的词典名称，完整内容详见<a
+                        class="notice"
+                        href="https://github.com/ninja33/ODH/blob/master/doc/scriptlist.zh_CN.md"
+                        target="_blank"
+                        >脚本清单</a
+                    >
+                </p>
+                <ol>
+                    <li>简明词典：有道简明英汉，百词斩图文词典</li>
+                    <li>权威词典：柯林斯双解，牛津双解，剑桥双解</li>
+                    <li>其他词典：法语助手、西语助手、千亿俄汉、汉典汉语</li>
+                    <li>其他双语：柯林斯英法/法英、剑桥英法/法英词典</li>
+                </ol>
+                <p>
+                    根据广大用户的请求，增加了Ankiweb制卡接口。但使用Ankiweb接口制卡，可能因违反<a
+                        class="notice"
+                        href="https://ankiweb.net/account/terms"
+                        target="_blank"
+                        ><b>TOS</b></a
+                    >而被<b class="alarm">封禁帐号</b>，请谨慎使用，责任自负
+                </p>
+                <p>
+                    注意：ankiconnect官版不支持同一单词重复制卡。想重复制卡，详见这篇<a
+                        class="notice"
+                        href="https://www.laohuang.net/20180213/ankiconnect-dupe-card-issue/"
+                        target="_blank"
+                        >博客文章</a
+                    >
+                </p>
+                <p style="float: right">
+                    作者:
+                    <a
+                        class="notice"
+                        href="https://www.laohuang.net"
+                        target="_blank"
+                        >你家老黄</a
+                    >
+                </p>
+            </div>
+
+            <div id="tab-2" class="tabcontent" style="display: none">
+                <h3>Online Dictionary Helper Guide</h3>
+                <p>
+                    Thanks for installing. Here is the brief introduction. If
+                    you need more details, please visit
+                    <a
+                        class="notice"
+                        href="https://github.com/ninja33/ODH"
+                        target="_blank"
+                        >Project Home</a
+                    >
+                </p>
+                <ol>
+                    <li>
+                        Open any given web page, move mouse cursor to the word.
+                    </li>
+                    <li>
+                        Click-Drag/Double Click mouse button to select word and
+                        phrase, or press <b>Hotkey</b> to automatically select
+                        word in case it's a link.
+                    </li>
+                    <li>
+                        A popup window will show up displaying the word
+                        definition.
+                    </li>
+                    <li>
+                        Left click <img src="../img/icon16.png" alt />icon, you
+                        may quickly <b>Enabled/Disable</b> this extension,
+                        choose <b>Hotkey</b> for automatical text selection, or
+                        select current dictionary.
+                    </li>
+                    <li>
+                        Right click <img src="../img/icon16.png" alt />icon,
+                        select <b>"Options"</b>, you may open options page for
+                        further setting
+                    </li>
+                </ol>
+                <p>
+                    The extension mainly uses script to retrive data from online
+                    dictioanry. Below is part of scripts list. For detail,
+                    please check
+                    <a
+                        class="notice"
+                        href="https://github.com/ninja33/ODH/blob/master/doc/scriptlist.zh_CN.md"
+                        target="_blank"
+                        >Full List</a
+                    >
+                </p>
+                <ol>
+                    <li>Concise：encn_Youdao, encn_Baicizhan</li>
+                    <li>Learner：encn_Collins, encn_Oxford, encn_Cambridge</li>
+                    <li>
+                        Others：frcn_Eudict, escn_Eudict, rucn_Qianyi, cncn_Zdic
+                    </li>
+                    <li>Bilingual: Collins(enfr/fren), Cambridge(enfr/fren)</li>
+                </ol>
+                <p>
+                    Added Ankiweb interface based on massive request. But
+                    <b class="alarm">Ankiweb account may be disabled</b>
+                    according to Ankiweb
+                    <a
+                        class="notice"
+                        href="https://ankiweb.net/account/terms"
+                        target="_blank"
+                        ><b>TOS</b></a
+                    >, please use this function at your own risk
+                </p>
+                <p>
+                    Note: Sometime, you occasionally can not create cards(not
+                    always), actually it’s not extension’s problem. Because it
+                    does not allow duplicated cards(with same sorted field)
+                    creation in ankiconnect by default. for more detail, please
+                    check this
+                    <a
+                        class="notice"
+                        href="https://www.laohuang.net/20180213/ankiconnect-dupe-card-issue/"
+                        target="_blank"
+                        >Blog Article</a
+                    >
+                </p>
+                <p style="float: right">
+                    Author:
+                    <a
+                        class="notice"
+                        href="https://www.laohuang.net"
+                        target="_blank"
+                        >Ninja Huang</a
+                    >
+                </p>
+            </div>
         </div>
-
-        <div id="tab-1" class="tabcontent">
-            <h3>在线词典助手-使用说明</h3>
-            <p>欢迎使用本插件，以下是插件简要说明，如需完整文档或插件最新信息，请访问
-                <a class="notice" href="https://github.com/ninja33/ODH" target="_blank">项目主页</a>
-            </p>
-            <ol>
-                <li>打开任意网页，将鼠标移动到想要查询的单词上。</li>
-                <li>点击拖动或者双击鼠标选取单词或者短语。如果单词文本是一个链接，可按下<b>取词热键</b>自动取词。</li>
-                <li>选词后，插件会弹出释义窗口显示在单词旁边。</li>
-                <li>左击<img src="../img/icon16.png" alt>图标，可以快速<b>启用/禁用</b>插件，选择<b>取词热键</b>，或者选择当前词典。</li>
-                <li>右击<img src="../img/icon16.png" alt>图标，然后选择<b>"选项"</b>可打开选项页，以进一步定制化插件。</li>
-            </ol>
-            <p>本插件主要以脚本获取在线词典信息，下面是部分脚本支持的词典名称，完整内容详见<a class="notice" href='https://github.com/ninja33/ODH/blob/master/doc/scriptlist.zh_CN.md' target="_blank">脚本清单</a></p>
-            <ol>
-                <li>简明词典：有道简明英汉，百词斩图文词典</li>
-                <li>权威词典：柯林斯双解，牛津双解，剑桥双解</li>
-                <li>其他词典：法语助手、西语助手、千亿俄汉、汉典汉语</li>
-                <li>其他双语：柯林斯英法/法英、剑桥英法/法英词典</li>
-            </ol>
-            <p>根据广大用户的请求，增加了Ankiweb制卡接口。但使用Ankiweb接口制卡，可能因违反<a class="notice" href='https://ankiweb.net/account/terms' target="_blank"><b>TOS</b></a>而被<b class="alarm">封禁帐号</b>，请谨慎使用，责任自负</p>
-            <p>注意：ankiconnect官版不支持同一单词重复制卡。想重复制卡，详见这篇<a class="notice" href='https://www.laohuang.net/20180213/ankiconnect-dupe-card-issue/' target="_blank">博客文章</a></p>
-            <p style="float:right">作者:
-                <a class="notice" href='https://www.laohuang.net' target="_blank">你家老黄</a>
-            </p>
-        </div>
-
-        <div id="tab-2" class="tabcontent" style="display:none">
-            <h3>Online Dictionary Helper Guide</h3>
-            <p>Thanks for installing. Here is the brief introduction. If you need more details, please visit
-                <a class="notice" href="https://github.com/ninja33/ODH" target="_blank">Project Home</a>
-            </p>
-            <ol>
-                <li>Open any given web page, move mouse cursor to the word.</li>
-                <li>Click-Drag/Double Click mouse button to select word and phrase, or press <b>Hotkey</b> to automatically select word in case it's a link.</li>
-                <li>A popup window will show up displaying the word definition.</li>
-                <li>Left click
-                    <img src="../img/icon16.png" alt>icon, you may quickly
-                    <b>Enabled/Disable</b> this extension, choose <b>Hotkey</b> for automatical text selection, or select current dictionary.</li>
-                <li>Right click
-                    <img src="../img/icon16.png" alt>icon, select <b>"Options"</b>, you may open options page for further setting</li>
-            </ol>
-            <p>The extension mainly uses script to retrive data from online dictioanry. Below is part of scripts list. For detail, please check <a class="notice" href='https://github.com/ninja33/ODH/blob/master/doc/scriptlist.zh_CN.md' target="_blank">Full List</a></p>
-            <ol>
-                <li>Concise：encn_Youdao, encn_Baicizhan</li>
-                <li>Learner：encn_Collins, encn_Oxford, encn_Cambridge</li>
-                <li>Others：frcn_Eudict, escn_Eudict, rucn_Qianyi, cncn_Zdic</li>
-                <li>Bilingual: Collins(enfr/fren), Cambridge(enfr/fren)</li>
-            </ol>
-            <p>Added Ankiweb interface based on massive request. But <b class="alarm">Ankiweb account may be disabled</b> according to Ankiweb <a class="notice" href='https://ankiweb.net/account/terms' target="_blank"><b>TOS</b></a>, please use this function at your own risk</p>
-            <p>Note: Sometime, you occasionally can not create cards(not always), actually it’s not extension’s problem. Because it does not allow duplicated cards(with same sorted field) creation in ankiconnect by default. for more detail, please check this <a class="notice" href='https://www.laohuang.net/20180213/ankiconnect-dupe-card-issue/' target="_blank">Blog Article</a></p>
-            <p style="float:right">Author:
-                <a class="notice" href='https://www.laohuang.net' target="_blank">Ninja Huang</a>
-            </p>
-        </div>
-
-    </div>
-    <script src="js/tabmenu.js"></script>
-</body>
-
+        <script src="js/tabmenu.js"></script>
+    </body>
 </html>

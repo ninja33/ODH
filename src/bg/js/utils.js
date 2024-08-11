@@ -24,8 +24,8 @@ function sanitizeOptions(options) {
         url: '',
         audio: '',
 
-        sysscripts: 'builtin_encn_Collins,encn_Collins,encn_Cambridge,encn_Oxford,fren_Cambridge,esen_Spanishdict,decn_Eudict,escn_Eudict,frcn_Eudict',
-        udfscripts: '',
+        systemScripts: 'encn_Collins,jpen_Takoboto',
+        userDefineScripts: '',
 
         dictSelected: '',
         dictNamelist: [],
@@ -38,7 +38,6 @@ function sanitizeOptions(options) {
     }
     return options;
 }
-
 
 async function optionsLoad() {
     return new Promise((resolve, reject) => {
@@ -55,7 +54,7 @@ async function optionsSave(options) {
 }
 
 function utilAsync(func) {
-    return function(...args) {
+    return function (...args) {
         func.apply(this, args);
     };
 }

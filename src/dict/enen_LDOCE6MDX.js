@@ -13,7 +13,6 @@ class encn_LDOCE6MDX {
         return 'Longman English Dictionary(mdx)';
     }
 
-
     setOptions(options) {
         this.options = options;
         //this.maxexample = options.maxexample;
@@ -32,7 +31,7 @@ class encn_LDOCE6MDX {
         }
         let promises = list.map((item) => this.findLDOCE6(item));
         let results = await Promise.all(promises);
-        return [].concat(...results).filter(x => x);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findLDOCE6(word) {
@@ -44,10 +43,8 @@ class encn_LDOCE6MDX {
         }
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
 
         let base = 'http://127.0.0.1:8000/';
@@ -75,7 +72,9 @@ class encn_LDOCE6MDX {
             let header = entry.querySelector('.entryhead');
             //let tailer = entry.querySelector('.tail');
 
-            let expression = T(header.querySelector('.hwd')) || T(header.querySelector('.phrvbhwd')); //headword
+            let expression =
+                T(header.querySelector('.hwd')) ||
+                T(header.querySelector('.phrvbhwd')); //headword
             let reading = T(header.querySelector('.pron')); // phonetic
 
             let audios = [];
@@ -87,38 +86,59 @@ class encn_LDOCE6MDX {
             }
 
             let extrainfo = T(header.querySelector('.gram'));
-            extrainfo = extrainfo ? `<span class='head_gram'>${extrainfo}</span>` : '';
+            extrainfo = extrainfo
+                ? `<span class='head_gram'>${extrainfo}</span>`
+                : '';
             let freqs = header.querySelectorAll('.freq') || [];
             for (const freq of freqs) {
                 extrainfo += `<span class="head_freq">${T(freq)}</span>`;
             }
 
-            let pos = T(header.querySelector('.pos')) ? `<span class='pos'>${T(header.querySelector('.pos'))}</span>` : '';
+            let pos = T(header.querySelector('.pos'))
+                ? `<span class='pos'>${T(header.querySelector('.pos'))}</span>`
+                : '';
 
             let senses = entry.querySelectorAll('.sense');
             for (const sense of senses) {
-                let signpost = T(sense.querySelector('.signpost')) || T(sense.querySelector('.lexunit'));
-                let sign = signpost ? `<div class="sign"><span class="eng_sign">${signpost}</span></div>` : '';
+                let signpost =
+                    T(sense.querySelector('.signpost')) ||
+                    T(sense.querySelector('.lexunit'));
+                let sign = signpost
+                    ? `<div class="sign"><span class="eng_sign">${signpost}</span></div>`
+                    : '';
                 let subsenses = sense.querySelectorAll('.subsense');
-                if (subsenses.length == 0)
-                    subsenses = [sense];
+                if (subsenses.length == 0) subsenses = [sense];
                 for (const subsense of subsenses) {
                     let subgram = T(subsense.querySelector('.gram'));
-                    let eng_tran = T(subsense.querySelector('.def')) ? `<span class='eng_tran'>${subgram}${T(subsense.querySelector('.def'))}</span>` : '';
+                    let eng_tran = T(subsense.querySelector('.def'))
+                        ? `<span class='eng_tran'>${subgram}${T(subsense.querySelector('.def'))}</span>`
+                        : '';
                     if (!eng_tran) continue;
                     let definition = '';
                     definition += `${sign}${pos}<span class="tran">${eng_tran}</span>`;
                     // make exmaple sentence segement
-                    let sense_examples = subsense.querySelectorAll('.sense>.example');
-                    let subse_examples = subsense.querySelectorAll('.subsense>.example');
+                    let sense_examples =
+                        subsense.querySelectorAll('.sense>.example');
+                    let subse_examples =
+                        subsense.querySelectorAll('.subsense>.example');
                     let examples = [...sense_examples, ...subse_examples];
                     if (examples.length > 0 && this.maxexample > 0) {
                         definition += '<ul class="sents">';
                         for (const [index, example] of examples.entries()) {
                             if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                             let soundlink = example.querySelector('a') || '';
-                            if (soundlink && soundlink.getAttribute('href').indexOf('sound://') != -1)
-                                soundlink = putSoundTag(base + soundlink.getAttribute('href').substring(8)); // 8 = 'sound://'.length
+                            if (
+                                soundlink &&
+                                soundlink
+                                    .getAttribute('href')
+                                    .indexOf('sound://') != -1
+                            )
+                                soundlink = putSoundTag(
+                                    base +
+                                        soundlink
+                                            .getAttribute('href')
+                                            .substring(8)
+                                ); // 8 = 'sound://'.length
                             definition += `<li class='sent'>${soundlink}<span class='eng_sent'>${T(example)}</span></li>`;
                         }
                         definition += '</ul>';
@@ -131,17 +151,31 @@ class encn_LDOCE6MDX {
                         let eng_gram = T(extra.querySelector('.propformprep'));
                         let eng_collo = T(extra.querySelector('.collo'));
                         if (!eng_gram && !eng_collo) continue;
-                        eng_gram = eng_gram ? `<span class="eng_gram_prep">${eng_gram}` : '';
-                        eng_collo = eng_collo ? `<span class="eng_gram_form">${eng_collo}</span>` : '';
+                        eng_gram = eng_gram
+                            ? `<span class="eng_gram_prep">${eng_gram}`
+                            : '';
+                        eng_collo = eng_collo
+                            ? `<span class="eng_gram_form">${eng_collo}</span>`
+                            : '';
                         let eng_gloss = T(extra.querySelector('.gloss'));
-                        eng_gloss = eng_gloss ? `<span class="eng_gram_gloss">${eng_gloss}</span>` : '';
+                        eng_gloss = eng_gloss
+                            ? `<span class="eng_gram_gloss">${eng_gloss}</span>`
+                            : '';
                         definition += `<span class="gram_extra">${eng_gram}${eng_collo}${eng_gloss}</span>`;
 
                         let examp = extra.querySelector('.example') || '';
                         if (!examp) continue;
                         let soundlink = examp.querySelector('a') || '';
-                        if (soundlink && soundlink.getAttribute('href').indexOf('sound://') != -1)
-                            soundlink = putSoundTag(base + soundlink.getAttribute('href').substring(8)); // 8 = 'sound://'.length
+                        if (
+                            soundlink &&
+                            soundlink
+                                .getAttribute('href')
+                                .indexOf('sound://') != -1
+                        )
+                            soundlink = putSoundTag(
+                                base +
+                                    soundlink.getAttribute('href').substring(8)
+                            ); // 8 = 'sound://'.length
 
                         let gram_collo_examp = `<span class="eng_gram_examp">${T(examp)}</span>`;
                         if (gram_collo_examp && this.maxexample > 0)
@@ -158,7 +192,7 @@ class encn_LDOCE6MDX {
                 reading,
                 extrainfo,
                 definitions,
-                audios
+                audios,
             });
         }
         return notes;
@@ -169,7 +203,8 @@ class encn_LDOCE6MDX {
 
         if (!word) return notes;
 
-        let base = 'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
+        let base =
+            'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try {
@@ -208,7 +243,6 @@ class encn_LDOCE6MDX {
         });
         return notes;
     }
-
 
     renderCSS() {
         let css = `

@@ -17,7 +17,6 @@ class Popup {
     }
 
     showNextTo(point, content) {
-
         this.inject();
         const elementRect = this.getRangeRect(point);
         const popupRect = this.popup.getBoundingClientRect();
@@ -32,8 +31,8 @@ class Popup {
             posY = elementRect.top - popupRect.height - this.offset;
         }
 
-        posX = (posX < 0) ? 0 : posX;
-        posY = (posY < 0) ? 0 : posY;
+        posX = posX < 0 ? 0 : posX;
+        posY = posY < 0 ? 0 : posY;
 
         this.showAt({ x: posX, y: posY }, content);
     }

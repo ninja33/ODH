@@ -6,7 +6,12 @@ class Ankiweb {
         this.password = '';
         chrome.webRequest.onBeforeSendHeaders.addListener(
             this.rewriteHeader,
-            { urls: ['https://ankiweb.net/account/login', 'https://ankiuser.net/edit/save'] },
+            {
+                urls: [
+                    'https://ankiweb.net/account/login',
+                    'https://ankiuser.net/edit/save',
+                ],
+            },
             ['requestHeaders', 'blocking', 'extraHeaders']
         );
     }
@@ -20,7 +25,9 @@ class Ankiweb {
     }
 
     async addNote(note) {
-        return (note && this.profile) ? await this.saveNote(note) : Promise.resolve(null);
+        return note && this.profile
+            ? await this.saveNote(note)
+            : Promise.resolve(null);
     }
 
     async getDeckNames() {
@@ -42,24 +49,28 @@ class Ankiweb {
     // --- Ankiweb API
     async api_connect(forceLogout = false) {
         return new Promise((resolve, reject) => {
-            let url = forceLogout ? 'https://ankiweb.net/account/logout' : 'https://ankiuser.net/edit/';
+            let url = forceLogout
+                ? 'https://ankiweb.net/account/logout'
+                : 'https://ankiuser.net/edit/';
             $.get(url, (result) => {
                 //let title = $('h1', $(result));
                 let parser = new DOMParser();
                 let doc = parser.parseFromString(result, 'text/html');
                 let title = doc.querySelectorAll('h1');
-                if (!title.length) return Promise.reject(false);
+                if (!title.length) return reject(false);
                 switch (title[0].innerText) {
                     case 'Add':
                         resolve({
                             action: 'edit',
-                            data: this.parseData(result)
+                            data: this.parseData(result),
                         });
                         break;
                     case 'Log in':
                         resolve({
                             action: 'login',
-                            data: doc.querySelector('input[name=csrf_token]').getAttribute('value')
+                            data: doc
+                                .querySelector('input[name=csrf_token]')
+                                .getAttribute('value'),
                             //data:$('input[name=csrf_token]', $(result)).val()
                         });
                         break;
@@ -76,7 +87,7 @@ class Ankiweb {
                 submitted: '1',
                 username: id,
                 password: password,
-                csrf_token: token
+                csrf_token: token,
             };
             $.post('https://ankiweb.net/account/login', info, (result) => {
                 //let title = $('h1', $(result));
@@ -106,14 +117,14 @@ class Ankiweb {
                 csrf_token: profile.token,
                 data: JSON.stringify(data),
                 mid: profile.modelids[note.modelName],
-                deck: profile.deckids[note.deckName]
+                deck: profile.deckids[note.deckName],
             };
             let request = {
                 url: 'https://ankiuser.net/edit/save',
                 type: 'POST',
                 data: dict,
                 error: (xhr, status, error) => resolve(null),
-                success: (data, status) => resolve(data)
+                success: (data, status) => resolve(data),
             };
             $.ajax(request);
         });
@@ -124,7 +135,11 @@ class Ankiweb {
             let resp = await this.api_connect(forceLogout);
             if (resp.action == 'edit') {
                 return resp.data;
-            } else if (retryCount > 0 && resp.action == 'login' && await this.api_login(this.id, this.password, resp.data)) {
+            } else if (
+                retryCount > 0 &&
+                resp.action == 'login' &&
+                (await this.api_login(this.id, this.password, resp.data))
+            ) {
                 return this.getProfile(retryCount - 1);
             } else {
                 return null;
@@ -139,7 +154,10 @@ class Ankiweb {
             let resp = await this.api_save(note, this.profile);
             if (resp != null) {
                 return true;
-            } else if (retryCount > 0 && (this.profile = await this.getProfile())) {
+            } else if (
+                retryCount > 0 &&
+                (this.profile = await this.getProfile())
+            ) {
                 return this.saveNote(note, retryCount - 1);
             } else {
                 return null;
@@ -149,25 +167,25 @@ class Ankiweb {
         }
     }
 
-    async getAddInfo(){
+    async getAddInfo() {
         return new Promise((resolve, reject) => {
             let request = {
                 url: 'https://ankiuser.net/edit/getAddInfo',
-                dataType: "json",
+                dataType: 'json',
                 error: (xhr, status, error) => resolve(null),
-                success: (data, status) => resolve(data)
+                success: (data, status) => resolve(data),
             };
             $.ajax(request);
         });
     }
 
-    async getNotetypeFields(nid){
+    async getNotetypeFields(nid) {
         return new Promise((resolve, reject) => {
             let request = {
                 url: 'https://ankiuser.net/edit/getNotetypeFields?ntid=' + nid,
-                dataType: "json",
+                dataType: 'json',
                 error: (xhr, status, error) => resolve(null),
-                success: (data, status) => resolve(data)
+                success: (data, status) => resolve(data),
             };
             $.ajax(request);
         });
@@ -180,16 +198,14 @@ class Ankiweb {
         const Addinfo = await this.getAddInfo();
 
         let decknames = [];
-        let deckids= {};
+        let deckids = {};
         let modelnames = [];
         let modelids = {};
         let modelfieldnames = {};
 
-        
-
         for (const deck of Addinfo.decks) {
             decknames.push(deck.name);
-            deckids[deck.name]=deck.id;
+            deckids[deck.name] = deck.id;
         }
 
         for (const notetype of Addinfo.notetypes) {
@@ -209,12 +225,13 @@ class Ankiweb {
             modelnames,
             modelids,
             modelfieldnames,
-            token
+            token,
         };
     }
 
     rewriteHeader(e) {
-        const userAgent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
+        const userAgent =
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
 
         for (let header of e.requestHeaders) {
             if (header.name.toLowerCase() == 'user-agent') {
@@ -247,17 +264,17 @@ class Ankiweb {
             if (!hasOrigin)
                 e.requestHeaders.push({
                     name: 'origin',
-                    value: origin
+                    value: origin,
                 });
             if (!hasReferer)
                 e.requestHeaders.push({
                     name: 'referer',
-                    value: referer
+                    value: referer,
                 });
         }
 
         return {
-            requestHeaders: e.requestHeaders
+            requestHeaders: e.requestHeaders,
         };
     }
 }

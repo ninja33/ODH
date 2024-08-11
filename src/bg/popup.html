@@ -1,63 +1,70 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="css/popup.css" />
+        <link rel="stylesheet" href="css/checkbox.css" />
+        <title data-i18n="optTitle">Online Dictionary Helper</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/popup.css">
-    <link rel="stylesheet" href="css/checkbox.css">
-    <title data-i18n="optTitle">Online Dictionary Helper</title>
-</head>
-
-<body>
-    <div class='container'>
-        <form>
-            <div class="grouppanel">
-                <div class="grouptitle">
-                    <span class="title" data-i18n="baTitle">Options</span>
-                    <span class="more" id="more">...</span>
-                </div>
-                <div class="crosspanel">
-                    <label data-i18n="baEnabled">Enabled</label>
-                    <div class="enabled">
-                        <input type="checkbox" value=true id="enabled">
-                        <label for="enabled"></label>
+    <body>
+        <div class="container">
+            <form>
+                <div class="grouppanel">
+                    <div class="grouptitle">
+                        <span class="title" data-i18n="baTitle">Options</span>
+                        <span class="more" id="more">...</span>
                     </div>
-                    <label data-i18n="baMouseselection">Enabled</label>
-                    <div class="enabled">
-                        <input type="checkbox" value=true id="mouseselection">
-                        <label for="mouseselection"></label>
+                    <div class="crosspanel">
+                        <label data-i18n="baEnabled">Enabled</label>
+                        <div class="enabled">
+                            <input type="checkbox" value="true" id="enabled" />
+                            <label for="enabled"></label>
+                        </div>
+                        <label data-i18n="baMouseselection">Enabled</label>
+                        <div class="enabled">
+                            <input
+                                type="checkbox"
+                                value="true"
+                                id="mouseselection"
+                            />
+                            <label for="mouseselection"></label>
+                        </div>
+
+                        <label data-i18n="baHotKey">AuoSel.</label>
+                        <select id="hotkey" class="col-2x">
+                            <option value="0">Off</option>
+                            <option value="16">Shift</option>
+                            <option value="17">Ctrl</option>
+                            <option value="18">Alt</option>
+                        </select>
+                        <hr />
+                        <label data-i18n="baCurrentDict">Dict.</label>
+                        <select id="dict" class="col-2x">
+                            <option value="encn-Default">encn-Default</option>
+                        </select>
                     </div>
-
-                    <label data-i18n="baHotKey">AuoSel.</label>
-                    <select id="hotkey" class="col-2x">
-                        <option value="0">Off</option>
-                        <option value="16">Shift</option>
-                        <option value="17">Ctrl</option>
-                        <option value="18">Alt</option>
-                    </select>
-                    <hr>
-                    <label data-i18n="baCurrentDict">Dict.</label>
-                    <select id="dict" class="col-2x">
-                        <option value="encn-Default">encn-Default</option>
-                    </select>
+                    <div class="crosspanel anki-options">
+                        <hr />
+                        <label data-i18n="baDeckname">Deck</label>
+                        <select id="deckname" class="col-2x">
+                            <option value=""></option>
+                        </select>
+                        <label data-i18n="baTags">Tags</label>
+                        <input
+                            type="text"
+                            id="tags"
+                            placeholder="Tags"
+                            class="col-2x"
+                        />
+                    </div>
                 </div>
-                <div class="crosspanel anki-options">
-                    <hr>
-                    <label data-i18n="baDeckname">Deck</label>
-                    <select id="deckname" class="col-2x">
-                        <option value=""></option>
-                    </select>
-                    <label data-i18n="baTags">Tags</label>
-                    <input type="text" id="tags" placeholder="Tags" class="col-2x">
-                </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
 
-    <!--script src="js/polyfill.js"></script-->
-    <script src="../lib/jquery-3.0.0.min.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/popup.js"></script>
-</body>
-
+        <!--script src="js/polyfill.js"></script-->
+        <script src="../lib/jquery-3.0.0.min.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/popup.js"></script>
+    </body>
 </html>

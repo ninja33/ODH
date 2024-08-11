@@ -13,7 +13,6 @@ class encn_Baicizhan {
         return 'Baicizhan EN->CN Dictionary';
     }
 
-
     setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
@@ -32,7 +31,7 @@ class encn_Baicizhan {
         }
         let promises = list.map((item) => this.findBaicizhan(item));
         let results = await Promise.all(promises);
-        return [].concat(...results).filter(x => x);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findBaicizhan(word) {
@@ -60,9 +59,16 @@ class encn_Baicizhan {
             definition += `<li class="bcz"><span class="bcz_chn">${def}</span></li>`;
         }
         definition += '</ul>';
-        definition += note.df ? `<div class='bcz'><img src='${note.df}' /></div>` : '';
-        definition += note.st && note.sttr ? `<ul class='sents'><li class='sent'><span class='eng_sent'>${note.st}</span><span class='chn_sent'>${note.sttr}</span></li></ul>` : '';
-        definition += note.img ? `<div class='bcz'><img src='${note.img}' /></div>` : '';
+        definition += note.df
+            ? `<div class='bcz'><img src='${note.df}' /></div>`
+            : '';
+        definition +=
+            note.st && note.sttr
+                ? `<ul class='sents'><li class='sent'><span class='eng_sent'>${note.st}</span><span class='chn_sent'>${note.sttr}</span></li></ul>`
+                : '';
+        definition += note.img
+            ? `<div class='bcz'><img src='${note.img}' /></div>`
+            : '';
         //definition += `<div class='bcz'><video width="340px" controls><source src='${note.tv}' type="video/mp4"></video></div>`;
         definition && definitions.push(definition);
         let css = `

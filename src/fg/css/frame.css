@@ -1,118 +1,117 @@
 .odh-notes {
-  font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
-  /*font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, 'Microsoft Yahei', sans-serif;*/
-  font-size: 14px;
-  text-align: left;
-  color: #1d2129;
-  line-height: 1.5em;
-  min-height: 1.5em;
-  overflow-y: auto;
-  margin: 8px;
-  border-radius: 3px;
-  box-sizing: border-box;
-  ;
+    font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
+    /*font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, 'Microsoft Yahei', sans-serif;*/
+    font-size: 14px;
+    text-align: left;
+    color: #1d2129;
+    line-height: 1.5em;
+    min-height: 1.5em;
+    overflow-y: auto;
+    margin: 8px;
+    border-radius: 3px;
+    box-sizing: border-box;
 }
 
 .odh-note {
-  margin: 5px 0;
-  padding: 0px;
-  /*border: 1px dashed red;*/
+    margin: 5px 0;
+    padding: 0px;
+    /*border: 1px dashed red;*/
 }
 
 .odh-headsection {
-  margin: 3px 0;
-  padding: 0 3px 3px;
-  border-bottom: 2px #666 solid;
+    margin: 3px 0;
+    padding: 0 3px 3px;
+    border-bottom: 2px #666 solid;
 }
 
 .odh-expression {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-right: 4px;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-right: 4px;
 }
 
 .odh-reading {
-  font-family: Arial, Helvetica, sans-serif;
-  margin-right: 4px;
-  font-size: 0.9em;
-  display: inline-block;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-right: 4px;
+    font-size: 0.9em;
+    display: inline-block;
 }
 
 .odh-extra {
-  margin-right: 4px;
-  display: inline-block;
+    margin-right: 4px;
+    display: inline-block;
 }
 
 .odh-definition,
 .odh-sentence {
-  display: block;
-  background-color: #fefefe;
-  border: 1px solid;
-  border-color: #e5e6e9 #dfe0e4 #d0d1d5;
-  border-radius: 3px;
-  padding: 5px;
-  margin-top: 5px;
-  word-wrap: break-word;
-  overflow: auto;  
+    display: block;
+    background-color: #fefefe;
+    border: 1px solid;
+    border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+    border-radius: 3px;
+    padding: 5px;
+    margin-top: 5px;
+    word-wrap: break-word;
+    overflow: auto;
 }
-#odh-context{
-  font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
-  background:#fffff4;
-  margin:0;
-  width: 96%;
-  height: 100px;
+#odh-context {
+    font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
+    background: #fffff4;
+    margin: 0;
+    width: 96%;
+    height: 100px;
 }
 .odh-sentence {
-  border: 2px dashed #d0d1d5;
-  padding:0;
+    border: 2px dashed #d0d1d5;
+    padding: 0;
 }
 
 .odh-addnote-disabled,
 .odh-addnote {
-  margin: 3px;
-  cursor: pointer;
-  position: relative;
-  float: right;
+    margin: 3px;
+    cursor: pointer;
+    position: relative;
+    float: right;
 }
 
-.odh-addnote-disabled{
-  cursor: not-allowed;
-  opacity:0.5;
+.odh-addnote-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .odh-audios {
-  margin: 3px;
-  position: relative;
-  float: right;
+    margin: 3px;
+    position: relative;
+    float: right;
 }
 
 .odh-playaudio {
-  cursor: pointer;
-  margin: 0 3px;
+    cursor: pointer;
+    margin: 0 3px;
 }
 
 .odh-playsound {
-  vertical-align: text-bottom;
-  margin: 0 3px;
+    vertical-align: text-bottom;
+    margin: 0 3px;
 }
 
 hr {
-  border: 1px;
-  margin: 5px 0;
-  border-top: 1px solid #d5d5d5;
+    border: 1px;
+    margin: 5px 0;
+    border-top: 1px solid #d5d5d5;
 }
 
 .hidden {
-  display: none;
+    display: none;
 }
 
 .highlight {
-  /*font-weight       : bold;*/
-  font-size: 0.9em;
-  border-radius: 4px;
-  color: #fff;
-  padding: 1px 2px;
-  margin-right: 3px;
-  text-decoration: none;
-  text-align: center;
+    /*font-weight       : bold;*/
+    font-size: 0.9em;
+    border-radius: 4px;
+    color: #fff;
+    padding: 1px 2px;
+    margin-right: 3px;
+    text-decoration: none;
+    text-align: center;
 }

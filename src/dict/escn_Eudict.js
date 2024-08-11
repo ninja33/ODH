@@ -27,11 +27,17 @@ class escn_Eudict {
         try {
             let terms = JSON.parse(await api.fetch(url));
             if (terms.length == 0) return null;
-            terms = terms.filter(term => term.value && term.recordid && term.recordtype != 'CG');
+            terms = terms.filter(
+                (term) => term.value && term.recordid && term.recordtype != 'CG'
+            );
             terms = terms.slice(0, 2); //max 2 results;
-            let queries = terms.map(term => this.findEudict(`https://www.esdict.cn/dicts/es/${term.value}?recordid=${term.recordid}`));
+            let queries = terms.map((term) =>
+                this.findEudict(
+                    `https://www.esdict.cn/dicts/es/${term.value}?recordid=${term.recordid}`
+                )
+            );
             let results = await Promise.all(queries);
-            return [].concat(...results).filter(x => x);
+            return [].concat(...results).filter((x) => x);
         } catch (err) {
             return null;
         }
@@ -39,7 +45,7 @@ class escn_Eudict {
 
     removeTags(elem, name) {
         let tags = elem.querySelectorAll(name);
-        tags.forEach(x => {
+        tags.forEach((x) => {
             x.outerHTML = '';
         });
     }
@@ -48,10 +54,8 @@ class escn_Eudict {
         let notes = [];
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
 
         let doc = '';
@@ -77,7 +81,9 @@ class escn_Eudict {
 
         let audios = [];
         try {
-            audios[0] = 'https://api.frdic.com/api/v2/speech/speakweb?' + headsection.querySelector('.voice-js').dataset.rel;
+            audios[0] =
+                'https://api.frdic.com/api/v2/speech/speakweb?' +
+                headsection.querySelector('.voice-js').dataset.rel;
         } catch (err) {
             audios = [];
         }
@@ -94,9 +100,18 @@ class escn_Eudict {
             anchor.setAttribute('href', link);
             anchor.setAttribute('target', '_blank');
         }
-        content.innerHTML = content.innerHTML.replace(/<p class="exp">(.+?)<\/p>/gi, '<span class="exp">$1</span>');
-        content.innerHTML = content.innerHTML.replace(/<span class="exp"><br>/gi, '<span class="exp">');
-        content.innerHTML = content.innerHTML.replace(/<span class="eg"><br>/gi, '<span class="eg">');
+        content.innerHTML = content.innerHTML.replace(
+            /<p class="exp">(.+?)<\/p>/gi,
+            '<span class="exp">$1</span>'
+        );
+        content.innerHTML = content.innerHTML.replace(
+            /<span class="exp"><br>/gi,
+            '<span class="exp">'
+        );
+        content.innerHTML = content.innerHTML.replace(
+            /<span class="eg"><br>/gi,
+            '<span class="eg">'
+        );
 
         let css = this.renderCSS();
         notes.push({
@@ -105,7 +120,7 @@ class escn_Eudict {
             reading,
             extrainfo,
             definitions: [content.innerHTML],
-            audios
+            audios,
         });
         return notes;
     }

@@ -1,6 +1,5 @@
 /* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isConnected, addNote, getTranslation, playAudio, isValidElement*/
 class ODHFront {
-
     constructor() {
         this.options = null;
         this.point = null;
@@ -17,25 +16,28 @@ class ODHFront {
         this.timeout = null;
         this.mousemoved = false;
 
-        window.addEventListener('mousemove', e => this.onMouseMove(e));
-        window.addEventListener('mousedown', e => this.onMouseDown(e));
-        window.addEventListener('dblclick', e => this.onDoubleClick(e));
-        window.addEventListener('keydown', e => this.onKeyDown(e));
+        window.addEventListener('mousemove', (e) => this.onMouseMove(e));
+        window.addEventListener('mousedown', (e) => this.onMouseDown(e));
+        window.addEventListener('dblclick', (e) => this.onDoubleClick(e));
+        window.addEventListener('keydown', (e) => this.onKeyDown(e));
 
         chrome.runtime.onMessage.addListener(this.onBgMessage.bind(this));
-        window.addEventListener('message', e => this.onFrameMessage(e));
-        document.addEventListener('selectionchange', e => this.userSelectionChanged(e));
-        //window.addEventListener('selectionend', e => this.onSelectionEnd(e));
+        window.addEventListener('message', (e) => this.onFrameMessage(e));
+        document.addEventListener('selectionchange', (e) =>
+            this.userSelectionChanged(e)
+        );
     }
 
     onKeyDown(e) {
-        if (!this.activateKey)
-            return;
+        if (!this.activateKey) return;
 
-        if (!isValidElement())
-            return;
+        if (!isValidElement()) return;
 
-        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
+        if (
+            this.enabled &&
+            this.point !== null &&
+            (e.keyCode === this.activateKey || e.charCode === this.activateKey)
+        ) {
             const range = rangeFromPoint(this.point);
             if (range == null) return;
             let textSource = new TextSourceRange(range);
@@ -49,14 +51,11 @@ class ODHFront {
     }
 
     onDoubleClick(e) {
-        if (!this.mouseselection)
-            return;
+        if (!this.mouseselection) return;
 
-        if (!isValidElement())
-            return;
+        if (!isValidElement()) return;
 
-        if (this.timeout)
-            clearTimeout(this.timeout);
+        if (this.timeout) clearTimeout(this.timeout);
         this.mousemoved = false;
         this.onSelectionEnd(e);
     }
@@ -74,7 +73,6 @@ class ODHFront {
     }
 
     userSelectionChanged(e) {
-
         if (!this.enabled || !this.mousemoved || !this.mouseselection) return;
 
         if (this.timeout) {
@@ -84,18 +82,18 @@ class ODHFront {
         // wait 500 ms after the last selection change event
         this.timeout = setTimeout(() => {
             this.onSelectionEnd(e);
-            //var selEndEvent = new CustomEvent('selectionend');
-            //window.dispatchEvent(selEndEvent);
         }, 500);
     }
 
+    /**
+     * main logic; get select text, send request to get translation,
+     * then build note
+     */
     async onSelectionEnd(e) {
+        // console.log('Step 1');
+        if (!this.enabled) return;
 
-        if (!this.enabled)
-            return;
-
-        if (!isValidElement())
-            return;
+        if (!isValidElement()) return;
 
         // reset selection timeout
         this.timeout = null;
@@ -105,15 +103,17 @@ class ODHFront {
         let result = await getTranslation(expression);
         if (result == null || result.length == 0) return;
         this.notes = this.buildNote(result);
-        this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, await this.renderPopup(this.notes));
-
+        this.popup.showNextTo(
+            { x: this.point.x, y: this.point.y },
+            await this.renderPopup(this.notes)
+        );
     }
 
     onBgMessage(request, sender, callback) {
         const { action, params } = request;
         const method = this['api_' + action];
 
-        if (typeof(method) === 'function') {
+        if (typeof method === 'function') {
             params.callback = callback;
             method.call(this, params);
         }
@@ -135,7 +135,7 @@ class ODHFront {
     onFrameMessage(e) {
         const { action, params } = e.data;
         const method = this['api_' + action];
-        if (typeof(method) === 'function') {
+        if (typeof method === 'function') {
             method.call(this, params);
         }
     }
@@ -144,8 +144,11 @@ class ODHFront {
         let { nindex, dindex, context } = params;
 
         let notedef = Object.assign({}, this.notes[nindex]);
-        notedef.definition = this.notes[nindex].css + this.notes[nindex].definitions[dindex];
-        notedef.definitions = this.notes[nindex].css + this.notes[nindex].definitions.join('<hr>');
+        notedef.definition =
+            this.notes[nindex].css + this.notes[nindex].definitions[dindex];
+        notedef.definitions =
+            this.notes[nindex].css +
+            this.notes[nindex].definitions.join('<hr>');
         notedef.sentence = context;
         notedef.url = window.location.href;
         let response = await addNote(notedef);
@@ -196,11 +199,11 @@ class ODHFront {
                 }
             }
             return result;
-        } else { // if 'result' is simple string, then return standard template.
+        } else {
+            // if 'result' is simple string, then return standard template.
             tmpl['definitions'] = [].concat(result);
             return [tmpl];
         }
-
     }
 
     async renderPopup(notes) {
@@ -209,8 +212,10 @@ class ODHFront {
         let image = '';
         let imageclass = '';
         if (services != 'none') {
-            image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
-            imageclass = await isConnected() ? 'class="odh-addnote"' : 'class="odh-addnote-disabled"';
+            image = services == 'ankiconnect' ? 'plus.png' : 'cloud.png';
+            imageclass = (await isConnected())
+                ? 'class="odh-addnote"'
+                : 'class="odh-addnote-disabled"';
         }
 
         for (const [nindex, note] of notes.entries()) {
@@ -219,7 +224,9 @@ class ODHFront {
             if (note.audios) {
                 for (const [dindex, audio] of note.audios.entries()) {
                     if (audio)
-                        audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/play.png')}"/>`;
+                        audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL(
+                            'fg/img/play.png'
+                        )}"/>`;
                 }
             }
             content += `
@@ -230,7 +237,12 @@ class ODHFront {
                     <span class="odh-extra">${note.extrainfo}</span>
                 </div>`;
             for (const [dindex, definition] of note.definitions.entries()) {
-                let button = (services == 'none' || services == '') ? '' : `<img ${imageclass} data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/'+ image)}" />`;
+                let button =
+                    services == 'none' || services == ''
+                        ? ''
+                        : `<img ${imageclass} data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL(
+                              'fg/img/' + image
+                          )}" />`;
                 content += `<div class="odh-definition">${button}${definition}</div>`;
             }
             content += '</div>';
@@ -245,8 +257,8 @@ class ODHFront {
         return `
         <html lang="en">
             <head><meta charset="UTF-8"><title></title>
-                <link rel="stylesheet" href="${root+'fg/css/frame.css'}">
-                <link rel="stylesheet" href="${root+'fg/css/spell.css'}">
+                <link rel="stylesheet" href="${root + 'fg/css/frame.css'}">
+                <link rel="stylesheet" href="${root + 'fg/css/spell.css'}">
             </head>
             <body style="margin:0px;">
             <div class="odh-notes">`;
@@ -255,23 +267,27 @@ class ODHFront {
     popupFooter() {
         let root = chrome.runtime.getURL('/');
         let services = this.options ? this.options.services : '';
-        let image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
+        let image = services == 'ankiconnect' ? 'plus.png' : 'cloud.png';
         let button = chrome.runtime.getURL('fg/img/' + image);
-        let monolingual = this.options ? (this.options.monolingual == '1' ? 1 : 0) : 0;
+        let monolingual = this.options
+            ? this.options.monolingual == '1'
+                ? 1
+                : 0
+            : 0;
 
         return `
             </div>
             <div class="icons hidden"">
                 <img id="plus" src="${button}"/>
-                <img id="load" src="${root+'fg/img/load.gif'}"/>
-                <img id="good" src="${root+'fg/img/good.png'}"/>
-                <img id="fail" src="${root+'fg/img/fail.png'}"/>
-                <img id="play" src="${root+'fg/img/play.png'}"/>
+                <img id="load" src="${root + 'fg/img/load.gif'}"/>
+                <img id="good" src="${root + 'fg/img/good.png'}"/>
+                <img id="fail" src="${root + 'fg/img/fail.png'}"/>
+                <img id="play" src="${root + 'fg/img/play.png'}"/>
                 <div id="context">${this.sentence}</div>
                 <div id="monolingual">${monolingual}</div>
                 </div>
-            <script src="${root+'fg/js/spell.js'}"></script>
-            <script src="${root+'fg/js/frame.js'}"></script>
+            <script src="${root + 'fg/js/spell.js'}"></script>
+            <script src="${root + 'fg/js/frame.js'}"></script>
             </body>
         </html>`;
     }

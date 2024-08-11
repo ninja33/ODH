@@ -13,7 +13,6 @@ class enen_UrbanDict {
         return 'Urban English Dictionary';
     }
 
-
     setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
@@ -22,8 +21,11 @@ class enen_UrbanDict {
     async findTerm(word) {
         this.word = word;
         //let deflection = api.deinflect(word);
-        let results = await Promise.all([this.findUrbanDict(word), this.findEC(word)]);
-        return [].concat(...results).filter(x => x);
+        let results = await Promise.all([
+            this.findUrbanDict(word),
+            this.findEC(word),
+        ]);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findUrbanDict(word) {
@@ -31,10 +33,8 @@ class enen_UrbanDict {
         if (!word) return notes; // return empty notes
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
 
         let base = 'https://www.urbandictionary.com/define.php?term=';
@@ -47,7 +47,6 @@ class enen_UrbanDict {
         } catch (err) {
             return [];
         }
-
 
         // make definition segement
         let definitions = [];
@@ -69,7 +68,9 @@ class enen_UrbanDict {
                 definition += '<ul class="sents">';
                 for (const [index, examp] of examps.entries()) {
                     if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                    definition += examp ? `<li class='sent'><span class='eng_sent'>${examp}</span></li>` : '';
+                    definition += examp
+                        ? `<li class='sent'><span class='eng_sent'>${examp}</span></li>`
+                        : '';
                 }
                 definition += '</ul>';
             }
@@ -88,7 +89,8 @@ class enen_UrbanDict {
 
         if (!word) return notes;
 
-        let base = 'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
+        let base =
+            'https://dict.youdao.com/jsonapi?jsonversion=2&client=mobile&dicts={"count":99,"dicts":[["ec"]]}&xmlVersion=5.1&q=';
         let url = base + encodeURIComponent(word);
         let data = '';
         try {

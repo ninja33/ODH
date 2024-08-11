@@ -22,7 +22,7 @@ class encn_Cambridge_tc {
         this.word = word;
         let promises = [this.findCambridge(word), this.findYoudao(word)];
         let results = await Promise.all(promises);
-        return [].concat(...results).filter(x => x);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findCambridge(word) {
@@ -30,13 +30,12 @@ class encn_Cambridge_tc {
         if (!word) return notes; // return empty notes
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
 
-        let base = 'https://dictionary.cambridge.org/search/english-chinese-traditional/direct/?q=';
+        let base =
+            'https://dictionary.cambridge.org/search/english-chinese-traditional/direct/?q=';
         let url = base + encodeURIComponent(word);
         let doc = '';
         try {
@@ -58,15 +57,24 @@ class encn_Cambridge_tc {
             if (readings) {
                 let reading_uk = T(readings[0]);
                 let reading_us = T(readings[1]);
-                reading = (reading_uk || reading_us) ? `UK[${reading_uk}] US[${reading_us}] ` : '';
+                reading =
+                    reading_uk || reading_us
+                        ? `UK[${reading_uk}] US[${reading_us}] `
+                        : '';
             }
             let pos = T(entry.querySelector('.posgram'));
             pos = pos ? `<span class='pos'>${pos}</span>` : '';
-            audios[0] = entry.querySelector(".uk.dpron-i source");
-            audios[0] = audios[0] ? 'https://dictionary.cambridge.org' + audios[0].getAttribute('src') : '';
+            audios[0] = entry.querySelector('.uk.dpron-i source');
+            audios[0] = audios[0]
+                ? 'https://dictionary.cambridge.org' +
+                  audios[0].getAttribute('src')
+                : '';
             //audios[0] = audios[0].replace('https', 'http');
-            audios[1] = entry.querySelector(".us.dpron-i source");
-            audios[1] = audios[1] ? 'https://dictionary.cambridge.org' + audios[1].getAttribute('src') : '';
+            audios[1] = entry.querySelector('.us.dpron-i source');
+            audios[1] = audios[1]
+                ? 'https://dictionary.cambridge.org' +
+                  audios[1].getAttribute('src')
+                : '';
             //audios[1] = audios[1].replace('https', 'http');
 
             let sensbodys = entry.querySelectorAll('.sense-body') || [];
@@ -75,36 +83,56 @@ class encn_Cambridge_tc {
                 for (const sensblock of sensblocks) {
                     let phrasehead = '';
                     let defblocks = [];
-                    if (sensblock.classList && sensblock.classList.contains('phrase-block')) {
-                        phrasehead = T(sensblock.querySelector('.phrase-title'));
-                        phrasehead = phrasehead ? `<div class="phrasehead">${phrasehead}</div>` : '';
-                        defblocks = sensblock.querySelectorAll('.def-block') || [];
+                    if (
+                        sensblock.classList &&
+                        sensblock.classList.contains('phrase-block')
+                    ) {
+                        phrasehead = T(
+                            sensblock.querySelector('.phrase-title')
+                        );
+                        phrasehead = phrasehead
+                            ? `<div class="phrasehead">${phrasehead}</div>`
+                            : '';
+                        defblocks =
+                            sensblock.querySelectorAll('.def-block') || [];
                     }
-                    if (sensblock.classList && sensblock.classList.contains('def-block')) {
+                    if (
+                        sensblock.classList &&
+                        sensblock.classList.contains('def-block')
+                    ) {
                         defblocks = [sensblock];
                     }
                     if (defblocks.length <= 0) continue;
 
                     // make definition segement
                     for (const defblock of defblocks) {
-                        let eng_tran = T(defblock.querySelector('.ddef_h .def'));
-                        let chn_tran = T(defblock.querySelector('.def-body .trans'));
+                        let eng_tran = T(
+                            defblock.querySelector('.ddef_h .def')
+                        );
+                        let chn_tran = T(
+                            defblock.querySelector('.def-body .trans')
+                        );
                         if (!eng_tran) continue;
                         let definition = '';
-                        eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>`;
+                        eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'), `<b>${expression}</b>`)}</span>`;
                         chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
                         let tran = `<span class='tran'>${eng_tran}${chn_tran}</span>`;
-                        definition += phrasehead ? `${phrasehead}${tran}` : `${pos}${tran}`;
+                        definition += phrasehead
+                            ? `${phrasehead}${tran}`
+                            : `${pos}${tran}`;
 
                         // make exmaple segement
-                        let examps = defblock.querySelectorAll('.def-body .examp') || [];
+                        let examps =
+                            defblock.querySelectorAll('.def-body .examp') || [];
                         if (examps.length > 0 && this.maxexample > 0) {
                             definition += '<ul class="sents">';
                             for (const [index, examp] of examps.entries()) {
                                 if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                                 let eng_examp = T(examp.querySelector('.eg'));
-                                let chn_examp = T(examp.querySelector('.trans'));
-                                definition += `<li class='sent'><span class='eng_sent'>${eng_examp.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                                let chn_examp = T(
+                                    examp.querySelector('.trans')
+                                );
+                                definition += `<li class='sent'><span class='eng_sent'>${eng_examp.replace(RegExp(expression, 'gi'), `<b>${expression}</b>`)}</span><span class='chn_sent'>${chn_examp}</span></li>`;
                             }
                             definition += '</ul>';
                         }
@@ -118,7 +146,7 @@ class encn_Cambridge_tc {
                 expression,
                 reading,
                 definitions,
-                audios
+                audios,
             });
         }
         return notes;
@@ -145,17 +173,26 @@ class encn_Cambridge_tc {
             let notes = [];
 
             //get Youdao EC data: check data availability
-            let defNodes = doc.querySelectorAll('#phrsListTab .trans-container ul li');
+            let defNodes = doc.querySelectorAll(
+                '#phrsListTab .trans-container ul li'
+            );
             if (!defNodes || !defNodes.length) return notes;
 
             //get headword and phonetic
-            let expression = T(doc.querySelector('#phrsListTab .wordbook-js .keyword')); //headword
+            let expression = T(
+                doc.querySelector('#phrsListTab .wordbook-js .keyword')
+            ); //headword
             let reading = '';
-            let readings = doc.querySelectorAll('#phrsListTab .wordbook-js .pronounce');
+            let readings = doc.querySelectorAll(
+                '#phrsListTab .wordbook-js .pronounce'
+            );
             if (readings) {
                 let reading_uk = T(readings[0]);
                 let reading_us = T(readings[1]);
-                reading = (reading_uk || reading_us) ? `${reading_uk} ${reading_us}` : '';
+                reading =
+                    reading_uk || reading_us
+                        ? `${reading_uk} ${reading_us}`
+                        : '';
             }
 
             let audios = [];
@@ -163,15 +200,15 @@ class encn_Cambridge_tc {
             audios[1] = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(expression)}&type=2`;
 
             let definition = '<ul class="ec">';
-            for (const defNode of defNodes){
+            for (const defNode of defNodes) {
                 let pos = '';
                 let def = T(defNode);
                 let match = /(^.+?\.)\s/gi.exec(def);
-                if (match && match.length > 1){
+                if (match && match.length > 1) {
                     pos = match[1];
                     def = def.replace(pos, '');
                 }
-                pos = pos ? `<span class="pos simple">${pos}</span>`:'';
+                pos = pos ? `<span class="pos simple">${pos}</span>` : '';
                 definition += `<li class="ec">${pos}<span class="ec_chn">${def}</span></li>`;
             }
             definition += '</ul>';
@@ -186,7 +223,7 @@ class encn_Cambridge_tc {
                 expression,
                 reading,
                 definitions: [definition],
-                audios
+                audios,
             });
             return notes;
         }
@@ -195,7 +232,9 @@ class encn_Cambridge_tc {
             let notes = [];
 
             //get Youdao EC data: check data availability
-            let transNode = doc.querySelectorAll('#ydTrans .trans-container p')[1];
+            let transNode = doc.querySelectorAll(
+                '#ydTrans .trans-container p'
+            )[1];
             if (!transNode) return notes;
 
             let definition = `${T(transNode)}`;
@@ -214,10 +253,8 @@ class encn_Cambridge_tc {
         }
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
     }
 

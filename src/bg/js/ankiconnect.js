@@ -39,10 +39,8 @@ class Ankiconnect {
     }
 
     async addNote(note) {
-        if (note)
-            return await this.ankiInvoke('addNote', { note });
-        else
-            return Promise.resolve(null);
+        if (note) return await this.ankiInvoke('addNote', { note });
+        else return Promise.resolve(null);
     }
 
     async getDeckNames() {

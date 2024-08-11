@@ -13,7 +13,6 @@ class encn_Oxford {
         return 'Oxford EN->CN Dictionary(bing)';
     }
 
-
     setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
@@ -22,10 +21,13 @@ class encn_Oxford {
     async findTerm(word) {
         this.word = word;
         let word_stem = await api.deinflect(word);
-        let promises = [this.findOxford(word), this.findOxford(word_stem), this.findYoudao(word)];
+        let promises = [
+            this.findOxford(word),
+            this.findOxford(word_stem),
+            this.findYoudao(word),
+        ];
         let results = await Promise.all(promises);
-        return [].concat(...results).filter(x => x);
-
+        return [].concat(...results).filter((x) => x);
     }
 
     async findOxford(word) {
@@ -33,10 +35,8 @@ class encn_Oxford {
         if (!word) return notes;
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
 
         let base = 'https://cn.bing.com/dict/search?q=';
@@ -45,24 +45,28 @@ class encn_Oxford {
         try {
             let data = await api.fetch(url);
             let parser = new DOMParser();
-            doc = parser.parseFromString(data, 'text/html').querySelector('.qdef');
+            doc = parser
+                .parseFromString(data, 'text/html')
+                .querySelector('.qdef');
         } catch (err) {
             return [];
         }
 
-
         let expression = T(doc.querySelector('#headword'));
         let reading_us = T(doc.querySelector('.hd_prUS')); // phonetic US
         let reading_uk = T(doc.querySelector('.hd_pr')); // phonetic UK
-        let reading = reading_us && reading_uk ? `${reading_uk} ${reading_us}` : '';
+        let reading =
+            reading_us && reading_uk ? `${reading_uk} ${reading_us}` : '';
 
         let audios = [];
         let audioslinks = doc.querySelectorAll('.hd_tf a');
         if (audioslinks)
             for (const [index, audiolink] of audioslinks.entries()) {
-                audios[index] = audiolink.getAttribute('onmouseover').match(/https:.+?mp3/gi)[0] || '';
+                audios[index] =
+                    audiolink
+                        .getAttribute('onmouseover')
+                        .match(/https:.+?mp3/gi)[0] || '';
             }
-
 
         let entries = doc.querySelectorAll('#authid .each_seg');
         if (!entries) return notes;
@@ -80,9 +84,15 @@ class encn_Oxford {
                 if (segement.classList && segement.classList.contains('dis')) {
                     let eng_dis = T(segement.querySelector('.val_dis'));
                     let chn_dis = T(segement.querySelector('.bil_dis'));
-                    dis = (chn_dis && eng_dis) ? `<div class="dis"><span class="eng_dis">${eng_dis}</span><span class="chn_dis">${chn_dis}</span></div>` : '';
+                    dis =
+                        chn_dis && eng_dis
+                            ? `<div class="dis"><span class="eng_dis">${eng_dis}</span><span class="chn_dis">${chn_dis}</span></div>`
+                            : '';
                 }
-                if (segement.classList && segement.classList.contains('se_lis')) {
+                if (
+                    segement.classList &&
+                    segement.classList.contains('se_lis')
+                ) {
                     let eng_tran = T(segement.querySelector('.val'));
                     let chn_tran = T(segement.querySelector('.bil'));
                     if (!eng_tran || !chn_tran) continue;
@@ -91,16 +101,25 @@ class encn_Oxford {
                         definition = '';
                     }
                     let grammar = T(segement.querySelector('.gra'));
-                    grammar = grammar ? `<span class="grammar">${grammar}</span>` : '';
+                    grammar = grammar
+                        ? `<span class="grammar">${grammar}</span>`
+                        : '';
                     let informal = T(segement.querySelector('.infor'));
-                    informal = informal ? `<span class="informal">${informal}</span>` : '';
+                    informal = informal
+                        ? `<span class="informal">${informal}</span>`
+                        : '';
                     let complement = T(segement.querySelector('.comple'));
-                    complement = complement ? `<span class="complement">${complement}</span>` : '';
-                    eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span>`;
+                    complement = complement
+                        ? `<span class="complement">${complement}</span>`
+                        : '';
+                    eng_tran = `<span class='eng_tran'>${eng_tran.replace(RegExp(expression, 'gi'), `<b>${expression}</b>`)}</span>`;
                     chn_tran = `<span class='chn_tran'>${chn_tran}</span>`;
                     definition += `${dis}${pos}${grammar}${complement}${informal}<span class='tran'>${eng_tran}${chn_tran}</span>`;
                 }
-                if (segement.classList && segement.classList.contains('li_exs')) {
+                if (
+                    segement.classList &&
+                    segement.classList.contains('li_exs')
+                ) {
                     let examps = segement.querySelectorAll('.li_ex') || [];
                     if (examps.length > 0 && this.maxexample > 0) {
                         definition += '<ul class="sents">';
@@ -108,29 +127,36 @@ class encn_Oxford {
                             if (index > this.maxexample - 1) break; // to control only 2 example sentence.
                             let eng_examp = T(examp.querySelector('.val_ex'));
                             let chn_examp = T(examp.querySelector('.bil_ex'));
-                            definition += `<li class='sent'><span class='eng_sent'>${eng_examp.replace(RegExp(expression, 'gi'),`<b>${expression}</b>`)}</span><span class='chn_sent'>${chn_examp}</span></li>`;
+                            definition += `<li class='sent'><span class='eng_sent'>${eng_examp.replace(RegExp(expression, 'gi'), `<b>${expression}</b>`)}</span><span class='chn_sent'>${chn_examp}</span></li>`;
                         }
                         definition += '</ul>';
                     }
                 }
             }
-            if (definition)
-                definitions.push(definition);
+            if (definition) definitions.push(definition);
 
             //process idiom
             let idmsents = entry.querySelectorAll('.idm_s');
             if (!idmsents) continue;
             for (const idmsent of idmsents) {
                 let idmphrase = `<div class="idmphrase">${T(idmsent)}</div>`;
-                if (!idmsent.nextSibling || idmsent.nextSibling.className != 'li_ids_co') continue;
+                if (
+                    !idmsent.nextSibling ||
+                    idmsent.nextSibling.className != 'li_ids_co'
+                )
+                    continue;
                 let idmblock = idmsent.nextSibling;
                 let eng_tran = T(idmblock.querySelector('.val'));
                 let chn_tran = T(idmblock.querySelector('.bil'));
                 if (!eng_tran || !chn_tran) continue;
 
                 let definition = '';
-                eng_tran = eng_tran ? `<span class='eng_tran'>${eng_tran}</span>` : '';
-                chn_tran = chn_tran ? `<span class='chn_tran'>${chn_tran}</span>` : '';
+                eng_tran = eng_tran
+                    ? `<span class='eng_tran'>${eng_tran}</span>`
+                    : '';
+                chn_tran = chn_tran
+                    ? `<span class='chn_tran'>${chn_tran}</span>`
+                    : '';
                 definition += `${idmphrase}<span class='tran'>${eng_tran}${chn_tran}</span>`;
                 // make exmaple segement
                 let eng_examp = T(idmblock.querySelector('.val_ex'));
@@ -149,7 +175,7 @@ class encn_Oxford {
                 expression,
                 reading,
                 definitions,
-                audios
+                audios,
             });
         }
         return notes;
@@ -174,23 +200,30 @@ class encn_Oxford {
             let notes = [];
 
             function T(node) {
-                if (!node)
-                    return '';
-                else
-                    return node.innerText.trim();
+                if (!node) return '';
+                else return node.innerText.trim();
             }
             //get Youdao EC data: check data availability
-            let defNodes = doc.querySelectorAll('#phrsListTab .trans-container ul li');
+            let defNodes = doc.querySelectorAll(
+                '#phrsListTab .trans-container ul li'
+            );
             if (!defNodes || !defNodes.length) return notes;
 
             //get headword and phonetic
-            let expression = T(doc.querySelector('#phrsListTab .wordbook-js .keyword')); //headword
+            let expression = T(
+                doc.querySelector('#phrsListTab .wordbook-js .keyword')
+            ); //headword
             let reading = '';
-            let readings = doc.querySelectorAll('#phrsListTab .wordbook-js .pronounce');
+            let readings = doc.querySelectorAll(
+                '#phrsListTab .wordbook-js .pronounce'
+            );
             if (readings) {
                 let reading_uk = T(readings[0]);
                 let reading_us = T(readings[1]);
-                reading = (reading_uk || reading_us) ? `${reading_uk} ${reading_us}` : '';
+                reading =
+                    reading_uk || reading_us
+                        ? `${reading_uk} ${reading_us}`
+                        : '';
             }
 
             let audios = [];
@@ -210,7 +243,7 @@ class encn_Oxford {
                 expression,
                 reading,
                 definitions: [definition],
-                audios
+                audios,
             });
             return notes;
         }

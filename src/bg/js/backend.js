@@ -8,23 +8,18 @@ class ODHBack {
         this.ankiweb = new Ankiweb();
         this.target = null;
 
-        //setup lemmatizer
-        this.deinflector = new Deinflector();
-        this.deinflector.loadData();
-
-        //Setup builtin dictionary data
-        this.builtin = new Builtin();
-        this.builtin.loadData();
-
-        this.agent = new Agent(document.getElementById('sandbox').contentWindow);
+        this.agent = new Agent(
+            document.getElementById('sandbox').contentWindow
+        );
 
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
-        window.addEventListener('message', e => this.onSandboxMessage(e));
-        chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
+        window.addEventListener('message', (e) => this.onSandboxMessage(e));
+        // chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
         chrome.tabs.onCreated.addListener((tab) => this.onTabReady(tab.id));
         chrome.tabs.onUpdated.addListener(this.onTabReady.bind(this));
-        chrome.commands.onCommand.addListener((command) => this.onCommand(command));
-
+        chrome.commands.onCommand.addListener((command) =>
+            this.onCommand(command)
+        );
     }
 
     onCommand(command) {
@@ -36,11 +31,15 @@ class ODHBack {
 
     onInstalled(details) {
         if (details.reason === 'install') {
-            chrome.tabs.create({ url: chrome.extension.getURL('bg/guide.html') });
+            chrome.tabs.create({
+                url: chrome.extension.getURL('bg/guide.html'),
+            });
             return;
         }
         if (details.reason === 'update') {
-            chrome.tabs.create({ url: chrome.extension.getURL('bg/update.html') });
+            chrome.tabs.create({
+                url: chrome.extension.getURL('bg/update.html'),
+            });
             return;
         }
     }
@@ -50,7 +49,6 @@ class ODHBack {
     }
 
     setFrontendOptions(options) {
-
         switch (options.enabled) {
             case false:
                 chrome.browserAction.setBadgeText({ text: 'off' });
@@ -60,11 +58,11 @@ class ODHBack {
                 break;
         }
         this.tabInvokeAll('setFrontendOptions', {
-            options
+            options,
         });
     }
 
-    checkLastError(){
+    checkLastError() {
         // NOP
     }
 
@@ -89,30 +87,42 @@ class ODHBack {
         let note = {
             deckName: options.deckname,
             modelName: options.typename,
-            options: { allowDuplicate: options.duplicate == '1' ? true : false },
+            options: {
+                allowDuplicate: options.duplicate == '1' ? true : false,
+            },
             fields: {},
-            tags: []
+            tags: [],
         };
 
-        let fieldnames = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url'];
+        let fieldnames = [
+            'expression',
+            'reading',
+            'extrainfo',
+            'definition',
+            'definitions',
+            'sentence',
+            'url',
+        ];
         for (const fieldname of fieldnames) {
             if (!options[fieldname]) continue;
             note.fields[options[fieldname]] = notedef[fieldname];
         }
 
         let tags = options.tags.trim();
-        if (tags.length > 0) 
-            note.tags = tags.split(' ');
+        if (tags.length > 0) note.tags = tags.split(' ');
 
         if (options.audio && notedef.audios.length > 0) {
             note.fields[options.audio] = '';
             let audionumber = Number(options.preferredaudio);
-            audionumber = (audionumber && notedef.audios[audionumber]) ? audionumber : 0;
+            audionumber =
+                audionumber && notedef.audios[audionumber] ? audionumber : 0;
             let audiofile = notedef.audios[audionumber];
             note.audio = {
-                'url': audiofile,
-                'filename': `ODH_${options.dictSelected}_${encodeURIComponent(notedef.expression)}_${audionumber}.mp3`,
-                'fields': [options.audio]
+                url: audiofile,
+                filename: `ODH_${options.dictSelected}_${encodeURIComponent(
+                    notedef.expression
+                )}_${audionumber}.mp3`,
+                fields: [options.audio],
             };
         }
 
@@ -124,7 +134,7 @@ class ODHBack {
         const { action, params } = request;
         const method = this['api_' + action];
 
-        if (typeof(method) === 'function') {
+        if (typeof method === 'function') {
             params.callback = callback;
             method.call(this, params);
         }
@@ -132,25 +142,15 @@ class ODHBack {
     }
 
     onSandboxMessage(e) {
-        const {
-            action,
-            params
-        } = e.data;
+        const { action, params } = e.data;
         const method = this['api_' + action];
-        if (typeof(method) === 'function')
-            method.call(this, params);
-
+        if (typeof method === 'function') method.call(this, params);
     }
 
     async api_initBackend(params) {
         let options = await optionsLoad();
         this.ankiweb.initConnection(options);
 
-        //to do: will remove it late after all users migrate to new version.
-        if (options.dictLibrary) { // to migrate legacy scripts list to new list.
-            options.sysscripts = options.dictLibrary;
-            options.dictLibrary = '';
-        }
         this.opt_optionsChanged(options);
     }
 
@@ -163,14 +163,9 @@ class ODHBack {
             dataType: 'text',
             timeout: 3000,
             error: (xhr, status, error) => this.callback(null, callbackId),
-            success: (data, status) => this.callback(data, callbackId)
+            success: (data, status) => this.callback(data, callbackId),
         };
         $.ajax(request);
-    }
-
-    async api_Deinflect(params) {
-        let { word, callbackId } = params;
-        this.callback(this.deinflector.deinflect(word), callbackId);
     }
 
     async api_getBuiltin(params) {
@@ -190,10 +185,11 @@ class ODHBack {
     }
 
     async api_getTranslation(params) {
+        // console.log('Step 3');
         let { expression, callback } = params;
 
         // Fix https://github.com/ninja33/ODH/issues/97
-        if (expression.endsWith(".")) {
+        if (expression.endsWith('.')) {
             expression = expression.slice(0, -1);
         }
 
@@ -221,7 +217,7 @@ class ODHBack {
 
     async api_playAudio(params) {
         let { url, callback } = params;
-        
+
         for (let key in this.audios) {
             this.audios[key].pause();
         }
@@ -238,7 +234,7 @@ class ODHBack {
         }
     }
 
-    // Option page and Brower Action page requests handlers.
+    // Option page and Browser Action page requests handlers.
     async opt_optionsChanged(options) {
         this.setFrontendOptions(options);
 
@@ -256,25 +252,39 @@ class ODHBack {
                 this.target = null;
         }
 
-        let defaultscripts = ['builtin_encn_Collins'];
-        let newscripts = `${options.sysscripts},${options.udfscripts}`;
-        let loadresults = null;
-        if (!this.options || (`${this.options.sysscripts},${this.options.udfscripts}` != newscripts)) {
-            const scriptsset = Array.from(new Set(defaultscripts.concat(newscripts.split(',').filter(x => x).map(x => x.trim()))));
-            loadresults = await this.loadScripts(scriptsset);
+        const defaultScripts = ['encn_Collins'];
+        let newScripts = `${options.systemScripts},${options.userDefineScripts}`;
+        let loadResult = null;
+        if (
+            !this.options ||
+            `${this.options.systemScripts},${this.options.userDefineScripts}` !=
+                newScripts
+        ) {
+            const scriptsSet = Array.from(
+                new Set(
+                    defaultScripts.concat(
+                        newScripts
+                            .split(',')
+                            .filter((x) => x)
+                            .map((x) => x.trim())
+                    )
+                )
+            );
+            loadResult = await this.loadScripts(scriptsSet);
         }
 
         this.options = options;
-        if (loadresults) {
-            let namelist = loadresults.map(x => x.result.objectname);
-            this.options.dictSelected = namelist.includes(options.dictSelected) ? options.dictSelected : namelist[0];
-            this.options.dictNamelist = loadresults.map(x => x.result);
+        if (loadResult) {
+            let namelist = loadResult.map((x) => x.result.objectname);
+            this.options.dictSelected = namelist.includes(options.dictSelected)
+                ? options.dictSelected
+                : namelist[0];
+            this.options.dictNamelist = loadResult.map((x) => x.result);
         }
         await this.setScriptsOptions(this.options);
         optionsSave(this.options);
         return this.options;
     }
-
 
     async opt_getDeckNames() {
         return this.target ? await this.target.getDeckNames() : null;
@@ -285,7 +295,9 @@ class ODHBack {
     }
 
     async opt_getModelFieldNames(modelName) {
-        return this.target ? await this.target.getModelFieldNames(modelName) : null;
+        return this.target
+            ? await this.target.getModelFieldNames(modelName)
+            : null;
     }
 
     async opt_getVersion() {
@@ -296,32 +308,38 @@ class ODHBack {
     async loadScripts(list) {
         let promises = list.map((name) => this.loadScript(name));
         let results = await Promise.all(promises);
-        return results.filter(x => { if (x.result) return x.result; });
+        return results.filter((x) => {
+            if (x.result) return x.result;
+        });
     }
 
     async loadScript(name) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('loadScript', { name }, result => resolve(result));
+            this.agent.postMessage('loadScript', { name }, (result) =>
+                resolve(result)
+            );
         });
     }
 
     async setScriptsOptions(options) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('setScriptsOptions', { options }, result => resolve(result));
+            this.agent.postMessage('setScriptsOptions', { options }, (result) =>
+                resolve(result)
+            );
         });
     }
 
     async findTerm(expression) {
         return new Promise((resolve, reject) => {
-            this.agent.postMessage('findTerm', { expression }, result => resolve(result));
+            this.agent.postMessage('findTerm', { expression }, (result) =>
+                resolve(result)
+            );
         });
     }
 
     callback(data, callbackId) {
         this.agent.postMessage('callback', { data, callbackId });
     }
-
-
 }
 
 window.odhback = new ODHBack();

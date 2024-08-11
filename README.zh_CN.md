@@ -10,9 +10,9 @@
 
 ## 使用说明
 
-- [Chrome插件下载链接](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
+-   [Chrome插件下载链接](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
 
-- [Firefox扩展下载链接](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
+-   [Firefox扩展下载链接](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
 
 1. 从Chrome商店或者Firefox扩展页下载安装插件后，从选项页激活插件。
 2. 打开任意想要取词翻译的网页，将鼠标放在单词上，拖动选择或者双击选择该单词。
@@ -31,7 +31,8 @@
     - 最大原句数量：用于设定从文章上下文中摘取的最大原句数量。
     - 最大例句数量：用于设定词典中例句的显示数量(需该词典脚本支持)。
 2. Anki选项:
-    当Anki和Ankiconnect插件都已安装并打开时，插件会从Anki中获取你的牌组模板列表，并显示如下选项。
+   当Anki和Ankiconnect插件都已安装并打开时，插件会从Anki中获取你的牌组模板列表，并显示如下选项。
+
     - 牌组名称：牌组名称的下拉列表，用于选择制卡所需**牌组名称**名称。
     - 模板名称：模板名称的下拉列表，用于选择制卡所需**模板名称**名称。
     - 单词字段名称：上述模板所含的字段列表，用于选择放置**单词字段**的字段名称。
@@ -58,5 +59,5 @@
 
 如果你想提交词典脚本或者改进插件本身，欢迎PR。
 
-- 插件代码 [[/src](https://github.com/ninja33/ODH/tree/master/src)]。
-- 脚本代码 [[/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)]。
+-   插件代码 [[/src](https://github.com/ninja33/ODH/tree/master/src)]。
+-   脚本代码 [[/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)]。

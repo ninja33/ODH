@@ -4,14 +4,18 @@ async function populateAnkiDeckAndModel(options) {
     $('#deckname').empty();
     names = await odhback().opt_getDeckNames();
     if (names !== null) {
-        names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
+        names.forEach((name) =>
+            $('#deckname').append($('<option>', { value: name, text: name }))
+        );
     }
     $('#deckname').val(options.deckname);
 
     $('#typename').empty();
     names = await odhback().opt_getModelNames();
     if (names !== null) {
-        names.forEach(name => $('#typename').append($('<option>', { value: name, text: name })));
+        names.forEach((name) =>
+            $('#typename').append($('<option>', { value: name, text: name }))
+        );
     }
     $('#typename').val(options.typename);
 }
@@ -23,11 +27,22 @@ async function populateAnkiFields(options) {
     let names = await odhback().opt_getModelFieldNames(modelName);
     if (names == null) return;
 
-    let fields = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
-    fields.forEach(field => {
+    let fields = [
+        'expression',
+        'reading',
+        'extrainfo',
+        'definition',
+        'definitions',
+        'sentence',
+        'url',
+        'audio',
+    ];
+    fields.forEach((field) => {
         $(`#${field}`).empty();
         $(`#${field}`).append($('<option>', { value: '', text: '' }));
-        names.forEach(name => $(`#${field}`).append($('<option>', { value: name, text: name })));
+        names.forEach((name) =>
+            $(`#${field}`).append($('<option>', { value: name, text: name }))
+        );
         $(`#${field}`).val(options[field]);
     });
 }
@@ -35,8 +50,7 @@ async function populateAnkiFields(options) {
 async function updateAnkiStatus(options) {
     $('#services-status').text(chrome.i18n.getMessage('msgConnecting'));
     $('#anki-options').hide();
-    if (options.services == 'ankiweb')
-        $('#user-options').show();
+    if (options.services == 'ankiweb') $('#user-options').show();
     else {
         $('#user-options').hide();
     }
@@ -47,55 +61,83 @@ async function updateAnkiStatus(options) {
     } else {
         populateAnkiDeckAndModel(options);
         populateAnkiFields(options);
-        $('#services-status').text(chrome.i18n.getMessage('msgSuccess', [version]));
+        $('#services-status').text(
+            chrome.i18n.getMessage('msgSuccess', [version])
+        );
         $('#anki-options').show();
-        if (options.services == 'ankiconnect')
-            $('#duplicate-option').show();
+        if (options.services == 'ankiconnect') $('#duplicate-option').show();
         else {
             $('#duplicate-option').hide();
-    }
-
+        }
     }
 }
 
 function populateDictionary(dicts) {
     $('#dict').empty();
-    dicts.forEach(item => $('#dict').append($('<option>', { value: item.objectname, text: item.displayname })));
+    dicts.forEach((item) =>
+        $('#dict').append(
+            $('<option>', { value: item.objectname, text: item.displayname })
+        )
+    );
 }
 
 function populateSysScriptsList(dictLibrary) {
-    const optionscripts = Array.from(new Set(dictLibrary.split(',').filter(x => x).map(x => x.trim())));
-    let systemscripts = [
-        'builtin_encn_Collins', 'general_Makenotes',//default & builtin script
-        'cncn_Zdic', //cn-cn dictionary
-        'encn_Collins', 'encn_Cambridge', 'encn_Cambridge_tc', 'encn_Oxford', 'encn_Youdao', 'encn_Baicizhan', //en-cn dictionaries
-        'enen_Collins', 'enen_LDOCE6MDX', 'enen_UrbanDict', //en-en dictionaries
-        'enfr_Cambridge', 'enfr_Collins', //en-fr dictionaries
-        'fren_Cambridge', 'fren_Collins', //fr-cn dictionaries
-        'esen_Spanishdict', 'decn_Eudict', 'escn_Eudict', 'frcn_Eudict', 'frcn_Youdao', 'rucn_Qianyi' //msci dictionaries
+    const optionsScripts = Array.from(
+        new Set(
+            dictLibrary
+                .split(',')
+                .filter((x) => x)
+                .map((x) => x.trim())
+        )
+    );
+    const systemScripts = [
+        'general_Makenotes', // default & builtin script
+        'encn_Collins',
+        'encn_Cambridge',
+        'encn_Cambridge_tc',
+        'encn_Oxford', // en-cn dictionaries
+        'enen_Collins',
+        'enen_LDOCE6MDX',
+        'enen_UrbanDict', // en-en dictionaries
+        'jpen_Takoboto', // jp dictionaries
     ];
     $('#scriptslistbody').empty();
-    systemscripts.forEach(script => {
+    systemScripts.forEach((script) => {
         let row = '';
-        row += `<input class="sl-col sl-col-onoff" type="checkbox" ${optionscripts.includes(script) || optionscripts.includes('lib://'+script)?'checked':''}>`;
-        row += `<input class="sl-col sl-col-cloud" type="checkbox" ${optionscripts.includes('lib://'+script)?'checked':''}>`;
+        row += `<input class="sl-col sl-col-onoff" type="checkbox" ${
+            optionsScripts.includes(script) ||
+            optionsScripts.includes('lib://' + script)
+                ? 'checked'
+                : ''
+        }>`;
+        row += `<input class="sl-col sl-col-cloud" type="checkbox" ${
+            optionsScripts.includes('lib://' + script) ? 'checked' : ''
+        }>`;
         row += `<span class="sl-col sl-col-name">${script}</span>`;
-        row += `<span class="sl-col sl-col-description">${chrome.i18n.getMessage(script)}</span>`;
+        row += `<span class="sl-col sl-col-description">${chrome.i18n.getMessage(
+            script
+        )}</span>`;
         $('#scriptslistbody').append($(`<div class="sl-row">${row}</div>`));
     });
 
     $('.sl-col-onoff', '.sl-row:nth-child(1)').prop('checked', true); // make default script(first row) always active.
     $('.sl-col-cloud', '.sl-row:nth-child(1)').prop('checked', false); // make default script(first row) as local script.
-    $('.sl-col-cloud, .sl-col-onoff', '.sl-row:nth-child(1)').css({ 'visibility': 'hidden' }); //make default sys script untouch
+    $('.sl-col-cloud, .sl-col-onoff', '.sl-row:nth-child(1)').css({
+        visibility: 'hidden',
+    }); //make default sys script untouch
 }
 
 function onScriptListChange() {
     let dictLibrary = [];
-    $('.sl-row').each(function() {
+    $('.sl-row').each(function () {
         if ($('.sl-col-onoff', this).prop('checked') == true)
-            dictLibrary.push($('.sl-col-cloud', this).prop('checked') ? 'lib://' + $('.sl-col-name', this).text() : $('.sl-col-name', this).text());
+            dictLibrary.push(
+                $('.sl-col-cloud', this).prop('checked')
+                    ? 'lib://' + $('.sl-col-name', this).text()
+                    : $('.sl-col-name', this).text()
+            );
     });
-    $('#sysscripts').val(dictLibrary.join());
+    $('#systemScripts').val(dictLibrary.join());
 }
 
 function onHiddenClicked() {
@@ -106,7 +148,6 @@ async function onAnkiTypeChanged(e) {
     if (e.originalEvent) {
         let options = await optionsLoad();
         populateAnkiFields(options);
-
     }
 }
 
@@ -152,28 +193,43 @@ async function onSaveClicked(e) {
     options.services = $('#services').val();
     options.id = $('#id').val();
     options.password = $('#password').val();
-    
+
     options.tags = $('#tags').val();
     options.duplicate = $('#duplicate').val();
 
-    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
-    fields.forEach(field => {
-        options[field] = $(`#${field}`).val() == null ? options[field] : $(`#${field}`).val();
+    let fields = [
+        'deckname',
+        'typename',
+        'expression',
+        'reading',
+        'extrainfo',
+        'definition',
+        'definitions',
+        'sentence',
+        'url',
+        'audio',
+    ];
+    fields.forEach((field) => {
+        options[field] =
+            $(`#${field}`).val() == null
+                ? options[field]
+                : $(`#${field}`).val();
     });
 
-    options.sysscripts = $('#sysscripts').val();
-    options.udfscripts = $('#udfscripts').val();
+    options.systemScripts = $('#systemScripts').val();
+    options.userDefineScripts = $('#userDefineScripts').val();
 
     $('#gif-load').show();
     let newOptions = await odhback().opt_optionsChanged(options);
     $('.gif').hide();
-    $('#gif-good').show(1000, () => { $('.gif').hide(); });
+    $('#gif-good').show(1000, () => {
+        $('.gif').hide();
+    });
 
     populateDictionary(newOptions.dictNamelist);
     $('#dict').val(newOptions.dictSelected);
 
-    if (e.target.id == 'saveclose')
-        window.close();
+    if (e.target.id == 'saveclose') window.close();
 }
 
 function onCloseClicked(e) {
@@ -202,14 +258,25 @@ async function onReady() {
     $('#tags').val(options.tags);
     $('#duplicate').val(options.duplicate);
 
-    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
-    fields.forEach(field => {
+    let fields = [
+        'deckname',
+        'typename',
+        'expression',
+        'reading',
+        'extrainfo',
+        'definition',
+        'definitions',
+        'sentence',
+        'url',
+        'audio',
+    ];
+    fields.forEach((field) => {
         $(`#${field}`).val(options[field]);
     });
 
-    $('#sysscripts').val(options.sysscripts);
-    $('#udfscripts').val(options.udfscripts);
-    populateSysScriptsList(options.sysscripts);
+    $('#systemScripts').val(options.systemScripts);
+    $('#userDefineScripts').val(options.userDefineScripts);
+    populateSysScriptsList(options.systemScripts);
     onHiddenClicked();
 
     $('#login').click(onLoginClicked);

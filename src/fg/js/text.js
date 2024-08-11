@@ -1,7 +1,7 @@
 HtmlTagsToReplace = {
     '&': '&amp;',
     '<': '&lt;',
-    '>': '&gt;'
+    '>': '&gt;',
 };
 
 function replaceHtmlTag(tag) {
@@ -16,13 +16,13 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
     let target = this;
     search = escapeRegExp(search);
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-String.prototype.searchAll = function(search) {
+String.prototype.searchAll = function (search) {
     let target = this;
     search = escapeRegExp(search);
     let regex = new RegExp(search, 'gi');
@@ -35,76 +35,87 @@ String.prototype.searchAll = function(search) {
 };
 
 function isPDFJSPage() {
-    return (document.querySelectorAll('div#viewer.pdfViewer').length > 0);
+    return document.querySelectorAll('div#viewer.pdfViewer').length > 0;
 }
 
 function isEmpty(word) {
-    return (!word);
+    return !word;
 }
 
 function isShortandNum(word) {
     let numReg = /\d/;
-    return (word.length < 3 || numReg.test(word));
+    return word.length < 3 || numReg.test(word);
 }
 
 function isChinese(word) {
     let cnReg = /[\u4e00-\u9fa5]+/gi;
-    return (cnReg.test(word));
+    return cnReg.test(word);
 }
 
 function isInvalid(word) {
     if (isChinese(word)) return false;
-    return (isChinese(word) && isEmpty(word) || isShortandNum(word));
+    return (isChinese(word) && isEmpty(word)) || isShortandNum(word);
 }
 
 function cutSentence(word, offset, sentence, sentenceNum) {
-
     if (sentenceNum > 0) {
-        let arr = sentence.match(/((?![.!?;:。！？]['"’”]?\s).|\n)*[.!?;:。！？]['"’”]?(\s|.*$)/g);
+        let arr = sentence.match(
+            /((?![.!?;:。！？]['"’”]?\s).|\n)*[.!?;:。！？]['"’”]?(\s|.*$)/g
+        );
         if (arr && arr.length > 1) {
-            arr = arr.reduceRight((accumulation, current) => {
-                if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
-                    accumulation[0] = current + accumulation[0];
-                } else {
-                    accumulation.unshift(current);
-                }
-                return accumulation;
-            }, ['']);
-            arr = arr.filter(x => x.length);
+            arr = arr.reduceRight(
+                (accumulation, current) => {
+                    if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
+                        accumulation[0] = current + accumulation[0];
+                    } else {
+                        accumulation.unshift(current);
+                    }
+                    return accumulation;
+                },
+                ['']
+            );
+            arr = arr.filter((x) => x.length);
         } else {
             arr = [sentence];
         }
 
-        let index = arr.findIndex(ele => { //try to exactly match to word based on offset.
-            if (ele.indexOf(word) !== -1 && ele.searchAll(word).indexOf(offset) != -1)
+        let index = arr.findIndex((ele) => {
+            //try to exactly match to word based on offset.
+            if (
+                ele.indexOf(word) !== -1 &&
+                ele.searchAll(word).indexOf(offset) != -1
+            )
                 return true;
-            else
-                offset -= ele.length;
+            else offset -= ele.length;
         });
 
-        if (index == -1) // fallback if can not exactly find word.
-            index = arr.findIndex(ele => ele.indexOf(word) !== -1);
+        if (index == -1)
+            // fallback if can not exactly find word.
+            index = arr.findIndex((ele) => ele.indexOf(word) !== -1);
 
         let left = Math.ceil((sentenceNum - 1) / 2);
         let start = index - left;
-        let end = index + ((sentenceNum - 1) - left);
+        let end = index + (sentenceNum - 1 - left);
 
         if (start < 0) {
             start = 0;
             end = sentenceNum - 1;
-        } else if (end > (arr.length - 1)) {
+        } else if (end > arr.length - 1) {
             end = arr.length - 1;
 
-            if ((end - (sentenceNum - 1)) < 0) {
+            if (end - (sentenceNum - 1) < 0) {
                 start = 0;
             } else {
                 start = end - (sentenceNum - 1);
             }
         }
 
-        return arr.slice(start, end + 1).join('').replaceAll(word, word.replace(/[^\s]+/g,'<b>\$&</b>'));
+        return arr
+            .slice(start, end + 1)
+            .join('')
+            .replaceAll(word, word.replace(/[^\s]+/g, '<b>$&</b>'));
     } else {
-        return sentence.replace(word, word.replace(/[^\s]+/g,'<b>\$&</b>'));
+        return sentence.replace(word, word.replace(/[^\s]+/g, '<b>$&</b>'));
     }
 }
 
@@ -117,15 +128,17 @@ function getSelectionOffset(node) {
     clone.setEnd(range.endContainer, range.endOffset);
     let end = clone.toString().length;
     return { start, end };
-
 }
 
 function getPDFNode(node) {
-
     let backwardindex = 0;
     do {
         node = node.parentNode;
-    } while (node.name && node.nodeName.toUpperCase() != 'SPAN' && node.nodeName.toUpperCase() != 'DIV');
+    } while (
+        node.name &&
+        node.nodeName.toUpperCase() != 'SPAN' &&
+        node.nodeName.toUpperCase() != 'DIV'
+    );
     let currentspan = node;
 
     let sentenceNodes = [currentspan];
@@ -135,32 +148,40 @@ function getPDFNode(node) {
         backwardindex += 1;
         if (previous.textContent.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
             break;
-        else
-            node = previous;
+        else node = previous;
     }
 
     node = currentspan;
     let next = null;
     while ((next = node.nextSibling)) {
         sentenceNodes.push(next);
-        if (node.nextSibling.textContent.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)
+        if (
+            node.nextSibling.textContent.search(
+                /[.!?;:。！？]['"’”]?(\s|.*$)/g
+            ) != -1
+        )
             break;
-        else
-            node = next;
+        else node = next;
     }
 
     let sentence = '';
     let offset = 0;
-    sentenceNodes = sentenceNodes.filter(x => x.textContent != '' || x.textContent != '-');
+    sentenceNodes = sentenceNodes.filter(
+        (x) => x.textContent != '' || x.textContent != '-'
+    );
     for (const node of sentenceNodes) {
         if (backwardindex == 0)
-            offset = sentence.length + window.getSelection().getRangeAt(0).startOffset;
+            offset =
+                sentence.length +
+                window.getSelection().getRangeAt(0).startOffset;
         backwardindex -= 1;
         let nodetext = node.textContent;
-        if (nodetext == '-')
-            sentence = sentence.slice(0, sentence.length-1);
+        if (nodetext == '-') sentence = sentence.slice(0, sentence.length - 1);
         else
-            sentence += (nodetext[nodetext.length - 1] == '-') ? nodetext.slice(0, nodetext.length - 1) : nodetext + ' ';
+            sentence +=
+                nodetext[nodetext.length - 1] == '-'
+                    ? nodetext.slice(0, nodetext.length - 1)
+                    : nodetext + ' ';
     }
 
     return { sentence, offset };
@@ -174,8 +195,7 @@ function getSentence(sentenceNum) {
     const selection = window.getSelection();
     let word = (selection.toString() || '').trim();
 
-    if (selection.rangeCount < 1)
-        return;
+    if (selection.rangeCount < 1) return;
 
     let node = selection.getRangeAt(0).commonAncestorContainer;
 
@@ -215,7 +235,7 @@ function selectedText() {
 }
 
 function isValidElement() {
-    // if (document.activeElement.getAttribute('contenteditable')) 
+    // if (document.activeElement.getAttribute('contenteditable'))
     //     return false;
 
     const invalidTags = ['INPUT', 'TEXTAREA'];

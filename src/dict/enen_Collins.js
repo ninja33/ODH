@@ -13,7 +13,6 @@ class enen_Collins {
         return 'Collins English Dictionary';
     }
 
-
     setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
@@ -23,7 +22,7 @@ class enen_Collins {
         this.word = word;
         //let deflection = api.deinflect(word);
         let results = await Promise.all([this.findCollins(word)]);
-        return [].concat(...results).filter(x => x);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findCollins(word) {
@@ -31,10 +30,8 @@ class enen_Collins {
         if (!word) return notes; // return empty notes
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
 
         let base = 'https://www.collinsdictionary.com/dictionary/english/';
@@ -56,7 +53,9 @@ class enen_Collins {
 
         let band = dictionary.querySelector('.word-frequency-img');
         let bandnum = band ? band.dataset.band : '';
-        let extrainfo = bandnum ? `<span class="band">${'\u25CF'.repeat(Number(bandnum))}</span>` : '';
+        let extrainfo = bandnum
+            ? `<span class="band">${'\u25CF'.repeat(Number(bandnum))}</span>`
+            : '';
 
         let sound = dictionary.querySelector('a.hwd_sound');
         let audios = sound ? [sound.dataset.srcMp3] : [];
@@ -75,13 +74,21 @@ class enen_Collins {
             definition += `${pos}${tran}`;
 
             // make exmaple segement
-            let examps = defblock.querySelectorAll('.sense .cit.type-example') || '';
+            let examps =
+                defblock.querySelectorAll('.sense .cit.type-example') || '';
             if (examps.length > 0 && this.maxexample > 0) {
                 definition += '<ul class="sents">';
                 for (const [index, examp] of examps.entries()) {
                     if (index > this.maxexample - 1) break; // to control only 2 example sentence.
-                    let eng_examp = T(examp) ? T(examp).replace(RegExp(expression, 'gi'), '<b>$&</b>') : '';
-                    definition += eng_examp ? `<li class='sent'><span class='eng_sent'>${eng_examp}</span></li>` : '';
+                    let eng_examp = T(examp)
+                        ? T(examp).replace(
+                              RegExp(expression, 'gi'),
+                              '<b>$&</b>'
+                          )
+                        : '';
+                    definition += eng_examp
+                        ? `<li class='sent'><span class='eng_sent'>${eng_examp}</span></li>`
+                        : '';
                 }
                 definition += '</ul>';
             }

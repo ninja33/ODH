@@ -12,9 +12,9 @@ What might set this extension apart is that users can grab online dictionary con
 
 ## How to use
 
-- [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
+-   [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
 
-- [Install from Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
+-   [Install from Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
 
 1. Install the extension first from Chrome Web Store or Firefox Add-ons, then configure and activate the extension on your demands in the options page.
 2. Open any webpage, move your mouse cursor over the word that you want to select and translate, drag and select/double-click/press **Hotkey** (defined in options page) to select the word or phrase.
@@ -28,6 +28,7 @@ What might set this extension apart is that users can grab online dictionary con
 The options of this extension are divided into three sections.
 
 1. General Options
+
     - Enabled: Turn the extension on/off.
     - AutoSel.Hotkey: Configure the **Hotkey** to select words or phrases. Four options are available: Off(Disable the hotkey), <kbd>Shift</kbd>, <kbd>Ctrl</kbd>, and <kbd>Alt</kbd> key.
     - Max.Context: Set the maximum number of sentences extracted from the context of the webpage.
@@ -42,7 +43,9 @@ The options of this extension are divided into three sections.
 ![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400_en.png)
 
 ## Development
+
 ### Getting started
+
 The source code of this extension on Github does not contain offline dictionary and English word deformation table data. You can go to the Chrome Web Store to download, or use a Chrome extension downloader to download the plugin's crx file and extract the dictionary JSON file.
 
 ### Use existing script or develop by yourself
@@ -55,5 +58,5 @@ The source code of this extension on Github does not contain offline dictionary 
 
 Pull requests are welcome if you want to enhance this extension, or submit your own dictionary script in the next release.
 
-- The extension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
-- The dictionary script will go to [/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)
+-   The extension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
+-   The dictionary script will go to [/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)

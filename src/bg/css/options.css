@@ -3,7 +3,7 @@
 }
 
 body {
-    font-family: "Segoe UI", Arial, "Microsoft Yahei", sans-serif;
+    font-family: 'Segoe UI', Arial, 'Microsoft Yahei', sans-serif;
     font-size: 12px;
     width: 440px;
     border-radius: 8px;
@@ -34,7 +34,8 @@ body {
     width: 100%;
 }
 
-.leftpanel, .rightpanel {
+.leftpanel,
+.rightpanel {
     padding: 0 6px;
     float: left;
     width: 50%;
@@ -60,7 +61,9 @@ a {
     color: white;
 }
 
-label, input, select {
+label,
+input,
+select {
     width: 95px;
     padding: 4px;
     margin: 3px;
@@ -87,14 +90,14 @@ label {
     display: inline-block;
 }
 
-.gif{
+.gif {
     vertical-align: middle;
 }
 
 .button {
     text-align: center;
     width: 95px;
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     padding: 4px;
     margin: 6px 3px 3px;

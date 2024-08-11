@@ -22,7 +22,7 @@ class encn_Youdao {
         this.word = word;
         //let deflection = await api.deinflect(word);
         let results = await Promise.all([this.findYoudao(word)]);
-        return [].concat(...results).filter(x => x);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findYoudao(word) {
@@ -46,17 +46,26 @@ class encn_Youdao {
             let notes = [];
 
             //get Youdao EC data: check data availability
-            let defNodes = doc.querySelectorAll('#phrsListTab .trans-container ul li');
+            let defNodes = doc.querySelectorAll(
+                '#phrsListTab .trans-container ul li'
+            );
             if (!defNodes || !defNodes.length) return notes;
 
             //get headword and phonetic
-            let expression = T(doc.querySelector('#phrsListTab .wordbook-js .keyword')); //headword
+            let expression = T(
+                doc.querySelector('#phrsListTab .wordbook-js .keyword')
+            ); //headword
             let reading = '';
-            let readings = doc.querySelectorAll('#phrsListTab .wordbook-js .pronounce');
+            let readings = doc.querySelectorAll(
+                '#phrsListTab .wordbook-js .pronounce'
+            );
             if (readings) {
                 let reading_uk = T(readings[0]);
                 let reading_us = T(readings[1]);
-                reading = (reading_uk || reading_us) ? `${reading_uk} ${reading_us}` : '';
+                reading =
+                    reading_uk || reading_us
+                        ? `${reading_uk} ${reading_us}`
+                        : '';
             }
 
             let audios = [];
@@ -87,7 +96,7 @@ class encn_Youdao {
                 expression,
                 reading,
                 definitions: [definition],
-                audios
+                audios,
             });
             return notes;
         }
@@ -96,7 +105,9 @@ class encn_Youdao {
             let notes = [];
 
             //get Youdao EC data: check data availability
-            let transNode = doc.querySelectorAll('#ydTrans .trans-container p')[1];
+            let transNode = doc.querySelectorAll(
+                '#ydTrans .trans-container p'
+            )[1];
             if (!transNode) return notes;
 
             let definition = `${T(transNode)}`;
@@ -115,11 +126,8 @@ class encn_Youdao {
         }
 
         function T(node) {
-            if (!node)
-                return '';
-            else
-                return node.innerText.trim();
+            if (!node) return '';
+            else return node.innerText.trim();
         }
-
     }
 }

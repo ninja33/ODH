@@ -15,7 +15,6 @@ class encn_Oxford {
         return 'Oxford EN->CN Dictionary';
     }
 
-
     setOptions(options) {
         this.options = options;
         this.maxexample = options.maxexample;
@@ -29,17 +28,17 @@ class encn_Oxford {
         let gmatch = /window.gtk = ['"](.+?)['"]/gi.exec(homepage);
         if (!gmatch || gmatch.length < 2) return null;
         return {
-            'token': tmatch[1],
-            'gtk': gmatch[1]
+            token: tmatch[1],
+            gtk: gmatch[1],
         };
     }
 
     async findTerm(word) {
         this.word = word;
-        let deflection = await api.deinflect(word) || [];
-        let promises = [word, deflection].map(x => this.findOxford(x));
+        let deflection = (await api.deinflect(word)) || [];
+        let promises = [word, deflection].map((x) => this.findOxford(x));
         let results = await Promise.all(promises);
-        return [].concat(...results).filter(x => x);
+        return [].concat(...results).filter((x) => x);
     }
 
     async findOxford(word) {
@@ -50,16 +49,24 @@ class encn_Oxford {
             let sentence = '';
             let sentnum = 0;
             for (const def of defs) {
-                if (def.text) definition += `<span class='tran'><span class='eng_tran'>${def.text}</span></span>`;
+                if (def.text)
+                    definition += `<span class='tran'><span class='eng_tran'>${def.text}</span></span>`;
                 if (def.tag == 'id' || def.tag == 'pv')
-                    definition += def.enText ? `<div class="idmphrase">${def.enText}</div>` : '';
+                    definition += def.enText
+                        ? `<div class="idmphrase">${def.enText}</div>`
+                        : '';
                 //if (def.tag == 'xrs')
                 //    definition += `<span class='tran'><span class='eng_tran'>${def.data[0].data[0].text}</span></span>`;
                 if (def.tag == 'd' || def.tag == 'ud')
-                    definition += pos + `<span class='tran'><span class='eng_tran'>${def.enText}</span><span class='chn_tran'>${def.chText}</span></span>`;
+                    definition +=
+                        pos +
+                        `<span class='tran'><span class='eng_tran'>${def.enText}</span><span class='chn_tran'>${def.chText}</span></span>`;
                 if (def.tag == 'x' && sentnum < maxexample) {
                     sentnum += 1;
-                    let enText = def.enText.replace(RegExp(exp, 'gi'), `<b>${exp}</b>`);
+                    let enText = def.enText.replace(
+                        RegExp(exp, 'gi'),
+                        `<b>${exp}</b>`
+                    );
                     sentence += `<li class='sent'><span class='eng_sent'>${enText}</span><span class='chn_sent'>${def.chText}</span></li>`;
                 }
             }
@@ -69,7 +76,8 @@ class encn_Oxford {
         const maxexample = this.maxexample;
         let notes = [];
         if (!word) return notes;
-        let base = 'https://fanyi.baidu.com/v2transapi?from=en&to=zh&simple_means_flag=3';
+        let base =
+            'https://fanyi.baidu.com/v2transapi?from=en&to=zh&simple_means_flag=3';
 
         if (!this.token || !this.gtk) {
             let common = await this.getToken();
@@ -87,9 +95,9 @@ class encn_Oxford {
             data = JSON.parse(await api.fetch(dicturl));
             let oxford = getOxford(data);
             let bdsimple = oxford.length ? [] : getBDSimple(data); //Combine Youdao Concise English-Chinese Dictionary to the end.
-            let bstrans = oxford.length || bdsimple.length ? [] : getBDTrans(data); //Combine Youdao Translation (if any) to the end.
+            let bstrans =
+                oxford.length || bdsimple.length ? [] : getBDTrans(data); //Combine Youdao Translation (if any) to the end.
             return [].concat(oxford, bdsimple, bstrans);
-
         } catch (err) {
             return [];
         }
@@ -97,8 +105,10 @@ class encn_Oxford {
         function getBDTrans(data) {
             try {
                 if (data.dict_result && data.dict_result.length != 0) return [];
-                if (!data.trans_result || data.trans_result.data.length < 1) return [];
-                let css = '<style>.odh-expression {font-size: 1em!important;font-weight: normal!important;}</style>';
+                if (!data.trans_result || data.trans_result.data.length < 1)
+                    return [];
+                let css =
+                    '<style>.odh-expression {font-size: 1em!important;font-weight: normal!important;}</style>';
                 let expression = data.trans_result.data[0].src;
                 let definition = data.trans_result.data[0].dst;
                 return [{ css, expression, definitions: [definition] }];
@@ -116,7 +126,10 @@ class encn_Oxford {
                 let symbols = simple.symbols[0];
                 let reading_uk = symbols.ph_en || '';
                 let reading_us = symbols.ph_am || '';
-                let reading = reading_uk && reading_us ? `uk[${reading_uk}] us[${reading_us}]` : '';
+                let reading =
+                    reading_uk && reading_us
+                        ? `uk[${reading_uk}] us[${reading_us}]`
+                        : '';
 
                 let audios = [];
                 audios[0] = `https://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
@@ -127,7 +140,9 @@ class encn_Oxford {
                 for (const def of symbols.parts)
                     if (def.means && def.means.length > 0) {
                         let pos = def.part || def.part_name || '';
-                        pos = pos ? `<span class="pos simple">${pos}</span>` : '';
+                        pos = pos
+                            ? `<span class="pos simple">${pos}</span>`
+                            : '';
                         definition += `<li class="ec">${pos}<span class="ec_chn">${def.means.join()}</span></li>`;
                     }
                 definition += '</ul>';
@@ -136,7 +151,13 @@ class encn_Oxford {
                 span.simple {background-color: #999!important}
                 span.pos  {text-transform:lowercase; font-size:0.9em; margin-right:5px; padding:2px 4px; color:white; background-color:#0d47a1; border-radius:3px;}
                 </style>`;
-                notes.push({ css, expression, reading, definitions: [definition], audios });
+                notes.push({
+                    css,
+                    expression,
+                    reading,
+                    definitions: [definition],
+                    audios,
+                });
                 return notes;
             } catch (error) {
                 return [];
@@ -152,7 +173,10 @@ class encn_Oxford {
                 let symbols = simple.symbols[0];
                 let reading_uk = symbols.ph_en || '';
                 let reading_us = symbols.ph_am || '';
-                let reading = reading_uk && reading_us ? `uk[${reading_uk}] us[${reading_us}]` : '';
+                let reading =
+                    reading_uk && reading_us
+                        ? `uk[${reading_uk}] us[${reading_us}]`
+                        : '';
 
                 let audios = [];
                 audios[0] = `https://fanyi.baidu.com/gettts?lan=uk&text=${encodeURIComponent(expression)}&spd=3&source=web`;
@@ -171,28 +195,50 @@ class encn_Oxford {
                                 pos = `<span class='pos'>${group.p_text}</span>`;
                             }
                             if (group.tag == 'd') {
-                                definition += pos + `<span class='tran'><span class='eng_tran'>${group.enText}</span><span class='chn_tran'>${group.chText}</span></span>`;
+                                definition +=
+                                    pos +
+                                    `<span class='tran'><span class='eng_tran'>${group.enText}</span><span class='chn_tran'>${group.chText}</span></span>`;
                                 definitions.push(definition);
                             }
 
                             if (group.tag == 'n-g') {
-                                definition += buildDefinitionBlock(expression, pos, group.data);
+                                definition += buildDefinitionBlock(
+                                    expression,
+                                    pos,
+                                    group.data
+                                );
                                 definitions.push(definition);
                             }
-
 
                             //if (group.tag == 'xrs') {
                             //    definition += buildDefinitionBlock(pos, group.data[0].data);
                             //    definitions.push(definition);
                             //}
 
-                            if (group.tag == 'sd-g' || group.tag == 'ids-g' || group.tag == 'pvs-g') {
+                            if (
+                                group.tag == 'sd-g' ||
+                                group.tag == 'ids-g' ||
+                                group.tag == 'pvs-g'
+                            ) {
                                 for (const item of group.data) {
-                                    if (item.tag == 'sd') definition = `<div class="dis"><span class="eng_dis">${item.enText}</span><span class="chn_dis">${item.chText}</span></div>` + definition;
+                                    if (item.tag == 'sd')
+                                        definition =
+                                            `<div class="dis"><span class="eng_dis">${item.enText}</span><span class="chn_dis">${item.chText}</span></div>` +
+                                            definition;
                                     let defs = [];
-                                    if (item.tag == 'n-g' || item.tag == 'id-g' || item.tag == 'pv-g') defs = item.data;
-                                    if (item.tag == 'vrs' || item.tag == 'xrs') defs = item.data[0].data;
-                                    definition += buildDefinitionBlock(expression, pos, defs);
+                                    if (
+                                        item.tag == 'n-g' ||
+                                        item.tag == 'id-g' ||
+                                        item.tag == 'pv-g'
+                                    )
+                                        defs = item.data;
+                                    if (item.tag == 'vrs' || item.tag == 'xrs')
+                                        defs = item.data[0].data;
+                                    definition += buildDefinitionBlock(
+                                        expression,
+                                        pos,
+                                        defs
+                                    );
                                 }
                                 definitions.push(definition);
                             }
@@ -205,9 +251,7 @@ class encn_Oxford {
             } catch (error) {
                 return [];
             }
-
         }
-
     }
 
     static renderCSS() {
