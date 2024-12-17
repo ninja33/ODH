@@ -122,9 +122,9 @@ class Ankiweb {
     async getProfile(retryCount = 1, forceLogout = false) {
         try {
             let resp = await this.api_connect(forceLogout);
-            if (resp.action == 'edit') {
+            if (resp.action === 'edit') {
                 return resp.data;
-            } else if (retryCount > 0 && resp.action == 'login' && await this.api_login(this.id, this.password, resp.data)) {
+            } else if (retryCount > 0 && resp.action === 'login' && await this.api_login(this.id, this.password, resp.data)) {
                 return this.getProfile(retryCount - 1);
             } else {
                 return null;

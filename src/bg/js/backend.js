@@ -28,7 +28,7 @@ class ODHBack {
     }
 
     onCommand(command) {
-        if (command != 'enabled') return;
+        if (command !== 'enabled') return;
         this.options.enabled = !this.options.enabled;
         this.setFrontendOptions(this.options);
         optionsSave(this.options);

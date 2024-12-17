@@ -8,7 +8,7 @@ class Agent {
 
     onMessage(e) {
         const { action, params } = e.data;
-        if (action != 'callback' || !params || !params.callbackId)
+        if (action !== 'callback' || !params || !params.callbackId)
             return;
         // we are the sender getting the callback
         if (this.callbacks[params.callbackId] && typeof(this.callbacks[params.callbackId]) === 'function') {
@@ -18,7 +18,7 @@ class Agent {
     }
 
     postMessage(action, params, callback) {
-        if (action != 'callback' && callback) {
+        if (action !== 'callback' && callback) {
             params.callbackId = Math.random();
             this.callbacks[params.callbackId] = callback;
         }

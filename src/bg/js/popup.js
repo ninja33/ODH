@@ -1,6 +1,6 @@
 /* global odhback, localizeHtmlPage, utilAsync, optionsLoad, optionsSave */
 async function populateAnkiDeckAndModel(options) {
-    let names = [];
+    let names;
     $('#deckname').empty();
     names = await odhback().opt_getDeckNames();
     if (names !== null) {

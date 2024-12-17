@@ -35,7 +35,7 @@ class TextSourceRange {
     }
 
     isAlpha(char) {
-        return /[\u002D|\u0041-\u005A|\u0061-\u007A|\u00A0-\u024F]/.test(char);
+        return /[\u002D|\u0041-\u005A\u0061-\u007A\u00A0-\u024F]/.test(char);
     }
 
     getStartPos(backwardcount) {
@@ -48,7 +48,7 @@ class TextSourceRange {
             clone.setStart(this.rng.startContainer, --pos);
             rangeText = clone.toString();
             count += this.isAlpha(rangeText.charAt(0)) ? 0 : 1;
-            if (count == backwardcount) {
+            if (count === backwardcount) {
                 break;
             }
         }
@@ -65,7 +65,7 @@ class TextSourceRange {
             clone.setEnd(this.rng.endContainer, ++pos);
             rangeText = clone.toString();
             count += this.isAlpha(rangeText.charAt(rangeText.length - 1)) ? 0 : 1;
-            if (count == forwardcount) {
+            if (count === forwardcount) {
                 break;
             }
         }
@@ -74,7 +74,7 @@ class TextSourceRange {
 
     setStartOffset(backwardcount) {
         let startPos = this.getStartPos(backwardcount);
-        if (startPos != 0)
+        if (startPos !== 0)
             startPos++;
         this.rng.setStart(this.rng.startContainer, startPos);
 
@@ -82,7 +82,7 @@ class TextSourceRange {
 
     setEndOffset(forwardcount) {
         let endPos = this.getEndPos(forwardcount);
-        if (endPos != this.rng.endContainer.data.length)
+        if (endPos !== this.rng.endContainer.data.length)
             endPos--;
         this.rng.setEnd(this.rng.endContainer, endPos);
     }

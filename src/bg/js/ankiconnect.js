@@ -16,7 +16,7 @@ class Ankiconnect {
                 dataType: 'json',
                 success: (response) => {
                     try {
-                        if (Object.getOwnPropertyNames(response).length != 2) {
+                        if (Object.getOwnPropertyNames(response).length !== 2) {
                             throw 'response has an unexpected number of fields';
                         }
                         if (!response.hasOwnProperty('error')) {
