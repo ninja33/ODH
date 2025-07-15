@@ -103,6 +103,9 @@
     "fren_Cambridge": { "message": "Cambridge FR->EN Dictionary" },
     "fren_Collins": { "message": "Collins FR->EN Dictionary" },
     "rucn_Qianyi": { "message": "Qianyi RU->CN Dictionary" },
+    "enes_Cambridge": {
+      "message": "English -> Spanish | Cambridge"
+   },
 
     "labelAlignment": { "message": "initial" }
 }
