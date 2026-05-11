@@ -29,13 +29,19 @@ class ODHFront {
     }
 
     onKeyDown(e) {
-        if (!this.activateKey)
+        if (!this.enabled)
+            return;
+        
+        if (e.keyCode === this.exitKey || e.charCode === this.exitKey)
+            this.popup.hide();
+
+        if (!this.activateKey || !(e.keyCode === this.activateKey || e.charCode === this.activateKey))
             return;
 
-        if (!isValidElement())
+        if (!isValidElement(document.activeElement))
             return;
 
-        if (this.enabled && this.point !== null && (e.keyCode === this.activateKey || e.charCode === this.activateKey)) {
+        if (this.point !== null) {
             const range = rangeFromPoint(this.point);
             if (range == null) return;
             let textSource = new TextSourceRange(range);
@@ -43,17 +49,17 @@ class ODHFront {
             this.mousemoved = false;
             this.onSelectionEnd(e);
         }
-
-        if (e.keyCode === this.exitKey || e.charCode === this.exitKey)
-            this.popup.hide();
     }
 
     onDoubleClick(e) {
+        if (!this.enabled)
+            return;
+
         if (!this.mouseselection)
             return;
 
-        if (!isValidElement())
-            return;
+        // if (!isValidElement(document.activeElement))
+        //     return;
 
         if (this.timeout)
             clearTimeout(this.timeout);
@@ -81,6 +87,11 @@ class ODHFront {
             clearTimeout(this.timeout);
         }
 
+        // if there's no text selected
+        if (window.getSelection().isCollapsed) {
+            return;
+        }
+
         // wait 500 ms after the last selection change event
         this.timeout = setTimeout(() => {
             this.onSelectionEnd(e);
@@ -94,18 +105,21 @@ class ODHFront {
         if (!this.enabled)
             return;
 
-        if (!isValidElement())
-            return;
+        // if (!isValidElement(document.activeElement))
+        //     return;
 
         // reset selection timeout
         this.timeout = null;
         const expression = selectedText();
         if (isEmpty(expression)) return;
 
+        // save the current point before sending the request
+        const point = this.point;
+
         let result = await getTranslation(expression);
         if (result == null || result.length == 0) return;
         this.notes = this.buildNote(result);
-        this.popup.showNextTo({ x: this.point.x, y: this.point.y, }, await this.renderPopup(this.notes));
+        this.popup.showNextTo({ x: point.x, y: point.y, }, await this.renderPopup(this.notes));
 
     }
 
