@@ -1,3 +1,17 @@
+HtmlTagsToReplace = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;'
+};
+
+function replaceHtmlTag(tag) {
+    return HtmlTagsToReplace[tag] || tag;
+}
+
+function escapeHtmlTag(string) {
+    return string.replace(/[&<>]/g, replaceHtmlTag);
+}
+
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -171,13 +185,13 @@ function getSentence(sentenceNum) {
 
     if (isPDFJSPage()) {
         let pdfcontext = getPDFNode(node);
-        sentence = pdfcontext.sentence;
+        sentence = escapeHtmlTag(pdfcontext.sentence);
         offset = pdfcontext.offset;
     } else {
         node = getWebNode(node, upNum);
 
         if (node !== document) {
-            sentence = node.textContent;
+            sentence = escapeHtmlTag(node.textContent);
             offset = getSelectionOffset(node).start;
         }
     }

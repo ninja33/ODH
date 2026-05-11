@@ -11,7 +11,8 @@ function sanitizeOptions(options) {
         id: '',
         password: '',
 
-        duplicate: '1', // 0: not allowe duplicated cards; 1: allowe duplicated cards; 
+        duplicate: '1', // 0: not allowe duplicated cards; 1: allowe duplicated cards;
+        tags: 'ODH',
         deckname: 'Default',
         typename: 'Basic',
         expression: 'Front',

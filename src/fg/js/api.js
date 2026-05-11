@@ -29,3 +29,11 @@ async  function addNote(notedef){
         return null;
     }
 }
+
+async  function playAudio(url){
+    try {
+        return await sendtoBackend({action:'playAudio',params:{url}});
+    } catch (err) {
+        return null;
+    }
+}

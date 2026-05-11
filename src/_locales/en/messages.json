@@ -42,6 +42,7 @@
 
     "lblAnkiStatus": { "message": "Anki Status" },
 
+    "lblTags": { "message": "Note Tags" },
     "lblAllowDuplicate": { "message": "Allow Duplicate" },
     "selNotAllowed": { "message": "Not Allowed" },
     "selAllowed": { "message": "Allowed" },
@@ -71,8 +72,11 @@
 
     "baTitle": { "message": "Quick options" },
     "baEnabled": { "message": "Enabled" },
-    "baMouseselection": { "message": "Mouse Sel." },
+    "baMouseselection": { "message": "Mouse" },
     "baHotkey": { "message": "AutoSel." },
+    "baCurrentDict": { "message": "Dict." },
+    "baDeckname": { "message": "Deck" },
+    "baTags": { "message": "Tags" },
 
     "general_Makenotes": { "message": "Make notes for general purpose" },
     "builtin_encn_Collins": { "message": "Collins EN->ZH Dict.(builtin)" },

@@ -29,20 +29,26 @@
                     </div>
 
                     <label data-i18n="baHotKey">AuoSel.</label>
-                    <select id="hotkey">
+                    <select id="hotkey" class="col-2x">
                         <option value="0">Off</option>
                         <option value="16">Shift</option>
                         <option value="17">Ctrl</option>
                         <option value="18">Alt</option>
                     </select>
-                    <hr class="anki-options">
-                    <select id="deckname" class="anki-options col-2x">
-                        <option value=""></option>
-                    </select>
                     <hr>
+                    <label data-i18n="baCurrentDict">Dict.</label>
                     <select id="dict" class="col-2x">
                         <option value="encn-Default">encn-Default</option>
                     </select>
+                </div>
+                <div class="crosspanel anki-options">
+                    <hr>
+                    <label data-i18n="baDeckname">Deck</label>
+                    <select id="deckname" class="col-2x">
+                        <option value=""></option>
+                    </select>
+                    <label data-i18n="baTags">Tags</label>
+                    <input type="text" id="tags" placeholder="Tags" class="col-2x">
                 </div>
             </div>
         </form>
