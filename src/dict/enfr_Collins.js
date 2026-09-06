@@ -81,6 +81,9 @@ class enfr_Collins {
                     word-wrap: break-word;
                     box-sizing: border-box;
                 }
+                 .mpuslot_b-container{
+                      display: none;
+                }
             </style>`;
 
         return css;
