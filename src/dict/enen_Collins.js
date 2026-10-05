@@ -38,7 +38,7 @@ class enen_Collins {
         }
 
         let base = 'https://www.collinsdictionary.com/dictionary/english/';
-        let url = base + encodeURIComponent(word);
+        let url = (base + encodeURIComponent(word)).replace(/%20/g, '-');
         let doc = '';
         try {
             let data = await api.fetch(url);
