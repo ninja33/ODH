@@ -37,6 +37,7 @@
 
     "msgConnecting": { "message": "连接中..." },
     "msgFailed": { "message": "未连接" },
+    "msgSaveFailed": { "message": "设置保存失败，请重试。" },
     "msgSuccess": {
         "message": "已连接:$INFORMATION$",
         "placeholders": { "information": { "content": "$1" } }

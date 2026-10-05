@@ -33,7 +33,7 @@ function sanitizeOptions(options) {
     };
 
     for (const key in defaults) {
-        if (!options.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(options, key)) {
             options[key] = defaults[key];
         }
     }
@@ -44,6 +44,11 @@ function sanitizeOptions(options) {
 async function optionsLoad() {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(null, (options) => {
+            const error = chrome.runtime.lastError;
+            if (error) {
+                reject(new Error(error.message));
+                return;
+            }
             resolve(sanitizeOptions(options));
         });
     });
@@ -51,7 +56,14 @@ async function optionsLoad() {
 
 async function optionsSave(options) {
     return new Promise((resolve, reject) => {
-        chrome.storage.local.set(sanitizeOptions(options), resolve());
+        chrome.storage.local.set(sanitizeOptions(options), () => {
+            const error = chrome.runtime.lastError;
+            if (error) {
+                reject(new Error(error.message));
+                return;
+            }
+            resolve();
+        });
     });
 }
 

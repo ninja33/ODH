@@ -1,9 +1,8 @@
-/* global odhback, localizeHtmlPage, utilAsync, optionsLoad, optionsSave */
+/* global localizeHtmlPage, utilAsync, optionsLoad */
 
 async function populateAnkiDeckAndModel(options) {
-    let names = [];
     $('#deckname').empty();
-    names = await options_api.getDeckNames();
+    let names = await options_api.getDeckNames();
     if (names !== null) {
         names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
     }
@@ -130,63 +129,80 @@ async function onAnkiTypeChanged(e) {
 
 async function onServicesChanged(e) {
     if (e.originalEvent) {
-        let options = await optionsLoad();
+        try {
+            let options = await optionsLoad();
 
-        options.services = $('#services').val();
-        options.id = $('#id').val();
-        options.password = $('#password').val();
-        options.ankiconnecturl = $('#ankiconnecturl').val();
+            options.services = $('#services').val();
+            options.id = $('#id').val() ?? options.id;
+            options.password = $('#password').val() ?? options.password;
+            options.ankiconnecturl = $('#ankiconnecturl').val();
 
-        let newOptions = await options_api.optionsChanged(options);
-        updateServiceStatus(newOptions);
+            let newOptions = await options_api.optionsChanged(options);
+            if (!newOptions) {
+                throw new Error('Settings were not confirmed.');
+            }
+            await updateServiceStatus(newOptions);
+        } catch {
+            $('#services-status').text(chrome.i18n.getMessage('msgSaveFailed'));
+        }
     }
 }
 
 async function onSaveClicked(e) {
     if (!e.originalEvent) return;
 
-    let optionsOld = await optionsLoad();
-    let options = $.extend(true, {}, optionsOld);
-
-    options.enabled = $('#enabled').prop('checked');
-    options.mouseselection = $('#mouseselection').prop('checked');
-    options.hotkey = $('#hotkey').val();
-
-    options.dictSelected = $('#dict').val();
-    options.monolingual = $('#monolingual').val();
-    options.preferredaudio = $('#anki-preferred-audio').val();
-    options.maxcontext = $('#maxcontext').val();
-    options.maxexample = $('#maxexample').val();
-
-    options.services = $('#services').val();
-    options.id = $('#id').val();
-    options.password = $('#password').val();
-    
-    options.ankiconnecturl = $('#ankiconnecturl').val();
-    options.tags = $('#tags').val();
-    options.duplicate = $('#duplicate').val();
-
-    let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
-    fields.forEach(field => {
-        options[field] = $(`#${field}`).val() == null ? options[field] : $(`#${field}`).val();
-    });
-
-    options.sysscripts = $('#sysscripts').val();
-    options.udfscripts = $('#udfscripts').val();
-
-    $('#gif-load').show();
-    let newOptions = await options_api.optionsChanged(options);
     $('.gif').hide();
-    $('#gif-good').show(1000, () => { $('.gif').hide(); });
+    $('#gif-load').show();
+    try {
+        let optionsOld = await optionsLoad();
+        let options = $.extend(true, {}, optionsOld);
 
-    populateDictionary(newOptions.dictNamelist);
-    $('#dict').val(newOptions.dictSelected);
+        options.enabled = $('#enabled').prop('checked');
+        options.mouseselection = $('#mouseselection').prop('checked');
+        options.hotkey = $('#hotkey').val();
 
-    if (e.target.id == 'saveclose')
-        window.close();
+        options.dictSelected = $('#dict').val();
+        options.monolingual = $('#monolingual').val();
+        options.preferredaudio = $('#anki-preferred-audio').val();
+        options.maxcontext = $('#maxcontext').val();
+        options.maxexample = $('#maxexample').val();
+
+        options.services = $('#services').val();
+        options.id = $('#id').val() ?? options.id;
+        options.password = $('#password').val() ?? options.password;
+
+        options.ankiconnecturl = $('#ankiconnecturl').val();
+        options.tags = $('#tags').val();
+        options.duplicate = $('#duplicate').val();
+
+        let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
+        fields.forEach(field => {
+            options[field] = $(`#${field}`).val() == null ? options[field] : $(`#${field}`).val();
+        });
+
+        options.sysscripts = $('#sysscripts').val();
+        options.udfscripts = $('#udfscripts').val();
+
+        let newOptions = await options_api.optionsChanged(options);
+        if (!newOptions) {
+            throw new Error('Settings were not confirmed.');
+        }
+
+        populateDictionary(newOptions.dictNamelist);
+        $('#dict').val(newOptions.dictSelected);
+
+        $('#gif-good').show(1000, () => { $('.gif').hide(); });
+
+        if (e.target.id == 'saveclose')
+            window.close();
+    } catch {
+        $('#gif-fail').show();
+    } finally {
+        $('#gif-load').hide();
+    }
 }
 
-function onCloseClicked(e) {
+function onCloseClicked() {
     window.close();
 }
 
@@ -239,4 +255,4 @@ async function onReady() {
 }
 
 $(document).ready(utilAsync(onReady));
-options_api = new OptionsAPI();
+const options_api = new OptionsAPI();

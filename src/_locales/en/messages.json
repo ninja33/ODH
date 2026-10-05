@@ -37,6 +37,7 @@
 
     "msgConnecting": { "message": "Connecting..." },
     "msgFailed": { "message": "Not Connected" },
+    "msgSaveFailed": { "message": "Settings could not be saved. Please try again." },
     "msgSuccess": {
         "message": "Connected:$INFORMATION$",
         "placeholders": { "information": { "content": "$1" } }

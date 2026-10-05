@@ -1,0 +1,31 @@
+{
+    "wug": {
+        "readings": ["wʌɡ"],
+        "star": 1,
+        "defs": [
+            {
+                "pos_en": "n.",
+                "def_en": "An imaginary object used only in automated tests.",
+                "def_cn": "自动化测试中的虚构物体。",
+                "ext": [
+                    {
+                        "ext_en": "This test contains one wug.",
+                        "ext_cn": "这项测试包含一个虚构物体。"
+                    }
+                ]
+            }
+        ]
+    },
+    "flindle": {
+        "readings": [],
+        "star": 0,
+        "defs": [
+            {
+                "pos_en": "v.",
+                "def_en": "To perform an imaginary action in a test.",
+                "def_cn": "在测试中执行虚构动作。",
+                "ext": []
+            }
+        ]
+    }
+}

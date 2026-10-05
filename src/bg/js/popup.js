@@ -1,8 +1,7 @@
-/* global odhback, localizeHtmlPage, utilAsync, optionsLoad, optionsSave */
+/* global localizeHtmlPage, utilAsync, optionsLoad */
 async function populateAnkiDeckAndModel(options) {
-    let names = [];
     $('#deckname').empty();
-    names = await options_api.getDeckNames();
+    let names = await options_api.getDeckNames();
     if (names !== null) {
         names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
     }
@@ -41,18 +40,25 @@ async function updateAnkiProfile(options) {
 async function onOptionChanged(e) {
     if (!e.originalEvent) return;
 
-    let options = await optionsLoad();
+    $('#save-status').text('');
+    try {
+        let options = await optionsLoad();
 
-    options.enabled = $('#enabled').prop('checked');
-    options.mouseselection = $('#mouseselection').prop('checked');
-    options.hotkey = $('#hotkey').val();
+        options.enabled = $('#enabled').prop('checked');
+        options.mouseselection = $('#mouseselection').prop('checked');
+        options.hotkey = $('#hotkey').val();
 
-    options.dictSelected = $('#dict').val();
+        options.dictSelected = $('#dict').val();
 
-    options.deckname = $('#deckname').val();
-    options.tags = $('#tags').val();
-    let newOptions = await options_api.optionsChanged(options);
-    optionsSave(newOptions);
+        options.deckname = $('#deckname').val();
+        options.tags = $('#tags').val();
+        const newOptions = await options_api.optionsChanged(options);
+        if (!newOptions) {
+            throw new Error('Settings were not confirmed.');
+        }
+    } catch {
+        $('#save-status').text(chrome.i18n.getMessage('msgSaveFailed'));
+    }
 }
 
 function onMoreOptions() {
@@ -89,4 +95,4 @@ async function onReady() {
 }
 
 $(document).ready(utilAsync(onReady));
-options_api = new OptionsAPI();
+const options_api = new OptionsAPI();

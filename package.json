@@ -1,0 +1,22 @@
+{
+    "name": "odh",
+    "version": "1.0.1",
+    "private": true,
+    "description": "Development tools for the ODH Chrome extension",
+    "license": "MIT",
+    "engines": {
+        "node": "24.x",
+        "npm": "11.x"
+    },
+    "packageManager": "npm@11.19.0",
+    "scripts": {
+        "lint": "eslint . --max-warnings=0",
+        "test:contracts": "node --test tests/contracts/json.test.cjs && node --test tests/contracts/manifest.test.cjs",
+        "test:unit": "node --test tests/unit/builtin.test.cjs && node --test tests/unit/deinflector.test.cjs && node --test tests/unit/settings.test.cjs && node --test tests/unit/settings-pages.test.cjs"
+    },
+    "devDependencies": {
+        "@eslint/js": "10.0.1",
+        "eslint": "10.12.0",
+        "globals": "17.13.0"
+    }
+}

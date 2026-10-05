@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, Agent, optionsLoad, optionsSave */
+/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave */
 class ODHServiceworker {
     constructor() {
 
@@ -23,11 +23,15 @@ class ODHServiceworker {
         chrome.commands.onCommand.addListener((command) => this.onCommand(command));
     }
 
-    onCommand(command) {
+    async onCommand(command) {
         if (command != 'enabled') return;
         this.options.enabled = !this.options.enabled;
         this.setFrontendOptions(this.options);
-        optionsSave(this.options);
+        try {
+            await optionsSave(this.options);
+        } catch {
+            console.error('Unable to save shortcut settings.');
+        }
     }
 
     onInstalled(details) {
@@ -145,7 +149,7 @@ class ODHServiceworker {
         try {
             const result =  await chrome.runtime.sendMessage(request);
             return result;
-        } catch (e) {
+        } catch {
             return null
         }
     }
@@ -162,7 +166,7 @@ class ODHServiceworker {
         
             const text = await response.text();
             callback(text);
-        } catch (e) {
+        } catch {
             callback(null);
         }
     }
@@ -183,8 +187,13 @@ class ODHServiceworker {
     }
 
     async api_initBackend(params) {
-        let options = await optionsLoad();
-        await this.optionsChanged(options);
+        try {
+            let options = await optionsLoad();
+            await this.optionsChanged(options);
+        } catch {
+            console.error('Unable to initialize settings.');
+        }
+        params.callback(null);
     }
 
     // Frontend API
@@ -199,7 +208,7 @@ class ODHServiceworker {
         try {
             let result = await this.findTerm(expression);
             callback(result);
-        } catch (err) {
+        } catch {
             callback(null);
         }
     }
@@ -223,7 +232,7 @@ class ODHServiceworker {
         try {
             let result = await this.playAudio(url);
             callback(result);
-        } catch (err) {
+        } catch {
             callback(null);
         }
     }
@@ -263,13 +272,19 @@ class ODHServiceworker {
             this.options.dictNamelist = loadresults.map(x => x.result);
         }
         await this.setScriptsOptions(this.options);
-        optionsSave(this.options);
+        await optionsSave(this.options);
     }
 
     // Option pages API
     async api_optionsChanged(params) {
         let { options, callback } = params;
-        await this.optionsChanged(options);
+        try {
+            await this.optionsChanged(options);
+        } catch {
+            console.error('Unable to save settings.');
+            callback(null);
+            return;
+        }
         callback(this.options);
     }
 
@@ -305,7 +320,12 @@ class ODHServiceworker {
     }
 
     async setScriptsOptions(options) {
-        return await this.sendtoBackground({action:'setScriptsOptions', params:{options}});
+        // Keep credentials and service endpoints out of the dictionary sandbox.
+        const scriptOptions = { ...options };
+        for (const field of ['id', 'password', 'ankiconnecturl']) {
+            delete scriptOptions[field];
+        }
+        return await this.sendtoBackground({action:'setScriptsOptions', params:{options: scriptOptions}});
     }
 
     async findTerm(expression) {
@@ -324,7 +344,7 @@ importScripts('utils.js');
 importScripts('agent.js');
 
 setupOffscreenDocument('/bg/background.html');
-odh_serviceworker = new ODHServiceworker();
+globalThis.odh_serviceworker = new ODHServiceworker();
 
 // according to woxxom's reply on below stackoverflow discussion
 // https://stackoverflow.com/questions/66618136/persistent-service-worker-in-chrome-extension

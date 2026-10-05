@@ -16,10 +16,21 @@
 
 # Web store zip
 *.zip
-*.json
 
 # JS Beautify
 .jsbeautifyrc
 
 # for Mac
 .DS_Store
+
+# Private dictionary data
+/src/bg/data/
+
+# Agent workspace and local instructions
+/.agent/
+/AGENTS.md
+
+# Credentials
+*.key
+.env
+.env.*
