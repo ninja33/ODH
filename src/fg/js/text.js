@@ -1,4 +1,4 @@
-HtmlTagsToReplace = {
+const HtmlTagsToReplace = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;'
@@ -26,7 +26,7 @@ String.prototype.searchAll = function(search) {
     let target = this;
     search = escapeRegExp(search);
     let regex = new RegExp(search, 'gi');
-    let result = 0;
+    let result;
     let indices = [];
     while ((result = regex.exec(target)) && result != '') {
         indices.push(result.index);
@@ -102,9 +102,9 @@ function cutSentence(word, offset, sentence, sentenceNum) {
             }
         }
 
-        return arr.slice(start, end + 1).join('').replaceAll(word, word.replace(/[^\s]+/g,'<b>\$&</b>'));
+        return arr.slice(start, end + 1).join('').replaceAll(word, word.replace(/[^\s]+/g,'<b>$&</b>'));
     } else {
-        return sentence.replace(word, word.replace(/[^\s]+/g,'<b>\$&</b>'));
+        return sentence.replace(word, word.replace(/[^\s]+/g,'<b>$&</b>'));
     }
 }
 
@@ -129,7 +129,7 @@ function getPDFNode(node) {
     let currentspan = node;
 
     let sentenceNodes = [currentspan];
-    let previous = null;
+    let previous;
     while ((previous = node.previousSibling)) {
         sentenceNodes.unshift(previous);
         backwardindex += 1;
@@ -140,7 +140,7 @@ function getPDFNode(node) {
     }
 
     node = currentspan;
-    let next = null;
+    let next;
     while ((next = node.nextSibling)) {
         sentenceNodes.push(next);
         if (node.nextSibling.textContent.search(/[.!?;:。！？]['"’”]?(\s|.*$)/g) != -1)

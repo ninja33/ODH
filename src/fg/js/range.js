@@ -42,7 +42,7 @@ class TextSourceRange {
         let clone = this.rng.cloneRange();
         let pos = this.rng.startOffset;
         let count = 0;
-        let rangeText = '';
+        let rangeText;
 
         while (pos >= 1) {
             clone.setStart(this.rng.startContainer, --pos);
@@ -59,7 +59,7 @@ class TextSourceRange {
         let clone = this.rng.cloneRange();
         let pos = this.rng.endOffset;
         let count = 0;
-        let rangeText = '';
+        let rangeText;
 
         while (pos < this.rng.endContainer.data.length) {
             clone.setEnd(this.rng.endContainer, ++pos);
