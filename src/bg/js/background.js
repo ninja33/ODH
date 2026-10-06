@@ -5,7 +5,7 @@ const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm', 'pla
 // is dropped here instead of being forwarded to the worker.
 const ODH_BRIDGE_ACTIONS = [
     'Fetch', 'Deinflect', 'getBuiltin', 'getLocale', 'initBackend',
-    'getCollins', 'getOxford', ...ODH_SANDBOX_ACTIONS, 'callback'
+    ...ODH_SANDBOX_ACTIONS, 'callback'
 ];
 
 class ODHBackground {
