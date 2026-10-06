@@ -1,8 +1,18 @@
 /* global Agent */
+// Actions the worker may ask the offscreen document to hand to the sandbox.
+const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm', 'playAudio'];
+// Actions sandbox-side code currently sends through this bridge. Anything else
+// is dropped here instead of being forwarded to the worker.
+const ODH_BRIDGE_ACTIONS = [
+    'Fetch', 'Deinflect', 'getBuiltin', 'getLocale', 'initBackend',
+    'getCollins', 'getOxford', ...ODH_SANDBOX_ACTIONS, 'callback'
+];
+
 class ODHBackground {
     constructor() {
         this.audios = {};
-        this.agent = new Agent(document.getElementById('sandbox').contentWindow);
+        this.sandboxWindow = document.getElementById('sandbox').contentWindow;
+        this.agent = new Agent(this.sandboxWindow, ODH_SANDBOX_ACTIONS, 'offscreen');
         // add listener
         chrome.runtime.onMessage.addListener(this.onServiceMessage.bind(this));
         window.addEventListener('message', e => this.onSandboxMessage(e));
@@ -25,7 +35,11 @@ class ODHBackground {
         const { action, params, target } = request;
         if (target != 'background')
             return;
-        
+
+        // Same action list as the other direction: the bridge stays narrow.
+        if (!ODH_SANDBOX_ACTIONS.includes(action) || !params)
+            return;
+
         if (action == 'playAudio') {
             let { url } = params
             this.playAudio(url)
@@ -57,8 +71,16 @@ class ODHBackground {
         }
     }
     async onSandboxMessage(e) {
-        const { action, params } = e.data;
+        // Only the pinned sandbox window, and only its known actions, may cross
+        // into the worker; reject before reading the payload.
+        if (e.source !== this.sandboxWindow) return;
+        const { action, params } = e.data || {};
+        if (!ODH_BRIDGE_ACTIONS.includes(action) || !params) return;
         const callbackId = params.callbackId
+        // A callback frame answering one of our own requests is an RPC reply:
+        // our Agent (the requester) consumes it. Forwarding it as a new request
+        // would leave the pending callback registered and hang that request.
+        if (action === 'callback' && callbackId in this.agent.callbacks) return;
         try {
             const result = await this.sendtoServiceworker({action, params});
             this.callback(result, callbackId);

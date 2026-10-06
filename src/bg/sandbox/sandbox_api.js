@@ -1,7 +1,7 @@
 /*global Agent */
 class SandboxAPI {
     constructor() {
-        this.agent = new Agent(window.parent);
+        this.agent = new Agent(window.parent, ['callback'], 'sandbox');
     }
 
     async postMessage(action, params) {

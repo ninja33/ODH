@@ -27,7 +27,7 @@
 /src/bg/data/
 
 # Agent workspace and local instructions
-/.agent/
+/.agents/
 /AGENTS.md
 
 # Credentials

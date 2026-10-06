@@ -1,4 +1,7 @@
 /* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isConnected, addNote, getTranslation, playAudio, isValidElement*/
+// Actions the popup frame may ask the content script to perform.
+const ODH_FRAME_ACTIONS = ['addNote', 'playAudio', 'playSound'];
+
 class ODHFrontend {
 
     constructor() {
@@ -119,9 +122,8 @@ class ODHFrontend {
         if (typeof(method) === 'function') {
             params.callback = callback;
             method.call(this, params);
+            return true;
         }
-
-        callback();
     }
 
     api_setFrontendOptions(params) {
@@ -136,6 +138,12 @@ class ODHFrontend {
     }
 
     onFrameMessage(e) {
+        // The popup frame shares this page's origin, so only the pinned frame
+        // window and the known actions are accepted. Full isolation is M06/M07.
+        const iframe = this.popup.popup;
+        if (!iframe || e.source !== iframe.contentWindow || !ODH_FRAME_ACTIONS.includes(e.data?.action))
+            return;
+
         const { action, params } = e.data;
         const method = this['api_' + action];
         if (typeof(method) === 'function') {

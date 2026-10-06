@@ -92,7 +92,7 @@ function settingsWorker({ stubScripts = true } = {}) {
         chrome: storage.chrome,
         optionsLoad: storage.optionsLoad,
         optionsSave: storage.optionsSave,
-        console: { error(message) { diagnostics.push(message); } },
+        console: { error(message) { diagnostics.push(message); }, log() {} },
         Ankiconnect: class {},
         Builtin: class { loadData() {} },
         Deinflector: class { loadData() {} },

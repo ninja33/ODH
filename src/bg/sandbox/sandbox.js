@@ -46,6 +46,8 @@ class Sandbox {
                 api.callback({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
             }
         } catch (err) {
+            // The caller only gets a null result, so keep the reason visible here.
+            console.error('Unable to load dictionary script:', name, err && err.message);
             api.callback({ name, result: null }, callbackId);
             return;
         }

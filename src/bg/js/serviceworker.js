@@ -130,6 +130,10 @@ class ODHServiceworker {
 
     // Message Hub and Handler start from here ...
     onMessage(request, sender, callback) {
+        // Only this extension may drive the worker; the browser supplies sender.id.
+        if (!sender || sender.id !== chrome.runtime.id)
+            return;
+
         const { action, params, target} = request;
 
         if (target != 'serviceworker')

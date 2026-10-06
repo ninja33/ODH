@@ -88,7 +88,12 @@ function onDomContentLoaded() {
     initSpellnTranslation();
 }
 
+const ODH_UI_ACTIONS = ['setActionState'];
+const ODH_UI_PEER = window.parent;
+
 function onMessage(e) {
+    if (e.source !== ODH_UI_PEER || !ODH_UI_ACTIONS.includes(e.data?.action)) return;
+
     const { action, params } = e.data;
     const method = window['api_' + action];
     if (typeof(method) === 'function') {
