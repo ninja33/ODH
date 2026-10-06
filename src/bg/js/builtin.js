@@ -9,6 +9,9 @@ class Builtin {
 
     findTerm(dictname, term) {
         const dict = this.dicts[dictname];
+        // WHY: dict comes from a JSON dictionary file, so its prototype is not
+        // under our control; the prototype-free form belongs to the hardening task.
+        // eslint-disable-next-line no-prototype-builtins
         return dict.hasOwnProperty(term) ? JSON.stringify(dict[term]):null;
     }
 

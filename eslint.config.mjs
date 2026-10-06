@@ -55,6 +55,9 @@ export default [
             // from hygiene checks until they are migrated one by one.
             'src/dict/**',
             'src/lib/jquery-3.0.0.min.js',
+            // Minified third-party hash helper (single line, single-letter names);
+            // it is used as-is and never edited here.
+            'src/bg/sandbox/sign.js',
             'node_modules/**',
             'dist/**',
             'tmp/**',

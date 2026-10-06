@@ -42,21 +42,6 @@ function isEmpty(word) {
     return (!word);
 }
 
-function isShortandNum(word) {
-    let numReg = /\d/;
-    return (word.length < 3 || numReg.test(word));
-}
-
-function isChinese(word) {
-    let cnReg = /[\u4e00-\u9fa5]+/gi;
-    return (cnReg.test(word));
-}
-
-function isInvalid(word) {
-    if (isChinese(word)) return false;
-    return (isChinese(word) && isEmpty(word) || isShortandNum(word));
-}
-
 function cutSentence(word, offset, sentence, sentenceNum) {
 
     if (sentenceNum > 0) {
