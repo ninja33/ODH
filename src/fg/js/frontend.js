@@ -1,4 +1,4 @@
-/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isConnected, addNote, getTranslation, playAudio, isValidElement*/
+/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isValidElement*/
 // Actions the popup frame may ask the content script to perform.
 const ODH_FRAME_ACTIONS = ['addNote', 'playAudio', 'playSound'];
 
@@ -64,7 +64,7 @@ class ODHFrontend {
         this.onSelectionEnd(e);
     }
 
-    onMouseDown(e) {
+    onMouseDown(_e) {
         this.popup.hide();
     }
 
@@ -92,7 +92,7 @@ class ODHFrontend {
         }, 500);
     }
 
-    async onSelectionEnd(e) {
+    async onSelectionEnd(_e) {
 
         if (!this.enabled)
             return;
@@ -166,7 +166,7 @@ class ODHFrontend {
     async api_playAudio(params) {
         let { nindex, dindex } = params;
         let url = this.notes[nindex].audios[dindex];
-        let response = await frontend_api.playAudio(url);
+        await frontend_api.playAudio(url);
     }
 
     api_playSound(params) {

@@ -59,7 +59,7 @@ class Popup {
         return rangeFromPoint(point).getBoundingClientRect();
     }
 
-    sendMessage(action, params, callback) {
+    sendMessage(action, params) {
         if (this.popup !== null) {
             this.popup.contentWindow.postMessage({ action, params }, '*');
         }

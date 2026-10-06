@@ -19,7 +19,7 @@ class Deinflector {
                 throw new Error(`Response status: ${response.status}`);
             }
             return await response.json();
-        } catch (e) {
+        } catch (_e) {
             return null;
         }
     }

@@ -70,6 +70,9 @@ export default [
             'no-unused-vars': ['error', {
                 args: 'after-used',
                 argsIgnorePattern: '^_',
+                // '_' is the project placeholder for a binding that exists only
+                // to document a signature, so it is not a leftover.
+                varsIgnorePattern: '^_',
                 caughtErrors: 'none'
             }]
         },
@@ -147,7 +150,14 @@ export default [
     ...Object.entries(classicExports).map(([file, names]) => ({
         files: [file],
         rules: {
-            'no-unused-vars': ['error', { varsIgnorePattern: `^(${names.join('|')})$` }]
+            // Per-file rules replace the options object, so the base options for
+            // required-but-unused signatures must be repeated here.
+            'no-unused-vars': ['error', {
+                varsIgnorePattern: `^(${names.join('|')}|_)$`,
+                args: 'after-used',
+                argsIgnorePattern: '^_',
+                caughtErrors: 'none'
+            }]
         }
     }))
 ];

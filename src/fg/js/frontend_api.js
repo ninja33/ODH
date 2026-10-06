@@ -3,7 +3,7 @@ class FrontendAPI{
         request.target='serviceworker';
         try {
             return await chrome.runtime.sendMessage(request);
-        } catch (e) {
+        } catch (_e) {
             return null
         }
     }

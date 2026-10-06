@@ -4,9 +4,6 @@ function spell() {
 	let $ = (tag, props, children=[], elm=document.createElement(tag)) =>
 		children.map(child => child && elm.appendChild(child)) && Object.assign(elm, props)
 
-	let colorPicker = _=> $('input', { type: 'color' })
-	let select = options => $('select', {}, options.map(o => $('option', { textContent:o })))
-
 	let buttons = {};
 	let queryState = _=> {
 		for(let cmd in buttons)
