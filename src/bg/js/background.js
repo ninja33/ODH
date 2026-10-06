@@ -77,21 +77,25 @@ class ODHBackground {
         const { action, params } = e.data || {};
         if (!ODH_BRIDGE_ACTIONS.includes(action) || !params) return;
         const callbackId = params.callbackId
-        // A callback frame answering one of our own requests is an RPC reply:
-        // our Agent (the requester) consumes it. Forwarding it as a new request
-        // would leave the pending callback registered and hang that request.
-        if (action === 'callback' && callbackId in this.agent.callbacks) return;
+        // Replies are Agent business, not bridge traffic. agent.onMessage is
+        // registered first and has already resolved the pending request and
+        // removed it from the registry by the time this listener runs, so this
+        // does not depend on inspecting that registry. Forwarding a reply would
+        // only add a runtime round trip to a worker that has no callback handler.
+        if (action === 'callback') return;
         try {
             const result = await this.sendtoServiceworker({action, params});
-            this.callback(result, callbackId);
+            this.replyToSandbox(result, callbackId);
         } catch (e) {
-            this.callback(null, callbackId);
+            this.replyToSandbox(null, callbackId);
         }
 
     }
 
-    // 'callback' helper to simply simulate postMessage callback
-    callback(data, callbackId) {
+    // Send an RPC reply back to a sandbox-originated request. The id belongs to the
+    // sandbox's Agent (it registered it before sending), so no callback is
+    // registered here: Agent.postMessage only does that for action != 'callback'.
+    replyToSandbox(data, callbackId) {
         this.agent.postMessage('callback', { data, callbackId });
     }
 }

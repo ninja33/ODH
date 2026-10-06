@@ -1,7 +1,10 @@
 /*global Agent */
 class SandboxAPI {
     constructor() {
-        this.agent = new Agent(window.parent, ['callback'], 'sandbox');
+        // Only dictionary capabilities live here. Replies and the init trigger are
+        // sandbox control-plane traffic and are written directly in sandbox.js, so
+        // a user dictionary script cannot replace them through window.api.
+        this.agent = new Agent(window.parent, [], 'sandbox');
     }
 
     async postMessage(action, params) {
@@ -36,14 +39,6 @@ class SandboxAPI {
 
     async locale() {
         return await this.postMessage('getLocale', {});
-    }
-
-    callback(data, callbackId) {
-        this.postMessage('callback', { data, callbackId });
-    }
-
-    initBackend() {
-        this.postMessage('initBackend', {});
     }
 
 }

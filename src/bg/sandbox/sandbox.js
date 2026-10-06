@@ -1,4 +1,13 @@
 /* global api */
+// Sandbox control-plane traffic lives here rather than on window.api: replies and
+// the init trigger register no callback of their own, and window.api is reachable
+// by user dictionary scripts, which must not be able to replace them.
+const ODH_BACKGROUND_ORIGIN = '*'; // the manifest sandbox has an opaque origin
+
+function replyToBackground(data, callbackId) {
+    window.parent.postMessage({ action: 'callback', params: { data, callbackId } }, ODH_BACKGROUND_ORIGIN);
+}
+
 class Sandbox {
     constructor() {
         this.audios = {};
@@ -35,7 +44,7 @@ class Sandbox {
         let { name, callbackId } = params;
 
         let scripttext = await api.fetch(this.buildScriptURL(name));
-        if (!scripttext) api.callback({ name, result: null }, callbackId);
+        if (!scripttext) replyToBackground({ name, result: null }, callbackId);
         try {
             let SCRIPT = eval(`(${scripttext})`);
             if (SCRIPT.name && typeof SCRIPT === 'function') {
@@ -43,12 +52,12 @@ class Sandbox {
                 //if (!this.dicts[SCRIPT.name]) 
                 this.dicts[SCRIPT.name] = script;
                 let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
-                api.callback({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
+                replyToBackground({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
             }
         } catch (err) {
             // The caller only gets a null result, so keep the reason visible here.
             console.error('Unable to load dictionary script:', name, err && err.message);
-            api.callback({ name, result: null }, callbackId);
+            replyToBackground({ name, result: null }, callbackId);
             return;
         }
     }
@@ -64,10 +73,10 @@ class Sandbox {
         let selected = options.dictSelected;
         if (this.dicts[selected]) {
             this.current = selected;
-            api.callback(selected, callbackId);
+            replyToBackground(selected, callbackId);
             return;
         }
-        api.callback(null, callbackId);
+        replyToBackground(null, callbackId);
     }
 
     async backend_findTerm(params) {
@@ -75,14 +84,16 @@ class Sandbox {
 
         if (this.dicts[this.current] && typeof(this.dicts[this.current].findTerm) === 'function') {
             let notes = await this.dicts[this.current].findTerm(expression);
-            api.callback(notes, callbackId);
+            replyToBackground(notes, callbackId);
             return;
         }
-        api.callback(null, callbackId);
+        replyToBackground(null, callbackId);
     }
 }
 
 window.sandbox = new Sandbox();
 document.addEventListener('DOMContentLoaded', () => {
-    api.initBackend();
+    // One-shot init trigger owned by this document; the offscreen still gates it
+    // once per document because sandbox code is not trusted to fire it repeatedly.
+    window.parent.postMessage({ action: 'initBackend', params: {} }, ODH_BACKGROUND_ORIGIN);
 }, false);
