@@ -28,10 +28,6 @@
 
 
     "lblServices": { "message": "Data Export" },
-    "lblUsername": { "message": "Username" },
-    "lblPassword": { "message": "Password" },
-    "lblSignup": { "message": "Signup" },
-    "lblSignin": { "message": "Signin" },
     "lblAnkiconnecturl": {"message": "Connect URL"},
     "lblConnect": {"message": "Connect"},
 
@@ -42,8 +38,6 @@
         "message": "Connected:$INFORMATION$",
         "placeholders": { "information": { "content": "$1" } }
     },
-
-    "lblAnkiStatus": { "message": "Anki Status" },
 
     "lblTags": { "message": "Note Tags" },
     "lblAllowDuplicate": { "message": "Allow Duplicate" },

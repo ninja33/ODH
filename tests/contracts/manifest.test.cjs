@@ -112,12 +112,10 @@ test('every manifest message reference exists in each supported locale', () => {
     }
 });
 
-test('supported locales share non-legacy message keys', () => {
-    // This unused English-only key predates the shared locale contract.
-    const legacyKeys = new Set(['lblAnkiStatus']);
+test('supported locales share the same message keys', () => {
     const keyLists = locales.map(locale => {
         const messages = JSON.parse(fs.readFileSync(path.join(extensionDir, `_locales/${locale}/messages.json`), 'utf8'));
-        return Object.keys(messages).filter(key => !legacyKeys.has(key)).sort();
+        return Object.keys(messages).sort();
     });
     for (let index = 1; index < locales.length; index += 1) {
         assert.deepEqual(keyLists[index], keyLists[0], `${locales[index]}: inconsistent message keys`);

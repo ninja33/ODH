@@ -46,10 +46,6 @@ async function updateServiceStatus(options) {
             $('#service-options-ankiconnect').show();
             updateAnkiProfile(options) 
             break;
-        case 'ankiweb':
-            $('#service-options-ankiweb').show();
-            updateAnkiProfile(options) 
-            break;
         default:
             break;
     }
@@ -240,7 +236,6 @@ async function onReady() {
     onHiddenClicked();
 
     $('#connect').click(onServicesChanged);
-    $('#login').click(onServicesChanged);
     $('#saveload').click(onSaveClicked);
     $('#saveclose').click(onSaveClicked);
     $('#close').click(onCloseClicked);

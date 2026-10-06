@@ -5,7 +5,6 @@ class ODHServiceworker {
         this.options = null;
 
         this.ankiconnect = new Ankiconnect();
-        //this.ankiweb = new Ankiweb();
         this.target = null;
 
         //setup lemmatizer
@@ -252,10 +251,8 @@ class ODHServiceworker {
             case 'ankiconnect':
                 this.target = this.ankiconnect;
                 break;
-            case 'ankiweb':
-                this.target = this.ankiweb;
-                break;
             default:
+                // Legacy 'ankiweb' values fall through: the service was removed.
                 this.target = null;
         }
         if (this.target !== null && typeof(this.target.initConnection) === 'function')

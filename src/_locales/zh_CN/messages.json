@@ -28,10 +28,6 @@
 
 
     "lblServices": { "message": "数据导出" },
-    "lblUsername": { "message": "用户邮箱" },
-    "lblPassword": { "message": "用户密码" },
-    "lblSignup": { "message": "注册" },
-    "lblSignin": { "message": "登录" },
     "lblAnkiconnecturl": {"message": "连接地址"},
     "lblConnect": {"message": "连接"},
 
