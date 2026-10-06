@@ -50,6 +50,10 @@ export default [
         ignores: [
             '.agent/**',
             'src/bg/data/**',
+            // Vendored dictionaries are eval-loaded third-party scripts; their
+            // class names are persisted dictionary IDs, so they are excluded
+            // from hygiene checks until they are migrated one by one.
+            'src/dict/**',
             'src/lib/jquery-3.0.0.min.js',
             'node_modules/**',
             'dist/**',
@@ -59,7 +63,16 @@ export default [
     },
     {
         files: ['**/*.{js,mjs,cjs}'],
-        rules: js.configs.recommended.rules,
+        rules: {
+            ...js.configs.recommended.rules,
+            // Callback signatures and catch bindings are fixed by the platform
+            // and by Chrome APIs, so unused ones are not worth reporting.
+            'no-unused-vars': ['error', {
+                args: 'after-used',
+                argsIgnorePattern: '^_',
+                caughtErrors: 'none'
+            }]
+        },
         linterOptions: { reportUnusedDisableDirectives: 'error' }
     },
     {
@@ -90,7 +103,6 @@ export default [
             'src/bg/js/options.js',
             'src/bg/js/popup.js',
             'src/bg/js/tabmenu.js',
-            'src/bg/js/ankiweb.js',
             'src/bg/sandbox/*.js',
             'src/dict/*.js',
             'src/fg/js/*.js'
@@ -115,7 +127,7 @@ export default [
         languageOptions: { globals: { chrome: 'readonly' } }
     },
     {
-        // Only these active pages load jQuery; ankiweb.js has no active loader.
+        // Only these active pages load jQuery.
         files: ['src/bg/js/options.js', 'src/bg/js/popup.js'],
         languageOptions: { globals: globals.jquery }
     },
