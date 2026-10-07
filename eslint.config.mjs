@@ -4,7 +4,8 @@ import globals from 'globals';
 // These bindings are consumed by other classic scripts or the dictionary loader.
 // Keep the actual class IDs: filenames do not always match the evaluated classes.
 const classicExports = {
-    'src/bg/js/agent.js': ['Agent'],
+    'src/lib/agent.js': ['Agent'],
+    'src/lib/envelope.js': ['odhErrorMessage', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhRead', 'odhUnwrap'],
     'src/bg/js/ankiconnect.js': ['Ankiconnect'],
     'src/bg/js/builtin.js': ['Builtin'],
     'src/bg/js/deinflector.js': ['Deinflector'],
@@ -104,7 +105,7 @@ export default [
     },
     {
         files: [
-            'src/bg/js/agent.js',
+            'src/lib/agent.js',
             'src/bg/js/background.js',
             'src/bg/js/options.js',
             'src/bg/js/popup.js',
@@ -113,6 +114,12 @@ export default [
             'src/dict/*.js',
             'src/fg/js/*.js'
         ],
+        languageOptions: { globals: globals.browser }
+    },
+    {
+        // envelope.js is shared by every context and only uses console; options_api.js
+        // runs on the options/action pages, which the chrome block does not cover.
+        files: ['src/lib/envelope.js', 'src/bg/js/options_api.js'],
         languageOptions: { globals: globals.browser }
     },
     {

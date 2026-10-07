@@ -9,10 +9,11 @@ class Builtin {
 
     findTerm(dictname, term) {
         const dict = this.dicts[dictname];
-        // WHY: dict comes from a JSON dictionary file, so its prototype is not
-        // under our control; the prototype-free form belongs to the hardening task.
-        // eslint-disable-next-line no-prototype-builtins
-        return dict.hasOwnProperty(term) ? JSON.stringify(dict[term]):null;
+        // WHY: dict comes from a JSON dictionary file, so its prototype is not under our
+        // control. A missing entry means the data never loaded; the caller turns that into
+        // a classified failure instead of an exception.
+        if (!dict) return null;
+        return Object.prototype.hasOwnProperty.call(dict, term) ? JSON.stringify(dict[term]) : null;
     }
 
     static async loadData(path) {

@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave */
+/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhFail, odhIsEnvelope, odhUnwrap, odhErrorMessage, odhError */
 class ODHServiceworker {
     constructor() {
 
@@ -131,13 +131,26 @@ class ODHServiceworker {
     // Message Hub and Handler start from here ...
     onMessage(request, sender, callback) {
         // Only this extension may drive the worker; the browser supplies sender.id.
+        // NOTE: this stays silent on purpose. Replying would confirm the extension's
+        // presence to a foreign sender, and there is no legitimate caller to inform.
         if (!sender || sender.id !== chrome.runtime.id)
             return;
 
         const { action, params, target} = request;
 
+        // Not addressed to this listener: the sender may be waiting on another one.
         if (target != 'serviceworker')
             return;
+
+        // Everything below this line is our own code's request, so it is answered exactly
+        // once and a caller can never be left waiting on a channel that will not reply.
+        const fail = (kind, detail) => callback(odhFail(kind, detail));
+
+        if (!params || typeof params !== 'object') {
+            // WHY: this used to throw on `params.callback = ...`, leaving the channel open.
+            fail('unknown', `Missing params for action: ${action}`);
+            return true;
+        }
 
         // initBackend is a lifecycle trigger, not part of any source's action surface;
         // it has its own entry, so it is matched before source routing.
@@ -153,26 +166,39 @@ class ODHServiceworker {
         const method = source ? this[source + '_' + action] : undefined;
 
         if (typeof(method) !== 'function') {
-            // Unroutable means this source may not call this action: refuse with the
-            // project's conventional failure value instead of leaving the channel open.
+            // Unroutable means this source may not call this action: refuse explicitly
+            // instead of leaving the channel open.
             console.warn('UNAUTHORIZED', { source: source || 'unrecognized', action, url: sender.url, tab: Boolean(sender.tab) });
-            callback(null);
+            fail('handler-error', `Action not allowed for source: ${action}`);
             return true;
         }
 
         params.callback = callback;
-        method.call(this, params);
+        try {
+            method.call(this, params);
+        } catch (error) {
+            console.error('Handler threw:', action, error && error.message);
+            fail('handler-error', error);
+        }
         return true;
     }
 
     async sendtoBackground(request){
         request.target='background';
+        let result;
         try {
-            const result =  await chrome.runtime.sendMessage(request);
-            return result;
-        } catch {
-            return null
+            result = await chrome.runtime.sendMessage(request);
+        } catch (error) {
+            throw odhError('network', odhErrorMessage(error));
         }
+        // Local callers get a plain value or a classified throw; the envelope only exists
+        // where a message crosses a boundary. The offscreen signals its own failures with a
+        // thrown Error carrying a kind, not with an envelope, so a failure can never be read
+        // back as a success value. A channel that closes before the reply is also a failure.
+        if (result && typeof result === 'object' && typeof result.kind === 'string' && !odhIsEnvelope(result)) {
+            throw result;
+        }
+        return odhUnwrap(result);
     }
 
     // sandbox message handler
@@ -187,24 +213,40 @@ class ODHServiceworker {
         
             const text = await response.text();
             callback(text);
-        } catch {
-            callback(null);
+        } catch (error) {
+            // The dictionary adapter still sees null, but the reason is now classified.
+            console.error('Dictionary fetch failed:', error && error.message);
+            callback(odhFail('network', error));
         }
     }
 
     async offscreen_Deinflect(params) {
         let { word, callback } = params;
+        if (!this.deinflector) {
+            callback(odhFail('missing-data', 'Deinflector is not loaded'));
+            return;
+        }
         callback(this.deinflector.deinflect(word));
     }
 
     async offscreen_getBuiltin(params) {
         let { dict, word, callback } = params;
+        if (!this.builtin || !this.builtin.dicts || !this.builtin.dicts[dict]) {
+            // WHY: a failed data load used to make findTerm throw on an undefined dict,
+            // which left the request unanswered.
+            callback(odhFail('missing-data', `Builtin dictionary not loaded: ${dict}`));
+            return;
+        }
         callback(this.builtin.findTerm(dict, word));
     }
 
     async offscreen_getLocale(params) {
         let { callback } = params;
-        callback(chrome.i18n.getUILanguage());
+        try {
+            callback(chrome.i18n.getUILanguage());
+        } catch (error) {
+            callback(odhFail('handler-error', error));
+        }
     }
 
     async initBackend(params) {
@@ -225,6 +267,7 @@ class ODHServiceworker {
             }
         })();
         await this.initInFlight;
+        // The sandbox triggers this and ignores the value; keep the existing reply shape.
         params.callback(null);
     }
 
@@ -240,8 +283,9 @@ class ODHServiceworker {
         try {
             let result = await this.findTerm(expression);
             callback(result);
-        } catch {
-            callback(null);
+        } catch (error) {
+            console.error('Translation lookup failed:', error && error.message);
+            callback(odhFail('network', error));
         }
     }
 
@@ -249,12 +293,17 @@ class ODHServiceworker {
         let { notedef, callback } = params;
 
         const note = this.formatNote(notedef);
+        if (!this.target) {
+            callback(odhFail('not-ready', 'No Anki service is configured'));
+            return;
+        }
         try {
             let result = await this.target.addNote(note);
             callback(result);
         } catch (err) {
+            // NOTE: never retried automatically; a timed-out write may have succeeded.
             console.error(err);
-            callback(null);
+            callback(odhFail('network', err));
         }
     }
 
@@ -264,8 +313,8 @@ class ODHServiceworker {
         try {
             let result = await this.playAudio(url);
             callback(result);
-        } catch {
-            callback(null);
+        } catch (error) {
+            callback(odhFail('handler-error', error));
         }
     }
 
@@ -328,9 +377,10 @@ class ODHServiceworker {
         let { options, callback } = params;
         try {
             await this.optionsChanged(options);
-        } catch {
+        } catch (error) {
+            // NOTE: a failed save is reported, never retried: the write may be partial.
             console.error('Unable to save settings.');
-            callback(null);
+            callback(odhFail('handler-error', error));
             return;
         }
         callback(this.options);
@@ -338,22 +388,42 @@ class ODHServiceworker {
 
     async options_getDeckNames(params) {
         let { callback } = params;
-        callback(this.target ? await this.target.getDeckNames() : null);
+        if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
+        try {
+            callback(await this.target.getDeckNames());
+        } catch (error) {
+            callback(odhFail('network', error));
+        }
     }
 
     async options_getModelNames(params) {
         let { callback } = params;
-        callback(this.target ? await this.target.getModelNames() : null);
+        if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
+        try {
+            callback(await this.target.getModelNames());
+        } catch (error) {
+            callback(odhFail('network', error));
+        }
     }
 
     async options_getModelFieldNames(params) {
         let { modelName, callback } = params;
-        callback(this.target ? await this.target.getModelFieldNames(modelName) : null);
+        if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
+        try {
+            callback(await this.target.getModelFieldNames(modelName));
+        } catch (error) {
+            callback(odhFail('network', error));
+        }
     }
 
     async options_getVersion(params) {
         let { callback } = params;
-        callback(this.target ? await this.target.getVersion() : null);
+        if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
+        try {
+            callback(await this.target.getVersion());
+        } catch (error) {
+            callback(odhFail('network', error));
+        }
     }
 
     // The action popup loads the same options.js/OptionsAPI as the options page, so it
@@ -413,7 +483,7 @@ importScripts('ankiconnect.js');
 importScripts('builtin.js');
 importScripts('deinflector.js');
 importScripts('utils.js');
-importScripts('agent.js');
+importScripts('../../lib/envelope.js');
 
 setupOffscreenDocument('/bg/background.html');
 globalThis.odh_serviceworker = new ODHServiceworker();

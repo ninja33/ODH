@@ -12,7 +12,7 @@
     "scripts": {
         "lint": "eslint . --max-warnings=0",
         "test:contracts": "node --test tests/contracts/json.test.cjs && node --test tests/contracts/manifest.test.cjs",
-        "test:unit": "node --test tests/unit/builtin.test.cjs && node --test tests/unit/deinflector.test.cjs && node --test tests/unit/settings.test.cjs && node --test tests/unit/settings-pages.test.cjs && node --test tests/unit/message-boundaries.test.cjs"
+        "test:unit": "node --test tests/unit/envelope.test.cjs && node --test tests/unit/sandbox-bridge.test.cjs && node --test tests/unit/builtin.test.cjs && node --test tests/unit/deinflector.test.cjs && node --test tests/unit/settings.test.cjs && node --test tests/unit/settings-pages.test.cjs && node --test tests/unit/message-boundaries.test.cjs"
     },
     "devDependencies": {
         "@eslint/js": "10.0.1",

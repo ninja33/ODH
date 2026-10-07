@@ -1,4 +1,4 @@
-/* global api */
+/* global api, odhFail */
 // Sandbox control-plane traffic lives here rather than on window.api: replies and
 // the init trigger register no callback of their own, and window.api is reachable
 // by user dictionary scripts, which must not be able to replace them.
@@ -6,6 +6,17 @@ const ODH_BACKGROUND_ORIGIN = '*'; // the manifest sandbox has an opaque origin
 
 function replyToBackground(data, callbackId) {
     window.parent.postMessage({ action: 'callback', params: { data, callbackId } }, ODH_BACKGROUND_ORIGIN);
+}
+
+// Failures leave this document as an envelope so the offscreen can tell "no result" from
+// "the dictionary failed". Success values stay raw, which keeps a peer that has not been
+// migrated yet working: see the migration note in lib/envelope.js.
+function replyOk(value, callbackId) {
+    replyToBackground(value, callbackId);
+}
+
+function replyFail(kind, detail, callbackId) {
+    replyToBackground(odhFail(kind, detail), callbackId);
 }
 
 class Sandbox {
@@ -43,22 +54,36 @@ class Sandbox {
     async backend_loadScript(params) {
         let { name, callbackId } = params;
 
-        let scripttext = await api.fetch(this.buildScriptURL(name));
-        if (!scripttext) replyToBackground({ name, result: null }, callbackId);
+        let scripttext;
+        try {
+            scripttext = await api.fetch(this.buildScriptURL(name));
+        } catch (err) {
+            console.error('Unable to fetch dictionary script:', name, err && err.message);
+            replyFail('network', err, callbackId);
+            return;
+        }
+        if (!scripttext) {
+            replyFail('network', `Empty script body: ${name}`, callbackId);
+            return;
+        }
+
         try {
             let SCRIPT = eval(`(${scripttext})`);
-            if (SCRIPT.name && typeof SCRIPT === 'function') {
-                let script = new SCRIPT();
-                //if (!this.dicts[SCRIPT.name]) 
-                this.dicts[SCRIPT.name] = script;
-                let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
-                replyToBackground({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
+            // WHY: a script evaluating to something without a callable constructor used
+            // to leave the request unanswered, which hung the caller forever.
+            if (!SCRIPT || !SCRIPT.name || typeof SCRIPT !== 'function') {
+                console.error('Dictionary script has no valid constructor:', name);
+                replyFail('missing-data', `Invalid dictionary script: ${name}`, callbackId);
+                return;
             }
+            let script = new SCRIPT();
+            this.dicts[SCRIPT.name] = script;
+            let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
+            replyOk({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
         } catch (err) {
-            // The caller only gets a null result, so keep the reason visible here.
+            // The caller only gets a failed reply, so keep the reason visible here.
             console.error('Unable to load dictionary script:', name, err && err.message);
-            replyToBackground({ name, result: null }, callbackId);
-            return;
+            replyFail('handler-error', err, callbackId);
         }
     }
 
@@ -73,21 +98,32 @@ class Sandbox {
         let selected = options.dictSelected;
         if (this.dicts[selected]) {
             this.current = selected;
-            replyToBackground(selected, callbackId);
+            replyOk(selected, callbackId);
             return;
         }
-        replyToBackground(null, callbackId);
+        replyFail('not-ready', `Dictionary not loaded: ${selected}`, callbackId);
     }
 
     async backend_findTerm(params) {
         let { expression, callbackId } = params;
 
-        if (this.dicts[this.current] && typeof(this.dicts[this.current].findTerm) === 'function') {
-            let notes = await this.dicts[this.current].findTerm(expression);
-            replyToBackground(notes, callbackId);
+        let dictionary = this.dicts[this.current];
+        if (!dictionary || typeof(dictionary.findTerm) !== 'function') {
+            replyFail('not-ready', `No selected dictionary: ${this.current}`, callbackId);
             return;
         }
-        replyToBackground(null, callbackId);
+
+        try {
+            // NOTE: an empty result and a failure are still indistinguishable to callers
+            // here; classifying "not found" is a separate, not yet decided change.
+            let notes = await dictionary.findTerm(expression);
+            replyOk(notes, callbackId);
+        } catch (err) {
+            // WHY: without this the exception left the request unanswered, so one broken
+            // dictionary hung every lookup instead of reporting a failure.
+            console.error('Dictionary threw during findTerm:', err && err.message);
+            replyFail('handler-error', err, callbackId);
+        }
     }
 }
 

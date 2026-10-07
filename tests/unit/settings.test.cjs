@@ -99,7 +99,7 @@ function settingsWorker({ stubScripts = true } = {}) {
         importScripts() {},
         setupOffscreenDocument() {},
         setInterval() {}
-    });
+    }, null, ['src/lib/envelope.js']);
     const worker = new Worker();
     worker.options = { services: 'none', sysscripts: '', udfscripts: '', enabled: true };
     // This unit test covers storage acknowledgement, not the browser bridge.
@@ -259,7 +259,11 @@ test('worker returns a failed acknowledgement once when storage rejects', async 
     await new Promise(resolve => setImmediate(resolve));
     fixture.complete('synthetic write failure');
     await saving;
-    assert.deepEqual(responses, [null]);
+    // A failed save is reported as a classified failure instead of a bare null, so the
+    // caller can tell it apart from "nothing to say".
+    assert.equal(responses.length, 1);
+    assert.equal(responses[0].ok, false);
+    assert.equal(responses[0].error.kind, 'handler-error');
     assert.deepEqual(fixture.diagnostics, ['Unable to save settings.']);
 });
 
@@ -271,7 +275,9 @@ test('worker reports an apply failure before storage without a successful respon
         options: { ...fixture.worker.options },
         callback(result) { responses.push(result); }
     });
-    assert.deepEqual(responses, [null]);
+    assert.equal(responses.length, 1);
+    assert.equal(responses[0].ok, false);
+    assert.equal(responses[0].error.kind, 'handler-error');
     assert.equal(fixture.writes.length, 0);
 });
 

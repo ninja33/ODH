@@ -54,6 +54,7 @@ test('content script JavaScript and CSS resources exist', () => {
 
 test('content scripts preserve the classic global dependency order', () => {
     assert.deepEqual(manifest.content_scripts[0].js, [
+        'lib/envelope.js',
         'fg/js/popup.js',
         'fg/js/range.js',
         'fg/js/text.js',
@@ -119,5 +120,36 @@ test('supported locales share the same message keys', () => {
     });
     for (let index = 1; index < locales.length; index += 1) {
         assert.deepEqual(keyLists[index], keyLists[0], `${locales[index]}: inconsistent message keys`);
+    }
+});
+
+// Classic scripts are loaded by relative path, from an HTML page or from importScripts.
+// A wrong path is invisible to unit tests and only shows up as a dead service worker in
+// Chrome, so resolve every declared script reference against the filesystem here.
+test('every declared classic script path resolves to a real file', () => {
+    const pages = [
+        'bg/background.html',
+        'bg/options.html',
+        'bg/popup.html',
+        'bg/sandbox/sandbox.html'
+    ];
+    const references = [];
+    for (const page of pages) {
+        const html = fs.readFileSync(path.join(extensionDir, page), 'utf8');
+        for (const match of html.matchAll(/<script src="([^"]+)"/g)) {
+            references.push({ from: page, reference: match[1] });
+        }
+    }
+    // importScripts resolves against the worker script's own directory, not the extension root.
+    const worker = 'bg/js/serviceworker.js';
+    const workerSource = fs.readFileSync(path.join(extensionDir, worker), 'utf8');
+    for (const match of workerSource.matchAll(/importScripts\('([^']+)'\)/g)) {
+        references.push({ from: worker, reference: match[1] });
+    }
+    assert.ok(references.length > 0, 'expected at least one declared classic script');
+    for (const { from, reference } of references) {
+        if (!reference.startsWith('.')) continue; // extension-root paths are checked elsewhere
+        const resolved = path.resolve(path.dirname(path.join(extensionDir, from)), reference);
+        assert.ok(fs.statSync(resolved).isFile(), `${from} references a missing script: ${reference}`);
     }
 });

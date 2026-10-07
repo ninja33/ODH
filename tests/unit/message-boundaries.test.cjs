@@ -26,18 +26,16 @@ function windowStub() {
 
 function agentFixture() {
     const window = windowStub();
-    const Agent = loadClassic('src/bg/js/agent.js', 'Agent', { window });
+    const Agent = loadClassic('src/lib/agent.js', 'Agent', { window });
     const peer = { postMessage() {} };
-    // No 'callback' here on purpose: the Agent must add it itself, otherwise every
-    // reply is dropped before its resolver runs (this broke dictionary loading).
-    const agent = new Agent(peer, ['loadScript']);
+    const agent = new Agent(peer);
     return { window, agent, peer };
 }
 
-test('agent always accepts the reply action even when the caller omits it', () => {
+// The agent has no action list any more: it consumes replies and ignores everything else,
+// so any request shape from the peer is harmless here.
+test('agent consumes replies and ignores other actions from its peer', () => {
     const { window, agent, peer } = agentFixture();
-    assert.deepEqual(agent.allowedActions, ['loadScript', 'callback']);
-
     const results = [];
     agent.callbacks['1'] = value => results.push(value);
     window.emit({ source: peer, data: { action: 'callback', params: { callbackId: '1', data: 'expected' } } });
@@ -58,7 +56,9 @@ test('agent consumes replies only from its own peer window', () => {
     assert.equal(Object.hasOwn(agent.callbacks, '1'), false, 'a consumed callback is removed');
 });
 
-test('agent ignores actions outside its inbound list', () => {
+// Requests, replies without an id, and malformed frames must all leave the registry alone:
+// only a well-formed reply may consume a registration.
+test('agent ignores requests and malformed frames from its peer', () => {
     const { window, agent, peer } = agentFixture();
     const results = [];
     agent.callbacks['1'] = value => results.push(value);
@@ -67,6 +67,7 @@ test('agent ignores actions outside its inbound list', () => {
     window.emit({ source: peer, data: { action: 'callback', params: {} } });
     window.emit({ source: peer, data: 'not an object' });
     assert.deepEqual(results, []);
+    assert.equal(Object.hasOwn(agent.callbacks, '1'), true, 'none of these may consume the registration');
 });
 
 // A repeated callback id overwrites a pending callback and hangs that request,
@@ -96,9 +97,9 @@ test('agent gives every pending request its own callback id', () => {
 // pending entry: that is how a loadScript reply could resolve an offscreen call.
 test('two agents on one window keep separate callback id namespaces', () => {
     const window = windowStub();
-    const Agent = loadClassic('src/bg/js/agent.js', 'Agent', { window });
-    const first = new Agent({ postMessage() {} }, ['callback'], 'offscreen');
-    const second = new Agent({ postMessage() {} }, ['callback'], 'sandbox');
+    const Agent = loadClassic('src/lib/agent.js', 'Agent', { window });
+    const first = new Agent({ postMessage() {} });
+    const second = new Agent({ postMessage() {} });
 
     for (let index = 0; index < 3; index++) {
         first.postMessage('loadScript', { name: `synthetic_${index}` }, () => {});
@@ -111,6 +112,18 @@ test('two agents on one window keep separate callback id namespaces', () => {
     assert.equal(secondIds.length, 3);
     assert.deepEqual(firstIds.filter(id => secondIds.includes(id)), [], 'ids must not overlap across agents');
     assert.deepEqual(new Set([...firstIds, ...secondIds]).size, 6);
+});
+
+// A duplicated reply is dropped for the same reason: the entry is consumed once.
+test('agent delivers a duplicated reply only once', () => {
+    const { agent, peer } = agentFixture();
+    const delivered = [];
+    agent.postMessage('loadScript', { name: 'synthetic' }, result => delivered.push(result));
+    const callbackId = Object.keys(agent.callbacks)[0];
+    const frame = { source: peer, data: { action: 'callback', params: { callbackId, data: 'ok' } } };
+    agent.onMessage(frame);
+    agent.onMessage(frame);
+    assert.deepEqual(delivered, ['ok']);
 });
 
 // --- Worker: native runtime sender identity ---------------------------------
@@ -151,11 +164,17 @@ function workerFixture() {
         importScripts() {},
         setupOffscreenDocument() {},
         setInterval() {}
-    });
+    }, null, ['src/lib/envelope.js']);
     const worker = new Worker();
     worker.options = { services: 'none', enabled: true, sysscripts: '', udfscripts: '' };
     worker.setScriptsOptions = async () => null;
     return { worker, chrome, storage, warnings: storage.warnings };
+}
+
+// A failure reply is an envelope; assert in terms of the classified kind so a hang and a
+// report are never confused. Success values stay raw, so they pass through unchanged.
+function errorKindOf(entry) {
+    return entry && entry.__odhReply === true && entry.ok === false ? entry.error.kind : null;
 }
 
 function runtimeRequest(worker, sender) {
@@ -217,7 +236,7 @@ test('worker refuses an action that the sender source may not call', async () =>
     assert.equal(fixture.warnings.length, 1, 'the refusal is reported once');
     assert.equal(fixture.warnings[0][0], 'UNAUTHORIZED');
     assert.equal(fixture.warnings[0][1].source, 'frontend');
-    assert.deepEqual(responses, [null], 'the caller gets a bounded failure, not a hang');
+    assert.deepEqual(responses.map(errorKindOf), ['handler-error'], 'the caller gets a classified failure, not a hang');
     assert.equal(legacyCalled, false, 'no legacy api_* fallback may serve the request');
 });
 
@@ -233,7 +252,8 @@ test('worker serves getVersion for the content script and the action popup', asy
         const responses = [];
         worker.onMessage({ action: 'getVersion', params: {}, target: 'serviceworker' }, sender, value => responses.push(value));
         await new Promise(resolve => setImmediate(resolve));
-        assert.deepEqual(responses, [null], `getVersion must answer for ${sender.tab ? 'frontend' : 'popup'}`);
+        assert.deepEqual(responses.map(errorKindOf), ['not-ready'],
+            `getVersion must answer for ${sender.tab ? 'frontend' : 'popup'}`);
     }
 });
 
@@ -268,8 +288,8 @@ test('worker routes initBackend through its dedicated entry', async () => {
 });
 
 // 'callback' has no handler for any source (replies are Agent business), so it is
-// refused with the bounded failure value instead of being silently swallowed.
-test('worker answers a stray callback frame with the bounded failure value', () => {
+// refused with a classified failure instead of being silently swallowed.
+test('worker answers a stray callback frame with a classified failure', () => {
     const { worker } = workerFixture();
     const responses = [];
     const kept = worker.onMessage(
@@ -277,7 +297,7 @@ test('worker answers a stray callback frame with the bounded failure value', () 
         { id: RUNTIME_ID },
         value => responses.push(value)
     );
-    assert.deepEqual(responses, [null]);
+    assert.deepEqual(responses.map(errorKindOf), ['handler-error']);
     assert.equal(kept, true);
 });
 
@@ -290,6 +310,38 @@ test('worker ignores messages addressed to another target', () => {
         value => responses.push(value)
     );
     assert.deepEqual(responses, []);
+});
+
+// A failure that arrives from the offscreen must never be read back as a success value.
+// The offscreen signals its own failures with a thrown Error carrying a kind, so this
+// distinguishes "the reply is an error" from "the reply is a dictionary result that
+// happens to be null".
+test('a failed offscreen reply is treated as a failure, not as a result', async () => {
+    const { worker, chrome } = workerFixture();
+    const responses = [];
+    chrome.runtime.sendMessage = async () => {
+        const error = new Error('synthetic sandbox failure');
+        error.kind = 'handler-error';
+        throw error;
+    };
+    await worker.findTerm('synthetic').then(
+        value => responses.push(`resolved:${value}`),
+        error => responses.push(`rejected:${error.kind}`)
+    );
+    assert.deepEqual(responses, ['rejected:network'],
+        'a channel failure must not resolve with the thrown error as its value');
+});
+
+// The offscreen can also answer with an explicit failure envelope (a nested relay).
+test('a failure envelope from the offscreen does not resolve the request', async () => {
+    const { worker, chrome } = workerFixture();
+    const responses = [];
+    chrome.runtime.sendMessage = async () => ({ __odhReply: true, ok: false, error: { kind: 'not-ready', message: 'synthetic' } });
+    await worker.findTerm('synthetic').then(
+        value => responses.push(`resolved:${value}`),
+        error => responses.push(`rejected:${error.kind}`)
+    );
+    assert.deepEqual(responses, ['rejected:not-ready']);
 });
 
 // --- Content script: popup frame messages -----------------------------------

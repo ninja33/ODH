@@ -1,11 +1,12 @@
-/* global Agent */
-// Actions the worker may ask the offscreen document to hand to the sandbox.
-const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm', 'playAudio'];
+/* global Agent, odhOk, odhFail, odhRead, odhUnwrap, odhErrorMessage, odhError */
+// Actions the worker may ask the offscreen document to hand to the sandbox. playAudio is
+// deliberately absent: the offscreen plays it locally and never forwards it.
+const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm'];
 class ODHBackground {
     constructor() {
         this.audios = {};
         this.sandboxWindow = document.getElementById('sandbox').contentWindow;
-        this.agent = new Agent(this.sandboxWindow, ODH_SANDBOX_ACTIONS, 'offscreen');
+        this.agent = new Agent(this.sandboxWindow);
         // add listener
         chrome.runtime.onMessage.addListener(this.onServiceMessage.bind(this));
         window.addEventListener('message', e => this.onSandboxMessage(e));
@@ -33,27 +34,42 @@ class ODHBackground {
         if (target != 'background')
             return;
 
-        // Same action list as the other direction: the bridge stays narrow.
-        if (!ODH_SANDBOX_ACTIONS.includes(action) || !params)
+        if (!params)
             return;
 
+        // playAudio ends here: the offscreen document plays it itself, so it is not part of
+        // the set that may be forwarded to the sandbox. Checked before that set so the two
+        // concerns stay independent.
         if (action == 'playAudio') {
             let { url } = params
             this.playAudio(url)
             callback(url)
             return true;
         }
-        
-        this.sendtoSandbox(action, params).then(result => callback(result));
+
+        // Everything below is handed to the sandbox, so it must be one of the known actions.
+        if (!ODH_SANDBOX_ACTIONS.includes(action))
+            return;
+
+        this.sendtoSandbox(action, params)
+            .then(result => callback(result))
+            .catch(error => callback(odhFail(error && error.kind ? error.kind : 'network', error)));
         return true;
     }
 
     async sendtoSandbox(action, params) {
         return new Promise((resolve, reject) => {
             try {
-                this.agent.postMessage(action, params, result => resolve(result));
+                // The sandbox replies with a failure envelope only when something went
+                // wrong; a successful value stays raw. Unwrapping here keeps this relay
+                // and the worker unaware of the sandbox's reply shape.
+                this.agent.postMessage(action, params, result => {
+                    const reply = odhRead(result);
+                    if (reply.ok) resolve(reply.value);
+                    else reject(odhError(reply.error.kind, reply.error.message));
+                });
             } catch (err) {
-                reject(null);
+                reject(err);
             }
         });
     }
@@ -61,11 +77,16 @@ class ODHBackground {
     // message from sandbox to service worker
     async sendtoServiceworker(request){
         request.target='serviceworker';
+        let result;
         try {
-            return await chrome.runtime.sendMessage(request);
+            result = await chrome.runtime.sendMessage(request);
         } catch (e) {
-            return null
+            throw odhError('network', odhErrorMessage(e) || 'worker channel failed');
         }
+        // Both directions hand back a plain value and throw on failure, so the envelope is
+        // only built where a message actually crosses a boundary. A channel that closes
+        // before the worker replies is a failure, not an empty success.
+        return odhUnwrap(result);
     }
     async onSandboxMessage(e) {
         // Trust boundary: everything below this line was posted by the sandbox, whose
@@ -82,9 +103,9 @@ class ODHBackground {
 
         try {
             const result = await this.sendtoServiceworker({ action, params });
-            this.replyToSandbox(result, params.callbackId);
-        } catch {
-            this.replyToSandbox(null, params.callbackId);
+            this.replyToSandbox(odhOk(result), params.callbackId);
+        } catch (error) {
+            this.replyToSandbox(odhFail(error && error.kind ? error.kind : 'network', error), params.callbackId);
         }
     }
 
