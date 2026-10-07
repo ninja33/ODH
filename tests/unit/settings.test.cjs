@@ -297,3 +297,69 @@ test('initialization consumes a read failure and completes its acknowledgement',
     assert.equal(fixture.writes.length, 0);
     assert.deepEqual(fixture.diagnostics, ['Unable to initialize settings.']);
 });
+
+// Two announcements arriving while the first initialization is still running must share
+// it; otherwise both pass the rebuild guard and every dictionary is loaded twice.
+test('concurrent initBackend calls share a single initialization', async () => {
+    const fixture = settingsWorker();
+    const options = { services: 'none', enabled: true, sysscripts: '', udfscripts: '', hotkey: '17' };
+    fixture.chrome.storage.local.get = (keys, callback) => callback(structuredClone(options));
+    fixture.chrome.storage.local.set = (written, callback) => { fixture.writes.push(structuredClone(written)); callback(); };
+
+    let releaseLoad = null;
+    let loads = 0;
+    fixture.worker.loadScripts = () => {
+        loads += 1;
+        return new Promise(resolve => {
+            releaseLoad = () => resolve([{ result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic' } }]);
+        });
+    };
+
+    const first = fixture.worker.initBackend({ callback() {} });
+    const second = fixture.worker.initBackend({ callback() {} });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(loads, 1, 'the second announcement must not start its own load');
+
+    releaseLoad();
+    await Promise.all([first, second]);
+    assert.equal(loads, 1, 'both announcements resolve from the same initialization');
+    assert.equal(fixture.worker.initInFlight, null, 'the slot is released so a later sandbox can initialize');
+
+    // A later announcement (e.g. a reloaded sandbox) must be able to run again.
+    const third = fixture.worker.initBackend({ callback() {} });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(loads, 2, 'the guard must not turn into a permanent one-shot latch');
+    releaseLoad();
+    await third;
+});
+
+// this.options lives in the worker, but the loaded dictionaries live in the sandbox
+// document. A sandbox that reset has lost its dicts while this.options is still set, so
+// initBackend must rebuild even when the stored configuration is unchanged. The options
+// page keeps the configuration-only behaviour: it cannot know the sandbox's state.
+test('initBackend rebuilds dictionary scripts even when the configuration is unchanged', async () => {
+    const fixture = settingsWorker();
+    const options = {
+        services: 'none', enabled: true, sysscripts: 'synthetic_script', udfscripts: '',
+        dictSelected: 'synthetic_dictionary', hotkey: '17'
+    };
+    fixture.chrome.storage.local.get = (keys, callback) => callback(structuredClone(options));
+    // optionsSave is a free variable of the loaded context, so it must be driven through
+    // storage rather than by assigning it on the worker instance.
+    fixture.chrome.storage.local.set = (written, callback) => { fixture.writes.push({ options: structuredClone(written) }); callback(); };
+    let loads = 0;
+    fixture.worker.loadScripts = async () => {
+        loads += 1;
+        return [{ result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic' } }];
+    };
+
+    await fixture.worker.initBackend({ callback() {} });
+    assert.equal(loads, 1, 'the first announcement builds the scripts once');
+
+    // Same configuration, but this stands for a sandbox document that has reloaded.
+    await fixture.worker.initBackend({ callback() {} });
+    assert.equal(loads, 2, 'a re-announcing sandbox is rebuilt even without a config change');
+
+    await fixture.worker.options_optionsChanged({ options: { ...options }, callback() {} });
+    assert.equal(loads, 2, 'saving an unchanged configuration does not reload the scripts');
+});

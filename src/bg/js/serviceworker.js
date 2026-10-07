@@ -3,6 +3,7 @@ class ODHServiceworker {
     constructor() {
 
         this.options = null;
+        this.initInFlight = null;
 
         this.ankiconnect = new Ankiconnect();
         this.target = null;
@@ -207,12 +208,23 @@ class ODHServiceworker {
     }
 
     async initBackend(params) {
-        try {
-            let options = await optionsLoad();
-            await this.optionsChanged(options);
-        } catch {
-            console.error('Unable to initialize settings.');
-        }
+        // Concurrent announcements must share one initialization: without this, two
+        // in-flight calls would both pass the rebuild guard and load every dictionary
+        // twice, then write the settings twice. The slot is released in finally, so a
+        // later sandbox document can still initialize.
+        this.initInFlight ??= (async () => {
+            try {
+                let options = await optionsLoad();
+                // A sandbox document announces itself here, so this is the fresh-start
+                // path: its dictionaries must be (re)built regardless of configuration.
+                await this.optionsChanged(options, { rebuildScripts: true });
+            } catch {
+                console.error('Unable to initialize settings.');
+            } finally {
+                this.initInFlight = null;
+            }
+        })();
+        await this.initInFlight;
         params.callback(null);
     }
 
@@ -269,7 +281,11 @@ class ODHServiceworker {
     }
 
     // Option page and Brower Action page requests handlers.
-    async optionsChanged(options) {
+    // rebuildScripts: the caller knows the sandbox side is new (or was reset), so the
+    // scripts must be registered again even when the configuration itself is unchanged.
+    // The difference belongs to the entry, not to options: the options page has no way
+    // to know the sandbox's state, and must not be asked for it.
+    async optionsChanged(options, { rebuildScripts = false } = {}) {
         this.setFrontendOptions(options);
 
         switch (options.services) {
@@ -289,7 +305,10 @@ class ODHServiceworker {
         let defaultscripts = ['builtin_encn_Collins'];
         let newscripts = `${options.sysscripts},${options.udfscripts}`;
         let loadresults = null;
-        if (!this.options || (`${this.options.sysscripts},${this.options.udfscripts}` != newscripts)) {
+        // WHY: this.options lives in the worker while the loaded dictionaries live in the
+        // sandbox document. A reset sandbox has lost its dicts while this.options is still
+        // set, so comparing configurations alone would skip the rebuild and leave it empty.
+        if (rebuildScripts || !this.options || (`${this.options.sysscripts},${this.options.udfscripts}` != newscripts)) {
             const scriptsset = Array.from(new Set(defaultscripts.concat(newscripts.split(',').filter(x => x).map(x => x.trim()))));
             loadresults = await this.loadScripts(scriptsset);
         }

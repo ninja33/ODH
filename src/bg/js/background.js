@@ -4,7 +4,6 @@ const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm', 'pla
 class ODHBackground {
     constructor() {
         this.audios = {};
-        this.initRequested = false;
         this.sandboxWindow = document.getElementById('sandbox').contentWindow;
         this.agent = new Agent(this.sandboxWindow, ODH_SANDBOX_ACTIONS, 'offscreen');
         // add listener
@@ -70,9 +69,9 @@ class ODHBackground {
     }
     async onSandboxMessage(e) {
         // Trust boundary: everything below this line was posted by the sandbox, whose
-        // dictionary scripts are untrusted. Only the pinned window and the dictionary
-        // capabilities cross; authority itself is decided by the worker's source_action
-        // routing, so no action list is duplicated here.
+        // dictionary scripts are untrusted. Only the pinned window is checked here;
+        // authority is decided entirely by the worker's source_action routing, so this
+        // relay holds no action list and no state of its own.
         if (e.source !== this.sandboxWindow) return;
         const { action, params } = e.data || {};
         if (!params) return;
@@ -81,32 +80,12 @@ class ODHBackground {
         // first and already resolved the pending request.
         if (action === 'callback') return;
 
-        if (action === 'initBackend') return this.initBackendOnce(params);
-
-        if (!['Fetch', 'Deinflect', 'getBuiltin', 'getLocale'].includes(action)) {
-            console.warn('Dropped sandbox request:', action);
-            return;
-        }
-
         try {
             const result = await this.sendtoServiceworker({ action, params });
             this.replyToSandbox(result, params.callbackId);
         } catch {
             this.replyToSandbox(null, params.callbackId);
         }
-    }
-
-    // The sandbox document triggers its own initialization once; any further request is
-    // refused here because sandbox code is not trusted to re-run optionsChanged.
-    async initBackendOnce(params) {
-        if (this.initRequested) {
-            console.warn('Ignoring repeated initBackend request');
-            this.replyToSandbox(null, params.callbackId);
-            return;
-        }
-        this.initRequested = true;
-        const result = await this.sendtoServiceworker({ action: 'initBackend', params });
-        this.replyToSandbox(result, params.callbackId);
     }
 
     // Send an RPC reply back to a sandbox-originated request. The id belongs to the
