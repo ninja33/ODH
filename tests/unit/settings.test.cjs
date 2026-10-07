@@ -92,7 +92,7 @@ function settingsWorker({ stubScripts = true } = {}) {
         chrome: storage.chrome,
         optionsLoad: storage.optionsLoad,
         optionsSave: storage.optionsSave,
-        console: { error(message) { diagnostics.push(message); }, log() {} },
+        console: { error(message) { diagnostics.push(message); }, log() {}, warn() {} },
         Ankiconnect: class {},
         Builtin: class { loadData() {} },
         Deinflector: class { loadData() {} },
@@ -175,7 +175,7 @@ test('saving settings filters the dictionary message while retaining internal an
         ankiconnecturl: 'http://127.0.0.1:18765',
         dictSelected: 'synthetic_other_dictionary', maxexample: '0', url: 'SourceField', legacyField: 'keep'
     };
-    const saving = fixture.worker.api_optionsChanged({ options, callback(result) { responses.push(result); } });
+    const saving = fixture.worker.options_optionsChanged({ options, callback(result) { responses.push(result); } });
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(requests.length, 1);
     assert.equal(fixture.writes.length, 1);
@@ -213,7 +213,7 @@ test('initialization filters dictionary settings while preserving stored legacy 
         requests.push(structuredClone(request));
         return request.params.options.dictSelected;
     };
-    const initializing = fixture.worker.api_initBackend({ callback(result) { responses.push(result); } });
+    const initializing = fixture.worker.initBackend({ callback(result) { responses.push(result); } });
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(requests.length, 1);
     assert.equal(fixture.writes.length, 1);
@@ -236,7 +236,7 @@ test('initialization filters dictionary settings while preserving stored legacy 
 test('worker acknowledges a settings change only after storage completion', async () => {
     const fixture = settingsWorker();
     const responses = [];
-    const saving = fixture.worker.api_optionsChanged({
+    const saving = fixture.worker.options_optionsChanged({
         options: { ...fixture.worker.options, enabled: false },
         callback(result) { responses.push(result); }
     });
@@ -252,7 +252,7 @@ test('worker acknowledges a settings change only after storage completion', asyn
 test('worker returns a failed acknowledgement once when storage rejects', async () => {
     const fixture = settingsWorker();
     const responses = [];
-    const saving = fixture.worker.api_optionsChanged({
+    const saving = fixture.worker.options_optionsChanged({
         options: { ...fixture.worker.options, password: 'synthetic-sensitive-value' },
         callback(result) { responses.push(result); }
     });
@@ -267,7 +267,7 @@ test('worker reports an apply failure before storage without a successful respon
     const fixture = settingsWorker();
     fixture.worker.setScriptsOptions = async () => { throw new Error('synthetic bridge failure'); };
     const responses = [];
-    await fixture.worker.api_optionsChanged({
+    await fixture.worker.options_optionsChanged({
         options: { ...fixture.worker.options },
         callback(result) { responses.push(result); }
     });
@@ -292,7 +292,7 @@ test('initialization consumes a read failure and completes its acknowledgement',
         delete fixture.chrome.runtime.lastError;
     };
     const responses = [];
-    await fixture.worker.api_initBackend({ callback(result) { responses.push(result); } });
+    await fixture.worker.initBackend({ callback(result) { responses.push(result); } });
     assert.deepEqual(responses, [null]);
     assert.equal(fixture.writes.length, 0);
     assert.deepEqual(fixture.diagnostics, ['Unable to initialize settings.']);

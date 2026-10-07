@@ -116,10 +116,12 @@ test('two agents on one window keep separate callback id namespaces', () => {
 // --- Worker: native runtime sender identity ---------------------------------
 
 function workerFixture() {
-    const storage = { data: {}, writes: [] };
+    const storage = { data: {}, writes: [], warnings: [] };
+    const consoleStub = { error() {}, log() {}, warn(...args) { storage.warnings.push(args); } };
     const runtime = {
         id: RUNTIME_ID,
         lastError: undefined,
+        getURL: path => `chrome-extension://${RUNTIME_ID}/${path}`,
         onMessage: { addListener() {} },
         onInstalled: { addListener() {} },
         onStartup: { addListener() {} },
@@ -142,7 +144,7 @@ function workerFixture() {
         chrome,
         optionsLoad: async () => ({}),
         optionsSave: async () => {},
-        console: { error() {}, log() {} },
+        console: consoleStub,
         Ankiconnect: class {},
         Builtin: class { loadData() {} },
         Deinflector: class { loadData() {} load(term) { this.term = term; } deinflect(term) { return [term]; } },
@@ -153,13 +155,13 @@ function workerFixture() {
     const worker = new Worker();
     worker.options = { services: 'none', enabled: true, sysscripts: '', udfscripts: '' };
     worker.setScriptsOptions = async () => null;
-    return { worker, chrome, storage };
+    return { worker, chrome, storage, warnings: storage.warnings };
 }
 
 function runtimeRequest(worker, sender) {
     const responses = [];
     const kept = worker.onMessage(
-        { action: 'Deinflect', params: { word: 'synthetic' }, target: 'serviceworker' },
+        { action: 'initBackend', params: {}, target: 'serviceworker' },
         sender,
         value => responses.push(value)
     );
@@ -174,11 +176,65 @@ test('worker refuses runtime senders without this extension identity', () => {
     }
 });
 
-test('worker serves matching runtime senders exactly once', () => {
+test('worker serves matching runtime senders exactly once', async () => {
     const { worker } = workerFixture();
     const { responses, kept } = runtimeRequest(worker, { id: RUNTIME_ID });
-    assert.deepEqual(responses, [['synthetic']]);
     assert.equal(kept, true);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(responses, [null], 'a matching sender reaches the handler once');
+});
+
+// A content script is recognised by sender.tab and routed to frontend_*; the handler
+// name itself is the permission surface, so no separate capability table is kept.
+test('worker routes a content script sender to its frontend handler', async () => {
+    const { worker } = workerFixture();
+    const responses = [];
+    worker.frontend_getTranslation = params => params.callback('TRANSLATED');
+    const kept = worker.onMessage(
+        { action: 'getTranslation', params: { expression: 'synthetic' }, target: 'serviceworker' },
+        { id: RUNTIME_ID, tab: { id: 7 }, url: 'https://example.test/' },
+        value => responses.push(value)
+    );
+    assert.equal(kept, true);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(responses, ['TRANSLATED']);
+});
+
+// An action with no handler for the sender's source is refused: the channel is
+// answered with the project's failure value instead of being left open.
+test('worker refuses an action that the sender source may not call', async () => {
+    const fixture = workerFixture();
+    const responses = [];
+    // A content script asking for a settings write is the shape of an over-reach.
+    let legacyCalled = false;
+    fixture.worker['api_optionsChanged'] = params => { legacyCalled = true; params.callback('LEGACY'); };
+    fixture.worker.onMessage(
+        { action: 'optionsChanged', params: {}, target: 'serviceworker' },
+        { id: RUNTIME_ID, tab: { id: 7 }, url: 'https://example.test/' },
+        value => responses.push(value)
+    );
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(fixture.warnings.length, 1, 'the refusal is reported once');
+    assert.equal(fixture.warnings[0][0], 'UNAUTHORIZED');
+    assert.equal(fixture.warnings[0][1].source, 'frontend');
+    assert.deepEqual(responses, [null], 'the caller gets a bounded failure, not a hang');
+    assert.equal(legacyCalled, false, 'no legacy api_* fallback may serve the request');
+});
+
+// The content script and the action popup both read the Anki connection state, so each
+// role has its own named entry; a missing one leaves isConnected() pending forever and
+// the popup never appears.
+test('worker serves getVersion for the content script and the action popup', async () => {
+    const { worker } = workerFixture();
+    for (const sender of [
+        { id: RUNTIME_ID, tab: { id: 7 }, url: 'https://example.test/' },
+        { id: RUNTIME_ID, url: `chrome-extension://${RUNTIME_ID}/bg/popup.html` }
+    ]) {
+        const responses = [];
+        worker.onMessage({ action: 'getVersion', params: {}, target: 'serviceworker' }, sender, value => responses.push(value));
+        await new Promise(resolve => setImmediate(resolve));
+        assert.deepEqual(responses, [null], `getVersion must answer for ${sender.tab ? 'frontend' : 'popup'}`);
+    }
 });
 
 // The certificate chain depended on the sandbox's own requests reaching api_
@@ -189,15 +245,31 @@ test('worker still serves sandbox-originated requests that carry a callbackId', 
     const responses = [];
     const kept = worker.onMessage(
         { action: 'initBackend', params: { callbackId: 0.5 }, target: 'serviceworker' },
-        { id: RUNTIME_ID },
+        { id: RUNTIME_ID, url: `chrome-extension://${RUNTIME_ID}/bg/background.html` },
         value => responses.push(value)
     );
     assert.equal(kept, true);
     await new Promise(resolve => setImmediate(resolve));
-    assert.deepEqual(responses, [null], 'api_initBackend must run and answer the sandbox callback');
+    assert.deepEqual(responses, [null], 'the offscreen relay must reach initBackend exactly once');
 });
 
-test('worker treats the forwarded callback action as a no-op, not a handler', () => {
+// initBackend has its own entry (it is not part of any source's action surface), so it
+// must stay reachable even though no source handler is named <source>_initBackend.
+test('worker routes initBackend through its dedicated entry', async () => {
+    const { worker } = workerFixture();
+    const seen = [];
+    worker.initBackend = params => { seen.push('initBackend'); params.callback(null); };
+    worker.onMessage(
+        { action: 'initBackend', params: {}, target: 'serviceworker' },
+        { id: RUNTIME_ID, url: `chrome-extension://${RUNTIME_ID}/bg/background.html` },
+        () => {}
+    );
+    assert.deepEqual(seen, ['initBackend']);
+});
+
+// 'callback' has no handler for any source (replies are Agent business), so it is
+// refused with the bounded failure value instead of being silently swallowed.
+test('worker answers a stray callback frame with the bounded failure value', () => {
     const { worker } = workerFixture();
     const responses = [];
     const kept = worker.onMessage(
@@ -205,7 +277,7 @@ test('worker treats the forwarded callback action as a no-op, not a handler', ()
         { id: RUNTIME_ID },
         value => responses.push(value)
     );
-    assert.deepEqual(responses, []);
+    assert.deepEqual(responses, [null]);
     assert.equal(kept, true);
 });
 
@@ -213,7 +285,7 @@ test('worker ignores messages addressed to another target', () => {
     const { worker } = workerFixture();
     const responses = [];
     worker.onMessage(
-        { action: 'Deinflect', params: { word: 'synthetic' }, target: 'background' },
+        { action: 'initBackend', params: {}, target: 'background' },
         { id: RUNTIME_ID },
         value => responses.push(value)
     );

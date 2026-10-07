@@ -1,16 +1,10 @@
 /* global Agent */
 // Actions the worker may ask the offscreen document to hand to the sandbox.
 const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm', 'playAudio'];
-// Actions sandbox-side code currently sends through this bridge. Anything else
-// is dropped here instead of being forwarded to the worker.
-const ODH_BRIDGE_ACTIONS = [
-    'Fetch', 'Deinflect', 'getBuiltin', 'getLocale', 'initBackend',
-    ...ODH_SANDBOX_ACTIONS, 'callback'
-];
-
 class ODHBackground {
     constructor() {
         this.audios = {};
+        this.initRequested = false;
         this.sandboxWindow = document.getElementById('sandbox').contentWindow;
         this.agent = new Agent(this.sandboxWindow, ODH_SANDBOX_ACTIONS, 'offscreen');
         // add listener
@@ -32,6 +26,10 @@ class ODHBackground {
     
     // message from service worker to sandbox
     onServiceMessage(request, sender, callback) {
+        // Only this extension may command the sandbox side; the browser supplies sender.id.
+        if (!sender || sender.id !== chrome.runtime.id)
+            return;
+
         const { action, params, target } = request;
         if (target != 'background')
             return;
@@ -71,25 +69,44 @@ class ODHBackground {
         }
     }
     async onSandboxMessage(e) {
-        // Only the pinned sandbox window, and only its known actions, may cross
-        // into the worker; reject before reading the payload.
+        // Trust boundary: everything below this line was posted by the sandbox, whose
+        // dictionary scripts are untrusted. Only the pinned window and the dictionary
+        // capabilities cross; authority itself is decided by the worker's source_action
+        // routing, so no action list is duplicated here.
         if (e.source !== this.sandboxWindow) return;
         const { action, params } = e.data || {};
-        if (!ODH_BRIDGE_ACTIONS.includes(action) || !params) return;
-        const callbackId = params.callbackId
-        // Replies are Agent business, not bridge traffic. agent.onMessage is
-        // registered first and has already resolved the pending request and
-        // removed it from the registry by the time this listener runs, so this
-        // does not depend on inspecting that registry. Forwarding a reply would
-        // only add a runtime round trip to a worker that has no callback handler.
+        if (!params) return;
+
+        // Replies are Agent business, not bridge traffic: agent.onMessage registered
+        // first and already resolved the pending request.
         if (action === 'callback') return;
-        try {
-            const result = await this.sendtoServiceworker({action, params});
-            this.replyToSandbox(result, callbackId);
-        } catch (e) {
-            this.replyToSandbox(null, callbackId);
+
+        if (action === 'initBackend') return this.initBackendOnce(params);
+
+        if (!['Fetch', 'Deinflect', 'getBuiltin', 'getLocale'].includes(action)) {
+            console.warn('Dropped sandbox request:', action);
+            return;
         }
 
+        try {
+            const result = await this.sendtoServiceworker({ action, params });
+            this.replyToSandbox(result, params.callbackId);
+        } catch {
+            this.replyToSandbox(null, params.callbackId);
+        }
+    }
+
+    // The sandbox document triggers its own initialization once; any further request is
+    // refused here because sandbox code is not trusted to re-run optionsChanged.
+    async initBackendOnce(params) {
+        if (this.initRequested) {
+            console.warn('Ignoring repeated initBackend request');
+            this.replyToSandbox(null, params.callbackId);
+            return;
+        }
+        this.initRequested = true;
+        const result = await this.sendtoServiceworker({ action: 'initBackend', params });
+        this.replyToSandbox(result, params.callbackId);
     }
 
     // Send an RPC reply back to a sandbox-originated request. The id belongs to the

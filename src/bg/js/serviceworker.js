@@ -138,12 +138,29 @@ class ODHServiceworker {
         if (target != 'serviceworker')
             return;
 
-        const method = this['api_' + action];
-
-        if (typeof(method) === 'function') {
+        // initBackend is a lifecycle trigger, not part of any source's action surface;
+        // it has its own entry, so it is matched before source routing.
+        if (action === 'initBackend') {
             params.callback = callback;
-            method.call(this, params);
+            this.initBackend(params);
+            return true;
         }
+
+        // Route by the sender's browser-supplied source: the handler name itself is
+        // the permission surface (source_action), so no separate matrix is kept.
+        const source = senderSource(sender);
+        const method = source ? this[source + '_' + action] : undefined;
+
+        if (typeof(method) !== 'function') {
+            // Unroutable means this source may not call this action: refuse with the
+            // project's conventional failure value instead of leaving the channel open.
+            console.warn('UNAUTHORIZED', { source: source || 'unrecognized', action, url: sender.url, tab: Boolean(sender.tab) });
+            callback(null);
+            return true;
+        }
+
+        params.callback = callback;
+        method.call(this, params);
         return true;
     }
 
@@ -158,7 +175,7 @@ class ODHServiceworker {
     }
 
     // sandbox message handler
-    async api_Fetch(params) {
+    async offscreen_Fetch(params) {
         let { url, callback } = params;
 
         try {
@@ -174,22 +191,22 @@ class ODHServiceworker {
         }
     }
 
-    async api_Deinflect(params) {
+    async offscreen_Deinflect(params) {
         let { word, callback } = params;
         callback(this.deinflector.deinflect(word));
     }
 
-    async api_getBuiltin(params) {
+    async offscreen_getBuiltin(params) {
         let { dict, word, callback } = params;
         callback(this.builtin.findTerm(dict, word));
     }
 
-    async api_getLocale(params) {
+    async offscreen_getLocale(params) {
         let { callback } = params;
         callback(chrome.i18n.getUILanguage());
     }
 
-    async api_initBackend(params) {
+    async initBackend(params) {
         try {
             let options = await optionsLoad();
             await this.optionsChanged(options);
@@ -200,7 +217,7 @@ class ODHServiceworker {
     }
 
     // Frontend API
-    async api_getTranslation(params) {
+    async frontend_getTranslation(params) {
         let { expression, callback } = params;
 
         // Fix https://github.com/ninja33/ODH/issues/97
@@ -216,7 +233,7 @@ class ODHServiceworker {
         }
     }
 
-    async api_addNote(params) {
+    async frontend_addNote(params) {
         let { notedef, callback } = params;
 
         const note = this.formatNote(notedef);
@@ -229,7 +246,7 @@ class ODHServiceworker {
         }
     }
 
-    async api_playAudio(params) {
+    async frontend_playAudio(params) {
         let { url, callback } = params;
 
         try {
@@ -238,6 +255,17 @@ class ODHServiceworker {
         } catch {
             callback(null);
         }
+    }
+
+    // The Anki connection state is read by the content script (to draw the add-note
+    // button) and by the action popup (to show the status line), so each source gets
+    // its own named entry even though the implementation is shared.
+    async frontend_getVersion(params) {
+        return await this.options_getVersion(params);
+    }
+
+    async popup_getVersion(params) {
+        return await this.options_getVersion(params);
     }
 
     // Option page and Brower Action page requests handlers.
@@ -277,7 +305,7 @@ class ODHServiceworker {
     }
 
     // Option pages API
-    async api_optionsChanged(params) {
+    async options_optionsChanged(params) {
         let { options, callback } = params;
         try {
             await this.optionsChanged(options);
@@ -289,24 +317,34 @@ class ODHServiceworker {
         callback(this.options);
     }
 
-    async api_getDeckNames(params) {
+    async options_getDeckNames(params) {
         let { callback } = params;
         callback(this.target ? await this.target.getDeckNames() : null);
     }
 
-    async api_getModelNames(params) {
+    async options_getModelNames(params) {
         let { callback } = params;
         callback(this.target ? await this.target.getModelNames() : null);
     }
 
-    async api_getModelFieldNames(params) {
+    async options_getModelFieldNames(params) {
         let { modelName, callback } = params;
         callback(this.target ? await this.target.getModelFieldNames(modelName) : null);
     }
 
-    async api_getVersion(params) {
+    async options_getVersion(params) {
         let { callback } = params;
         callback(this.target ? await this.target.getVersion() : null);
+    }
+
+    // The action popup loads the same options.js/OptionsAPI as the options page, so it
+    // reaches the same settings and deck queries through its own named entries.
+    async popup_optionsChanged(params) {
+        return await this.options_optionsChanged(params);
+    }
+
+    async popup_getDeckNames(params) {
+        return await this.options_getDeckNames(params);
     }
 
     // Sandbox API
@@ -335,6 +373,20 @@ class ODHServiceworker {
 
     async playAudio(url) {
         return await this.sendtoBackground({action:'playAudio', params:{url}});
+    }
+}
+
+// The source comes from browser-supplied sender fields, never from message payloads.
+// A content script is identified by sender.tab (its url is the host page, which varies
+// per site); extension pages by their exact url.
+function senderSource(sender) {
+    if (!sender || sender.id !== chrome.runtime.id) return null;
+    if (sender.tab) return 'frontend';
+    switch (sender.url) {
+        case chrome.runtime.getURL('bg/background.html'): return 'offscreen';
+        case chrome.runtime.getURL('bg/options.html'): return 'options';
+        case chrome.runtime.getURL('bg/popup.html'): return 'popup';
+        default: return null;
     }
 }
 
