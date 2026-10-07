@@ -1,4 +1,4 @@
-/* global Agent, odhOk, odhFail, odhUnwrap, odhErrorMessage, odhError */
+/* global Agent, odhOk, odhFail, odhUnwrap, odhWithTimeout, ODH_DEFAULT_REQUEST_TIMEOUT_MS, odhErrorMessage, odhError */
 // Actions the worker may ask the offscreen document to hand to the sandbox. playAudio is
 // deliberately absent: the offscreen plays it locally and never forwards it.
 const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm'];
@@ -58,7 +58,7 @@ class ODHBackground {
     }
 
     async sendtoSandbox(action, params) {
-        return new Promise((resolve, reject) => {
+        const reply = new Promise((resolve, reject) => {
             try {
                 // Only the value crosses this relay: a failed reply becomes a thrown error.
                 this.agent.postMessage(action, params, result => {
@@ -72,6 +72,8 @@ class ODHBackground {
                 reject(err);
             }
         });
+        // A sandbox that never answers must not keep the worker waiting.
+        return odhWithTimeout(reply, action, ODH_DEFAULT_REQUEST_TIMEOUT_MS);
     }
     
     // message from sandbox to service worker
@@ -79,7 +81,7 @@ class ODHBackground {
         request.target='serviceworker';
         let result;
         try {
-            result = await chrome.runtime.sendMessage(request);
+            result = await odhWithTimeout(chrome.runtime.sendMessage(request), request.action, ODH_DEFAULT_REQUEST_TIMEOUT_MS);
         } catch (e) {
             throw odhError('network', odhErrorMessage(e) || 'worker channel failed');
         }

@@ -9,7 +9,7 @@ const { loadClassic } = require('../helpers/load-classic.cjs');
 // so assert field by field for envelopes and only deep-compare realm-local results.
 function envelopeRealm() {
     const warnings = [];
-    const realmApi = loadClassic('src/lib/envelope.js', '({ odhOk, odhFail, odhIsEnvelope, odhUnwrap })', {
+    const realmApi = loadClassic('src/lib/envelope.js', '({ odhOk, odhFail, odhIsEnvelope, odhUnwrap, odhError, odhWithTimeout, odhLog })', {
         console: { warn: (...args) => warnings.push(args), log() {}, error() {} }
     });
     return { ...realmApi, warnings };
@@ -105,4 +105,78 @@ test('a tagged envelope with a malformed body is not a reply', () => {
         assert.equal(odhIsEnvelope(candidate), false);
         assert.ok(outcome(() => odhUnwrap(candidate)).threw, 'a malformed envelope must not be read');
     }
+});
+
+// --- odhWithTimeout: a request whose peer never answers must not wait forever ---------
+
+// The timer is injected so these cases need no real waiting and cannot be flaky.
+function fakeClock() {
+    const scheduled = [];
+    return {
+        scheduled,
+        setTimer(callback, ms) { scheduled.push({ callback, ms }); return scheduled.length; },
+        clearTimer() {},   // nothing to release in this stub
+        fire(ms) {
+            for (const entry of scheduled.splice(0)) {
+                if (entry.ms === ms) entry.callback();
+            }
+        }
+    };
+}
+
+test('odhWithTimeout passes a value through without firing the timer', async () => {
+    const { odhWithTimeout } = envelopeRealm();
+    const clock = fakeClock();
+    const value = await odhWithTimeout(Promise.resolve('synthetic value'), 'Fetch', 15000, {
+        setTimer: clock.setTimer, clearTimer: clock.clearTimer
+    });
+    assert.equal(value, 'synthetic value');
+    assert.equal(clock.scheduled.length, 1, 'one timer is scheduled per request');
+});
+
+test('odhWithTimeout rejects with a timeout failure when no reply arrives', async () => {
+    const { odhWithTimeout } = envelopeRealm();
+    const clock = fakeClock();
+    const never = new Promise(() => {});
+    const pending = odhWithTimeout(never, 'findTerm', 15000, {
+        setTimer: clock.setTimer, clearTimer: clock.clearTimer
+    });
+    clock.fire(15000);
+    const result = await pending.then(() => 'resolved', error => error);
+    assert.notEqual(result, 'resolved', 'the request must not resolve');
+    assert.equal(result.kind, 'timeout');
+    assert.equal(result.message, 'No reply for "findTerm" within 15000ms');
+});
+
+// A peer that fails early must keep its own reason: the timeout is not a catch-all.
+test('odhWithTimeout keeps the peer failure instead of reporting a timeout', async () => {
+    const { odhWithTimeout, odhError } = envelopeRealm();
+    const clock = fakeClock();
+    const result = await odhWithTimeout(Promise.reject(odhError('network', 'synthetic')), 'Fetch', 15000, {
+        setTimer: clock.setTimer, clearTimer: clock.clearTimer
+    }).then(() => 'resolved', error => error);
+    assert.equal(result.kind, 'network');
+});
+
+test('odhWithTimeout without a positive budget does not schedule anything', async () => {
+    const { odhWithTimeout } = envelopeRealm();
+    const clock = fakeClock();
+    const value = await odhWithTimeout(Promise.resolve('synthetic'), 'playAudio', 0, {
+        setTimer: clock.setTimer, clearTimer: clock.clearTimer
+    });
+    assert.equal(value, 'synthetic');
+    assert.equal(clock.scheduled.length, 0);
+});
+
+// One phrasing for every reported failure: the action, its message, and the classification in
+// parentheses. This case pins the shape so logs stay greppable across contexts.
+test('odhLog reports the action, the message, and the kind in parentheses', () => {
+    const { odhLog, odhFail, odhError } = envelopeRealm();
+    assert.equal(odhLog('getTranslation', 'No reply for "getTranslation" within 3000ms', 'timeout'),
+        'getTranslation No reply for "getTranslation" within 3000ms (timeout)');
+    // An error object contributes its message, and a missing message falls back to the kind.
+    assert.equal(odhLog('Fetch', odhError('network', 'synthetic transport failure'), 'network'),
+        'Fetch synthetic transport failure (network)');
+    assert.equal(odhLog('Fetch', odhFail('not-ready', undefined), 'not-ready'), 'Fetch not-ready (not-ready)');
+    assert.equal(odhLog('Fetch', '', ''), 'Fetch failed');
 });

@@ -96,6 +96,10 @@ function settingsWorker({ stubScripts = true } = {}) {
     storage.chrome.action = { setBadgeText() {} };
     const Worker = loadClassic('src/bg/js/serviceworker.js', 'ODHServiceworker', {
         chrome: storage.chrome,
+        // The realm needs the host timers: the request timeout helper takes setTimeout by
+        // default, just like every other host facility a stub context provides.
+        setTimeout,
+        clearTimeout,
         optionsLoad: storage.optionsLoad,
         optionsSave: storage.optionsSave,
         console: { error(message) { diagnostics.push(message); }, log() {}, warn() {} },

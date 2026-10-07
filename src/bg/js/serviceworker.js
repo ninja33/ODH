@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhUnwrap, odhErrorMessage, odhError */
+/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhUnwrap, odhWithTimeout, ODH_DEFAULT_REQUEST_TIMEOUT_MS, odhErrorMessage, odhLog, odhError */
 class ODHServiceworker {
     constructor() {
 
@@ -187,9 +187,11 @@ class ODHServiceworker {
         request.target='background';
         let result;
         try {
-            result = await chrome.runtime.sendMessage(request);
+            result = await odhWithTimeout(chrome.runtime.sendMessage(request), request.action, ODH_DEFAULT_REQUEST_TIMEOUT_MS);
         } catch (error) {
-            throw odhError('network', odhErrorMessage(error));
+            // Keep a classified reason (a timeout, for instance) instead of flattening every
+            // failure into a channel error.
+            throw (error && error.kind) ? error : odhError('network', odhErrorMessage(error));
         }
         // Local callers get a plain value or a classified throw; the envelope only exists
         // where a message crosses a boundary. A channel that closes before the reply arrives
@@ -211,8 +213,8 @@ class ODHServiceworker {
             callback(odhOk(text));
         } catch (error) {
             // The dictionary adapter still sees null, but the reason is now classified.
-            console.error('Dictionary fetch failed:', error && error.message);
-            callback(odhFail('network', error));
+            console.error('Dictionary fetch failed:', odhLog(url, error, error && error.kind));
+            callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
 
@@ -281,8 +283,8 @@ class ODHServiceworker {
             let result = await this.findTerm(expression);
             callback(odhOk(result));
         } catch (error) {
-            console.error('Translation lookup failed:', error && error.message);
-            callback(odhFail('network', error));
+            console.error('Translation lookup failed:', odhLog(expression, error, error && error.kind));
+            callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
 
@@ -300,7 +302,7 @@ class ODHServiceworker {
         } catch (err) {
             // NOTE: never retried automatically; a timed-out write may have succeeded.
             console.error(err);
-            callback(odhFail('network', err));
+            callback(odhFail(err && err.kind ? err.kind : 'network', err));
         }
     }
 
@@ -389,7 +391,7 @@ class ODHServiceworker {
         try {
             callback(odhOk(await this.target.getDeckNames()));
         } catch (error) {
-            callback(odhFail('network', error));
+            callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
 
@@ -399,7 +401,7 @@ class ODHServiceworker {
         try {
             callback(odhOk(await this.target.getModelNames()));
         } catch (error) {
-            callback(odhFail('network', error));
+            callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
 
@@ -409,7 +411,7 @@ class ODHServiceworker {
         try {
             callback(odhOk(await this.target.getModelFieldNames(modelName)));
         } catch (error) {
-            callback(odhFail('network', error));
+            callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
 
@@ -419,7 +421,7 @@ class ODHServiceworker {
         try {
             callback(odhOk(await this.target.getVersion()));
         } catch (error) {
-            callback(odhFail('network', error));
+            callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
 

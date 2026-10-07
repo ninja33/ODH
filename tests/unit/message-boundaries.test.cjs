@@ -155,6 +155,8 @@ function workerFixture() {
     };
     const Worker = loadClassic('src/bg/js/serviceworker.js', 'ODHServiceworker', {
         chrome,
+        setTimeout,
+        clearTimeout,
         optionsLoad: async () => ({}),
         optionsSave: async () => {},
         console: consoleStub,
@@ -334,7 +336,8 @@ test('a failed offscreen reply is treated as a failure, not as a result', async 
         value => responses.push(`resolved:${value}`),
         error => responses.push(`rejected:${error.kind}`)
     );
-    assert.deepEqual(responses, ['rejected:network'],
+    // The relay's own classification survives: it is not flattened into a channel error.
+    assert.deepEqual(responses, ['rejected:handler-error'],
         'a channel failure must not resolve with the thrown error as its value');
 });
 
@@ -348,6 +351,19 @@ test('a failure envelope from the offscreen does not resolve the request', async
         error => responses.push(`rejected:${error.kind}`)
     );
     assert.deepEqual(responses, ['rejected:not-ready']);
+});
+
+// A timeout raised at one bridge must still be classified as a timeout when the handler relays
+// it: flattening every failure into a channel error would leave the page unable to react.
+test('a bridge timeout keeps its classification through the handler', async () => {
+    const { worker, chrome } = workerFixture();
+    const responses = [];
+    chrome.runtime.sendMessage = async () => ({ __odhReply: true, ok: false, error: { kind: 'timeout', message: 'synthetic' } });
+    await worker.frontend_getTranslation({ expression: 'synthetic', callback: value => responses.push(value) });
+    assert.equal(responses.length, 1);
+    assert.equal(responses[0].__odhReply, true);
+    assert.equal(responses[0].ok, false);
+    assert.equal(responses[0].error.kind, 'timeout', 'the classification must survive the relay');
 });
 
 // --- Content script: popup frame messages -----------------------------------

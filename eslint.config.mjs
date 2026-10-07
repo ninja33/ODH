@@ -5,7 +5,7 @@ import globals from 'globals';
 // Keep the actual class IDs: filenames do not always match the evaluated classes.
 const classicExports = {
     'src/lib/agent.js': ['Agent'],
-    'src/lib/envelope.js': ['odhErrorMessage', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap'],
+    'src/lib/envelope.js': ['ODH_DEFAULT_REQUEST_TIMEOUT_MS', 'odhErrorMessage', 'odhLog', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap', 'odhWithTimeout'],
     'src/bg/js/ankiconnect.js': ['Ankiconnect'],
     'src/bg/js/builtin.js': ['Builtin'],
     'src/bg/js/deinflector.js': ['Deinflector'],

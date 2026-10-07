@@ -1,4 +1,4 @@
-/*global Agent, odhUnwrap */
+/*global Agent, odhUnwrap, odhWithTimeout, odhLog, ODH_DEFAULT_REQUEST_TIMEOUT_MS */
 class SandboxAPI {
     constructor() {
         // Only dictionary capabilities live here. Replies and the init trigger are
@@ -10,7 +10,7 @@ class SandboxAPI {
     async postMessage(action, params) {
         // Never rejects: old dictionaries only branch on the value, so a failure settles
         // with null and the reason stays in the console.
-        return new Promise(resolve => {
+        const reply = new Promise(resolve => {
             try {
                 this.agent.postMessage(action, params, result => {
                     // Unwrap so dictionary scripts keep their legacy contract: a bare value,
@@ -18,14 +18,20 @@ class SandboxAPI {
                     try {
                         resolve(odhUnwrap(result));
                     } catch (error) {
-                        console.warn('Dictionary request failed:', action, error && error.kind, error && error.message);
+                        console.warn('Dictionary request failed:', odhLog(action, error, error && error.kind));
                         resolve(null);
                     }
                 });
             } catch (err) {
-                console.warn('Dictionary request could not be sent:', action, err && err.message);
+                console.warn('Dictionary request could not be sent:', odhLog(action, err, err && err.kind));
                 resolve(null);
             }
+        });
+        // A worker that never answers must not hang a dictionary: the timeout is reported
+        // and the adapter keeps its "value or null" contract.
+        return odhWithTimeout(reply, action, ODH_DEFAULT_REQUEST_TIMEOUT_MS).catch(error => {
+            console.warn('Dictionary request failed:', odhLog(action, error, error && error.kind));
+            return null;
         });
     }
 

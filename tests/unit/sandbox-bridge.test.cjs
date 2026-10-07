@@ -8,7 +8,7 @@ const { loadClassic } = require('../helpers/load-classic.cjs');
 // in Chrome with "Unexpected identifier 'Object'" while every unit test stayed green.
 // Mirrors the real sandbox: the API binds its Agent to window.parent (the offscreen
 // document), and replies arrive as window messages from that same peer.
-function sandboxBridge() {
+function sandboxBridge({ setTimer = setTimeout, timeoutMs = null } = {}) {
     const listeners = [];
     const parent = { postMessage() {} };
     const window = {
@@ -18,9 +18,12 @@ function sandboxBridge() {
         }
     };
     const SandboxAPI = loadClassic('src/bg/sandbox/sandbox_api.js', 'SandboxAPI',
-        { window, console: { warn() {}, log() {}, error() {} } }, null,
+        { window, setTimeout: setTimer, clearTimeout, console: { warn() {}, log() {}, error() {} } }, null,
         ['src/lib/envelope.js', 'src/lib/agent.js']);
     const api = new SandboxAPI();
+    // The production budget is 15s; overriding it here keeps a timeout case fast. The code
+    // under test (odhWithTimeout) is unchanged.
+    if (timeoutMs !== null) api.agent = Object.assign(api.agent, { timeoutMs });
     return {
         api,
         send: envelope => {
@@ -63,4 +66,17 @@ test('api.deinflect resolves the raw array from a success envelope', async () =>
     const pending = bridge.api.deinflect('synthetic');
     bridge.send({ __odhReply: true, ok: true, value: ['synthetic'] });
     assert.deepEqual(Array.from(await pending), ['synthetic']);
+});
+
+// A silent peer must settle the caller. The timer is injected so the production timeout path
+// (the default setTimer inside odhWithTimeout) fires at once instead of after 15 seconds.
+test('a sandbox that never replies settles the caller instead of hanging', async () => {
+    const bridge = sandboxBridge({ setTimer: callback => { callback(); return 0; } });
+    const pending = bridge.api.fetch('https://example.test/dict.js');
+    // The caller settles; that is what this case is about. A deliberate limitation: the Agent's
+    // registry entry is not released by the timeout, because postMessage is fire-and-forget and
+    // only the owner of a request may drop its record. The residue is one closure per request
+    // whose peer never answers, and a late reply is still dropped (the entry is ignored once
+    // the request is settled). Deliberately not asserted either way.
+    assert.equal(await pending, null, 'the dictionary contract stays null on a timeout');
 });

@@ -15,6 +15,10 @@
 // would otherwise be able to impersonate an envelope. Real payloads never carry it.
 const ODH_ENVELOPE_TAG = '__odhReply';
 
+// The single default budget for waiting on a reply, shared by every context that loads this
+// file. A caller may pass its own value, but the number itself lives in one place.
+const ODH_DEFAULT_REQUEST_TIMEOUT_MS = 8000;
+
 // Names only, no policy: which kinds a caller may see is decided by its own code.
 const ODH_ERROR_KINDS = [
     'not-found',      // looked up but genuinely absent (词典没有该词)
@@ -66,6 +70,15 @@ function odhError(kind, detail) {
     return error;
 }
 
+// The one phrasing for a reported failure: the action, its message, and the classification in
+// parentheses. The kind is spelled out so a log reader does not have to infer it from the text.
+// The label ('Worker request failed:', ...) stays at the call site, which knows the direction.
+function odhLog(action, detail, kind) {
+    const message = odhErrorMessage(detail) || kind || 'failed';
+    const classification = kind ? ` (${kind})` : '';
+    return `${action} ${message}${classification}`;
+}
+
 // The only way to read a reply: return its value, or throw the classified failure. Bridges
 // let that failure propagate; the adapters catch it to preserve the dictionary/page contract
 // (a bare value, or null / [] on failure). Strict on purpose: a reply without the tag means
@@ -76,4 +89,26 @@ function odhUnwrap(envelope) {
     }
     if (envelope.ok) return envelope.value;
     throw odhError(envelope.error.kind, envelope.error.message);
+}
+
+// A request whose peer never answers must not leave the caller waiting forever, so every
+// place that waits for a reply bounds the wait here. It lives beside the envelope because a
+// timeout is simply one of its failure kinds; the timer is injected for the same reason the
+// rest of this file takes no globals.
+// NOTE: this bounds waiting only. It cannot stop a peer that is already stuck, and a request
+// with side effects (writing a card, saving settings) must never be retried just because it
+// timed out: the write may have succeeded.
+function odhWithTimeout(promise, action, timeoutMs, { setTimer = setTimeout, clearTimer = clearTimeout } = {}) {
+    if (!(timeoutMs > 0)) return promise;
+    return new Promise((resolve, reject) => {
+        const timer = setTimer(() => {
+            reject(odhError('timeout', `No reply for "${action}" within ${timeoutMs}ms`));
+        }, timeoutMs);
+        // The original request keeps running; a reply that arrives later is dropped by the
+        // callback registry, which has already forgotten it.
+        Promise.resolve(promise).then(
+            value => { clearTimer(timer); resolve(value); },
+            error => { clearTimer(timer); reject(error); }
+        );
+    });
 }
