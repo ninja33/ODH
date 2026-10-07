@@ -192,8 +192,12 @@ test('saving settings filters the dictionary message while retaining internal an
     fixture.complete();
     await saving;
     assert.equal(responses.length, 1);
-    assert.equal(responses[0], fixture.worker.options);
-    assert.equal(responses[0].password, 'synthetic-sensitive-value');
+    // The reply is enveloped, so unwrap before comparing: the value itself is unchanged,
+    // including the credentials the page is allowed to read back.
+    assert.equal(responses[0].__odhReply, true);
+    assert.equal(responses[0].ok, true);
+    assert.equal(responses[0].value, fixture.worker.options);
+    assert.equal(responses[0].value.password, 'synthetic-sensitive-value');
 });
 
 test('initialization filters dictionary settings while preserving stored legacy credentials', async () => {
@@ -246,7 +250,10 @@ test('worker acknowledges a settings change only after storage completion', asyn
     fixture.complete();
     await saving;
     assert.equal(responses.length, 1);
-    assert.equal(responses[0].enabled, false);
+    // Enveloped reply: the acknowledgement is the applied options inside the envelope.
+    assert.equal(responses[0].__odhReply, true);
+    assert.equal(responses[0].ok, true);
+    assert.equal(responses[0].value.enabled, false);
 });
 
 test('worker returns a failed acknowledgement once when storage rejects', async () => {

@@ -1,4 +1,4 @@
-/* global api, odhFail */
+/* global api, odhOk, odhFail */
 // Sandbox control-plane traffic lives here rather than on window.api: replies and
 // the init trigger register no callback of their own, and window.api is reachable
 // by user dictionary scripts, which must not be able to replace them.
@@ -8,11 +8,11 @@ function replyToBackground(data, callbackId) {
     window.parent.postMessage({ action: 'callback', params: { data, callbackId } }, ODH_BACKGROUND_ORIGIN);
 }
 
-// Failures leave this document as an envelope so the offscreen can tell "no result" from
-// "the dictionary failed". Success values stay raw, which keeps a peer that has not been
-// migrated yet working: see the migration note in lib/envelope.js.
+// Every reply leaves this document enveloped, so the relay can tell "this is the produced
+// value" from "the dictionary failed" without inspecting the value itself. The value is
+// unwrapped again before any dictionary code sees it.
 function replyOk(value, callbackId) {
-    replyToBackground(value, callbackId);
+    replyToBackground(odhOk(value), callbackId);
 }
 
 function replyFail(kind, detail, callbackId) {

@@ -43,7 +43,7 @@ class ODHBackground {
         if (action == 'playAudio') {
             let { url } = params
             this.playAudio(url)
-            callback(url)
+            callback(odhOk(url))
             return true;
         }
 
@@ -52,7 +52,7 @@ class ODHBackground {
             return;
 
         this.sendtoSandbox(action, params)
-            .then(result => callback(result))
+            .then(result => callback(odhOk(result)))
             .catch(error => callback(odhFail(error && error.kind ? error.kind : 'network', error)));
         return true;
     }

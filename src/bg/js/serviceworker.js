@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhFail, odhIsEnvelope, odhUnwrap, odhErrorMessage, odhError */
+/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhIsEnvelope, odhUnwrap, odhErrorMessage, odhError */
 class ODHServiceworker {
     constructor() {
 
@@ -212,7 +212,7 @@ class ODHServiceworker {
             }
         
             const text = await response.text();
-            callback(text);
+            callback(odhOk(text));
         } catch (error) {
             // The dictionary adapter still sees null, but the reason is now classified.
             console.error('Dictionary fetch failed:', error && error.message);
@@ -226,7 +226,7 @@ class ODHServiceworker {
             callback(odhFail('missing-data', 'Deinflector is not loaded'));
             return;
         }
-        callback(this.deinflector.deinflect(word));
+        callback(odhOk(this.deinflector.deinflect(word)));
     }
 
     async offscreen_getBuiltin(params) {
@@ -237,13 +237,13 @@ class ODHServiceworker {
             callback(odhFail('missing-data', `Builtin dictionary not loaded: ${dict}`));
             return;
         }
-        callback(this.builtin.findTerm(dict, word));
+        callback(odhOk(this.builtin.findTerm(dict, word)));
     }
 
     async offscreen_getLocale(params) {
         let { callback } = params;
         try {
-            callback(chrome.i18n.getUILanguage());
+            callback(odhOk(chrome.i18n.getUILanguage()));
         } catch (error) {
             callback(odhFail('handler-error', error));
         }
@@ -282,7 +282,7 @@ class ODHServiceworker {
 
         try {
             let result = await this.findTerm(expression);
-            callback(result);
+            callback(odhOk(result));
         } catch (error) {
             console.error('Translation lookup failed:', error && error.message);
             callback(odhFail('network', error));
@@ -299,7 +299,7 @@ class ODHServiceworker {
         }
         try {
             let result = await this.target.addNote(note);
-            callback(result);
+            callback(odhOk(result));
         } catch (err) {
             // NOTE: never retried automatically; a timed-out write may have succeeded.
             console.error(err);
@@ -312,7 +312,7 @@ class ODHServiceworker {
 
         try {
             let result = await this.playAudio(url);
-            callback(result);
+            callback(odhOk(result));
         } catch (error) {
             callback(odhFail('handler-error', error));
         }
@@ -383,14 +383,14 @@ class ODHServiceworker {
             callback(odhFail('handler-error', error));
             return;
         }
-        callback(this.options);
+        callback(odhOk(this.options));
     }
 
     async options_getDeckNames(params) {
         let { callback } = params;
         if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
         try {
-            callback(await this.target.getDeckNames());
+            callback(odhOk(await this.target.getDeckNames()));
         } catch (error) {
             callback(odhFail('network', error));
         }
@@ -400,7 +400,7 @@ class ODHServiceworker {
         let { callback } = params;
         if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
         try {
-            callback(await this.target.getModelNames());
+            callback(odhOk(await this.target.getModelNames()));
         } catch (error) {
             callback(odhFail('network', error));
         }
@@ -410,7 +410,7 @@ class ODHServiceworker {
         let { modelName, callback } = params;
         if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
         try {
-            callback(await this.target.getModelFieldNames(modelName));
+            callback(odhOk(await this.target.getModelFieldNames(modelName)));
         } catch (error) {
             callback(odhFail('network', error));
         }
@@ -420,7 +420,7 @@ class ODHServiceworker {
         let { callback } = params;
         if (!this.target) { callback(odhFail('not-ready', 'No Anki service is configured')); return; }
         try {
-            callback(await this.target.getVersion());
+            callback(odhOk(await this.target.getVersion()));
         } catch (error) {
             callback(odhFail('network', error));
         }
