@@ -70,13 +70,15 @@ test('worker handlers answer with a success envelope, including a null value', a
     assert.equal(okEnvelope(captured), null);
 });
 
-// initBackend is the one deliberate exception: its reply is ignored by the sandbox, so it
-// stays a bare value rather than forcing the relay to unwrap a reply nobody reads.
-test('initBackend keeps its bare reply', async () => {
+// initBackend's reply is ignored by the sandbox, but the relay that carries it still reads
+// it, so it is enveloped like every other reply (carrying null as its value).
+test('initBackend replies with an envelope carrying null', async () => {
     const worker = workerFixture();
     let captured = 'unset';
     await worker.initBackend({ callback: value => { captured = value; } });
-    assert.equal(captured, null);
+    assert.equal(captured.__odhReply, true);
+    assert.equal(captured.ok, true);
+    assert.equal(captured.value, null);
 });
 
 // --- sandbox reply helper ----------------------------------------------------

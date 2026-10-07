@@ -2,6 +2,12 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { loadClassic } = require('../helpers/load-classic.cjs');
 
+// Offscreen replies to the worker are enveloped, so any stub standing in for the relay must
+// return an envelope as well.
+const odhOk = loadClassic('src/lib/envelope.js', 'odhOk', {
+    console: { error() {}, log() {}, warn() {} }
+});
+
 function settingsStorage() {
     const writes = [];
     const chrome = {
@@ -103,7 +109,7 @@ function settingsWorker({ stubScripts = true } = {}) {
     const worker = new Worker();
     worker.options = { services: 'none', sysscripts: '', udfscripts: '', enabled: true };
     // This unit test covers storage acknowledgement, not the browser bridge.
-    if (stubScripts) worker.setScriptsOptions = async () => null;
+    if (stubScripts) worker.setScriptsOptions = async () => odhOk(null);
     worker.loadScripts = async () => [];
     return { ...storage, worker, diagnostics };
 }
@@ -113,7 +119,7 @@ test('dictionary messages omit sensitive settings and preserve the original conf
     const requests = [];
     fixture.chrome.runtime.sendMessage = async request => {
         requests.push(structuredClone(request));
-        return 'synthetic_dictionary';
+        return odhOk('synthetic_dictionary');
     };
     const options = Object.freeze({
         ...fixture.worker.options,
@@ -144,7 +150,7 @@ test('dictionary messages do not restore sensitive keys added by defaults', asyn
     let sent;
     fixture.chrome.runtime.sendMessage = async request => {
         sent = structuredClone(request.params.options);
-        return null;
+        return odhOk(null);
     };
     const options = await fixture.optionsLoad();
     const before = structuredClone(options);
@@ -166,7 +172,7 @@ test('saving settings filters the dictionary message while retaining internal an
     const connections = [];
     fixture.chrome.runtime.sendMessage = async request => {
         requests.push(structuredClone(request));
-        return request.params.options.dictSelected;
+        return odhOk(request.params.options.dictSelected);
     };
     fixture.worker.ankiconnect.initConnection = async options => { connections.push(structuredClone(options)); };
     const options = {
@@ -215,7 +221,7 @@ test('initialization filters dictionary settings while preserving stored legacy 
     }];
     fixture.chrome.runtime.sendMessage = async request => {
         requests.push(structuredClone(request));
-        return request.params.options.dictSelected;
+        return odhOk(request.params.options.dictSelected);
     };
     const initializing = fixture.worker.initBackend({ callback(result) { responses.push(result); } });
     await new Promise(resolve => setImmediate(resolve));
@@ -234,7 +240,11 @@ test('initialization filters dictionary settings while preserving stored legacy 
     assert.equal(fixture.writes[0].options.password, 'synthetic-sensitive-value');
     fixture.complete();
     await initializing;
-    assert.deepEqual(responses, [null]);
+    // initBackend replies with an envelope carrying null, like every other reply.
+    assert.equal(responses.length, 1);
+    assert.equal(responses[0].__odhReply, true);
+    assert.equal(responses[0].ok, true);
+    assert.equal(responses[0].value, null);
 });
 
 test('worker acknowledges a settings change only after storage completion', async () => {
@@ -306,7 +316,11 @@ test('initialization consumes a read failure and completes its acknowledgement',
     };
     const responses = [];
     await fixture.worker.initBackend({ callback(result) { responses.push(result); } });
-    assert.deepEqual(responses, [null]);
+    // initBackend is enveloped like every other reply, carrying null as its value.
+    assert.equal(responses.length, 1);
+    assert.equal(responses[0].__odhReply, true);
+    assert.equal(responses[0].ok, true);
+    assert.equal(responses[0].value, null);
     assert.equal(fixture.writes.length, 0);
     assert.deepEqual(fixture.diagnostics, ['Unable to initialize settings.']);
 });

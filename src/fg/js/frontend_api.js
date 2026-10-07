@@ -1,4 +1,4 @@
-/* global odhRead */
+/* global odhUnwrap */
 class FrontendAPI{
     async sendtoServiceworker(request){
         request.target='serviceworker';
@@ -10,12 +10,14 @@ class FrontendAPI{
             console.warn('Worker request failed:', request.action, error && error.message);
             return null;
         }
-        const reply = odhRead(result);
-        if (reply.ok) return reply.value;
-        // NOTE: the page-level contract stays "value or null", so a migrated caller does
-        // not need try/catch; the classified reason is kept in the console.
-        console.warn('Worker reported a failure:', request.action, reply.error.kind, reply.error.message);
-        return null;
+        try {
+            return odhUnwrap(result);
+        } catch (error) {
+            // NOTE: the page-level contract stays "value or null", so a caller still does not
+            // need try/catch; the classified reason is kept in the console.
+            console.warn('Worker reported a failure:', request.action, error && error.kind, error && error.message);
+            return null;
+        }
     }
 
     async isConnected(){

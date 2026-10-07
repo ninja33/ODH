@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhIsEnvelope, odhUnwrap, odhErrorMessage, odhError */
+/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhUnwrap, odhErrorMessage, odhError */
 class ODHServiceworker {
     constructor() {
 
@@ -192,12 +192,8 @@ class ODHServiceworker {
             throw odhError('network', odhErrorMessage(error));
         }
         // Local callers get a plain value or a classified throw; the envelope only exists
-        // where a message crosses a boundary. The offscreen signals its own failures with a
-        // thrown Error carrying a kind, not with an envelope, so a failure can never be read
-        // back as a success value. A channel that closes before the reply is also a failure.
-        if (result && typeof result === 'object' && typeof result.kind === 'string' && !odhIsEnvelope(result)) {
-            throw result;
-        }
+        // where a message crosses a boundary. A channel that closes before the reply arrives
+        // throws here, and so does a reply that is not an envelope.
         return odhUnwrap(result);
     }
 
@@ -267,8 +263,9 @@ class ODHServiceworker {
             }
         })();
         await this.initInFlight;
-        // The sandbox triggers this and ignores the value; keep the existing reply shape.
-        params.callback(null);
+        // The sandbox ignores this reply, but the relay that carries it still reads it, and
+        // after the strict change a bare value would be a protocol error there.
+        params.callback(odhOk(null));
     }
 
     // Frontend API

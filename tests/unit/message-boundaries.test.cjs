@@ -200,7 +200,10 @@ test('worker serves matching runtime senders exactly once', async () => {
     const { responses, kept } = runtimeRequest(worker, { id: RUNTIME_ID });
     assert.equal(kept, true);
     await new Promise(resolve => setImmediate(resolve));
-    assert.deepEqual(responses, [null], 'a matching sender reaches the handler once');
+    assert.equal(responses.length, 1, 'a matching sender reaches the handler once');
+    assert.equal(responses[0].__odhReply, true);
+    assert.equal(responses[0].ok, true);
+    assert.equal(responses[0].value, null);
 });
 
 // A content script is recognised by sender.tab and routed to frontend_*; the handler
@@ -270,7 +273,10 @@ test('worker still serves sandbox-originated requests that carry a callbackId', 
     );
     assert.equal(kept, true);
     await new Promise(resolve => setImmediate(resolve));
-    assert.deepEqual(responses, [null], 'the offscreen relay must reach initBackend exactly once');
+    assert.equal(responses.length, 1, 'the offscreen relay must reach initBackend exactly once');
+    assert.equal(responses[0].__odhReply, true);
+    assert.equal(responses[0].ok, true);
+    assert.equal(responses[0].value, null);
 });
 
 // initBackend has its own entry (it is not part of any source's action surface), so it

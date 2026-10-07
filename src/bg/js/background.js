@@ -1,4 +1,4 @@
-/* global Agent, odhOk, odhFail, odhRead, odhUnwrap, odhErrorMessage, odhError */
+/* global Agent, odhOk, odhFail, odhUnwrap, odhErrorMessage, odhError */
 // Actions the worker may ask the offscreen document to hand to the sandbox. playAudio is
 // deliberately absent: the offscreen plays it locally and never forwards it.
 const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm'];
@@ -60,13 +60,13 @@ class ODHBackground {
     async sendtoSandbox(action, params) {
         return new Promise((resolve, reject) => {
             try {
-                // The sandbox replies with a failure envelope only when something went
-                // wrong; a successful value stays raw. Unwrapping here keeps this relay
-                // and the worker unaware of the sandbox's reply shape.
+                // Only the value crosses this relay: a failed reply becomes a thrown error.
                 this.agent.postMessage(action, params, result => {
-                    const reply = odhRead(result);
-                    if (reply.ok) resolve(reply.value);
-                    else reject(odhError(reply.error.kind, reply.error.message));
+                    try {
+                        resolve(odhUnwrap(result));
+                    } catch (error) {
+                        reject(error);
+                    }
                 });
             } catch (err) {
                 reject(err);

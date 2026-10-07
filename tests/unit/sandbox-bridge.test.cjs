@@ -40,11 +40,13 @@ test('api.fetch resolves the raw script text carried in a success envelope', asy
     assert.equal(await pending, 'const script = 1;');
 });
 
-test('api.fetch resolves a plain value from a not-yet-migrated reply', async () => {
+// Replies are envelopes now, so a raw value is a protocol error rather than a result. The
+// dictionary still sees null: the adapter reports the fault and keeps the legacy contract.
+test('a raw reply is reported as a protocol error, not read as a value', async () => {
     const bridge = sandboxBridge();
     const pending = bridge.api.fetch('https://example.test/dict.js');
     bridge.send('const legacy = 1;');
-    assert.equal(await pending, 'const legacy = 1;');
+    assert.equal(await pending, null);
 });
 
 // A failure must not be handed to the dictionary as data; the legacy shapes are null and

@@ -1,4 +1,4 @@
-/*global Agent, odhRead */
+/*global Agent, odhUnwrap */
 class SandboxAPI {
     constructor() {
         // Only dictionary capabilities live here. Replies and the init trigger are
@@ -13,15 +13,14 @@ class SandboxAPI {
         return new Promise(resolve => {
             try {
                 this.agent.postMessage(action, params, result => {
-                    // The bridge wraps every reply, so unwrap here: dictionary scripts keep
-                    // the legacy contract (a bare value, or null / [] on failure).
-                    const reply = odhRead(result);
-                    if (reply.ok) {
-                        resolve(reply.value);
-                        return;
+                    // Unwrap so dictionary scripts keep their legacy contract: a bare value,
+                    // or null on failure (the classified reason goes to the console).
+                    try {
+                        resolve(odhUnwrap(result));
+                    } catch (error) {
+                        console.warn('Dictionary request failed:', action, error && error.kind, error && error.message);
+                        resolve(null);
                     }
-                    console.warn('Dictionary request failed:', action, reply.error.kind, reply.error.message);
-                    resolve(null);
                 });
             } catch (err) {
                 console.warn('Dictionary request could not be sent:', action, err && err.message);

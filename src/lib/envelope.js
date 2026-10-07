@@ -3,9 +3,9 @@
 //   success: { __odhReply: true, ok: true,  value: <structured-cloneable> }
 //   failure: { __odhReply: true, ok: false, error: { kind, message } }
 //
-// NOTE: a reply written by a peer that has not been migrated yet is still a raw value.
-// odhRead() therefore treats anything without the tag as a success, so migration can
-// happen one layer at a time without turning a good result into an error.
+// NOTE: every internal reply is an envelope; there is no raw-value fallback. A reply
+// without the tag is a protocol error rather than a value, so it can never be read as a
+// result by mistake.
 //
 // The dictionary-facing api.* contract does NOT change: sandbox_api.js unwraps the
 // envelope and adapts failures back to the legacy shapes (null / []).
@@ -57,14 +57,6 @@ function odhIsEnvelope(value) {
     return value.ok === false && Boolean(value.error) && typeof value.error.kind === 'string';
 }
 
-// Client-side adapter. Never throws: the caller decides what a failure means, and the
-// failure value it receives is already the legacy shape it used before.
-function odhRead(envelope) {
-    if (!odhIsEnvelope(envelope)) return { ok: true, value: envelope };
-    if (envelope.ok) return { ok: true, value: envelope.value };
-    return { ok: false, error: envelope.error };
-}
-
 // Every failure that crosses a local boundary is a real Error carrying a `kind`, so a
 // catcher can classify it with plain property access and never needs instanceof (which
 // does not survive the realm boundaries between worker, offscreen and sandbox).
@@ -74,12 +66,14 @@ function odhError(kind, detail) {
     return error;
 }
 
-// Bridge-side adapter: returns the success value and throws the classified failure, which
-// is what a relay wants (it only passes values through; failures must propagate). A reply
-// without the tag counts as a value for the same reason odhRead accepts it.
-// Use odhRead instead when the caller must turn a failure into a legacy value.
+// The only way to read a reply: return its value, or throw the classified failure. Bridges
+// let that failure propagate; the adapters catch it to preserve the dictionary/page contract
+// (a bare value, or null / [] on failure). Strict on purpose: a reply without the tag means
+// one side is out of step, and reporting that beats reading it as data.
 function odhUnwrap(envelope) {
-    const reply = odhRead(envelope);
-    if (reply.ok) return reply.value;
-    throw odhError(reply.error.kind, reply.error.message);
+    if (!odhIsEnvelope(envelope)) {
+        throw odhError('unknown', `Reply is not an envelope: ${typeof envelope}`);
+    }
+    if (envelope.ok) return envelope.value;
+    throw odhError(envelope.error.kind, envelope.error.message);
 }
