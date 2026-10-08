@@ -1,8 +1,8 @@
-/* global Agent, odhOk, odhFail, odhUnwrap, odhWithTimeout, ODH_DEFAULT_REQUEST_TIMEOUT_MS, odhErrorMessage, odhError */
+/* global Agent, odhOk, odhFail, odhSendMessage, odhPostMessage, TO_WORKER, TO_OFFSCREEN */
 // Actions the worker may ask the offscreen document to hand to the sandbox. playAudio is
 // deliberately absent: the offscreen plays it locally and never forwards it.
 const ODH_SANDBOX_ACTIONS = ['loadScript', 'setScriptsOptions', 'findTerm'];
-class ODHBackground {
+class ODHOffscreen {
     constructor() {
         this.audios = {};
         this.sandboxWindow = document.getElementById('sandbox').contentWindow;
@@ -31,7 +31,7 @@ class ODHBackground {
             return;
 
         const { action, params, target } = request;
-        if (target != 'background')
+        if (target != TO_OFFSCREEN)
             return;
 
         if (!params)
@@ -51,45 +51,17 @@ class ODHBackground {
         if (!ODH_SANDBOX_ACTIONS.includes(action))
             return;
 
-        this.sendtoSandbox(action, params)
+        // The listener must return true synchronously to keep the reply channel open, so the
+        // answer is delivered from a continuation rather than from an await inside the handler.
+        // odhPostMessage always hands back a settled-safe promise: it catches a synchronous
+        // throw from the agent and rejects with it, so nothing escapes this chain.
+        odhPostMessage(this.agent, action, params)
             .then(result => callback(odhOk(result)))
             .catch(error => callback(odhFail(error && error.kind ? error.kind : 'network', error)));
         return true;
     }
 
-    async sendtoSandbox(action, params) {
-        const reply = new Promise((resolve, reject) => {
-            try {
-                // Only the value crosses this relay: a failed reply becomes a thrown error.
-                this.agent.postMessage(action, params, result => {
-                    try {
-                        resolve(odhUnwrap(result));
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
-        // A sandbox that never answers must not keep the worker waiting.
-        return odhWithTimeout(reply, action, ODH_DEFAULT_REQUEST_TIMEOUT_MS);
-    }
-    
     // message from sandbox to service worker
-    async sendtoServiceworker(request){
-        request.target='serviceworker';
-        let result;
-        try {
-            result = await odhWithTimeout(chrome.runtime.sendMessage(request), request.action, ODH_DEFAULT_REQUEST_TIMEOUT_MS);
-        } catch (e) {
-            throw odhError('network', odhErrorMessage(e) || 'worker channel failed');
-        }
-        // Both directions hand back a plain value and throw on failure, so the envelope is
-        // only built where a message actually crosses a boundary. A channel that closes
-        // before the worker replies is a failure, not an empty success.
-        return odhUnwrap(result);
-    }
     async onSandboxMessage(e) {
         // Trust boundary: everything below this line was posted by the sandbox, whose
         // dictionary scripts are untrusted. Only the pinned window is checked here;
@@ -104,7 +76,8 @@ class ODHBackground {
         if (action === 'callback') return;
 
         try {
-            const result = await this.sendtoServiceworker({ action, params });
+            // Only the value crosses this relay: a failed reply becomes a thrown error.
+            const result = await odhSendMessage(TO_WORKER, { action, params });
             this.replyToSandbox(odhOk(result), params.callbackId);
         } catch (error) {
             this.replyToSandbox(odhFail(error && error.kind ? error.kind : 'network', error), params.callbackId);
@@ -119,4 +92,4 @@ class ODHBackground {
     }
 }
 
-window.odhbackground = new ODHBackground();
+window.odhoffscreen = new ODHOffscreen();

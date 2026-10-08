@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhUnwrap, odhWithTimeout, ODH_DEFAULT_REQUEST_TIMEOUT_MS, odhErrorMessage, odhLog, odhError */
+/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhSendMessage, odhLog, TO_WORKER, TO_OFFSCREEN, TO_FRONTEND */
 class ODHServiceworker {
     constructor() {
 
@@ -86,7 +86,7 @@ class ODHServiceworker {
 
     tabInvoke(tabId, request) {
         const callback = () => this.checkLastError(chrome.runtime.lastError);
-        request.target = "frontend"
+        request.target = TO_FRONTEND
         chrome.tabs.sendMessage(tabId, request, callback);
     }
 
@@ -139,7 +139,7 @@ class ODHServiceworker {
         const { action, params, target} = request;
 
         // Not addressed to this listener: the sender may be waiting on another one.
-        if (target != 'serviceworker')
+        if (target != TO_WORKER)
             return;
 
         // Everything below this line is our own code's request, so it is answered exactly
@@ -183,20 +183,10 @@ class ODHServiceworker {
         return true;
     }
 
+    // Local callers get a plain value or a classified throw; the envelope only exists where a
+    // message crosses a boundary.
     async sendtoBackground(request){
-        request.target='background';
-        let result;
-        try {
-            result = await odhWithTimeout(chrome.runtime.sendMessage(request), request.action, ODH_DEFAULT_REQUEST_TIMEOUT_MS);
-        } catch (error) {
-            // Keep a classified reason (a timeout, for instance) instead of flattening every
-            // failure into a channel error.
-            throw (error && error.kind) ? error : odhError('network', odhErrorMessage(error));
-        }
-        // Local callers get a plain value or a classified throw; the envelope only exists
-        // where a message crosses a boundary. A channel that closes before the reply arrives
-        // throws here, and so does a reply that is not an envelope.
-        return odhUnwrap(result);
+        return odhSendMessage(TO_OFFSCREEN, request);
     }
 
     // sandbox message handler
@@ -471,7 +461,7 @@ function senderSource(sender) {
     if (!sender || sender.id !== chrome.runtime.id) return null;
     if (sender.tab) return 'frontend';
     switch (sender.url) {
-        case chrome.runtime.getURL('bg/background.html'): return 'offscreen';
+        case chrome.runtime.getURL('bg/offscreen.html'): return 'offscreen';
         case chrome.runtime.getURL('bg/options.html'): return 'options';
         case chrome.runtime.getURL('bg/popup.html'): return 'popup';
         default: return null;
@@ -483,8 +473,9 @@ importScripts('builtin.js');
 importScripts('deinflector.js');
 importScripts('utils.js');
 importScripts('../../lib/envelope.js');
+importScripts('../../lib/message.js');
 
-setupOffscreenDocument('/bg/background.html');
+setupOffscreenDocument('/bg/offscreen.html');
 globalThis.odh_serviceworker = new ODHServiceworker();
 
 // according to woxxom's reply on below stackoverflow discussion

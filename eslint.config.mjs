@@ -5,7 +5,8 @@ import globals from 'globals';
 // Keep the actual class IDs: filenames do not always match the evaluated classes.
 const classicExports = {
     'src/lib/agent.js': ['Agent'],
-    'src/lib/envelope.js': ['ODH_DEFAULT_REQUEST_TIMEOUT_MS', 'odhErrorMessage', 'odhLog', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap', 'odhWithTimeout'],
+    'src/lib/envelope.js': ['ODH_DEFAULT_REQUEST_TIMEOUT_MS', 'odhErrorMessage', 'odhLog', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap'],
+    'src/lib/message.js': ['odhWithTimeout', 'odhSendMessage', 'odhPostMessage', 'TO_WORKER', 'TO_OFFSCREEN', 'TO_FRONTEND'],
     'src/bg/js/ankiconnect.js': ['Ankiconnect'],
     'src/bg/js/builtin.js': ['Builtin'],
     'src/bg/js/deinflector.js': ['Deinflector'],
@@ -106,7 +107,7 @@ export default [
     {
         files: [
             'src/lib/agent.js',
-            'src/bg/js/background.js',
+            'src/bg/js/offscreen.js',
             'src/bg/js/options.js',
             'src/bg/js/popup.js',
             'src/bg/js/tabmenu.js',
@@ -123,6 +124,12 @@ export default [
         languageOptions: { globals: globals.browser }
     },
     {
+        // message.js wraps both transports and needs chrome.runtime plus the browser timers
+        // the deadline uses. Every context loads it, sandbox included.
+        files: ['src/lib/message.js'],
+        languageOptions: { globals: { ...globals.browser, chrome: 'readonly' } }
+    },
+    {
         // utils.js is imported by the worker, but its DOM helper runs only in UI pages.
         files: ['src/bg/js/utils.js'],
         languageOptions: { globals: { chrome: 'readonly', document: 'readonly' } }
@@ -130,7 +137,7 @@ export default [
     {
         files: [
             'src/bg/js/serviceworker.js',
-            'src/bg/js/background.js',
+            'src/bg/js/offscreen.js',
             'src/bg/js/options_api.js',
             'src/bg/js/options.js',
             'src/bg/js/popup.js',
@@ -155,7 +162,7 @@ export default [
     {
         // frontend_api is created on window by frontend.js after the API class loads.
         files: ['src/fg/js/frontend.js'],
-        languageOptions: { globals: { FrontendAPI: 'readonly', frontend_api: 'readonly' } }
+        languageOptions: { globals: { FrontendAPI: 'readonly', frontend_api: 'readonly', TO_FRONTEND: 'readonly' } }
     },
     ...Object.entries(classicExports).map(([file, names]) => ({
         files: [file],

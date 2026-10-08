@@ -19,7 +19,7 @@ function sandboxBridge({ setTimer = setTimeout, timeoutMs = null } = {}) {
     };
     const SandboxAPI = loadClassic('src/bg/sandbox/sandbox_api.js', 'SandboxAPI',
         { window, setTimeout: setTimer, clearTimeout, console: { warn() {}, log() {}, error() {} } }, null,
-        ['src/lib/envelope.js', 'src/lib/agent.js']);
+        ['src/lib/envelope.js', 'src/lib/message.js', 'src/lib/agent.js']);
     const api = new SandboxAPI();
     // The production budget is 15s; overriding it here keeps a timeout case fast. The code
     // under test (odhWithTimeout) is unchanged.

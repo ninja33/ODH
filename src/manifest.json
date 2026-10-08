@@ -24,6 +24,7 @@
         "matches": ["*://*/*", "file://*/*"],
         "js": [
             "lib/envelope.js",
+            "lib/message.js",
             "fg/js/popup.js",
             "fg/js/range.js",
             "fg/js/text.js",

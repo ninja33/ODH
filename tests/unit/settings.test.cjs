@@ -109,7 +109,7 @@ function settingsWorker({ stubScripts = true } = {}) {
         importScripts() {},
         setupOffscreenDocument() {},
         setInterval() {}
-    }, null, ['src/lib/envelope.js']);
+    }, null, ['src/lib/envelope.js', 'src/lib/message.js']);
     const worker = new Worker();
     worker.options = { services: 'none', sysscripts: '', udfscripts: '', enabled: true };
     // This unit test covers storage acknowledgement, not the browser bridge.
@@ -137,7 +137,7 @@ test('dictionary messages omit sensitive settings and preserve the original conf
     assert.equal(await fixture.worker.setScriptsOptions(options), 'synthetic_dictionary');
     assert.equal(requests.length, 1);
     assert.equal(requests[0].action, 'setScriptsOptions');
-    assert.equal(requests[0].target, 'background');
+    assert.equal(requests[0].target, 'offscreen');
     const sent = requests[0].params.options;
     for (const field of ['id', 'password', 'ankiconnecturl']) {
         assert.equal(Object.hasOwn(sent, field), false, `${field} must not enter the sandbox`);

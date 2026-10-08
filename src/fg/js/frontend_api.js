@@ -1,21 +1,12 @@
-/* global odhUnwrap, odhWithTimeout, odhLog, ODH_DEFAULT_REQUEST_TIMEOUT_MS */
+/* global odhSendMessage, odhLog, TO_WORKER */
 class FrontendAPI{
+    // The page-level contract stays "value or null", so UI callers still need no try/catch;
+    // the classified reason is kept in the console.
     async sendtoServiceworker(request){
-        request.target='serviceworker';
-        let result;
         try {
-            result = await odhWithTimeout(chrome.runtime.sendMessage(request), request.action, ODH_DEFAULT_REQUEST_TIMEOUT_MS);
+            return await odhSendMessage(TO_WORKER, request);
         } catch (error) {
-            // A channel that closes before the worker replies is a failure, not a value.
             console.warn('Worker request failed:', odhLog(request.action, error, error && error.kind));
-            return null;
-        }
-        try {
-            return odhUnwrap(result);
-        } catch (error) {
-            // NOTE: the page-level contract stays "value or null", so a caller still does not
-            // need try/catch; the classified reason is kept in the console.
-            console.warn('Worker reported a failure:', odhLog(request.action, error, error && error.kind));
             return null;
         }
     }

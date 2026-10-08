@@ -90,25 +90,3 @@ function odhUnwrap(envelope) {
     if (envelope.ok) return envelope.value;
     throw odhError(envelope.error.kind, envelope.error.message);
 }
-
-// A request whose peer never answers must not leave the caller waiting forever, so every
-// place that waits for a reply bounds the wait here. It lives beside the envelope because a
-// timeout is simply one of its failure kinds; the timer is injected for the same reason the
-// rest of this file takes no globals.
-// NOTE: this bounds waiting only. It cannot stop a peer that is already stuck, and a request
-// with side effects (writing a card, saving settings) must never be retried just because it
-// timed out: the write may have succeeded.
-function odhWithTimeout(promise, action, timeoutMs, { setTimer = setTimeout, clearTimer = clearTimeout } = {}) {
-    if (!(timeoutMs > 0)) return promise;
-    return new Promise((resolve, reject) => {
-        const timer = setTimer(() => {
-            reject(odhError('timeout', `No reply for "${action}" within ${timeoutMs}ms`));
-        }, timeoutMs);
-        // The original request keeps running; a reply that arrives later is dropped by the
-        // callback registry, which has already forgotten it.
-        Promise.resolve(promise).then(
-            value => { clearTimer(timer); resolve(value); },
-            error => { clearTimer(timer); reject(error); }
-        );
-    });
-}

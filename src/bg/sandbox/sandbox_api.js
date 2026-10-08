@@ -1,4 +1,4 @@
-/*global Agent, odhUnwrap, odhWithTimeout, odhLog, ODH_DEFAULT_REQUEST_TIMEOUT_MS */
+/*global Agent, odhPostMessage, odhLog */
 class SandboxAPI {
     constructor() {
         // Only dictionary capabilities live here. Replies and the init trigger are
@@ -7,32 +7,16 @@ class SandboxAPI {
         this.agent = new Agent(window.parent);
     }
 
+    // Never rejects: old dictionaries only branch on the value, so a failure settles with null
+    // and the classified reason stays in the console. A worker that never answers must not hang
+    // a dictionary either, so the wait is bounded in the transport.
     async postMessage(action, params) {
-        // Never rejects: old dictionaries only branch on the value, so a failure settles
-        // with null and the reason stays in the console.
-        const reply = new Promise(resolve => {
-            try {
-                this.agent.postMessage(action, params, result => {
-                    // Unwrap so dictionary scripts keep their legacy contract: a bare value,
-                    // or null on failure (the classified reason goes to the console).
-                    try {
-                        resolve(odhUnwrap(result));
-                    } catch (error) {
-                        console.warn('Dictionary request failed:', odhLog(action, error, error && error.kind));
-                        resolve(null);
-                    }
-                });
-            } catch (err) {
-                console.warn('Dictionary request could not be sent:', odhLog(action, err, err && err.kind));
-                resolve(null);
-            }
-        });
-        // A worker that never answers must not hang a dictionary: the timeout is reported
-        // and the adapter keeps its "value or null" contract.
-        return odhWithTimeout(reply, action, ODH_DEFAULT_REQUEST_TIMEOUT_MS).catch(error => {
+        try {
+            return await odhPostMessage(this.agent, action, params);
+        } catch (error) {
             console.warn('Dictionary request failed:', odhLog(action, error, error && error.kind));
             return null;
-        });
+        }
     }
 
     async deinflect(word) {

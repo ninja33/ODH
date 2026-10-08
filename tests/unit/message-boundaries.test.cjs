@@ -166,7 +166,7 @@ function workerFixture() {
         importScripts() {},
         setupOffscreenDocument() {},
         setInterval() {}
-    }, null, ['src/lib/envelope.js']);
+    }, null, ['src/lib/envelope.js', 'src/lib/message.js']);
     const worker = new Worker();
     worker.options = { services: 'none', enabled: true, sysscripts: '', udfscripts: '' };
     worker.setScriptsOptions = async () => null;
@@ -270,7 +270,7 @@ test('worker still serves sandbox-originated requests that carry a callbackId', 
     const responses = [];
     const kept = worker.onMessage(
         { action: 'initBackend', params: { callbackId: 0.5 }, target: 'serviceworker' },
-        { id: RUNTIME_ID, url: `chrome-extension://${RUNTIME_ID}/bg/background.html` },
+        { id: RUNTIME_ID, url: `chrome-extension://${RUNTIME_ID}/bg/offscreen.html` },
         value => responses.push(value)
     );
     assert.equal(kept, true);
@@ -289,7 +289,7 @@ test('worker routes initBackend through its dedicated entry', async () => {
     worker.initBackend = params => { seen.push('initBackend'); params.callback(null); };
     worker.onMessage(
         { action: 'initBackend', params: {}, target: 'serviceworker' },
-        { id: RUNTIME_ID, url: `chrome-extension://${RUNTIME_ID}/bg/background.html` },
+        { id: RUNTIME_ID, url: `chrome-extension://${RUNTIME_ID}/bg/offscreen.html` },
         () => {}
     );
     assert.deepEqual(seen, ['initBackend']);
@@ -313,7 +313,8 @@ test('worker ignores messages addressed to another target', () => {
     const { worker } = workerFixture();
     const responses = [];
     worker.onMessage(
-        { action: 'initBackend', params: {}, target: 'background' },
+        // A real address that belongs to the offscreen document, not to the worker.
+        { action: 'initBackend', params: {}, target: 'offscreen' },
         { id: RUNTIME_ID },
         value => responses.push(value)
     );

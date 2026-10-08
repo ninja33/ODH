@@ -36,7 +36,7 @@ function workerFixture() {
         importScripts() {},
         setupOffscreenDocument() {},
         setInterval() {}
-    }, null, ['src/lib/envelope.js']);
+    }, null, ['src/lib/envelope.js', 'src/lib/message.js']);
     return new Worker();
 }
 
@@ -93,7 +93,7 @@ test('the sandbox replies with a success envelope', () => {
         document: { addEventListener() {} },
         console: { error() {}, log() {}, warn() {} },
         api: { fetch: async () => null }
-    }, null, ['src/lib/envelope.js']);
+    }, null, ['src/lib/envelope.js', 'src/lib/message.js']);
     const sandbox = new sandboxApi();
     sandbox.dicts = { synthetic: { setOptions() {} } };
 

@@ -1,4 +1,4 @@
-/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isValidElement*/
+/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isValidElement */
 // Actions the popup frame may ask the content script to perform.
 const ODH_FRAME_ACTIONS = ['addNote', 'playAudio', 'playSound'];
 
@@ -114,7 +114,7 @@ class ODHFrontend {
 
     onMessage(request, sender, callback) {
         const { action, params, target } = request;
-        if (target !='frontend')
+        if (target != TO_FRONTEND)
             return;
 
         const method = this['api_' + action];
