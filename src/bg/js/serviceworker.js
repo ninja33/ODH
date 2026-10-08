@@ -267,7 +267,9 @@ class ODHServiceworker {
             let result = await this.findTerm(expression);
             callback(odhOk(result));
         } catch (error) {
-            console.error('Translation lookup failed:', odhLog(expression, error, error && error.kind));
+            // WHY: the action is logged, never the expression. A looked-up term is page content,
+            // and a diagnostic line must not carry it.
+            console.error('Translation lookup failed:', odhLog('getTranslation', error, error && error.kind));
             callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
@@ -283,10 +285,12 @@ class ODHServiceworker {
         try {
             let result = await this.target.addNote(note);
             callback(odhOk(result));
-        } catch (err) {
+        } catch (error) {
             // NOTE: never retried automatically; a timed-out write may have succeeded.
-            console.error(err);
-            callback(odhFail(err && err.kind ? err.kind : 'network', err));
+            // WHY: log the action and its classification rather than the error object, whose
+            // message may carry the card's payload or the configured endpoint.
+            console.error('Add note failed:', odhLog('addNote', error, error && error.kind));
+            callback(odhFail(error && error.kind ? error.kind : 'network', error));
         }
     }
 

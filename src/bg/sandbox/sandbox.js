@@ -57,9 +57,9 @@ class Sandbox {
         let scripttext;
         try {
             scripttext = await api.fetch(this.buildScriptURL(name));
-        } catch (err) {
-            console.error('Unable to fetch dictionary script:', name, err && err.message);
-            replyFail('network', err, callbackId);
+        } catch (error) {
+            console.error('Unable to fetch dictionary script:', name, error && error.message);
+            replyFail('network', error, callbackId);
             return;
         }
         if (!scripttext) {
@@ -80,10 +80,10 @@ class Sandbox {
             this.dicts[SCRIPT.name] = script;
             let displayname = typeof(script.displayName) === 'function' ? await script.displayName() : SCRIPT.name;
             replyOk({ name, result: { objectname: SCRIPT.name, displayname } }, callbackId);
-        } catch (err) {
+        } catch (error) {
             // The caller only gets a failed reply, so keep the reason visible here.
-            console.error('Unable to load dictionary script:', name, err && err.message);
-            replyFail('handler-error', err, callbackId);
+            console.error('Unable to load dictionary script:', name, error && error.message);
+            replyFail('handler-error', error, callbackId);
         }
     }
 
@@ -118,11 +118,11 @@ class Sandbox {
             // here; classifying "not found" is a separate, not yet decided change.
             let notes = await dictionary.findTerm(expression);
             replyOk(notes, callbackId);
-        } catch (err) {
+        } catch (error) {
             // WHY: without this the exception left the request unanswered, so one broken
             // dictionary hung every lookup instead of reporting a failure.
-            console.error('Dictionary threw during findTerm:', err && err.message);
-            replyFail('handler-error', err, callbackId);
+            console.error('Dictionary threw during findTerm:', error && error.message);
+            replyFail('handler-error', error, callbackId);
         }
     }
 }

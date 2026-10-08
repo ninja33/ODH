@@ -1,3 +1,4 @@
+/* global odhLog */
 class Ankiconnect {
     constructor() {
         this.version = null;
@@ -44,7 +45,12 @@ class Ankiconnect {
                 throw response.error;
             }
             return response.result;
-        } catch (e) {
+        } catch (error) {
+            // WHY: every caller branches on a falsy value, so the call still settles as null and
+            // the contract stays with the reliability task. The failure must not vanish silently
+            // either, so it is reported here, where the reason is still known. The endpoint is
+            // deliberately not part of the line; AnkiConnect's own message says enough.
+            console.error('Anki request failed:', odhLog(action, error));
             return null;
         }
 
