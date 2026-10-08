@@ -16,14 +16,41 @@ class encn_Collins {
 
     setOptions(options) {
         this.options = options;
-        this.maxexample = options.maxexample;
+        this.maxexample = Number(options.maxexample) || 0;
     }
 
     async findTerm(word) {
         this.word = word;
-        //let deflection = api.deinflect(word);
-        let results = await Promise.all([this.findCollins(word)]);
-        return [].concat(...results).filter(x => x);
+        if (!word) return [];
+
+        // Try original / stem / lowercase so irregular forms still hit Collins.
+        let candidates = new Set([word]);
+        let word_stem = await api.deinflect(word);
+        if (word_stem) candidates.add(word_stem);
+
+        let lowercase = word.toLowerCase();
+        if (lowercase != word) {
+            candidates.add(lowercase);
+            let lowercase_stem = await api.deinflect(lowercase);
+            if (lowercase_stem) candidates.add(lowercase_stem);
+        }
+
+        let results = await Promise.all(
+            [...candidates].map((item) => this.findCollins(item))
+        );
+        return dedupeNotes([].concat(...results).filter(x => x));
+
+        function dedupeNotes(notes) {
+            let seen = new Set();
+            let unique = [];
+            for (const note of notes) {
+                let key = note.expression || JSON.stringify(note.definitions);
+                if (seen.has(key)) continue;
+                seen.add(key);
+                unique.push(note);
+            }
+            return unique;
+        }
     }
 
     async findCollins(word) {
@@ -92,21 +119,21 @@ class encn_Collins {
                         posNode.remove();
                 }
                 let tran = tranNode.innerHTML.trim();
-                let chn_tran = tran.match(/( ?\((?:([\u4e00-\u9fa5]|，|…|、)+)\) ?|[\u4e00-\u9fa5]||;|…|，|、|\]|\[)+/gi).join(' ').trim();
+                let chn_tran = (tran.match(/( ?\((?:([\u4e00-\u9fa5]|，|…|、)+)\) ?|[\u4e00-\u9fa5]||;|…|，|、|\]|\[)+/gi) || []).join(' ').trim();
                 let eng_tran = tran.replace(/( ?\((?:([\u4e00-\u9fa5]|，|…|、)+)\) ?|[\u4e00-\u9fa5]|;|…|，|、|\]|\[)+/gi, '').trim();
                 chn_tran = chn_tran ? `<span class="chn_tran">${chn_tran}</span>` : '';
-                //eng_tran = eng_tran ? eng_tran.replace(RegExp(expression, 'gi'), '<b>$&</b>') : ''; //surround expression with <b> in eng_translation.
                 eng_tran = eng_tran ? `<span class="eng_tran">${eng_tran}</span>` : '';
                 definition += `${pos}<span class="tran">${eng_tran}${chn_tran}</span>`;
 
                 // make exmaple sentence segement
                 let exampleNodes = defNode.querySelectorAll('.exampleLists');
                 if (exampleNodes && exampleNodes.length > 0 && maxexample > 0) {
+                    let re = escapeRegExp(expression);
                     definition += '<ul class="sents">';
                     for (const [index, example] of exampleNodes.entries()) {
                         if (index > maxexample - 1) break; // to control only n example sentences defined in option.
                         let chn_sent = T(example.querySelector('p+p'));
-                        let eng_sent = T(example.querySelector('p')) ? T(example.querySelector('p')).replace(RegExp(expression, 'gi'), '<b>$&</b>') : ''; //surround expression with <b> in eng_example.
+                        let eng_sent = T(example.querySelector('p')) ? T(example.querySelector('p')).replace(re, '<b>$&</b>') : ''; //surround expression with <b> in eng_example.
                         definition += `<li class='sent'><span class='eng_sent'>${eng_sent}</span><span class='chn_sent'>${chn_sent}</span></li>`;
                     }
                     definition += '</ul>';
@@ -217,6 +244,11 @@ class encn_Collins {
                 return '';
             else
                 return node.innerText.trim();
+        }
+
+        function escapeRegExp(text) {
+            let escaped = String(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return new RegExp(escaped, 'gi');
         }
     }
 }
