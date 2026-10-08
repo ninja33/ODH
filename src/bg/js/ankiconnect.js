@@ -1,21 +1,18 @@
 /* global odhLog */
 class Ankiconnect {
     constructor() {
-        this.version = null;
         this.url = 'http://127.0.0.1:8765'; //define default ankiconnect ip/port
     }
 
     async initConnection(options) {
         this.url = options.ankiconnecturl;
-        this.version = await this.ankiInvoke('version', {}, 100);
     }
 
-    // WHY: the timeout parameter is part of the public call contract but is not
-    // implemented - no AbortController, no request cancellation. initConnection()
-    // passes 100ms. Behaviour is recorded in architecture section 7 and belongs
-    // to the reliability task, not to this lint pass.
+    // WHY: the timeout option is part of the public call contract but is not implemented - no
+    // AbortController, no request cancellation, so nothing can bound a request yet. Behaviour is
+    // recorded in architecture section 7 and belongs to the reliability task, not to this lint pass.
     // eslint-disable-next-line no-unused-vars
-    async ankiInvoke(action, params = {}, timeout = 3000) {
+    async ankiInvoke(action, params = {}, { timeout = 3000, quiet = false } = {}) {
         let version = 6;
         let request = { action, version, params };
         try {
@@ -47,10 +44,14 @@ class Ankiconnect {
             return response.result;
         } catch (error) {
             // WHY: every caller branches on a falsy value, so the call still settles as null and
-            // the contract stays with the reliability task. The failure must not vanish silently
-            // either, so it is reported here, where the reason is still known. The endpoint is
-            // deliberately not part of the line; AnkiConnect's own message says enough.
-            console.error('Anki request failed:', odhLog(action, error));
+            // the contract stays with the reliability task. A failed call is reported here, where
+            // the reason is still known, unless the caller passed quiet: a presence probe gets
+            // "Anki is not running" as a normal answer, and one line per lookup would bury the
+            // rest of the console. The endpoint stays out of the line; AnkiConnect's own message
+            // says enough.
+            if (!quiet) {
+                console.error('Anki request failed:', odhLog(action, error));
+            }
             return null;
         }
 
@@ -75,7 +76,11 @@ class Ankiconnect {
         return await this.ankiInvoke('modelFieldNames', { modelName });
     }
 
+    // WHY: this is the only connectivity signal the settings pages and the add-note button
+    // have, so it is asked live. A cached snapshot still answered "connected" long after Anki
+    // had stopped, and still answered "not connected" after it came back. It asks quietly: this
+    // is a presence probe, not an operation the user requested.
     async getVersion() {
-        return this.version;
+        return await this.ankiInvoke('version', {}, { quiet: true });
     }
 }

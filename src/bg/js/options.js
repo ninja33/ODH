@@ -3,19 +3,19 @@
 async function populateAnkiDeckAndModel(options) {
     $('#deckname').empty();
     let names = await options_api.getDeckNames();
-    if (names !== null) {
-        names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
-    }
+    // WHY: a failed query means Anki is unreachable, so the lists stay empty rather than
+    // reading names[0] off null and rejecting unhandled.
+    if (names === null) return;
+    names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
 
-    let deckName = options.deckname ? options.deckname : names[0]; 
+    let deckName = options.deckname ? options.deckname : names[0];
     $('#deckname').val(deckName);
 
     $('#typename').empty();
     names = await options_api.getModelNames();
-    if (names !== null) {
-        names.forEach(name => $('#typename').append($('<option>', { value: name, text: name })));
-    }
-    
+    if (names === null) return;
+    names.forEach(name => $('#typename').append($('<option>', { value: name, text: name })));
+
     let typeName = options.typename ? options.typename: names[0];
     $('#typename').val(typeName);
 }
@@ -59,8 +59,10 @@ async function updateAnkiProfile(options) {
     if (version === null) {
         $('#services-status').text(chrome.i18n.getMessage('msgFailed'));
     } else {
-        populateAnkiDeckAndModel(options);
-        populateAnkiFields(options);
+        // WHY: the field list reads the model select, so it has to run after that select is
+        // filled. Awaiting both also keeps a failed query from rejecting unhandled.
+        await populateAnkiDeckAndModel(options);
+        await populateAnkiFields(options);
         $('#services-status').text(chrome.i18n.getMessage('msgSuccess', [version]));
         $('#service-options-ankiprofile').show();
         if (options.services == 'ankiconnect')
@@ -118,7 +120,7 @@ function onHiddenClicked() {
 async function onAnkiTypeChanged(e) {
     if (e.originalEvent) {
         let options = await optionsLoad();
-        populateAnkiFields(options);
+        await populateAnkiFields(options);
 
     }
 }

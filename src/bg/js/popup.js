@@ -2,10 +2,12 @@
 async function populateAnkiDeckAndModel(options) {
     $('#deckname').empty();
     let names = await options_api.getDeckNames();
-    if (names !== null) {
-        names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
-    }
-    let deckName = options.deckname ? options.deckname : names[0]; 
+    // WHY: a failed query means Anki is unreachable, so the list stays empty rather than
+    // reading names[0] off null and rejecting unhandled.
+    if (names === null) return;
+    names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
+
+    let deckName = options.deckname ? options.deckname : names[0];
     $('#deckname').val(deckName);
 }
 
@@ -32,7 +34,7 @@ async function updateAnkiProfile(options) {
     if (version === null) {
         $('#service-options-ankiprofile').hide();
     } else {
-        populateAnkiDeckAndModel(options);
+        await populateAnkiDeckAndModel(options);
         $('#service-options-ankiprofile').show();
     }
 }
