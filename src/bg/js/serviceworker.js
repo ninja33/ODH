@@ -183,12 +183,6 @@ class ODHServiceworker {
         return true;
     }
 
-    // Local callers get a plain value or a classified throw; the envelope only exists where a
-    // message crosses a boundary.
-    async sendtoBackground(request){
-        return odhSendMessage(TO_OFFSCREEN, request);
-    }
-
     // sandbox message handler
     async offscreen_Fetch(params) {
         let { url, callback } = params;
@@ -433,7 +427,7 @@ class ODHServiceworker {
     }
 
     async loadScript(name) {
-        return await this.sendtoBackground({action:'loadScript', params:{name}});
+        return await odhSendMessage(TO_OFFSCREEN, {action:'loadScript', params:{name}});
     }
 
     async setScriptsOptions(options) {
@@ -442,15 +436,15 @@ class ODHServiceworker {
         for (const field of ['id', 'password', 'ankiconnecturl']) {
             delete scriptOptions[field];
         }
-        return await this.sendtoBackground({action:'setScriptsOptions', params:{options: scriptOptions}});
+        return await odhSendMessage(TO_OFFSCREEN, {action:'setScriptsOptions', params:{options: scriptOptions}});
     }
 
     async findTerm(expression) {
-        return await this.sendtoBackground({action:'findTerm', params:{expression}});
+        return await odhSendMessage(TO_OFFSCREEN, {action:'findTerm', params:{expression}});
     }
 
     async playAudio(url) {
-        return await this.sendtoBackground({action:'playAudio', params:{url}});
+        return await odhSendMessage(TO_OFFSCREEN, {action:'playAudio', params:{url}});
     }
 }
 
