@@ -44,6 +44,19 @@ class escn_Eudict {
         });
     }
 
+    sanitizeAttrs(elem) {
+        let all = elem.querySelectorAll('*');
+        all.forEach(node => {
+            [...node.attributes].forEach(attr => {
+                let name = attr.name.toLowerCase();
+                let value = attr.value.trim().toLowerCase();
+                if (name.startsWith('on') || ((name === 'href' || name === 'src') && value.startsWith('javascript:'))) {
+                    node.removeAttribute(attr.name);
+                }
+            });
+        });
+    }
+
     async findEudict(url) {
         let notes = [];
 
