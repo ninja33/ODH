@@ -1,4 +1,4 @@
-/* global ODH_DEFAULT_REQUEST_TIMEOUT_MS, odhError, odhErrorMessage, odhUnwrap */
+/* global odhError, odhErrorMessage, odhUnwrap */
 // The odh version of the two messaging calls Chrome already has, differing in one way: they
 // wait for the reply under a deadline and hand back its value or a classified failure.
 //   odhSendMessage  ~ chrome.runtime.sendMessage
@@ -21,6 +21,15 @@
 const TO_WORKER = 'serviceworker';   // the service worker
 const TO_OFFSCREEN = 'offscreen';    // the offscreen document that hosts the sandbox
 const TO_FRONTEND = 'frontend';      // a content script, reached through chrome.tabs.sendMessage
+
+// The single default budget for waiting on a reply, and the whole timeout policy in one place,
+// so no call site chooses a number. The timer is injected so a test can drive it without waiting.
+const ODH_DEFAULT_REQUEST_TIMEOUT_MS = 8000;
+
+// The worker-side deadline for one dictionary fetch. It must stay below the reply budget above:
+// a URL that never answers has to fail inside the worker while the caller is still waiting, so
+// the classified reply reaches it instead of the generic 'timeout'.
+const ODH_DICTIONARY_FETCH_TIMEOUT_MS = 6000;
 
 // The deadline both helpers use, and the whole timeout policy in one place, so no call site
 // chooses it. The timer is injected so a test can drive it without waiting.

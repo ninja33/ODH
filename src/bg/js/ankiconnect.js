@@ -8,13 +8,16 @@ class Ankiconnect {
         this.url = options.ankiconnecturl;
     }
 
-    // WHY: the timeout option is part of the public call contract but is not implemented - no
-    // AbortController, no request cancellation, so nothing can bound a request yet. Behaviour is
-    // recorded in architecture section 7 and belongs to the reliability task, not to this lint pass.
-    // eslint-disable-next-line no-unused-vars
     async ankiInvoke(action, params = {}, { timeout = 3000, quiet = false } = {}) {
         let version = 6;
         let request = { action, version, params };
+        // WHY: the deadline bounds this request, not the caller's wait: a black-hole endpoint
+        // used to hold the bridge's 8s reply budget instead of failing here. An abort makes
+        // the in-flight fetch reject, so a timeout takes the existing catch below and the call
+        // still settles as null, the contract every caller branches on. Distinguishing a write
+        // that timed out from one that failed belongs to the reliability task (M12).
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeout);
         try {
             const rawResponse = await fetch(this.url, {
                 method: 'POST',
@@ -22,7 +25,8 @@ class Ankiconnect {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json; charset=utf-8'
                 },
-                body: JSON.stringify(request)
+                body: JSON.stringify(request),
+                signal: controller.signal
             });
             const response = await rawResponse.json();
 
@@ -48,11 +52,15 @@ class Ankiconnect {
             // the reason is still known, unless the caller passed quiet: a presence probe gets
             // "Anki is not running" as a normal answer, and one line per lookup would bury the
             // rest of the console. The endpoint stays out of the line; AnkiConnect's own message
-            // says enough.
+            // says enough. An abort is this deadline firing rather than a refused connection, so
+            // the line names it as a timeout.
+            const aborted = Boolean(error && error.name === 'AbortError');
             if (!quiet) {
-                console.error('Anki request failed:', odhLog(action, error));
+                console.error('Anki request failed:', odhLog(action, error, aborted ? 'timeout' : undefined));
             }
             return null;
+        } finally {
+            clearTimeout(timer);
         }
 
     }

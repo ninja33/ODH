@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const vm = require('node:vm');
 const { loadClassic } = require('../helpers/load-classic.cjs');
+const { fakeTimers, hangingFetch } = require('../helpers/abort-deadline.cjs');
 
 // These cases cover the message entry gates added in B01: who may cross each
 // seam, and which actions are accepted there. Stubs only stand in for the
@@ -128,7 +129,9 @@ test('agent delivers a duplicated reply only once', () => {
 
 // --- Worker: native runtime sender identity ---------------------------------
 
-function workerFixture() {
+// fetch and the timers are overridable so the dictionary fetch deadline can be driven by hand:
+// a URL that never answers must be settled on demand, not after a real wait.
+function workerFixture({ fetch: fetchImpl, timers: timerPair } = {}) {
     const storage = { data: {}, writes: [], warnings: [] };
     const consoleStub = { error() {}, log() {}, warn(...args) { storage.warnings.push(args); } };
     const runtime = {
@@ -153,10 +156,13 @@ function workerFixture() {
         action: { setBadgeText() {} },
         i18n: { getUILanguage: () => 'en' }
     };
+    const timers = timerPair || { setTimeout, clearTimeout };
     const Worker = loadClassic('src/bg/js/serviceworker.js', 'ODHServiceworker', {
         chrome,
-        setTimeout,
-        clearTimeout,
+        setTimeout: timers.setTimeout,
+        clearTimeout: timers.clearTimeout,
+        AbortController,
+        ...(fetchImpl ? { fetch: fetchImpl } : {}),
         optionsLoad: async () => ({}),
         optionsSave: async () => {},
         console: consoleStub,
@@ -478,4 +484,59 @@ test('popup frame ignores actions outside its list, even from the parent', () =>
     window.emit({ source: parent, data: { action: 'addNote', params: {} } });
     window.emit({ source: parent, data: 'not an object' });
     assert.deepEqual(calls, []);
+});
+
+// --- worker-side fetch deadlines --------------------------------------------------------
+// The caller's reply budget bounds waiting only: it cannot stop a fetch that is already
+// running. These cases pin the worker-side deadline that closes that gap for the one request
+// shape with no deadline of its own.
+
+// A URL that never answers used to keep running in the worker long after the caller had
+// already failed with 'timeout'. Aborting here makes the classified reply arrive while the
+// caller is still waiting.
+test('a dictionary fetch that stops answering is aborted at the worker deadline', async () => {
+    const seen = [];
+    const timers = fakeTimers();
+    const { worker } = workerFixture({ fetch: hangingFetch(seen), timers });
+    const responses = [];
+
+    const pending = worker.offscreen_Fetch({ url: 'https://black-hole.invalid/dict.js', callback: value => responses.push(value) });
+    timers.fireAll();
+    await pending;
+
+    assert.equal(responses.length, 1, 'the handler answers exactly once');
+    assert.equal(errorKindOf(responses[0]), 'timeout', 'a slow dictionary is a timeout, not a network failure');
+    assert.equal(seen[0].init.signal.aborted, true, 'the deadline must abort the in-flight fetch');
+});
+
+test('a dictionary fetch that answers in time is not aborted', async () => {
+    const seen = [];
+    const timers = fakeTimers();
+    const { worker } = workerFixture({
+        fetch: async (url, init) => { seen.push({ url, init }); return { ok: true, text: async () => 'synthetic script' }; },
+        timers
+    });
+    const responses = [];
+
+    await worker.offscreen_Fetch({ url: 'https://dict.invalid/dict.js', callback: value => responses.push(value) });
+
+    assert.equal(responses.length, 1);
+    assert.equal(responses[0].ok, true);
+    assert.equal(responses[0].value, 'synthetic script');
+    assert.equal(timers.pending.size, 0, 'the deadline must be cleared once the reply is in');
+    assert.equal(seen[0].init.signal.aborted, false, 'a settled request must not be aborted');
+});
+
+// The ordering is what makes the classified reply observable: a deadline at or above the
+// reply budget would let the caller time out first, and the abort would arrive too late.
+// Both numbers live in message.js, the one place the timeout policy is declared.
+test('the dictionary fetch deadline stays below the caller reply budget', () => {
+    const { ODH_DEFAULT_REQUEST_TIMEOUT_MS, ODH_DICTIONARY_FETCH_TIMEOUT_MS } = loadClassic('src/lib/message.js',
+        '({ ODH_DEFAULT_REQUEST_TIMEOUT_MS, ODH_DICTIONARY_FETCH_TIMEOUT_MS })', {
+            console: { warn() {}, log() {}, error() {} }
+        }, null, ['src/lib/envelope.js']);
+    assert.ok(typeof ODH_DICTIONARY_FETCH_TIMEOUT_MS === 'number' && ODH_DICTIONARY_FETCH_TIMEOUT_MS > 0,
+        'the deadline is a positive number of milliseconds');
+    assert.ok(ODH_DICTIONARY_FETCH_TIMEOUT_MS < ODH_DEFAULT_REQUEST_TIMEOUT_MS,
+        `the dictionary deadline (${ODH_DICTIONARY_FETCH_TIMEOUT_MS}) must stay below the reply budget (${ODH_DEFAULT_REQUEST_TIMEOUT_MS})`);
 });

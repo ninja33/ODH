@@ -163,8 +163,8 @@ test('every declared classic script path resolves to a real file', () => {
 
 // Names lib/*.js provides through the shared classic globals.
 const libExports = {
-    'lib/envelope.js': ['ODH_DEFAULT_REQUEST_TIMEOUT_MS', 'odhErrorMessage', 'odhLog', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap'],
-    'lib/message.js': ['odhWithTimeout', 'odhSendMessage', 'odhPostMessage', 'TO_WORKER', 'TO_OFFSCREEN', 'TO_FRONTEND'],
+    'lib/envelope.js': ['odhErrorMessage', 'odhLog', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap'],
+    'lib/message.js': ['ODH_DEFAULT_REQUEST_TIMEOUT_MS', 'ODH_DICTIONARY_FETCH_TIMEOUT_MS', 'odhWithTimeout', 'odhSendMessage', 'odhPostMessage', 'TO_WORKER', 'TO_OFFSCREEN', 'TO_FRONTEND'],
     'lib/agent.js': ['Agent']
 };
 

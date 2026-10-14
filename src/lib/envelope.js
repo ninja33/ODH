@@ -15,10 +15,6 @@
 // would otherwise be able to impersonate an envelope. Real payloads never carry it.
 const ODH_ENVELOPE_TAG = '__odhReply';
 
-// The single default budget for waiting on a reply, shared by every context that loads this
-// file. A caller may pass its own value, but the number itself lives in one place.
-const ODH_DEFAULT_REQUEST_TIMEOUT_MS = 8000;
-
 // Names only, no policy: which kinds a caller may see is decided by its own code.
 const ODH_ERROR_KINDS = [
     'not-found',      // looked up but genuinely absent (词典没有该词)

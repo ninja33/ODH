@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, odhOk, odhFail, odhSendMessage, odhLog, TO_WORKER, TO_OFFSCREEN, TO_FRONTEND */
+/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, ODH_DICTIONARY_FETCH_TIMEOUT_MS, odhOk, odhFail, odhSendMessage, odhLog, TO_WORKER, TO_OFFSCREEN, TO_FRONTEND */
 class ODHServiceworker {
     constructor() {
 
@@ -187,18 +187,28 @@ class ODHServiceworker {
     async offscreen_Fetch(params) {
         let { url, callback } = params;
 
+        // WHY: the caller's reply budget (ODH_DEFAULT_REQUEST_TIMEOUT_MS) bounds waiting only;
+        // without this shorter, fetch-side deadline a URL that never answers would keep running
+        // here long after the caller had already failed with 'timeout'.
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), ODH_DICTIONARY_FETCH_TIMEOUT_MS);
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { signal: controller.signal });
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-        
+
             const text = await response.text();
             callback(odhOk(text));
         } catch (error) {
+            // WHY: an abort is this deadline firing, not the network failing; without the
+            // branch a dictionary that was merely slow would be flattened into 'network'.
+            const kind = (error && error.name === 'AbortError') ? 'timeout' : (error && error.kind ? error.kind : 'network');
             // The dictionary adapter still sees null, but the reason is now classified.
-            console.error('Dictionary fetch failed:', odhLog(url, error, error && error.kind));
-            callback(odhFail(error && error.kind ? error.kind : 'network', error));
+            console.error('Dictionary fetch failed:', odhLog(url, error, kind));
+            callback(odhFail(kind, error));
+        } finally {
+            clearTimeout(timer);
         }
     }
 
