@@ -17,7 +17,7 @@ const ODH_ENVELOPE_TAG = '__odhReply';
 
 // Names only, no policy: which kinds a caller may see is decided by its own code.
 const ODH_ERROR_KINDS = [
-    'not-found',      // looked up but genuinely absent (词典没有该词)
+    'not-found',      // looked up but genuinely absent (the dictionary has no such term)
     'not-ready',      // initialization unfinished / no dictionary selected yet
     'missing-data',   // a required data file did not load
     'network',        // fetch failed, or the runtime channel failed

@@ -170,7 +170,7 @@ function workerFixture({ fetch: fetchImpl, timers: timerPair } = {}) {
         Builtin: class { loadData() {} },
         Deinflector: class { loadData() {} load(term) { this.term = term; } deinflect(term) { return [term]; } },
         importScripts() {},
-        setupOffscreenDocument() {},
+        setupOffscreenDocument: async () => {},
         setInterval() {}
     }, null, ['src/lib/envelope.js', 'src/lib/message.js']);
     const worker = new Worker();

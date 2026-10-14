@@ -79,7 +79,6 @@ function localizeHtmlPage() {
     }
 }
 
-/* example code from google's offscreen document*/
 let creating; // A global promise to avoid concurrency issues
 async function setupOffscreenDocument(path) {
     // Check all windows controlled by the service worker to see if one
@@ -100,10 +99,20 @@ async function setupOffscreenDocument(path) {
     } else {
         creating = chrome.offscreen.createDocument({
             url: path,
-            reasons: ['CLIPBOARD'],
-            justification: 'reason for needing the document',
+            // WHY: this document really hosts the dictionary sandbox iframe and plays audio;
+            // the reasons must describe that use, and the justification is the text Chrome
+            // shows when it reports an offscreen problem.
+            reasons: ['AUDIO_PLAYBACK', 'IFRAME_SCRIPTING'],
+            justification: 'ODH hosts its dictionary sandbox iframe and plays audio in this document.',
         });
-        await creating;
-        creating = null;
+        try {
+            await creating;
+        } finally {
+            // WHY: a failed creation used to leave the rejected promise in `creating`, so
+            // every later caller awaited the same stale rejection and could never retry.
+            // Clearing it in finally keeps the single-flight guarantee while letting the
+            // next call try again.
+            creating = null;
+        }
     }
 }

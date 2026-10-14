@@ -483,7 +483,11 @@ importScripts('utils.js');
 importScripts('../../lib/envelope.js');
 importScripts('../../lib/message.js');
 
-setupOffscreenDocument('/bg/offscreen.html');
+// WHY: a failed creation must not become an unhandled rejection at worker startup; the
+// offscreen document is recreated on demand, so only the reason is logged here.
+setupOffscreenDocument('/bg/offscreen.html').catch(error => {
+    console.error('Unable to create the offscreen document:', error && error.message);
+});
 globalThis.odh_serviceworker = new ODHServiceworker();
 
 // according to woxxom's reply on below stackoverflow discussion

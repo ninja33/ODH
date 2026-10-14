@@ -107,7 +107,7 @@ function settingsWorker({ stubScripts = true } = {}) {
         Builtin: class { loadData() {} },
         Deinflector: class { loadData() {} },
         importScripts() {},
-        setupOffscreenDocument() {},
+        setupOffscreenDocument: async () => {},
         setInterval() {}
     }, null, ['src/lib/envelope.js', 'src/lib/message.js']);
     const worker = new Worker();

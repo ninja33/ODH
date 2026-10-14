@@ -33,7 +33,7 @@
         ],
         "css": ["fg/css/client.css"]
     }],
-    "minimum_chrome_version": "110.0.0.0",
+    "minimum_chrome_version": "116.0.0.0",
     "options_ui": {
         "page": "bg/options.html"
     },

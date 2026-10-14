@@ -34,7 +34,7 @@ function workerFixture() {
         Builtin: class { loadData() {} },
         Deinflector: class { loadData() {} deinflect() { return ['synthetic'] } },
         importScripts() {},
-        setupOffscreenDocument() {},
+        setupOffscreenDocument: async () => {},
         setInterval() {}
     }, null, ['src/lib/envelope.js', 'src/lib/message.js']);
     return new Worker();

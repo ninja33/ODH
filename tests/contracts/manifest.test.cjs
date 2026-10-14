@@ -32,6 +32,14 @@ test('manifest uses MV3 with a classic service worker', () => {
     assert.equal(manifest.background.type ?? 'classic', 'classic');
 });
 
+// The worker calls chrome.runtime.getContexts and creates an offscreen document, both of which
+// Chrome documents as 116+. The declared floor has to match what the code calls, or the
+// extension is promised to users on builds where it cannot run at all. A deliberate bump is a
+// decision, so it must update this assertion rather than drift away from the manifest.
+test('the declared minimum Chrome version matches the APIs the extension calls', () => {
+    assert.equal(manifest.minimum_chrome_version, '116.0.0.0');
+});
+
 test('manifest entrypoints and sandbox pages exist', () => {
     for (const resource of [
         manifest.background.service_worker,
