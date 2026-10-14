@@ -6,6 +6,9 @@
 # dependencies
 /node_modules
 
+# Local toolchain: pinned Node for maintainer offline use (see tools/README.md)
+/tools/
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
