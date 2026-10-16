@@ -52,12 +52,12 @@ test('worker handlers answer with a success envelope, including a null value', a
     // A handler whose value is legitimately null must still be enveloped; the envelope is
     // what tells the consumer "this ran and produced null".
     let captured = null;
-    worker.offscreen_Deinflect({ word: 'synthetic', callback: value => { captured = value; } });
+    await worker.offscreen_Deinflect({ word: 'synthetic', callback: value => { captured = value; } });
     assert.deepEqual(okEnvelope(captured), ['synthetic']);
 
     captured = null;
     worker.builtin = { dicts: { collins: {} }, findTerm: () => null };
-    worker.offscreen_getBuiltin({ dict: 'collins', word: 'synthetic', callback: value => { captured = value; } });
+    await worker.offscreen_getBuiltin({ dict: 'collins', word: 'synthetic', callback: value => { captured = value; } });
     assert.equal(okEnvelope(captured), null, 'a null result must survive the envelope');
 
     captured = null;

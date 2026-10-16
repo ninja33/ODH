@@ -10,11 +10,24 @@ class ODHServiceworker {
 
         //setup lemmatizer
         this.deinflector = new Deinflector();
-        this.deinflector.loadData();
-
         //Setup builtin dictionary data
         this.builtin = new Builtin();
-        this.builtin.loadData();
+        // NOTE: loadData settles null on failure, so this never rejects.
+        this.dataReady = Promise.all([this.deinflector.loadData(), this.builtin.loadData()]);
+
+        // WHY: loaded here, not on demand: a restarted worker must recover without
+        // waiting for an announcement or a request (architecture defect 3).
+        this.optionsReady = (async () => {
+            try {
+                let options = await optionsLoad();
+                // WHY: a save that landed during the read is newer — do not overwrite it.
+                if (this.options) return;
+                await this.setupOptions(options);
+                this.options = options;
+            } catch (error) {
+                console.error(`Unable to load settings: ${error && error.message}`);
+            }
+        })();
 
         chrome.runtime.onMessage.addListener(this.onMessage.bind(this));
         chrome.runtime.onInstalled.addListener(this.onInstalled.bind(this));
@@ -25,6 +38,9 @@ class ODHServiceworker {
 
     async onCommand(command) {
         if (command != 'enabled') return;
+        // WHY: the constructor's read may still be in flight; toggling on null options
+        // used to throw and leave the shortcut dead.
+        if (!this.options) return;
         this.options.enabled = !this.options.enabled;
         this.setFrontendOptions(this.options);
         try {
@@ -46,6 +62,10 @@ class ODHServiceworker {
     }
 
     onTabReady(tabId) {
+        // WHY: a tab can become ready before the constructor's read lands; broadcasting
+        // null options used to throw inside the content script's handler. The next tab
+        // event carries the configuration.
+        if (!this.options) return;
         this.tabInvoke(tabId, {
             action:'setFrontendOptions', 
             params: { 
@@ -214,6 +234,9 @@ class ODHServiceworker {
 
     async offscreen_Deinflect(params) {
         let { word, callback } = params;
+        // WHY: a restarted worker's data load may still be running; answering now would
+        // read the dataset before it exists.
+        await this.dataReady;
         if (!this.deinflector) {
             callback(odhFail('missing-data', 'Deinflector is not loaded'));
             return;
@@ -223,6 +246,9 @@ class ODHServiceworker {
 
     async offscreen_getBuiltin(params) {
         let { dict, word, callback } = params;
+        // WHY: same pending data load as offscreen_Deinflect — the dictionaries may still
+        // be parsing.
+        await this.dataReady;
         if (!this.builtin || !this.builtin.dicts || !this.builtin.dicts[dict]) {
             // WHY: a failed data load used to make findTerm throw on an undefined dict,
             // which left the request unanswered.
@@ -243,15 +269,20 @@ class ODHServiceworker {
 
     async initBackend(params) {
         // Concurrent announcements must share one initialization: without this, two
-        // in-flight calls would both pass the rebuild guard and load every dictionary
-        // twice, then write the settings twice. The slot is released in finally, so a
-        // later sandbox document can still initialize.
+        // in-flight calls would both load every dictionary twice, then write the
+        // settings twice. The slot is released in finally, so a later sandbox document
+        // can still initialize.
         this.initInFlight ??= (async () => {
             try {
                 let options = await optionsLoad();
                 // A sandbox document announces itself here, so this is the fresh-start
                 // path: its dictionaries must be (re)built regardless of configuration.
-                await this.optionsChanged(options, { rebuildScripts: true });
+                // WHY: loaded here rather than through the save path, whose reload is
+                // conditional on a configuration change.
+                await this.setupScripts(options);
+                this.options = options;
+                await this.setScriptsOptions(this.options);
+                await optionsSave(this.options);
             } catch {
                 console.error('Unable to initialize settings.');
             } finally {
@@ -327,11 +358,8 @@ class ODHServiceworker {
     }
 
     // Option page and Brower Action page requests handlers.
-    // rebuildScripts: the caller knows the sandbox side is new (or was reset), so the
-    // scripts must be registered again even when the configuration itself is unchanged.
-    // The difference belongs to the entry, not to options: the options page has no way
-    // to know the sandbox's state, and must not be asked for it.
-    async optionsChanged(options, { rebuildScripts = false } = {}) {
+    // NOTE: applies only — the caller records this.options as its closing step.
+    async setupOptions(options) {
         this.setFrontendOptions(options);
 
         switch (options.services) {
@@ -347,24 +375,39 @@ class ODHServiceworker {
         }
         if (this.target !== null && typeof(this.target.initConnection) === 'function')
             await this.target.initConnection(options);
+    }
 
+    // NOTE: no flags — loading is the caller's condition, and the caller records
+    // this.options. Fixups land in place, on the passed options.
+    async setupScripts(options) {
         let defaultscripts = ['builtin_encn_Collins'];
         let newscripts = `${options.sysscripts},${options.udfscripts}`;
-        let loadresults = null;
+        const scriptsset = Array.from(new Set(defaultscripts.concat(newscripts.split(',').filter(x => x).map(x => x.trim()))));
+        let { loaded, failed } = await this.loadScripts(scriptsset);
+
+        let namelist = loaded.map(x => x.result.objectname);
+        if (namelist.length > 0 && !namelist.includes(options.dictSelected)) {
+            // WHY: the selection moves without any UI signal, so the console names the
+            // dictionary that could not be selected and the one that took over.
+            let reason = failed.some(x => x.name === options.dictSelected) ? 'failed to load' : 'is no longer configured';
+            console.info(`Dictionary ${options.dictSelected} ${reason}, switching to ${namelist[0]}`);
+            options.dictSelected = namelist[0];
+        }
+        options.dictNamelist = loaded.map(x => x.result);
+    }
+
+    async optionsChanged(options) {
         // WHY: this.options lives in the worker while the loaded dictionaries live in the
         // sandbox document. A reset sandbox has lost its dicts while this.options is still
         // set, so comparing configurations alone would skip the rebuild and leave it empty.
-        if (rebuildScripts || !this.options || (`${this.options.sysscripts},${this.options.udfscripts}` != newscripts)) {
-            const scriptsset = Array.from(new Set(defaultscripts.concat(newscripts.split(',').filter(x => x).map(x => x.trim()))));
-            loadresults = await this.loadScripts(scriptsset);
-        }
-
+        // WHY: !this.options covers a constructor load that failed or is still in flight
+        // — a popup toggle is itself the event that wakes the worker — so the first save
+        // forces a full rebuild.
+        const scriptsChanged = !this.options
+            || (`${this.options.sysscripts},${this.options.udfscripts}` != `${options.sysscripts},${options.udfscripts}`);
+        await this.setupOptions(options);
+        if (scriptsChanged) await this.setupScripts(options);
         this.options = options;
-        if (loadresults) {
-            let namelist = loadresults.map(x => x.result.objectname);
-            this.options.dictSelected = namelist.includes(options.dictSelected) ? options.dictSelected : namelist[0];
-            this.options.dictNamelist = loadresults.map(x => x.result);
-        }
         await this.setScriptsOptions(this.options);
         await optionsSave(this.options);
     }
@@ -435,9 +478,14 @@ class ODHServiceworker {
 
     // Sandbox API
     async loadScripts(list) {
-        let promises = list.map((name) => this.loadScript(name));
-        let results = await Promise.all(promises);
-        return results.filter(x => { if (x.result) return x.result; });
+        const settled = await Promise.allSettled(list.map((name) => this.loadScript(name)));
+        return settled.reduce((acc, result, index) => {
+            if (result.status === 'fulfilled')
+                acc.loaded.push(result.value);
+            else
+                acc.failed.push({ name: list[index], reason: result.reason });
+            return acc;
+        }, { loaded: [], failed: [] });
     }
 
     async loadScript(name) {

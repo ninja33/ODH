@@ -129,7 +129,7 @@ class Sandbox {
 
 window.sandbox = new Sandbox();
 document.addEventListener('DOMContentLoaded', () => {
-    // One-shot init trigger owned by this document; the offscreen still gates it
-    // once per document because sandbox code is not trusted to fire it repeatedly.
+    // NOTE: this document announces itself once, here. The worker single-flights
+    // concurrent frames; a replayed frame reloads the scripts (accepted residual).
     window.parent.postMessage({ action: 'initBackend', params: {} }, ODH_BACKGROUND_ORIGIN);
 }, false);

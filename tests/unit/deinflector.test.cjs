@@ -43,3 +43,14 @@ test('Deinflector lookup is exact and does not normalize input case', async () =
     assert.equal(deinflector.deinflect('WUGS'), null);
     assert.deepEqual(deinflector.deinflect('wugs'), ['wug']);
 });
+
+test('Deinflector returns null instead of throwing when the data load failed', async () => {
+    const Deinflector = loadClassic('src/bg/js/deinflector.js', 'Deinflector', {
+        fetch: async () => ({ ok: false, status: 404 })
+    });
+    const deinflector = new Deinflector();
+    await deinflector.loadData();
+    assert.equal(deinflector.wordforms, null);
+    // Reading the dataset used to throw here, which surfaced as an unanswered request.
+    assert.equal(deinflector.deinflect('wugs'), null);
+});

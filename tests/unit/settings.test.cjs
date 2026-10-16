@@ -102,7 +102,7 @@ function settingsWorker({ stubScripts = true } = {}) {
         clearTimeout,
         optionsLoad: storage.optionsLoad,
         optionsSave: storage.optionsSave,
-        console: { error(message) { diagnostics.push(message); }, log() {}, warn() {} },
+        console: { error(message) { diagnostics.push(message); }, info() {}, log() {}, warn() {} },
         Ankiconnect: class {},
         Builtin: class { loadData() {} },
         Deinflector: class { loadData() {} },
@@ -114,7 +114,7 @@ function settingsWorker({ stubScripts = true } = {}) {
     worker.options = { services: 'none', sysscripts: '', udfscripts: '', enabled: true };
     // This unit test covers storage acknowledgement, not the browser bridge.
     if (stubScripts) worker.setScriptsOptions = async () => odhOk(null);
-    worker.loadScripts = async () => [];
+    worker.loadScripts = async () => ({ loaded: [], failed: [] });
     return { ...storage, worker, diagnostics };
 }
 
@@ -220,9 +220,10 @@ test('initialization filters dictionary settings while preserving stored legacy 
         id: 'synthetic-account', password: 'synthetic-sensitive-value',
         ankiconnecturl: 'http://127.0.0.1:18765', maxexample: '1', legacyField: 'keep'
     });
-    fixture.worker.loadScripts = async () => [{
-        result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic dictionary' }
-    }];
+    fixture.worker.loadScripts = async () => ({
+        loaded: [{ result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic dictionary' } }],
+        failed: []
+    });
     fixture.chrome.runtime.sendMessage = async request => {
         requests.push(structuredClone(request));
         return odhOk(request.params.options.dictSelected);
@@ -342,7 +343,7 @@ test('concurrent initBackend calls share a single initialization', async () => {
     fixture.worker.loadScripts = () => {
         loads += 1;
         return new Promise(resolve => {
-            releaseLoad = () => resolve([{ result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic' } }]);
+            releaseLoad = () => resolve({ loaded: [{ result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic' } }], failed: [] });
         });
     };
 
@@ -381,7 +382,7 @@ test('initBackend rebuilds dictionary scripts even when the configuration is unc
     let loads = 0;
     fixture.worker.loadScripts = async () => {
         loads += 1;
-        return [{ result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic' } }];
+        return { loaded: [{ result: { objectname: 'synthetic_dictionary', displayname: 'Synthetic' } }], failed: [] };
     };
 
     await fixture.worker.initBackend({ callback() {} });
@@ -391,6 +392,10 @@ test('initBackend rebuilds dictionary scripts even when the configuration is unc
     await fixture.worker.initBackend({ callback() {} });
     assert.equal(loads, 2, 'a re-announcing sandbox is rebuilt even without a config change');
 
+    // The worker's baseline comes from the constructor's own read, so the first save
+    // establishes it; an unchanged repeat is what must not reload.
     await fixture.worker.options_optionsChanged({ options: { ...options }, callback() {} });
-    assert.equal(loads, 2, 'saving an unchanged configuration does not reload the scripts');
+    const loadsAfterFirstSave = loads;
+    await fixture.worker.options_optionsChanged({ options: { ...options }, callback() {} });
+    assert.equal(loads, loadsAfterFirstSave, 'saving an unchanged configuration does not reload the scripts');
 });
