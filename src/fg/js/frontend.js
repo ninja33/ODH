@@ -259,7 +259,7 @@ class ODHFrontend {
                 <link rel="stylesheet" href="${root+'fg/css/frame.css'}">
                 <link rel="stylesheet" href="${root+'fg/css/spell.css'}">
             </head>
-            <body style="margin:0px;">
+            <body>
             <div class="odh-notes">`;
     }
 

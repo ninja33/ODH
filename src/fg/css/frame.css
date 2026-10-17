@@ -1,3 +1,10 @@
+/* WHY: the popup body margin lives here, not as an inline style attribute — inline
+   styles are blocked by a strict host page CSP (style-src without 'unsafe-inline'),
+   which used to leave the popup content offset on such sites. */
+body {
+  margin: 0;
+}
+
 .odh-notes {
   font-family: 'Open Sans', Helvetica, Arial, 'Microsoft Yahei', Sans-serif;
   /*font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, 'Microsoft Yahei', sans-serif;*/
