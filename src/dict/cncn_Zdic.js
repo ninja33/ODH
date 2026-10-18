@@ -33,6 +33,20 @@ class cncn_Zdic {
         });
     }
 
+    renderCSS() {
+        return `<style>
+        .xxjs-list {margin:0; padding-left:1.4em;}
+        .xxjs-item {margin:4px 0;}
+        .xxjs-item__def {line-height:1.6;}
+        .xxjs-citation {margin:2px 0 2px .5em; padding-left:8px; border-left:2px solid #e0e0e0; color:#666; font-size:.9em;}
+        .xxjs-citation__list {display:inline; margin:0; padding:0; list-style:none;}
+        .xxjs-citation__item {display:inline; margin:0; padding:0;}
+        .xxjs-citation__source {color:#999;}
+        .xxjs-block-label {color:#999; font-size:.85em; margin-right:4px;}
+        .xxjs-english {color:#555; font-size:.9em; margin:2px 0 2px .5em;}
+        </style>`;
+    }
+
     async findZdic(word) {
         let notes = [];
         if (!word) return notes; // return empty notes
@@ -47,13 +61,21 @@ class cncn_Zdic {
             return [];
         }
 
-        let jbjs = doc.querySelector('.jbjs') || ''; // basic explaination
-        //let xxjsContent = doc.querySelector('.res_c_center') || '';
-        if (jbjs) {
-            this.removeTags(jbjs,'.zib-title'); 
-            this.removeTags(jbjs,'.h2_entry'); 
-            this.removeTags(jbjs,'.am-default.contentslot');
-            return jbjs.innerHTML;
+        let content = doc.querySelector('.dict-section__body') || ''; // detailed explanation
+        if (content) {
+            let reading = '';
+            let head = content.querySelector('.xxjs-reading-head');
+            if (head) {
+                let py = head.querySelector('.xxjs-reading__py');
+                reading = py ? py.textContent.replace(/\s+/g, ' ').trim() : '';
+            }
+
+            this.removeTags(content, '.xxjs-reading-head, .ad-wrapper, .adsbygoogle, .feedback-link');
+            return [{
+                css: this.renderCSS(),
+                reading,
+                definitions: [content.innerHTML]
+            }];
         } else {
             return [];
         }
