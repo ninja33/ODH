@@ -83,7 +83,7 @@ function populateSysScriptsList(dictLibrary) {
     let systemscripts = [
         'builtin_encn_Collins', 'general_Makenotes',//default & builtin script
         'cncn_Zdic', //cn-cn dictionary
-        'encn_Collins', 'encn_Cambridge', 'encn_Cambridge_tc', 'encn_Oxford', 'encn_Youdao', 'encn_Baicizhan', //en-cn dictionaries
+        'encn_Collins', 'encn_Cambridge', 'encn_Cambridge_tc', 'encn_Oxford', 'encn_Youdao', //en-cn dictionaries
         'enen_Collins', 'enen_LDOCE6MDX', 'enen_UrbanDict', //en-en dictionaries
         'enfr_Cambridge', 'enfr_Collins', //en-fr dictionaries
         'fren_Cambridge', 'fren_Collins', //fr-cn dictionaries

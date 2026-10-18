@@ -8,7 +8,6 @@
 |---|---|---|---|
 |EN|CN|OLCC(*)四合一词典|encn_List|
 |EN|CN|有道英汉简明词典|encn_Youdao|
-|EN|CN|百词斩英汉图文词典|encn_Baicizhan|
 |EN|CN|牛津英汉双解词典|encn_Oxford|
 |EN|CN|朗文英汉双解词典|encn_Longman|
 |EN|CN|柯林斯英汉双解词典|encn_Collins|

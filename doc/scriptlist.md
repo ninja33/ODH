@@ -10,7 +10,6 @@ Here is a list of the existing dictionary scripts. You can copy the script name 
 |---|---|---|---|
 |EN|CN|Bundle|encn_List|
 |EN|CN|Youdao|encn_Youdao|
-|EN|CN|Baicizhan|encn_Baicizhan|
 |EN|CN|Oxford|encn_Oxford|
 |EN|CN|Longman|encn_Longman|
 |EN|CN|Collins|encn_Collins|

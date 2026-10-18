@@ -79,7 +79,6 @@
     "builtin_encn_Collins": { "message": "柯林斯英漢詞典(內置)" },
     "builtin_encn_Oxford": { "message": "牛津英漢詞典(內置)" },
     "cncn_Zdic": { "message": "漢典漢語詞典" },
-    "encn_Baicizhan": { "message": "百詞斬英漢圖解詞典" },
     "encn_Cambridge": { "message": "劍橋英漢雙解詞典(簡體)" },
     "encn_Cambridge_tc": { "message": "劍橋英漢雙解詞典(繁體)" },
     "encn_Collins": { "message": "柯林斯英漢雙解詞典" },

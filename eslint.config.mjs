@@ -24,7 +24,6 @@ const classicExports = {
     'src/dict/builtin_encn_Collins.js': ['builtin_encn_Collins'],
     'src/dict/cncn_Zdic.js': ['cncn_Zdic'],
     'src/dict/decn_Eudict.js': ['decn_Eudict'],
-    'src/dict/encn_Baicizhan.js': ['encn_Baicizhan'],
     'src/dict/encn_Cambridge.js': ['encn_Cambridge'],
     'src/dict/encn_Cambridge_tc.js': ['encn_Cambridge_tc'],
     'src/dict/encn_Collins.js': ['encn_Collins'],
