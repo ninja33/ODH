@@ -23,9 +23,11 @@
     "content_scripts": [{
         "matches": ["*://*/*", "file://*/*"],
         "js": [
-            "lib/envelope.js",
-            "lib/message.js",
-            "fg/js/popup.js",
+         "lib/envelope.js",
+         "lib/message.js",
+         "lib/purify-3.4.11.min.js",
+         "lib/sanitize.js",
+         "fg/js/popup.js",
             "fg/js/range.js",
             "fg/js/text.js",
             "fg/js/frontend_api.js",
@@ -47,6 +49,7 @@
                 "fg/css/frame.css",
                 "fg/css/spell.css",
                 "fg/js/frame.js",
+                "fg/js/frame_style.js",
                 "fg/js/spell.js",
                 "fg/font/spell-icons.ttf",
                 "fg/font/spell-icons.woff",

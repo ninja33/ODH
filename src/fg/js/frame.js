@@ -1,10 +1,10 @@
-/* global spell */
+/* global spell, filterDictionaryStyles */
 function getImageSource(id) {
     return document.querySelector(`#${id}`).src;
 }
 
 function registerAddNoteLinks() {
-    for (let link of document.getElementsByClassName('odh-addnote')) {
+    for (let link of document.querySelectorAll('[data-odh-control="add"]')) {
         link.addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -23,7 +23,7 @@ function registerAddNoteLinks() {
 }
 
 function registerAudioLinks() {
-    for (let link of document.getElementsByClassName('odh-playaudio')) {
+    for (let link of document.querySelectorAll('[data-odh-control="audio"]')) {
         link.addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -40,7 +40,7 @@ function registerAudioLinks() {
 }
 
 function registerSoundLinks() {
-    for (let link of document.getElementsByClassName('odh-playsound')) {
+    for (let link of document.querySelectorAll('[data-odh-control="sound"]')) {
         link.setAttribute('src', getImageSource('play'));
         link.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -81,6 +81,7 @@ function hideTranslation(){
 }
 
 function onDomContentLoaded() {
+    filterDictionaryStyles();
     registerAddNoteLinks();
     registerAudioLinks();
     registerSoundLinks();
@@ -105,7 +106,7 @@ function api_setActionState(result) {
     const { response, params } = result;
     const { nindex, dindex } = params;
 
-    const match = document.querySelector(`.odh-addnote[data-nindex="${nindex}"].odh-addnote[data-dindex="${dindex}"]`);
+    const match = document.querySelector(`[data-odh-control="add"][data-nindex="${nindex}"][data-dindex="${dindex}"]`);
     if (response)
         match.src = getImageSource('good');
     else

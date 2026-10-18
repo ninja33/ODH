@@ -65,6 +65,10 @@ test('content scripts preserve the classic global dependency order', () => {
         'lib/envelope.js',
         // message.js builds on the envelope, so it must load after it and before any client.
         'lib/message.js',
+        // DOMPurify and the M07 sanitize module load before frontend.js, whose
+        // buildNote() sanitizes dictionary results (stage 7.2 wires the call).
+        'lib/purify-3.4.11.min.js',
+        'lib/sanitize.js',
         'fg/js/popup.js',
         'fg/js/range.js',
         'fg/js/text.js',
@@ -173,15 +177,20 @@ test('every declared classic script path resolves to a real file', () => {
 const libExports = {
     'lib/envelope.js': ['odhErrorMessage', 'odhLog', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap'],
     'lib/message.js': ['ODH_DEFAULT_REQUEST_TIMEOUT_MS', 'ODH_DICTIONARY_FETCH_TIMEOUT_MS', 'odhWithTimeout', 'odhSendMessage', 'odhPostMessage', 'TO_WORKER', 'TO_OFFSCREEN', 'TO_FRONTEND'],
-    'lib/agent.js': ['Agent']
+    'lib/agent.js': ['Agent'],
+    'lib/purify-3.4.11.min.js': ['DOMPurify'],
+    'lib/sanitize.js': ['sanitizeNote', 'odhSanitizeHtml', 'odhSanitizeAudioUrl']
 };
 
 // A lib file can itself use another one, so the order among them matters too: message.js calls
-// the envelope's helpers, which only exist if envelope.js ran first.
+// the envelope's helpers, which only exist if envelope.js ran first; sanitize.js calls
+// DOMPurify, which only exists if the vendored file ran first.
 const libRequires = {
     'lib/message.js': ['lib/envelope.js'],
     'lib/envelope.js': [],
-    'lib/agent.js': []
+    'lib/agent.js': [],
+    'lib/purify-3.4.11.min.js': [],
+    'lib/sanitize.js': ['lib/purify-3.4.11.min.js']
 };
 
 function scriptSource(relative) {

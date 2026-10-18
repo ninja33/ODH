@@ -7,6 +7,8 @@ const classicExports = {
     'src/lib/agent.js': ['Agent'],
     'src/lib/envelope.js': ['odhErrorMessage', 'odhLog', 'odhError', 'odhOk', 'odhFail', 'odhIsEnvelope', 'odhUnwrap'],
     'src/lib/message.js': ['ODH_DEFAULT_REQUEST_TIMEOUT_MS', 'ODH_DICTIONARY_FETCH_TIMEOUT_MS', 'odhWithTimeout', 'odhSendMessage', 'odhPostMessage', 'TO_WORKER', 'TO_OFFSCREEN', 'TO_FRONTEND'],
+    'src/lib/sanitize.js': ['sanitizeNote', 'odhSanitizeHtml', 'odhSanitizeAudioUrl'],
+    'src/fg/js/frame_style.js': ['filterDictionaryStyles'],
     'src/bg/js/ankiconnect.js': ['Ankiconnect'],
     'src/bg/js/builtin.js': ['Builtin'],
     'src/bg/js/deinflector.js': ['Deinflector'],
@@ -21,7 +23,6 @@ const classicExports = {
     'src/fg/js/spell.js': ['spell'],
     'src/dict/builtin_encn_Collins.js': ['builtin_encn_Collins'],
     'src/dict/cncn_Zdic.js': ['cncn_Zdic'],
-    'src/dict/cncn_Zdic_old.js': ['cncn_Zdic'],
     'src/dict/decn_Eudict.js': ['decn_Eudict'],
     'src/dict/encn_Baicizhan.js': ['encn_Baicizhan'],
     'src/dict/encn_Cambridge.js': ['encn_Cambridge'],
@@ -50,13 +51,19 @@ const classicExports = {
 export default [
     {
         ignores: [
-            '.agent/**',
+            // .agents/ holds local plans, rules and smoke-test material: not tracked by this
+            // repository and never shipped. Without this entry `npm run lint` walks the whole
+            // prototype copy of the extension under .agents/experiments/.
+            '.agents/**',
             'src/bg/data/**',
             // Vendored dictionaries are eval-loaded third-party scripts; their
             // class names are persisted dictionary IDs, so they are excluded
             // from hygiene checks until they are migrated one by one.
             'src/dict/**',
             'src/lib/jquery-3.0.0.min.js',
+            // Vendored DOMPurify 3.4.11 (Apache-2.0 / MPL-2.0, cure53, tag 3.4.11,
+            // sha256 dbabb5b2…); minified third-party file, used as-is.
+            'src/lib/purify-3.4.11.min.js',
             // Minified third-party hash helper (single line, single-letter names);
             // it is used as-is and never edited here.
             'src/bg/sandbox/sign.js',
