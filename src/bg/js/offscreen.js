@@ -19,7 +19,11 @@ class ODHOffscreen {
 
         const audio = this.audios[url] || new Audio(url);
         audio.currentTime = 0;
-        audio.play();
+        // WHY: play() returns a promise that rejects when the source cannot be played — a
+        // decode failure, or a host that refuses the request because it wants a Referer we
+        // are not allowed to set. Left unhandled it surfaced in the offscreen console as an
+        // uncaught error and buried the real cause, so report it with the URL that failed.
+        audio.play().catch((error) => console.warn('Audio playback failed:', url, error && error.name));
         this.audios[url] = audio;
     }
     // message exchange for both servicework and sandbox start from here ...

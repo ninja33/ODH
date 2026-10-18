@@ -1,4 +1,4 @@
-/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isValidElement */
+/* global Popup, rangeFromPoint, TextSourceRange, selectedText, isEmpty, getSentence, isValidElement, sanitizeNote */
 // Actions the popup frame may ask the content script to perform.
 const ODH_FRAME_ACTIONS = ['addNote', 'playAudio', 'playSound'];
 
@@ -178,7 +178,11 @@ class ODHFrontend {
 
         const audio = this.audio[url] || new Audio(url);
         audio.currentTime = 0;
-        audio.play();
+        // WHY: play() returns a promise that rejects when the source cannot be played — a
+        // decode failure, or a host that refuses the request because it wants a Referer we
+        // are not allowed to set. Left unhandled it surfaced as an uncaught error in the host
+        // page console and buried the real cause, so report it with the URL that failed.
+        audio.play().catch((error) => console.warn('Sound playback failed:', url, error && error.name));
 
         this.audio[url] = audio;
     }
@@ -205,11 +209,12 @@ class ODHFrontend {
                 for (const key in tmpl) {
                     item[key] = item[key] ? item[key] : tmpl[key];
                 }
+                sanitizeNote(item);
             }
             return result;
         } else { // if 'result' is simple string, then return standard template.
             tmpl['definitions'] = [].concat(result);
-            return [tmpl];
+            return [sanitizeNote(tmpl)];
         }
 
     }
@@ -221,7 +226,7 @@ class ODHFrontend {
         let imageclass = '';
         if (services != 'none') {
             image = (services == 'ankiconnect') ? 'plus.png' : 'cloud.png';
-            imageclass = await frontend_api.isConnected() ? 'class="odh-addnote"' : 'class="odh-addnote-disabled"';
+            imageclass = await frontend_api.isConnected() ? 'class="odh-addnote" data-odh-control="add"' : 'class="odh-addnote-disabled"';
         }
 
         for (const [nindex, note] of notes.entries()) {
@@ -230,7 +235,7 @@ class ODHFrontend {
             if (note.audios) {
                 for (const [dindex, audio] of note.audios.entries()) {
                     if (audio)
-                        audiosegment += `<img class="odh-playaudio" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/play.png')}"/>`;
+                        audiosegment += `<img class="odh-playaudio" data-odh-control="audio" data-nindex="${nindex}" data-dindex="${dindex}" src="${chrome.runtime.getURL('fg/img/play.png')}"/>`;
                 }
             }
             content += `
@@ -282,6 +287,7 @@ class ODHFrontend {
                 <div id="monolingual">${monolingual}</div>
                 </div>
             <script src="${root+'fg/js/spell.js'}"></script>
+            <script src="${root+'fg/js/frame_style.js'}"></script>
             <script src="${root+'fg/js/frame.js'}"></script>
             </body>
         </html>`;
