@@ -65,8 +65,8 @@ test('content scripts preserve the classic global dependency order', () => {
         'lib/envelope.js',
         // message.js builds on the envelope, so it must load after it and before any client.
         'lib/message.js',
-        // DOMPurify and the M07 sanitize module load before frontend.js, whose
-        // buildNote() sanitizes dictionary results (stage 7.2 wires the call).
+        // DOMPurify and the sanitize module load before frontend.js, whose
+        // buildNote() sanitizes dictionary results.
         'lib/purify-3.4.11.min.js',
         'lib/sanitize.js',
         'fg/js/popup.js',

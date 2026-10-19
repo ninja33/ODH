@@ -436,14 +436,14 @@ test('content script accepts frame actions only from the pinned popup frame', ()
     assert.deepEqual(calls, [params]);
 });
 
-// The host page can forge event.source by dispatching its own MessageEvent, and a real
-// window.postMessage stays trusted. dispatchEvent() is what separates the two.
-test('content script rejects a synthesized frame event even with the right source', () => {
+// isTrusted is what separates a browser-dispatched message from an event a script
+// dispatches itself; the source alone does not, since either can name this window.
+test('content script rejects a frame event the page dispatched itself', () => {
     const { window, frameWin, calls } = frontendFixture();
     const params = { nindex: 0, dindex: 0, context: 'synthetic' };
 
     window.emit({ isTrusted: false, source: frameWin, data: { action: 'addNote', params } });
-    assert.deepEqual(calls, [], 'forged source is not enough; the untrusted flag gives it away');
+    assert.deepEqual(calls, [], 'the source matches, but the event was not browser-dispatched');
 
     window.emit({ source: frameWin, data: { action: 'addNote', params } });
     assert.deepEqual(calls, [params], 'the real frame message is still accepted');

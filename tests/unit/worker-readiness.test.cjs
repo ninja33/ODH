@@ -150,7 +150,7 @@ test('setupScripts always loads the configured set and fixes up the selection', 
     await fixture.worker.setupScripts(options);
 
     // The script set and the namelist are built inside the loaded realm, so they are
-    // normalised before comparing (M09 VM realm lesson).
+    // normalised before comparing.
     assert.equal(fixture.loads.length, 1);
     assert.deepEqual(Array.from(fixture.loads[0]), ['builtin_encn_Collins', 'synthetic_script']);
     assert.equal(options.dictSelected, 'synthetic_dictionary', 'an unloadable selection falls back');

@@ -14,8 +14,8 @@ class Ankiconnect {
         // WHY: the deadline bounds this request, not the caller's wait: a black-hole endpoint
         // used to hold the bridge's 8s reply budget instead of failing here. An abort makes
         // the in-flight fetch reject, so a timeout takes the existing catch below and the call
-        // still settles as null, the contract every caller branches on. Distinguishing a write
-        // that timed out from one that failed belongs to the reliability task (M12).
+        // still settles as null, the contract every caller branches on. Callers therefore see
+        // the same null for a request that timed out and for one that failed.
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), timeout);
         try {
