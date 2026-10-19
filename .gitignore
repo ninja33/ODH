@@ -32,6 +32,8 @@
 # Agent workspace and local instructions
 /.agents/
 /AGENTS.md
+/.codebuddy/
+/CODEBUDDY.md
 
 # Credentials
 *.key

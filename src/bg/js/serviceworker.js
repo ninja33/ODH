@@ -67,9 +67,9 @@ class ODHServiceworker {
         // event carries the configuration.
         if (!this.options) return;
         this.tabInvoke(tabId, {
-            action:'setFrontendOptions', 
-            params: { 
-                options: this.options 
+            action:'setFrontendOptions',
+            params: {
+                options: this.options
             }
         });
     }
@@ -130,7 +130,7 @@ class ODHServiceworker {
         }
 
         let tags = options.tags.trim();
-        if (tags.length > 0) 
+        if (tags.length > 0)
             note.tags = tags.split(' ');
 
         if (options.audio && notedef.audios.length > 0) {
@@ -538,8 +538,7 @@ setupOffscreenDocument('/bg/offscreen.html').catch(error => {
 });
 globalThis.odh_serviceworker = new ODHServiceworker();
 
-// according to woxxom's reply on below stackoverflow discussion
-// https://stackoverflow.com/questions/66618136/persistent-service-worker-in-chrome-extension
+// Removing the timer was tried and measured; it stays to keep the established behaviour.
 const keepAlive = () => setInterval(chrome.runtime.getPlatformInfo, 20e3);
 chrome.runtime.onStartup.addListener(keepAlive);
 keepAlive();

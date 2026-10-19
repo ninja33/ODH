@@ -20,7 +20,7 @@ function ankiFixture(responses = [], { fetch: fetchImpl, seen = [] } = {}) {
         requests.push(JSON.parse(init.body));
         const response = responses.shift();
         if (response === 'reject') throw new Error('Failed to fetch');
-        return { json: async () => response };
+        return { ok: true, json: async () => response };
     };
     const Ankiconnect = loadClassic('src/bg/js/ankiconnect.js', 'Ankiconnect', {
         AbortController,
@@ -112,4 +112,55 @@ test('a fast reply leaves no deadline behind', async () => {
     assert.equal(await anki.getVersion(), 6);
     assert.equal(timers.pending.size, 0, 'the deadline must be cleared once the reply is in');
     assert.equal(seen[0].init.signal.aborted, false, 'a settled request must not be aborted');
+});
+
+// A gateway or proxy error used to reach json() and surface as a parse failure, so "the server
+// answered 502" and "the body was not JSON" produced the same line. The status is now read before
+// parsing, and the call still settles as null.
+test('an HTTP error status is named on the line and still settles as null', async () => {
+    const { Ankiconnect, logged } = ankiFixture([], {
+        fetch: async () => ({
+            ok: false,
+            status: 502,
+            json: async () => ({ error: null, result: 6 })
+        })
+    });
+    const anki = new Ankiconnect();
+
+    assert.equal(await anki.addNote({ deckName: 'synthetic' }), null);
+    assert.ok(
+        logged.some(line => line.includes('HTTP 502') && line.includes('(http-status)')),
+        `the status and its classification belong on one line: ${logged.join(' | ')}`);
+});
+
+// A body that is not JSON at all is a different fault from an HTTP status, and the two used to be
+// indistinguishable. The error is built in the test realm, so the classification relies on the
+// error's name rather than on an instanceof check.
+test('a body that is not JSON is named as such and still settles as null', async () => {
+    const { Ankiconnect, logged } = ankiFixture([], {
+        fetch: async () => ({
+            ok: true,
+            json: async () => { throw new SyntaxError('Unexpected token < in JSON at position 0'); }
+        })
+    });
+    const anki = new Ankiconnect();
+
+    assert.equal(await anki.addNote({ deckName: 'synthetic' }), null);
+    assert.ok(
+        logged.some(line => line.includes('(invalid-json)')),
+        `an unparsable body is its own classification: ${logged.join(' | ')}`);
+});
+
+// AnkiConnect reports its own failures inside the payload with HTTP 200, so this is the branch
+// that carries Anki's own message; tagging it keeps that message and the reason together.
+test("Anki's own error field is named on the line and still settles as null", async () => {
+    const { Ankiconnect, logged } = ankiFixture([
+        { error: 'deck was not found: Default', result: null }
+    ]);
+    const anki = new Ankiconnect();
+
+    assert.equal(await anki.addNote({ deckName: 'synthetic' }), null);
+    assert.ok(
+        logged.some(line => line.includes('deck was not found') && line.includes('(anki-error)')),
+        `Anki's message and its classification belong on one line: ${logged.join(' | ')}`);
 });

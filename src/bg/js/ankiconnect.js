@@ -28,6 +28,13 @@ class Ankiconnect {
                 body: JSON.stringify(request),
                 signal: controller.signal
             });
+            // WHY: a gateway or proxy error used to reach json() and surface as a parse failure,
+            // so "the server answered 502" and "the body was not JSON" read the same in the log.
+            // The status is read before parsing, and the throw carries the reason so the single
+            // reporting path in the catch can name it. The endpoint stays out of the line.
+            if (!rawResponse.ok) {
+                throw { odhReason: 'http-status', message: `HTTP ${rawResponse.status}` };
+            }
             const response = await rawResponse.json();
 
             if (Object.getOwnPropertyNames(response).length != 2) {
@@ -43,7 +50,10 @@ class Ankiconnect {
                 throw 'response is missing required result field';
             }
             if (response.error) {
-                throw response.error;
+                // WHY: AnkiConnect answers 200 and reports its own failure in the payload, so this
+                // is the branch that carries Anki's message. Tagging it keeps that message and
+                // the reason on the same line; the text logged is unchanged.
+                throw { odhReason: 'anki-error', message: response.error };
             }
             return response.result;
         } catch (error) {
@@ -52,11 +62,17 @@ class Ankiconnect {
             // the reason is still known, unless the caller passed quiet: a presence probe gets
             // "Anki is not running" as a normal answer, and one line per lookup would bury the
             // rest of the console. The endpoint stays out of the line; AnkiConnect's own message
-            // says enough. An abort is this deadline firing rather than a refused connection, so
-            // the line names it as a timeout.
+            // says enough.
             const aborted = Boolean(error && error.name === 'AbortError');
+            // WHY: the deadline firing is named a timeout, and the two tagged throws and an
+            // unparsable body name themselves. A refused connection keeps no label, as before:
+            // its own message already says what happened. The name is compared rather than
+            // `instanceof SyntaxError` because an injected error can come from another realm.
+            const reason = aborted ? 'timeout'
+                : (error && error.odhReason) ? error.odhReason
+                    : (error && error.name === 'SyntaxError') ? 'invalid-json' : undefined;
             if (!quiet) {
-                console.error('Anki request failed:', odhLog(action, error, aborted ? 'timeout' : undefined));
+                console.error('Anki request failed:', odhLog(action, error, reason));
             }
             return null;
         } finally {
