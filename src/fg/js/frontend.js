@@ -138,10 +138,13 @@ class ODHFrontend {
     }
 
     onFrameMessage(e) {
-        // The popup frame shares this page's origin, so only the pinned frame
-        // window and the known actions are accepted. Full isolation is M06/M07.
+        // Accept a message only when it is a browser-dispatched event, it came from the
+        // pinned popup frame, and it names an action we expose. isTrusted separates the
+        // cases that source and origin cannot: postMessage carries the flag, an event a
+        // script dispatches on its own window does not, so requiring it keeps the action
+        // list reachable from the frame's own postMessage calls.
         const iframe = this.popup.popup;
-        if (!iframe || e.source !== iframe.contentWindow || !ODH_FRAME_ACTIONS.includes(e.data?.action))
+        if (!iframe || !e.isTrusted || e.source !== iframe.contentWindow || !ODH_FRAME_ACTIONS.includes(e.data?.action))
             return;
 
         const { action, params } = e.data;
@@ -178,10 +181,9 @@ class ODHFrontend {
 
         const audio = this.audio[url] || new Audio(url);
         audio.currentTime = 0;
-        // WHY: play() returns a promise that rejects when the source cannot be played — a
-        // decode failure, or a host that refuses the request because it wants a Referer we
-        // are not allowed to set. Left unhandled it surfaced as an uncaught error in the host
-        // page console and buried the real cause, so report it with the URL that failed.
+        // WHY: play() returns a promise that rejects when the source cannot be played — an
+        // undecodable file, or a host that only answers requests carrying a Referer, which
+        // scripts cannot set. Report the URL instead of leaving the rejection unhandled.
         audio.play().catch((error) => console.warn('Sound playback failed:', url, error && error.name));
 
         this.audio[url] = audio;

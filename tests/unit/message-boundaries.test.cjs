@@ -18,7 +18,10 @@ function windowStub() {
             if (type === 'message') listeners.push(listener);
         },
         emit(event) {
-            for (const listener of listeners.slice()) listener(event);
+            // A real window.postMessage is dispatched by the browser and keeps isTrusted;
+            // dispatchEvent() forces it to false. Tests pass isTrusted: false explicitly to
+            // stand in for a host-synthesized event.
+            for (const listener of listeners.slice()) listener({ isTrusted: true, ...event });
         }
     };
 }
@@ -431,6 +434,19 @@ test('content script accepts frame actions only from the pinned popup frame', ()
 
     window.emit({ source: frameWin, data: { action: 'addNote', params } });
     assert.deepEqual(calls, [params]);
+});
+
+// The host page can forge event.source by dispatching its own MessageEvent, and a real
+// window.postMessage stays trusted. dispatchEvent() is what separates the two.
+test('content script rejects a synthesized frame event even with the right source', () => {
+    const { window, frameWin, calls } = frontendFixture();
+    const params = { nindex: 0, dindex: 0, context: 'synthetic' };
+
+    window.emit({ isTrusted: false, source: frameWin, data: { action: 'addNote', params } });
+    assert.deepEqual(calls, [], 'forged source is not enough; the untrusted flag gives it away');
+
+    window.emit({ source: frameWin, data: { action: 'addNote', params } });
+    assert.deepEqual(calls, [params], 'the real frame message is still accepted');
 });
 
 test('content script ignores frame actions outside its list', () => {
