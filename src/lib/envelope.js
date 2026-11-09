@@ -20,8 +20,8 @@ const ODH_ERROR_KINDS = [
     'not-found',      // looked up but genuinely absent (the dictionary has no such term)
     'not-ready',      // initialization unfinished / no dictionary selected yet
     'missing-data',   // a required data file did not load
-    'network',        // fetch failed, or the runtime channel failed
-    'handler-error',  // a handler threw (including inside a dictionary script)
+    'network',        // the fetch or the runtime channel failed, or the address was refused
+    'handler-error',  // the handler itself failed: it threw, or it actively refused the call
     'timeout',        // reserved: the request timeout task
     'unknown'         // final fallback
 ];

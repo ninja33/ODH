@@ -165,6 +165,7 @@ function workerFixture({ fetch: fetchImpl, timers: timerPair } = {}) {
         setTimeout: timers.setTimeout,
         clearTimeout: timers.clearTimeout,
         AbortController,
+        URL,
         ...(fetchImpl ? { fetch: fetchImpl } : {}),
         optionsLoad: async () => ({}),
         optionsSave: async () => {},
@@ -555,4 +556,120 @@ test('the dictionary fetch deadline stays below the caller reply budget', () => 
         'the deadline is a positive number of milliseconds');
     assert.ok(ODH_DICTIONARY_FETCH_TIMEOUT_MS < ODH_DEFAULT_REQUEST_TIMEOUT_MS,
         `the dictionary deadline (${ODH_DICTIONARY_FETCH_TIMEOUT_MS}) must stay below the reply budget (${ODH_DEFAULT_REQUEST_TIMEOUT_MS})`);
+});
+
+// --- dictionary fetch entry allowlist ---------------------------------------------------
+// The script URL field and dictionary scripts both accept arbitrary text, so offscreen_Fetch
+// is where a URL first becomes something concrete. These cases pin what it may reach.
+
+// The reply is classified by kind like any other failure, and the request must not reach
+// fetch at all: a refusal is decided before the network is touched.
+async function fetchReplyFor(url, options = {}) {
+    const seen = [];
+    const timers = fakeTimers();
+    const { worker } = workerFixture({
+        fetch: async (called, init) => { seen.push({ url: called, init }); return { ok: true, text: async () => 'body' }; },
+        timers,
+        ...options
+    });
+    const responses = [];
+    await worker.offscreen_Fetch({ url, callback: value => responses.push(value) });
+    return { responses, seen, worker };
+}
+
+test('a dictionary fetch refuses protocols outside http, https and the extension origin', async () => {
+    for (const url of ['file:///etc/passwd', 'data:text/html,x', 'javascript:alert(1)']) {
+        const { responses, seen } = await fetchReplyFor(url);
+        assert.equal(responses.length, 1, `${url} must be answered exactly once`);
+        assert.equal(errorKindOf(responses[0]), 'network', `${url} is a classified refusal`);
+        assert.deepEqual(seen, [], `${url} must not reach fetch`);
+    }
+});
+
+// Another extension's resource is not one of ours, and '//host/x.js' lands on that same
+// shape once it is resolved against the extension origin instead of becoming an http URL.
+test('a dictionary fetch refuses chrome-extension URLs that are not this extension', async () => {
+    for (const url of ['chrome-extension://other-extension-id/x.js', '//other-extension-id/x.js']) {
+        const { responses, seen } = await fetchReplyFor(url);
+        assert.equal(errorKindOf(responses[0]), 'network', `${url} must be refused`);
+        assert.deepEqual(seen, [], `${url} must not reach fetch`);
+    }
+});
+
+// The regression guard that matters most: every built-in dictionary script loads through
+// this same call with a relative path, so refusing the extension origin would break all of
+// them at once while every other case still passed.
+test('a dictionary fetch allows this extension\'s own built-in script path', async () => {
+    const { responses, seen } = await fetchReplyFor('/dict/cncn_Zdic.js');
+    assert.equal(responses.length, 1);
+    assert.equal(responses[0].ok, true);
+    assert.equal(seen.length, 1, 'a built-in script must reach fetch');
+    assert.equal(seen[0].url, '/dict/cncn_Zdic.js', 'the path is passed through unchanged');
+});
+
+test('a dictionary fetch refuses cloud metadata endpoints', async () => {
+    const blocked = [
+        'http://169.254.169.254/latest/meta-data/',
+        'http://169.254.0.23/latest/meta-data/',
+        // The same host spelled as one decimal integer and as hex: URL parsing normalizes
+        // both, so the comparison never has to understand them.
+        'http://2852039166/latest/meta-data/',
+        'http://0xA9FEA9FE/latest/meta-data/',
+        'http://100.100.100.200/latest/meta-data/',
+        'http://metadata.google.internal/computeMetadata/v1/',
+        'http://metadata.tencentyun.com/latest/meta-data/',
+        // A trailing dot is the same host to DNS.
+        'http://metadata.google.internal./computeMetadata/v1/'
+    ];
+    for (const url of blocked) {
+        const { responses, seen } = await fetchReplyFor(url);
+        assert.equal(errorKindOf(responses[0]), 'network', `${url} must be refused`);
+        assert.deepEqual(seen, [], `${url} must not reach fetch`);
+    }
+});
+
+// IPv6 is not a supported form anywhere in this project, so it is refused rather than
+// decoded. The mapped spelling is the one that would otherwise reach a blocked IPv4 host.
+test('a dictionary fetch refuses IPv6 addresses outright', async () => {
+    for (const url of ['http://[::1]/x.js', 'http://[::ffff:169.254.169.254]/x.js', 'http://[fe80::1]/x.js']) {
+        const { responses, seen } = await fetchReplyFor(url);
+        assert.equal(errorKindOf(responses[0]), 'network', `${url} must be refused`);
+        assert.deepEqual(seen, [], `${url} must not reach fetch`);
+    }
+});
+
+// The other half of the same decision: a self-hosted dictionary service is a stated use,
+// so loopback and private ranges must stay reachable.
+test('a dictionary fetch allows loopback, private ranges and public hosts', async () => {
+    const allowed = ['http://127.0.0.1:8000/entry', 'http://192.168.1.10/x.js', 'http://10.0.0.5/x.js', 'https://example.test/x.js'];
+    for (const url of allowed) {
+        const { responses, seen } = await fetchReplyFor(url);
+        assert.equal(responses[0].ok, true, `${url} must be allowed`);
+        assert.equal(seen.length, 1, `${url} must reach fetch`);
+    }
+});
+
+// Every refusal shares the kind 'network' — from the caller's side the data simply could
+// not be fetched — so the reason has to survive in the message. Four layers collapsing
+// into one text would make the refusal undiagnosable, which is the whole point of naming it.
+test('each refusal layer keeps its own reason in the message', async () => {
+    const reasons = [
+        'http://',                                                        // unparseable ('http://' has no host)
+        'file:///etc/passwd',                                             // protocol
+        'chrome-extension://other-extension-id/x.js',                     // foreign extension
+        'http://[::1]/x.js',                                              // IPv6
+        'http://169.254.169.254/latest/meta-data/'                        // metadata
+    ];
+    const messages = [];
+    for (const url of reasons) {
+        const { responses } = await fetchReplyFor(url);
+        assert.equal(errorKindOf(responses[0]), 'network', `${url} is refused as a network failure`);
+        messages.push(responses[0].error.message);
+    }
+    assert.equal(new Set(messages).size, messages.length, 'no two layers may share one message');
+    assert.match(messages[0], /Not a usable URL/);
+    assert.match(messages[1], /Unsupported protocol/);
+    assert.match(messages[2], /another extension/);
+    assert.match(messages[3], /IPv6/);
+    assert.match(messages[4], /metadata/);
 });

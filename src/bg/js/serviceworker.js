@@ -207,6 +207,18 @@ class ODHServiceworker {
     async offscreen_Fetch(params) {
         let { url, callback } = params;
 
+        // WHY: the script URL field and the dictionary scripts themselves accept arbitrary
+        // text, so this is the first place the extension knows what a URL actually became.
+        // Refusing here keeps the extension from being a fetch proxy for anything else.
+        // The kind stays 'network' because the caller's situation is the same as any other
+        // unusable address — the data cannot be fetched — and the reason is in the message.
+        const refusal = odhFetchRefusal(url);
+        if (refusal) {
+            console.error('Dictionary fetch refused:', odhLog(url, refusal, 'network'));
+            callback(odhFail('network', refusal));
+            return;
+        }
+
         // WHY: the caller's reply budget (ODH_DEFAULT_REQUEST_TIMEOUT_MS) bounds waiting only;
         // without this shorter, fetch-side deadline a URL that never answers would keep running
         // here long after the caller had already failed with 'timeout'.
@@ -508,6 +520,50 @@ class ODHServiceworker {
     async playAudio(url) {
         return await odhSendMessage(TO_OFFSCREEN, {action:'playAudio', params:{url}});
     }
+}
+
+// Every dictionary request for remote content passes through offscreen_Fetch, so the set of
+// reachable addresses is decided here once. Built-in scripts resolve to
+// chrome-extension://<this id>/dict/*.js, which is why that scheme has to stay allowed.
+const ODH_FETCH_PROTOCOLS = ['http:', 'https:', 'chrome-extension:'];
+
+// Link-local is where every major cloud publishes instance metadata (169.254.169.254, and
+// Tencent Cloud on 169.254.0.23). No dictionary has a legitimate use for it. Loopback and
+// private ranges stay reachable so a self-hosted dictionary service still works.
+const ODH_LINK_LOCAL = /^169\.254\.\d{1,3}\.\d{1,3}$/;
+const ODH_METADATA_HOSTS = ['100.100.100.200', 'metadata.google.internal', 'metadata.tencentyun.com'];
+
+// Returns the refusal reason, or null when the URL may be fetched. Each branch names what
+// was refused and why, because the caller only ever sees this message as the reason.
+function odhFetchRefusal(url) {
+    let parsed;
+    try {
+        // Resolving against the extension origin is what gives a relative dictionary path
+        // ('/dict/x.js') its chrome-extension: scheme instead of failing outright.
+        parsed = new URL(url, chrome.runtime.getURL(''));
+    } catch (error) {
+        return `Not a usable URL: ${String(url)}`;
+    }
+
+    if (!ODH_FETCH_PROTOCOLS.includes(parsed.protocol))
+        return `Unsupported protocol "${parsed.protocol}": only http, https and this extension's own resources can be fetched`;
+
+    // A built-in script is a resource this extension ships; pointing at another extension's
+    // resource is not that, and '//host/x.js' resolves here as a chrome-extension: URL.
+    if (parsed.protocol === 'chrome-extension:' && parsed.hostname !== chrome.runtime.id)
+        return `Refused another extension's resource: ${parsed.hostname}`;
+
+    // IPv6 is not a supported form anywhere in this project, so it is refused wholesale
+    // rather than decoded; that also covers the IPv4-mapped spelling of a blocked IPv4 host.
+    if (parsed.hostname.startsWith('['))
+        return `Unsupported IPv6 address: ${parsed.hostname} — this extension only handles IPv4 and hostnames`;
+
+    // A trailing dot is the same host to DNS, so strip it before comparing.
+    const host = parsed.hostname.replace(/\.$/, '').toLowerCase();
+    if (ODH_LINK_LOCAL.test(host) || ODH_METADATA_HOSTS.includes(host))
+        return `Refused cloud metadata endpoint: ${host} — instance credentials are never a dictionary source`;
+
+    return null;
 }
 
 // The source comes from browser-supplied sender fields, never from message payloads.
