@@ -11,7 +11,7 @@
     "packageManager": "npm@11.19.0",
     "scripts": {
         "lint": "eslint . --max-warnings=0",
-        "test:contracts": "node --test tests/contracts/json.test.cjs && node --test tests/contracts/manifest.test.cjs",
+        "test:contracts": "node --test tests/contracts/json.test.cjs && node --test tests/contracts/manifest.test.cjs && node --test tests/contracts/data-i18n-keys.test.cjs",
         "test:unit": "node --test tests/unit/envelope.test.cjs && node --test tests/unit/message.test.cjs && node --test tests/unit/envelope-producers.test.cjs && node --test tests/unit/sandbox-bridge.test.cjs && node --test tests/unit/ankiconnect.test.cjs && node --test tests/unit/builtin.test.cjs && node --test tests/unit/deinflector.test.cjs && node --test tests/unit/settings.test.cjs && node --test tests/unit/settings-pages.test.cjs && node --test tests/unit/message-boundaries.test.cjs && node --test tests/unit/worker-readiness.test.cjs && node --test tests/unit/offscreen-setup.test.cjs && node --test tests/unit/offscreen-audio.test.cjs && node --test tests/unit/frontend-audio.test.cjs && node --test tests/unit/frame-css-baseline.test.cjs && node --test tests/unit/sanitize-notes.test.cjs && node --test tests/unit/frame-style-filter.test.cjs"
     },
     "devDependencies": {
