@@ -1,23 +1,41 @@
-/* global localizeHtmlPage, utilAsync, optionsLoad */
+/* global localizeHtmlPage, optionsLoad */
+
+// WHY: jQuery's .val() returned null for a select with no options attached, while the native
+// .value gives ''. Three call sites write the result straight back into the stored configuration,
+// so collapsing the two would turn a cleared list into an empty string instead of null.
+function readSelectValue(el) {
+    return el.selectedIndex < 0 ? null : el.value;
+}
+
+function setSelectValue(el, value) {
+    // WHY: jQuery's .val(null) selected the empty option (selectedIndex 0), while assigning
+    // null to a native select leaves it unselected (selectedIndex -1). Reading that back
+    // through readSelectValue would yield null instead of '', so normalise null the same way.
+    el.value = value === null ? '' : value;
+}
+
 async function populateAnkiDeckAndModel(options) {
-    $('#deckname').empty();
+    const deck = document.getElementById('deckname');
+    deck.replaceChildren();
     let names = await options_api.getDeckNames();
     // WHY: a failed query means Anki is unreachable, so the list stays empty rather than
     // reading names[0] off null and rejecting unhandled.
     if (names === null) return;
-    names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
+    names.forEach(name => deck.append(new Option(name, name)));
 
     let deckName = options.deckname ? options.deckname : names[0];
-    $('#deckname').val(deckName);
+    deck.value = deckName;
 }
 
 function populateDictionary(dicts) {
-    $('#dict').empty();
-    dicts.forEach(item => $('#dict').append($('<option>', { value: item.objectname, text: item.displayname })));
+    const dict = document.getElementById('dict');
+    dict.replaceChildren();
+    dicts.forEach(item => dict.append(new Option(item.displayname, item.objectname)));
 }
 
 async function updateServiceStatus(options) {
-    $('.service-options').hide();
+    for (const panel of document.querySelectorAll('.service-options'))
+        panel.hidden = true;
     switch (options.services) {
         case 'none':
             break;
@@ -31,35 +49,34 @@ async function updateServiceStatus(options) {
 
 async function updateAnkiProfile(options) {
     let version = await options_api.getVersion();
+    const profile = document.getElementById('service-options-ankiprofile');
     if (version === null) {
-        $('#service-options-ankiprofile').hide();
+        profile.hidden = true;
     } else {
         await populateAnkiDeckAndModel(options);
-        $('#service-options-ankiprofile').show();
+        profile.hidden = false;
     }
 }
 
-async function onOptionChanged(e) {
-    if (!e.originalEvent) return;
-
-    $('#save-status').text('');
+async function onOptionChanged() {
+    document.getElementById('save-status').textContent = '';
     try {
         let options = await optionsLoad();
 
-        options.enabled = $('#enabled').prop('checked');
-        options.mouseselection = $('#mouseselection').prop('checked');
-        options.hotkey = $('#hotkey').val();
+        options.enabled = document.getElementById('enabled').checked;
+        options.mouseselection = document.getElementById('mouseselection').checked;
+        options.hotkey = readSelectValue(document.getElementById('hotkey'));
 
-        options.dictSelected = $('#dict').val();
+        options.dictSelected = readSelectValue(document.getElementById('dict'));
 
-        options.deckname = $('#deckname').val();
-        options.tags = $('#tags').val();
+        options.deckname = readSelectValue(document.getElementById('deckname'));
+        options.tags = document.getElementById('tags').value;
         const newOptions = await options_api.optionsChanged(options);
         if (!newOptions) {
             throw new Error('Settings were not confirmed.');
         }
     } catch {
-        $('#save-status').text(chrome.i18n.getMessage('msgSaveFailed'));
+        document.getElementById('save-status').textContent = chrome.i18n.getMessage('msgSaveFailed');
     }
 }
 
@@ -74,27 +91,27 @@ function onMoreOptions() {
 async function onReady() {
     localizeHtmlPage();
     let options = await optionsLoad();
-    $('#enabled').prop('checked', options.enabled);
-    $('#mouseselection').prop('checked', options.mouseselection);
-    $('#hotkey').val(options.hotkey);
+    document.getElementById('enabled').checked = options.enabled;
+    document.getElementById('mouseselection').checked = options.mouseselection;
+    setSelectValue(document.getElementById('hotkey'), options.hotkey);
     populateDictionary(options.dictNamelist);
-    $('#dict').val(options.dictSelected);
-    $('#deckname').val(options.deckname);
-    $('#tags').val(options.tags);
+    setSelectValue(document.getElementById('dict'), options.dictSelected);
+    setSelectValue(document.getElementById('deckname'), options.deckname);
+    document.getElementById('tags').value = options.tags;
 
-    $('#enabled').change(onOptionChanged);
-    $('#mouseselection').change(onOptionChanged);
-    $('#hotkey').change(onOptionChanged);
-    $('#dict').change(onOptionChanged);
+    document.getElementById('enabled').addEventListener('change', onOptionChanged);
+    document.getElementById('mouseselection').addEventListener('change', onOptionChanged);
+    document.getElementById('hotkey').addEventListener('change', onOptionChanged);
+    document.getElementById('dict').addEventListener('change', onOptionChanged);
 
-    $('#deckname').change(onOptionChanged);
-    $('#tags').change(onOptionChanged);
+    document.getElementById('deckname').addEventListener('change', onOptionChanged);
+    document.getElementById('tags').addEventListener('change', onOptionChanged);
 
-    $('#more').click(onMoreOptions);
+    document.getElementById('more').addEventListener('click', onMoreOptions);
 
     updateServiceStatus(options);
 
 }
 
-$(document).ready(utilAsync(onReady));
+document.addEventListener('DOMContentLoaded', () => onReady());
 const options_api = new OptionsAPI();
