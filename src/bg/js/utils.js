@@ -75,7 +75,7 @@ function utilAsync(func) {
 
 function localizeHtmlPage() {
     for (const el of document.querySelectorAll('[data-i18n]')) {
-        el.innerHTML = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
+        el.textContent = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
     }
 }
 
