@@ -67,12 +67,6 @@ async function optionsSave(options) {
     });
 }
 
-function utilAsync(func) {
-    return function(...args) {
-        func.apply(this, args);
-    };
-}
-
 function localizeHtmlPage() {
     for (const el of document.querySelectorAll('[data-i18n]')) {
         el.textContent = chrome.i18n.getMessage(el.getAttribute('data-i18n'));

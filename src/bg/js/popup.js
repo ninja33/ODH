@@ -1,16 +1,14 @@
 /* global localizeHtmlPage, optionsLoad */
 
-// WHY: jQuery's .val() returned null for a select with no options attached, while the native
-// .value gives ''. Three call sites write the result straight back into the stored configuration,
-// so collapsing the two would turn a cleared list into an empty string instead of null.
+// WHY: an empty select and a select on its empty option both read as "", but only the first
+// means "no choice was made". The stored configuration must keep its old value in that case.
 function readSelectValue(el) {
     return el.selectedIndex < 0 ? null : el.value;
 }
 
+// WHY: assigning null leaves a select unselected instead of selecting its empty option, which
+// would then read back as null rather than "" through readSelectValue.
 function setSelectValue(el, value) {
-    // WHY: jQuery's .val(null) selected the empty option (selectedIndex 0), while assigning
-    // null to a native select leaves it unselected (selectedIndex -1). Reading that back
-    // through readSelectValue would yield null instead of '', so normalise null the same way.
     el.value = value === null ? '' : value;
 }
 

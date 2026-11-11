@@ -1,27 +1,51 @@
-/* global localizeHtmlPage, utilAsync, optionsLoad */
+/* global localizeHtmlPage, optionsLoad */
+
+// WHY: an empty select and a select on its empty option both read as "", but only the first
+// means "no choice was made". The stored configuration must keep its old value in that case.
+function readSelectValue(el) {
+    return el.selectedIndex < 0 ? null : el.value;
+}
+
+// WHY: assigning null leaves a select unselected instead of selecting its empty option, which
+// would then read back as null rather than "" through readSelectValue.
+function setSelectValue(el, value) {
+    el.value = value === null ? '' : value;
+}
+
+// options.html has no #id / #password inputs; the stored credentials are carried over as-is.
+function readOptionalValue(id) {
+    const el = document.getElementById(id);
+    return el ? el.value : undefined;
+}
+
+function hideAllGifs() {
+    for (const gif of document.querySelectorAll('.gif')) gif.hidden = true;
+}
 
 async function populateAnkiDeckAndModel(options) {
-    $('#deckname').empty();
+    const deck = document.getElementById('deckname');
+    deck.replaceChildren();
     let names = await options_api.getDeckNames();
     // WHY: a failed query means Anki is unreachable, so the lists stay empty rather than
     // reading names[0] off null and rejecting unhandled.
     if (names === null) return;
-    names.forEach(name => $('#deckname').append($('<option>', { value: name, text: name })));
+    names.forEach(name => deck.append(new Option(name, name)));
 
     let deckName = options.deckname ? options.deckname : names[0];
-    $('#deckname').val(deckName);
+    setSelectValue(deck, deckName);
 
-    $('#typename').empty();
+    const type = document.getElementById('typename');
+    type.replaceChildren();
     names = await options_api.getModelNames();
     if (names === null) return;
-    names.forEach(name => $('#typename').append($('<option>', { value: name, text: name })));
+    names.forEach(name => type.append(new Option(name, name)));
 
     let typeName = options.typename ? options.typename: names[0];
-    $('#typename').val(typeName);
+    setSelectValue(type, typeName);
 }
 
 async function populateAnkiFields(options) {
-    const modelName = $('#typename').val() || options.typename;
+    const modelName = readSelectValue(document.getElementById('typename')) || options.typename;
     if (modelName === null) return;
 
     let names = await options_api.getModelFieldNames(modelName);
@@ -29,21 +53,23 @@ async function populateAnkiFields(options) {
 
     let fields = ['expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
     fields.forEach(field => {
-        $(`#${field}`).empty();
-        $(`#${field}`).append($('<option>', { value: '', text: '' }));
-        names.forEach(name => $(`#${field}`).append($('<option>', { value: name, text: name })));
-        $(`#${field}`).val(options[field]);
+        const el = document.getElementById(field);
+        el.replaceChildren();
+        el.append(new Option('', ''));
+        names.forEach(name => el.append(new Option(name, name)));
+        setSelectValue(el, options[field]);
     });
 }
 
 async function updateServiceStatus(options) {
-    $('.service-options').hide();
-    $('#services-status').text(chrome.i18n.getMessage('msgFailed'));
+    for (const panel of document.querySelectorAll('.service-options'))
+        panel.hidden = true;
+    document.getElementById('services-status').textContent = chrome.i18n.getMessage('msgFailed');
     switch (options.services) {
         case 'none':
             break;
         case 'ankiconnect':
-            $('#service-options-ankiconnect').show();
+            document.getElementById('service-options-ankiconnect').hidden = false;
             updateAnkiProfile(options) 
             break;
         default:
@@ -52,30 +78,33 @@ async function updateServiceStatus(options) {
 }
 
 async function updateAnkiProfile(options) {
-    $('#service-options-ankiprofile').hide();
-    $('#services-status').text(chrome.i18n.getMessage('msgConnecting'));
+    const profile = document.getElementById('service-options-ankiprofile');
+    const status = document.getElementById('services-status');
+    profile.hidden = true;
+    status.textContent = chrome.i18n.getMessage('msgConnecting');
     
     let version = await options_api.getVersion();
     if (version === null) {
-        $('#services-status').text(chrome.i18n.getMessage('msgFailed'));
+        status.textContent = chrome.i18n.getMessage('msgFailed');
     } else {
         // WHY: the field list reads the model select, so it has to run after that select is
         // filled. Awaiting both also keeps a failed query from rejecting unhandled.
         await populateAnkiDeckAndModel(options);
         await populateAnkiFields(options);
-        $('#services-status').text(chrome.i18n.getMessage('msgSuccess', [version]));
-        $('#service-options-ankiprofile').show();
+        status.textContent = chrome.i18n.getMessage('msgSuccess', [version]);
+        profile.hidden = false;
         if (options.services == 'ankiconnect')
-            $('#duplicate-option').show();
+            document.getElementById('duplicate-option').hidden = false;
         else {
-            $('#duplicate-option').hide();
+            document.getElementById('duplicate-option').hidden = true;
         }
     }
 }
 
 function populateDictionary(dicts) {
-    $('#dict').empty();
-    dicts.forEach(item => $('#dict').append($('<option>', { value: item.objectname, text: item.displayname })));
+    const dict = document.getElementById('dict');
+    dict.replaceChildren();
+    dicts.forEach(item => dict.append(new Option(item.displayname, item.objectname)));
 }
 
 function populateSysScriptsList(dictLibrary) {
@@ -89,97 +118,118 @@ function populateSysScriptsList(dictLibrary) {
         'fren_Cambridge', 'fren_Collins', //fr-cn dictionaries
         'esen_Spanishdict', 'decn_Eudict', 'escn_Eudict', 'frcn_Eudict', 'frcn_Youdao', 'rucn_Qianyi' //msci dictionaries
     ];
-    $('#scriptslistbody').empty();
+    const body = document.getElementById('scriptslistbody');
+    body.replaceChildren();
     systemscripts.forEach(script => {
-        let row = '';
-        row += `<input class="sl-col sl-col-onoff" type="checkbox" ${optionscripts.includes(script) || optionscripts.includes('lib://'+script)?'checked':''}>`;
-        row += `<input class="sl-col sl-col-cloud" type="checkbox" ${optionscripts.includes('lib://'+script)?'checked':''}>`;
-        row += `<span class="sl-col sl-col-name">${script}</span>`;
-        row += `<span class="sl-col sl-col-description">${chrome.i18n.getMessage(script)}</span>`;
-        $('#scriptslistbody').append($(`<div class="sl-row">${row}</div>`));
+        const row = document.createElement('div');
+        row.className = 'sl-row';
+
+        const onoff = document.createElement('input');
+        onoff.className = 'sl-col sl-col-onoff';
+        onoff.type = 'checkbox';
+        onoff.checked = optionscripts.includes(script) || optionscripts.includes('lib://' + script);
+
+        const cloud = document.createElement('input');
+        cloud.className = 'sl-col sl-col-cloud';
+        cloud.type = 'checkbox';
+        cloud.checked = optionscripts.includes('lib://' + script);
+
+        const name = document.createElement('span');
+        name.className = 'sl-col sl-col-name';
+        name.textContent = script;
+
+        const description = document.createElement('span');
+        description.className = 'sl-col sl-col-description';
+        description.textContent = chrome.i18n.getMessage(script);
+
+        row.append(onoff, cloud, name, description);
+        body.append(row);
     });
 
-    $('.sl-col-onoff', '.sl-row:nth-child(1)').prop('checked', true); // make default script(first row) always active.
-    $('.sl-col-cloud', '.sl-row:nth-child(1)').prop('checked', false); // make default script(first row) as local script.
-    $('.sl-col-cloud, .sl-col-onoff', '.sl-row:nth-child(1)').css({ 'visibility': 'hidden' }); //make default sys script untouch
+    const first = body.querySelector('.sl-row');
+    // make default script(first row) always active.
+    first.querySelector('.sl-col-onoff').checked = true;
+    // make default script(first row) as local script.
+    first.querySelector('.sl-col-cloud').checked = false;
+    // make default sys script untouch
+    for (const box of first.querySelectorAll('.sl-col-onoff, .sl-col-cloud'))
+        box.style.visibility = 'hidden';
 }
 
 function onScriptListChange() {
     let dictLibrary = [];
-    $('.sl-row').each(function() {
-        if ($('.sl-col-onoff', this).prop('checked') == true)
-            dictLibrary.push($('.sl-col-cloud', this).prop('checked') ? 'lib://' + $('.sl-col-name', this).text() : $('.sl-col-name', this).text());
-    });
-    $('#sysscripts').val(dictLibrary.join());
+    for (const row of document.querySelectorAll('.sl-row')) {
+        if (row.querySelector('.sl-col-onoff').checked == true)
+            dictLibrary.push(row.querySelector('.sl-col-cloud').checked ? 'lib://' + row.querySelector('.sl-col-name').textContent : row.querySelector('.sl-col-name').textContent);
+    }
+    document.getElementById('sysscripts').value = dictLibrary.join();
 }
 
 function onHiddenClicked() {
-    $('.sl-col-cloud').toggleClass('hidden');
+    for (const box of document.querySelectorAll('.sl-col-cloud'))
+        box.classList.toggle('hidden');
 }
 
-async function onAnkiTypeChanged(e) {
-    if (e.originalEvent) {
+async function onAnkiTypeChanged() {
+    let options = await optionsLoad();
+    await populateAnkiFields(options);
+}
+
+async function onServicesChanged() {
+    try {
         let options = await optionsLoad();
-        await populateAnkiFields(options);
 
-    }
-}
+        options.services = readSelectValue(document.getElementById('services'));
+        options.id = readOptionalValue('id') ?? options.id;
+        options.password = readOptionalValue('password') ?? options.password;
+        options.ankiconnecturl = document.getElementById('ankiconnecturl').value;
 
-async function onServicesChanged(e) {
-    if (e.originalEvent) {
-        try {
-            let options = await optionsLoad();
-
-            options.services = $('#services').val();
-            options.id = $('#id').val() ?? options.id;
-            options.password = $('#password').val() ?? options.password;
-            options.ankiconnecturl = $('#ankiconnecturl').val();
-
-            let newOptions = await options_api.optionsChanged(options);
-            if (!newOptions) {
-                throw new Error('Settings were not confirmed.');
-            }
-            await updateServiceStatus(newOptions);
-        } catch {
-            $('#services-status').text(chrome.i18n.getMessage('msgSaveFailed'));
+        let newOptions = await options_api.optionsChanged(options);
+        if (!newOptions) {
+            throw new Error('Settings were not confirmed.');
         }
+        await updateServiceStatus(newOptions);
+    } catch {
+        document.getElementById('services-status').textContent = chrome.i18n.getMessage('msgSaveFailed');
     }
 }
 
 async function onSaveClicked(e) {
-    if (!e.originalEvent) return;
+    // WHY: currentTarget is cleared once dispatch ends, so it must be read before any await.
+    const buttonId = e.currentTarget.id;
 
-    $('.gif').hide();
-    $('#gif-load').show();
+    hideAllGifs();
+    document.getElementById('gif-load').hidden = false;
     try {
         let optionsOld = await optionsLoad();
-        let options = $.extend(true, {}, optionsOld);
+        let options = structuredClone(optionsOld);
 
-        options.enabled = $('#enabled').prop('checked');
-        options.mouseselection = $('#mouseselection').prop('checked');
-        options.hotkey = $('#hotkey').val();
+        options.enabled = document.getElementById('enabled').checked;
+        options.mouseselection = document.getElementById('mouseselection').checked;
+        options.hotkey = readSelectValue(document.getElementById('hotkey'));
 
-        options.dictSelected = $('#dict').val();
-        options.monolingual = $('#monolingual').val();
-        options.preferredaudio = $('#anki-preferred-audio').val();
-        options.maxcontext = $('#maxcontext').val();
-        options.maxexample = $('#maxexample').val();
+        options.dictSelected = readSelectValue(document.getElementById('dict'));
+        options.monolingual = readSelectValue(document.getElementById('monolingual'));
+        options.preferredaudio = readSelectValue(document.getElementById('anki-preferred-audio'));
+        options.maxcontext = readSelectValue(document.getElementById('maxcontext'));
+        options.maxexample = readSelectValue(document.getElementById('maxexample'));
 
-        options.services = $('#services').val();
-        options.id = $('#id').val() ?? options.id;
-        options.password = $('#password').val() ?? options.password;
+        options.services = readSelectValue(document.getElementById('services'));
+        options.id = readOptionalValue('id') ?? options.id;
+        options.password = readOptionalValue('password') ?? options.password;
 
-        options.ankiconnecturl = $('#ankiconnecturl').val();
-        options.tags = $('#tags').val();
-        options.duplicate = $('#duplicate').val();
+        options.ankiconnecturl = document.getElementById('ankiconnecturl').value;
+        options.tags = document.getElementById('tags').value;
+        options.duplicate = readSelectValue(document.getElementById('duplicate'));
 
         let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
         fields.forEach(field => {
-            options[field] = $(`#${field}`).val() == null ? options[field] : $(`#${field}`).val();
+            const value = readSelectValue(document.getElementById(field));
+            options[field] = value == null ? options[field] : value;
         });
 
-        options.sysscripts = $('#sysscripts').val();
-        options.udfscripts = $('#udfscripts').val();
+        options.sysscripts = document.getElementById('sysscripts').value;
+        options.udfscripts = document.getElementById('udfscripts').value;
 
         let newOptions = await options_api.optionsChanged(options);
         if (!newOptions) {
@@ -187,16 +237,21 @@ async function onSaveClicked(e) {
         }
 
         populateDictionary(newOptions.dictNamelist);
-        $('#dict').val(newOptions.dictSelected);
+        setSelectValue(document.getElementById('dict'), newOptions.dictSelected);
 
-        $('#gif-good').show(1000, () => { $('.gif').hide(); });
+        await updateServiceStatus(newOptions);
 
-        if (e.target.id == 'saveclose')
+        const good = document.getElementById('gif-good');
+        good.hidden = false;
+        good.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000 })
+            .finished.then(hideAllGifs, hideAllGifs);
+
+        if (buttonId == 'saveclose')
             window.close();
     } catch {
-        $('#gif-fail').show();
+        document.getElementById('gif-fail').hidden = false;
     } finally {
-        $('#gif-load').hide();
+        document.getElementById('gif-load').hidden = true;
     }
 }
 
@@ -207,49 +262,53 @@ function onCloseClicked() {
 async function onReady() {
     localizeHtmlPage();
     let options = await optionsLoad();
-    $('#enabled').prop('checked', options.enabled);
-    $('#mouseselection').prop('checked', options.mouseselection);
-    $('#hotkey').val(options.hotkey);
+    document.getElementById('enabled').checked = options.enabled;
+    document.getElementById('mouseselection').checked = options.mouseselection;
+    setSelectValue(document.getElementById('hotkey'), options.hotkey);
 
     populateDictionary(options.dictNamelist);
-    $('#dict').val(options.dictSelected);
+    setSelectValue(document.getElementById('dict'), options.dictSelected);
 
-    $('#monolingual').val(options.monolingual);
-    $('#anki-preferred-audio').val(options.preferredaudio);
-    $('#maxcontext').val(options.maxcontext);
-    $('#maxexample').val(options.maxexample);
+    setSelectValue(document.getElementById('monolingual'), options.monolingual);
+    setSelectValue(document.getElementById('anki-preferred-audio'), options.preferredaudio);
+    setSelectValue(document.getElementById('maxcontext'), options.maxcontext);
+    setSelectValue(document.getElementById('maxexample'), options.maxexample);
 
-    $('#services').val(options.services);
-    $('#id').val(options.id);
-    $('#password').val(options.password);
+    setSelectValue(document.getElementById('services'), options.services);
+    // #id / #password have no inputs in options.html, so the element may be absent.
+    for (const [id, value] of [['id', options.id], ['password', options.password]]) {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+    }
 
-    $('#ankiconnecturl').val(options.ankiconnecturl);
-    $('#tags').val(options.tags);
-    $('#duplicate').val(options.duplicate);
+    document.getElementById('ankiconnecturl').value = options.ankiconnecturl;
+    document.getElementById('tags').value = options.tags;
+    setSelectValue(document.getElementById('duplicate'), options.duplicate);
 
     let fields = ['deckname', 'typename', 'expression', 'reading', 'extrainfo', 'definition', 'definitions', 'sentence', 'url', 'audio'];
     fields.forEach(field => {
-        $(`#${field}`).val(options[field]);
+        setSelectValue(document.getElementById(field), options[field]);
     });
 
-    $('#sysscripts').val(options.sysscripts);
-    $('#udfscripts').val(options.udfscripts);
+    document.getElementById('sysscripts').value = options.sysscripts;
+    document.getElementById('udfscripts').value = options.udfscripts;
     populateSysScriptsList(options.sysscripts);
     onHiddenClicked();
 
-    $('#connect').click(onServicesChanged);
-    $('#saveload').click(onSaveClicked);
-    $('#saveclose').click(onSaveClicked);
-    $('#close').click(onCloseClicked);
-    $('.gif').hide();
+    document.getElementById('connect').addEventListener('click', onServicesChanged);
+    document.getElementById('saveload').addEventListener('click', onSaveClicked);
+    document.getElementById('saveclose').addEventListener('click', onSaveClicked);
+    document.getElementById('close').addEventListener('click', onCloseClicked);
+    hideAllGifs();
 
-    $('.sl-col-onoff, .sl-col-cloud').click(onScriptListChange);
-    $('#hidden').click(onHiddenClicked);
-    $('#typename').change(onAnkiTypeChanged);
-    $('#services').change(onServicesChanged);
+    for (const box of document.querySelectorAll('.sl-col-onoff, .sl-col-cloud'))
+        box.addEventListener('click', onScriptListChange);
+    document.getElementById('hidden').addEventListener('click', onHiddenClicked);
+    document.getElementById('typename').addEventListener('change', onAnkiTypeChanged);
+    document.getElementById('services').addEventListener('change', onServicesChanged);
 
     updateServiceStatus(options);
 }
 
-$(document).ready(utilAsync(onReady));
+document.addEventListener('DOMContentLoaded', () => onReady());
 const options_api = new OptionsAPI();
