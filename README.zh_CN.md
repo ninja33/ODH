@@ -1,5 +1,11 @@
 # 在线词典助手 (含Anki制卡功能)
 
+[English](README.md) | 中文
+
+[![checks](https://github.com/ninja33/ODH/actions/workflows/checks.yml/badge.svg)](https://github.com/ninja33/ODH/actions/workflows/checks.yml)
+![license](https://img.shields.io/github/license/ninja33/ODH)
+![last commit](https://img.shields.io/github/last-commit/ninja33/ODH)
+
 在线词典助手是一个Chrome插件。用于浏览网页时查询在线词典，并将查询内容显示在单词旁的小弹窗里。该工具同时支持Anki制卡功能(需在Anki上安装**ankiconnect**插件).
 
 有关制作该工具的缘由细节，详情可见[背景](doc/background.zh_CN.md)介绍。

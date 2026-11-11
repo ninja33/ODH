@@ -1,6 +1,10 @@
 # Online Dictionary Helper (with Anki support)
 
-[[中文版说明](README.zh_CN.md)]
+English | [中文](README.zh_CN.md)
+
+[![checks](https://github.com/ninja33/ODH/actions/workflows/checks.yml/badge.svg)](https://github.com/ninja33/ODH/actions/workflows/checks.yml)
+![license](https://img.shields.io/github/license/ninja33/ODH)
+![last commit](https://img.shields.io/github/last-commit/ninja33/ODH)
 
 Online Dictionary Helper is a Chrome/Firefox extension to show definitions for words and phrases from online (or builtin) dictionary via users' selection on any webpage and PDF documents (using [pdf.js](https://mozilla.github.io/pdf.js/)), which also supports flash-card creation using [Anki](https://github.com/dae/anki) (with **[AnkiConnect](https://github.com/FooSoft/anki-connect)**, an Anki add-on, installed).
 
