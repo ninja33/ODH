@@ -1,0 +1,9 @@
+# Gitleaks configuration for ODH.
+#
+# The default rule set stays in force; this file only narrows what gets scanned.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Local toolchain: gitignored, never published, and full of third-party example strings"
+paths = ['''tools/''']

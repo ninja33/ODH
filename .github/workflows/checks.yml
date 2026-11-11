@@ -1,0 +1,64 @@
+name: checks
+
+# Runs the same checks a contributor runs locally, on a clone that has no
+# private dictionary data and no local toolchain directory.
+#
+# Gitleaks needs the full history: the baseline records findings from 2018,
+# and actions/checkout defaults to depth 1, which would hide them entirely.
+# That is why fetch-depth is set to 0 below rather than left at the default.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Contract tests
+        run: npm run test:contracts
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      # The scanner and its archive live outside the repository tree: the dir
+      # scan walks the working tree, and leaving a .tar.gz at the root would put
+      # it in scope. RUNNER_TEMP is a scratch directory that GitHub clears.
+      - name: Install Gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          # Digest of gitleaks_8.30.1_linux_x64.tar.gz, from the release's
+          # published checksums. The macOS build used locally has a different
+          # digest because it is a different archive.
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/gitleaks.tar.gz" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+
+      # History and working tree are scanned separately: the git scan covers
+      # commits, the dir scan also catches files that never reached a commit.
+      - name: Scan history for secrets
+        run: $RUNNER_TEMP/gitleaks git . --config .gitleaks.toml --baseline-path .gitleaks-baseline.json --redact --no-banner
+
+      - name: Scan working tree for secrets
+        run: $RUNNER_TEMP/gitleaks dir . --config .gitleaks.toml --baseline-path .gitleaks-baseline.json --redact --no-banner
