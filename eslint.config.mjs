@@ -59,7 +59,6 @@ export default [
             // class names are persisted dictionary IDs, so they are excluded
             // from hygiene checks until they are migrated one by one.
             'src/dict/**',
-            'src/lib/jquery-3.0.0.min.js',
             // Vendored DOMPurify 3.4.11 (Apache-2.0 / MPL-2.0, cure53, tag 3.4.11,
             // sha256 dbabb5b2…); minified third-party file, used as-is.
             'src/lib/purify-3.4.11.min.js',
@@ -151,11 +150,6 @@ export default [
             'src/fg/js/frontend.js'
         ],
         languageOptions: { globals: { chrome: 'readonly' } }
-    },
-    {
-        // Only these active pages load jQuery.
-        files: ['src/bg/js/options.js', 'src/bg/js/popup.js'],
-        languageOptions: { globals: globals.jquery }
     },
     {
         files: ['src/bg/js/serviceworker.js'],

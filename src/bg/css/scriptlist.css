@@ -23,13 +23,6 @@
     margin: 3px;
 }
 
-.sl-col input[type=checkbox] {
-    width: initial;
-    border: initial;
-    margin: 0;
-    padding: 0;
-}
-
 .sl-col-onoff, .sl-col-cloud {
     width: 30px;
     text-align: center;

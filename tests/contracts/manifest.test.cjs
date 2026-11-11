@@ -321,3 +321,12 @@ test('every message target is declared once and checked by exactly one receiver'
             `${name} ('${wire}') must be checked by exactly one receiver, found ${receivers}`);
     }
 });
+
+// src/lib is a hand-managed vendored directory with no package manager behind it, so a
+// re-vendored library raises no warning anywhere else. This guards the file name only: it
+// does not detect jQuery-style calls in page source.
+test('no jQuery library is vendored in src/lib', () => {
+    const libDir = path.join(extensionDir, 'lib');
+    const vendored = fs.readdirSync(libDir).filter(name => /jquery/i.test(name));
+    assert.deepEqual(vendored, [], `Unexpected vendored jQuery: ${vendored.join(', ')}`);
+});
