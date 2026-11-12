@@ -1,4 +1,4 @@
-/* global localizeHtmlPage, optionsLoad */
+/* global localizeHtmlPage, loadOptions */
 
 // WHY: an empty select and a select on its empty option both read as "", but only the first
 // means "no choice was made". The stored configuration must keep its old value in that case.
@@ -171,13 +171,13 @@ function onHiddenClicked() {
 }
 
 async function onAnkiTypeChanged() {
-    let options = await optionsLoad();
+    let options = await loadOptions();
     await populateAnkiFields(options);
 }
 
 async function onServicesChanged() {
     try {
-        let options = await optionsLoad();
+        let options = await loadOptions();
 
         options.services = readSelectValue(document.getElementById('services'));
         options.id = readOptionalValue('id') ?? options.id;
@@ -201,7 +201,7 @@ async function onSaveClicked(e) {
     hideAllGifs();
     document.getElementById('gif-load').hidden = false;
     try {
-        let optionsOld = await optionsLoad();
+        let optionsOld = await loadOptions();
         let options = structuredClone(optionsOld);
 
         options.enabled = document.getElementById('enabled').checked;
@@ -261,7 +261,7 @@ function onCloseClicked() {
 
 async function onReady() {
     localizeHtmlPage();
-    let options = await optionsLoad();
+    let options = await loadOptions();
     document.getElementById('enabled').checked = options.enabled;
     document.getElementById('mouseselection').checked = options.mouseselection;
     setSelectValue(document.getElementById('hotkey'), options.hotkey);

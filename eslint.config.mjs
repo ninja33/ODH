@@ -13,7 +13,7 @@ const classicExports = {
     'src/bg/js/builtin.js': ['Builtin'],
     'src/bg/js/deinflector.js': ['Deinflector'],
     'src/bg/js/options_api.js': ['OptionsAPI'],
-    'src/bg/js/utils.js': ['optionsLoad', 'optionsSave', 'localizeHtmlPage', 'setupOffscreenDocument'],
+    'src/bg/js/utils.js': ['loadOptions', 'saveOptions', 'localizeHtmlPage', 'setupOffscreenDocument'],
     'src/bg/sandbox/sign.js': ['hash'],
     'src/fg/js/frontend_api.js': ['FrontendAPI'],
     'src/fg/js/popup.js': ['Popup'],

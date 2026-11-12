@@ -1,4 +1,4 @@
-/* global Ankiconnect, Deinflector, Builtin, optionsLoad, optionsSave, ODH_DICTIONARY_FETCH_TIMEOUT_MS, odhOk, odhFail, odhSendMessage, odhLog, TO_WORKER, TO_OFFSCREEN, TO_FRONTEND */
+/* global Ankiconnect, Deinflector, Builtin, loadOptions, saveOptions, ODH_DICTIONARY_FETCH_TIMEOUT_MS, odhOk, odhFail, odhSendMessage, odhLog, TO_WORKER, TO_OFFSCREEN, TO_FRONTEND */
 class ODHServiceworker {
     constructor() {
 
@@ -19,7 +19,7 @@ class ODHServiceworker {
         // waiting for an announcement or a request (architecture defect 3).
         this.optionsReady = (async () => {
             try {
-                let options = await optionsLoad();
+                let options = await loadOptions();
                 // WHY: a save that landed during the read is newer — do not overwrite it.
                 if (this.options) return;
                 await this.setupOptions(options);
@@ -44,7 +44,7 @@ class ODHServiceworker {
         this.options.enabled = !this.options.enabled;
         this.setFrontendOptions(this.options);
         try {
-            await optionsSave(this.options);
+            await saveOptions(this.options);
         } catch {
             console.error('Unable to save shortcut settings.');
         }
@@ -286,7 +286,7 @@ class ODHServiceworker {
         // can still initialize.
         this.initInFlight ??= (async () => {
             try {
-                let options = await optionsLoad();
+                let options = await loadOptions();
                 // A sandbox document announces itself here, so this is the fresh-start
                 // path: its dictionaries must be (re)built regardless of configuration.
                 // WHY: loaded here rather than through the save path, whose reload is
@@ -294,7 +294,7 @@ class ODHServiceworker {
                 await this.setupScripts(options);
                 this.options = options;
                 await this.setScriptsOptions(this.options);
-                await optionsSave(this.options);
+                await saveOptions(this.options);
             } catch {
                 console.error('Unable to initialize settings.');
             } finally {
@@ -421,7 +421,7 @@ class ODHServiceworker {
         if (scriptsChanged) await this.setupScripts(options);
         this.options = options;
         await this.setScriptsOptions(this.options);
-        await optionsSave(this.options);
+        await saveOptions(this.options);
     }
 
     // Option pages API

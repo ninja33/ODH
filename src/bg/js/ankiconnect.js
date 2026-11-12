@@ -43,10 +43,10 @@ class Ankiconnect {
             // WHY: response comes from a JSON payload, so its prototype is not
             // under our control. AnkiConnect always defines both fields, but the
             // prototype-free form below is correct hardening, not a style change.
-            if (!Object.prototype.hasOwnProperty.call(response, 'error')) {
+            if (!Object.hasOwn(response, 'error')) {
                 throw 'response is missing required error field';
             }
-            if (!Object.prototype.hasOwnProperty.call(response, 'result')) {
+            if (!Object.hasOwn(response, 'result')) {
                 throw 'response is missing required result field';
             }
             if (response.error) {

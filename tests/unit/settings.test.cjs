@@ -17,7 +17,7 @@ function settingsStorage() {
             get(keys, callback) { callback({ dictSelected: 'legacy_dictionary', hotkey: '17', legacyField: 'keep' }); }
         } }
     };
-    const helpers = loadClassic('src/bg/js/utils.js', '({ optionsLoad, optionsSave })', { chrome });
+    const helpers = loadClassic('src/bg/js/utils.js', '({ loadOptions, saveOptions })', { chrome });
     function complete(error) {
         chrome.runtime.lastError = error ? { message: error } : undefined;
         writes.at(-1).callback();
@@ -29,7 +29,7 @@ function settingsStorage() {
 test('settings save waits for storage completion and preserves legacy fields', async () => {
     const storage = settingsStorage();
     let confirmed = false;
-    const saving = storage.optionsSave({ dictSelected: 'legacy_dictionary', hotkey: '17', legacyField: 'keep' });
+    const saving = storage.saveOptions({ dictSelected: 'legacy_dictionary', hotkey: '17', legacyField: 'keep' });
     saving.then(() => { confirmed = true; });
     await Promise.resolve();
     assert.equal(confirmed, false);
@@ -45,7 +45,7 @@ test('settings save waits for storage completion and preserves legacy fields', a
 
 test('settings save rejects a storage callback failure', async () => {
     const storage = settingsStorage();
-    const saving = storage.optionsSave({});
+    const saving = storage.saveOptions({});
     const rejected = assert.rejects(saving, /synthetic write failure/);
     storage.complete('synthetic write failure');
     await rejected;
@@ -54,12 +54,12 @@ test('settings save rejects a storage callback failure', async () => {
 test('settings save rejects a synchronous storage failure', async () => {
     const storage = settingsStorage();
     storage.chrome.storage.local.set = () => { throw new Error('synthetic unavailable storage'); };
-    await assert.rejects(storage.optionsSave({}), /synthetic unavailable storage/);
+    await assert.rejects(storage.saveOptions({}), /synthetic unavailable storage/);
 });
 
 test('settings read adds defaults without removing legacy values', async () => {
     const storage = settingsStorage();
-    const result = await storage.optionsLoad();
+    const result = await storage.loadOptions();
     assert.equal(result.enabled, true);
     assert.equal(result.dictSelected, 'legacy_dictionary');
     assert.equal(result.hotkey, '17');
@@ -73,13 +73,13 @@ test('settings read rejects failure instead of creating defaults from a failed r
         callback(undefined);
         delete storage.chrome.runtime.lastError;
     };
-    await assert.rejects(storage.optionsLoad(), /synthetic read failure/);
+    await assert.rejects(storage.loadOptions(), /synthetic read failure/);
     assert.equal(storage.writes.length, 0);
 });
 
 test('legacy settings cannot override the own-property check', async () => {
     const storage = settingsStorage();
-    const saving = storage.optionsSave({ hasOwnProperty: 'legacy value', enabled: false });
+    const saving = storage.saveOptions({ hasOwnProperty: 'legacy value', enabled: false });
     assert.equal(storage.writes[0].options.hasOwnProperty, 'legacy value');
     assert.equal(storage.writes[0].options.enabled, false);
     storage.complete();
@@ -100,8 +100,8 @@ function settingsWorker({ stubScripts = true } = {}) {
         // default, just like every other host facility a stub context provides.
         setTimeout,
         clearTimeout,
-        optionsLoad: storage.optionsLoad,
-        optionsSave: storage.optionsSave,
+        loadOptions: storage.loadOptions,
+        saveOptions: storage.saveOptions,
         console: { error(message) { diagnostics.push(message); }, info() {}, log() {}, warn() {} },
         Ankiconnect: class {},
         Builtin: class { loadData() {} },
@@ -156,7 +156,7 @@ test('dictionary messages do not restore sensitive keys added by defaults', asyn
         sent = structuredClone(request.params.options);
         return odhOk(null);
     };
-    const options = await fixture.optionsLoad();
+    const options = await fixture.loadOptions();
     const before = structuredClone(options);
     assert.equal(await fixture.worker.setScriptsOptions(options), null);
     for (const field of ['id', 'password', 'ankiconnecturl']) {
@@ -376,7 +376,7 @@ test('initBackend rebuilds dictionary scripts even when the configuration is unc
         dictSelected: 'synthetic_dictionary', hotkey: '17'
     };
     fixture.chrome.storage.local.get = (keys, callback) => callback(structuredClone(options));
-    // optionsSave is a free variable of the loaded context, so it must be driven through
+    // saveOptions is a free variable of the loaded context, so it must be driven through
     // storage rather than by assigning it on the worker instance.
     fixture.chrome.storage.local.set = (written, callback) => { fixture.writes.push({ options: structuredClone(written) }); callback(); };
     let loads = 0;

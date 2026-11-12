@@ -13,7 +13,7 @@ class Builtin {
         // control. A missing entry means the data never loaded; the caller turns that into
         // a classified failure instead of an exception.
         if (!dict) return null;
-        return Object.prototype.hasOwnProperty.call(dict, term) ? JSON.stringify(dict[term]) : null;
+        return Object.hasOwn(dict, term) ? JSON.stringify(dict[term]) : null;
     }
 
     static async loadData(path) {

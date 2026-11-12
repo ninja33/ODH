@@ -1,4 +1,4 @@
-/* global localizeHtmlPage, optionsLoad */
+/* global localizeHtmlPage, loadOptions */
 
 // WHY: an empty select and a select on its empty option both read as "", but only the first
 // means "no choice was made". The stored configuration must keep its old value in that case.
@@ -59,7 +59,7 @@ async function updateAnkiProfile(options) {
 async function onOptionChanged() {
     document.getElementById('save-status').textContent = '';
     try {
-        let options = await optionsLoad();
+        let options = await loadOptions();
 
         options.enabled = document.getElementById('enabled').checked;
         options.mouseselection = document.getElementById('mouseselection').checked;
@@ -88,7 +88,7 @@ function onMoreOptions() {
 
 async function onReady() {
     localizeHtmlPage();
-    let options = await optionsLoad();
+    let options = await loadOptions();
     document.getElementById('enabled').checked = options.enabled;
     document.getElementById('mouseselection').checked = options.mouseselection;
     setSelectValue(document.getElementById('hotkey'), options.hotkey);

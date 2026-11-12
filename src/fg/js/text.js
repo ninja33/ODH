@@ -16,12 +16,6 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-String.prototype.replaceAll = function(search, replacement) {
-    let target = this;
-    search = escapeRegExp(search);
-    return target.replace(new RegExp(search, 'g'), replacement);
-};
-
 String.prototype.searchAll = function(search) {
     let target = this;
     search = escapeRegExp(search);
@@ -48,7 +42,7 @@ function cutSentence(word, offset, sentence, sentenceNum) {
         let arr = sentence.match(/((?![.!?;:。！？]['"’”]?\s).|\n)*[.!?;:。！？]['"’”]?(\s|.*$)/g);
         if (arr && arr.length > 1) {
             arr = arr.reduceRight((accumulation, current) => {
-                if (current.search(/\.\w{0,3}\.\s$/g) != -1) {
+                if (current.search(/\.\w{0,3}\.\s$/g) !== -1) {
                     accumulation[0] = current + accumulation[0];
                 } else {
                     accumulation.unshift(current);
@@ -61,14 +55,14 @@ function cutSentence(word, offset, sentence, sentenceNum) {
         }
 
         let index = arr.findIndex(ele => { //try to exactly match to word based on offset.
-            if (ele.indexOf(word) !== -1 && ele.searchAll(word).indexOf(offset) != -1)
+            if (ele.includes(word) && ele.searchAll(word).includes(offset))
                 return true;
             else
                 offset -= ele.length;
         });
 
         if (index == -1) // fallback if can not exactly find word.
-            index = arr.findIndex(ele => ele.indexOf(word) !== -1);
+            index = arr.findIndex(ele => ele.includes(word));
 
         let left = Math.ceil((sentenceNum - 1) / 2);
         let start = index - left;
@@ -94,8 +88,8 @@ function cutSentence(word, offset, sentence, sentenceNum) {
 }
 
 function getSelectionOffset(node) {
-    var range = window.getSelection().getRangeAt(0);
-    var clone = range.cloneRange();
+    const range = window.getSelection().getRangeAt(0);
+    const clone = range.cloneRange();
     clone.selectNodeContents(node);
     clone.setEnd(range.startContainer, range.startOffset);
     let start = clone.toString().length;
@@ -164,7 +158,7 @@ function getSentence(sentenceNum) {
 
     let node = selection.getRangeAt(0).commonAncestorContainer;
 
-    if (['INPUT', 'TEXTAREA'].indexOf(node.tagName) !== -1) {
+    if (['INPUT', 'TEXTAREA'].includes(node.tagName)) {
         return;
     }
 

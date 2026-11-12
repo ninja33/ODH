@@ -130,8 +130,8 @@ function settingsPage(page, save, read = async () => ({
                     return await save(options);
                 }
             },
-            optionsLoad: read,
-            optionsSave() { assert.fail('Pages must not write the worker response back to storage'); },
+            loadOptions: read,
+            saveOptions() { assert.fail('Pages must not write the worker response back to storage'); },
             localizeHtmlPage() {},
             // The VM realm has no host globals; a browser provides both of these.
             structuredClone,

@@ -33,7 +33,7 @@ function sanitizeOptions(options) {
     };
 
     for (const key in defaults) {
-        if (!Object.prototype.hasOwnProperty.call(options, key)) {
+        if (!Object.hasOwn(options, key)) {
             options[key] = defaults[key];
         }
     }
@@ -41,7 +41,7 @@ function sanitizeOptions(options) {
 }
 
 
-async function optionsLoad() {
+async function loadOptions() {
     return new Promise((resolve, reject) => {
         chrome.storage.local.get(null, (options) => {
             const error = chrome.runtime.lastError;
@@ -54,7 +54,7 @@ async function optionsLoad() {
     });
 }
 
-async function optionsSave(options) {
+async function saveOptions(options) {
     return new Promise((resolve, reject) => {
         chrome.storage.local.set(sanitizeOptions(options), () => {
             const error = chrome.runtime.lastError;

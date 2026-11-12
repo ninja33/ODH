@@ -27,8 +27,8 @@ function workerFixture() {
     };
     const Worker = loadClassic('src/bg/js/serviceworker.js', 'ODHServiceworker', {
         chrome,
-        optionsLoad: async () => ({}),
-        optionsSave: async () => {},
+        loadOptions: async () => ({}),
+        saveOptions: async () => {},
         console: { error() {}, log() {}, warn() {} },
         Ankiconnect: class {},
         Builtin: class { loadData() {} },

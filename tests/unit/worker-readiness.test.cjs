@@ -7,7 +7,7 @@ const { loadClassic } = require('../helpers/load-classic.cjs');
 
 const RUNTIME_ID = 'synthetic-extension-id';
 
-function readinessWorker({ options, optionsLoad, deferData = false, stubScripts = true } = {}) {
+function readinessWorker({ options, loadOptions, deferData = false, stubScripts = true } = {}) {
     const diagnostics = [];
     const notes = [];
     const saves = [];
@@ -54,8 +54,8 @@ function readinessWorker({ options, optionsLoad, deferData = false, stubScripts 
         chrome,
         setTimeout,
         clearTimeout,
-        optionsLoad: optionsLoad || (async () => structuredClone(options || {})),
-        optionsSave: async saved => { saves.push(structuredClone(saved)); },
+        loadOptions: loadOptions || (async () => structuredClone(options || {})),
+        saveOptions: async saved => { saves.push(structuredClone(saved)); },
         console: { error(message) { diagnostics.push(message); }, info(message) { notes.push(message); }, log() {}, warn() {} },
         Ankiconnect: AnkiconnectStub,
         Builtin: class { loadData() { return dataGate; } },
@@ -99,7 +99,7 @@ test('the constructor loads options and applies worker-local state without any m
 
 test('a failed constructor load is logged, leaves options null, and never rejects', async () => {
     const fixture = readinessWorker({
-        optionsLoad: async () => { throw new Error('synthetic read failure'); }
+        loadOptions: async () => { throw new Error('synthetic read failure'); }
     });
 
     // Awaiting must not throw: the window is closed by the handler guards, not by a
@@ -180,7 +180,7 @@ test('optionsChanged reloads only when the script list changes, and always saves
 test('the shortcut and the tab broadcast stay silent until the constructor read lands', async () => {
     let releaseRead = null;
     const fixture = readinessWorker({
-        optionsLoad: () => new Promise(resolve => { releaseRead = resolve; })
+        loadOptions: () => new Promise(resolve => { releaseRead = resolve; })
     });
 
     // The window where a command or a tab event precedes the constructor's read: both

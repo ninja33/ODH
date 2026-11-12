@@ -87,8 +87,6 @@ class ODHFrontend {
         // wait 500 ms after the last selection change event
         this.timeout = setTimeout(() => {
             this.onSelectionEnd(e);
-            //var selEndEvent = new CustomEvent('selectionend');
-            //window.dispatchEvent(selEndEvent);
         }, 500);
     }
 
