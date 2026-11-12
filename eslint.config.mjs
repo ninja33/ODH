@@ -68,7 +68,9 @@ export default [
             'node_modules/**',
             'dist/**',
             'tmp/**',
-            'out-tsc/**'
+            'out-tsc/**',
+            // Local release packaging: not tracked and not shipped.
+            'packaging/**'
         ]
     },
     {

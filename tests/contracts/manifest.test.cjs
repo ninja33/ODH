@@ -11,7 +11,7 @@ function assertResource(resource) {
     assert.equal(typeof resource, 'string');
     const relative = resource.replace(/^\/+/, '');
     assert.ok(relative.length > 0 && !relative.split('/').includes('..'), `Invalid resource: ${resource}`);
-    assert.ok(!relative.startsWith('bg/data/'), `Private data is not a public resource: ${resource}`);
+    assert.ok(!relative.startsWith('bg/data/'), `Not a public resource: ${resource}`);
     assert.ok(fs.statSync(path.join(extensionDir, relative)).isFile(), `Missing resource: ${resource}`);
 }
 

@@ -61,3 +61,8 @@ Pull requests are welcome if you want to enhance this extension, or submit your 
 
 - The extension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
 - The dictionary script will go to [/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)
+
+## Licenses
+
+This project is MIT licensed (see [LICENSE](LICENSE)). The bundled third-party
+library is listed in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).

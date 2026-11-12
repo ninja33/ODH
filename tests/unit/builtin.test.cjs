@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { loadClassic } = require('../helpers/load-classic.cjs');
-// All entries are synthetic and unrelated to the private dictionary files.
+// All entries are synthetic.
 const collins = require('../fixtures/collins.json');
 
 async function loadedDictionary() {

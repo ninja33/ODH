@@ -26,8 +26,11 @@
 # for Mac
 .DS_Store
 
-# Private dictionary data
+# Local dictionary data
 /src/bg/data/
+
+# Local release packaging
+/packaging/
 
 # Agent workspace and local instructions
 /.agents/

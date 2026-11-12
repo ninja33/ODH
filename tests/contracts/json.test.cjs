@@ -3,7 +3,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const projectDir = path.resolve(__dirname, '../..');
-// Enumerate public JSON explicitly so local configuration and dictionaries stay private.
+// Enumerate public JSON explicitly so unspecified files are not validated by accident.
 const publicJson = [
     'package.json',
     'package-lock.json',

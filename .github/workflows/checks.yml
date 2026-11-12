@@ -1,7 +1,7 @@
 name: checks
 
-# Runs the same checks a contributor runs locally, on a clone that has no
-# private dictionary data and no local toolchain directory.
+# Runs the same checks a contributor runs locally, on a fresh clone without the
+# local toolchain directory.
 #
 # Gitleaks needs the full history: the baseline records findings from 2018,
 # and actions/checkout defaults to depth 1, which would hide them entirely.
