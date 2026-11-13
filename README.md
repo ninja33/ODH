@@ -1,68 +1,136 @@
 # Online Dictionary Helper (with Anki support)
 
-English | [中文](README.zh_CN.md)
+English | [中文](README.zh.md)
 
 [![checks](https://github.com/ninja33/ODH/actions/workflows/checks.yml/badge.svg)](https://github.com/ninja33/ODH/actions/workflows/checks.yml)
 ![license](https://img.shields.io/github/license/ninja33/ODH)
 ![last commit](https://img.shields.io/github/last-commit/ninja33/ODH)
 
-Online Dictionary Helper is a Chrome/Firefox extension to show definitions for words and phrases from online (or builtin) dictionary via users' selection on any webpage and PDF documents (using [pdf.js](https://mozilla.github.io/pdf.js/)), which also supports flash-card creation using [Anki](https://github.com/dae/anki) (with **[AnkiConnect](https://github.com/FooSoft/anki-connect)**, an Anki add-on, installed).
+## Introduction
 
-Details on the reasons for making this extension can be found in the [background](doc/background.md) introduction if you are interested.
+Online Dictionary Helper (ODH) is a Chrome extension. Select a word or phrase on any web page — including PDFs inside the pdf.js viewer — and a popup with its definitions appears next to it. Definitions come from dictionary scripts: either the dictionaries shipped with the extension, or a script you write yourself to scrape any online dictionary.
 
-![Anki Notes](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/anki_001_640x400.png)
+With [Anki](https://apps.ankiweb.net/) and [AnkiConnect](https://github.com/FooSoft/anki-connect) installed, you can turn a selected definition plus the page sentence into a review card in one click.
 
-What might set this extension apart is that users can grab online dictionary content with their own customized script (running under extension development mode). For development details, please check the [development guide](doc/development.md).
+Read the [background](docs/background.md) for why it exists.
 
-## How to use
+## Architecture
 
-- [Install from Chrome Web Store](https://chrome.google.com/webstore/detail/anki-online-dictionary-he/lppjdajkacanlmpbbcdkccjkdbpllajb?hl=en)
+The extension runs in four mutually isolated environments, each able to do only what it can:
 
-- [Install from Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/online-dictionary-helper/)
+| Environment | Responsibility | Constraint |
+| --- | --- | --- |
+| **Content scripts** `src/fg/` | selection, popup rendering, click handling in the page | shares the DOM, but JavaScript globals are isolated |
+| **Service worker** `src/bg/js/` | message routing, configuration, Anki requests, cross-origin fetch | no DOM, no `window`, no `Audio` |
+| **Offscreen document** `src/bg/` | hosts the sandbox iframe, plays audio | only `chrome.runtime`; storage and tab work goes back to the worker |
+| **Sandbox** `src/bg/sandbox/` | runs dictionary scripts | opaque origin with no access to any `chrome.*` API |
 
-1. Install the extension first from Chrome Web Store or Firefox Add-ons, then configure and activate the extension on your demands in the options page.
-2. Open any webpage, move your mouse cursor over the word that you want to select and translate, drag and select/double-click/press **Hotkey** (defined in options page) to select the word or phrase.
-3. If the word or phrase is a clickable link, use the predefined **Hotkey** or hold the <kbd>Alt</kbd> key while selecting to translate.
-4. A popup window will show up above the selection displaying the word definition.
-5. (Optional) While Anki and AnkiConnect are installed and running, go to the `Services Options` tab in the options page to setup the Anki deck, type, and field names to put your **expression**, **sentence**, **reading**, **definition**, etc.
-6. (Optional) Press the green **(+)** button on the top right corner of each definition in the popup window to add the word or phrase to Anki as a note.
+```mermaid
+flowchart LR
+    subgraph WEB["Page context"]
+        CS["Content scripts<br/>selection · rendering · cards"]
+        POP["In-page popup iframe<br/>opaque origin"]
+    end
+    subgraph EXT["Extension"]
+        UI["Options page / action popup"]
+        SW["Service worker<br/>routing · Anki · fetch"]
+        OFFSC["Offscreen document<br/>hosts sandbox · audio"]
+        SAN["Sandbox iframe<br/>evals dictionary scripts"]
+    end
+    ANKI["Anki + AnkiConnect"]
+    NET["Online dictionary sites"]
 
-## The Options Page
+    CS <--> POP
+    CS --> SW
+    UI --> SW
+    SW <--> OFFSC
+    OFFSC <--> SAN
+    SW <--> ANKI
+    SW <--> NET
+```
 
-The options of this extension are divided into three sections.
+**Why it splits this way**: the worker is the only place that can issue cross-origin requests and the natural owner of state, but it has no DOM — hence the offscreen document for the iframe and `Audio`. The offscreen document in turn only gets `chrome.runtime`, so storage and tab work still route back to the worker. Dictionary scripts must be able to `eval()` (the script is text fetched at runtime) and extension pages may not — which is exactly why the sandbox needs an opaque origin.
 
-1. General Options
-    - Enabled: Turn the extension on/off.
-    - AutoSel.Hotkey: Configure the **Hotkey** to select words or phrases. Four options are available: Off(Disable the hotkey), <kbd>Shift</kbd>, <kbd>Ctrl</kbd>, and <kbd>Alt</kbd> key.
-    - Max.Context: Set the maximum number of sentences extracted from the context of the webpage.
-    - Max.Example: Set the maximum number of example sentences from the dictionary (requires support of the dictionary script).
+## Messaging
 
-2. AnkiConnect Options: Setup Anki deck/type name, and which note fields you are going to put **expression**, **sentence**, **reading**, **definition**, etc.
+Two message channels run side by side, with different protocols that must not be mixed:
 
-3. Dictionary Options:
-    - Dictionary Script: Input your own script name here, and click <kbd>Load Script</kbd> button to load it.
-    - Selected Dictionary: Choose the dictionary (bultin or loaded) for the definitions on your preference.
+| Channel | Between | Routing |
+| --- | --- | --- |
+| `chrome.runtime` messages | extension pages, content scripts, worker, offscreen | a `target` field on the request: `serviceworker` / `offscreen` / `frontend` |
+| `window.postMessage` | content script ↔ in-page popup iframe; offscreen ↔ sandbox | its own action / params / callbackId protocol |
 
-![Options Page](https://raw.githubusercontent.com/ninja33/ODH/master/doc/img/option_general_640x400_en.png)
+- On receiving a runtime message the worker checks `sender.id` and `target`, then maps to a handler using **browser-supplied sender information** (`sender.tab`, or the exact `sender.url`) — names like `frontend_getTranslation`, `options_optionsChanged`. The source is never read from the message body.
+- Every cross-boundary reply is an envelope: `{ok: true, value}` on success, `{ok: false, error: {kind, message}}` on failure. Failures carry a classification (`network`, `timeout`, `handler-error`, …) and are never flattened into "no result".
+- The default deadline for awaiting a reply is **8 seconds**; a timeout fails with the `timeout` kind and does not cancel the original request. A dictionary `fetch` has its own separate **6-second** ceiling inside the worker.
 
-## Development
-### Getting started
-The source code of this extension on Github does not contain offline dictionary and English word deformation table data. You can go to the Chrome Web Store to download, or use a Chrome extension downloader to download the plugin's crx file and extract the dictionary JSON file.
+The full path of one lookup:
 
-### Use existing script or develop by yourself
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CS as Content script
+    participant SW as Service worker
+    participant OFFSC as Offscreen
+    participant SB as Sandbox
+    participant D as Dictionary script
 
-1. You can use existing dictionary scripts in the [dictionaries list](doc/scriptlist.md).
-2. Or develop the script by yourself based on [development guide](doc/development.md).
-3. Or open an [issue](https://github.com/ninja33/ODH/issues) in this repo if you really need help.
+    CS->>SW: getTranslation (target: serviceworker)
+    SW->>OFFSC: findTerm
+    OFFSC->>SB: postMessage findTerm
+    SB->>D: findTerm(expression)
+    D->>SB: api.fetch(url)
+    SB->>OFFSC: postMessage Fetch
+    OFFSC->>SW: offscreen_Fetch
+    SW->>SW: fetch(url), 6s ceiling
+    SW-->>D: response text, back along the same path
+    D-->>CS: notes[]
+    CS->>CS: render the popup
+```
 
-### Pull request
+## Sandbox
 
-Pull requests are welcome if you want to enhance this extension, or submit your own dictionary script in the next release.
+Dictionary scripts come from this repository or from arbitrary URLs, and they must be able to `eval()`. Those three facts rule out running them in an ordinary extension page.
 
-- The extension source will go to [/src](https://github.com/ninja33/ODH/tree/master/src)
-- The dictionary script will go to [/src/dict](https://github.com/ninja33/ODH/tree/master/src/dict)
+The manifest declares `src/bg/sandbox/sandbox.html` as a sandbox page. It runs in an **opaque origin** cut off from every extension API; the manifest declares no custom sandbox CSP, so the default policy permits `eval()`. Capability is exposed through a single `api` object — currently `fetch`, `deinflect`, `getBuiltin` and `locale`.
 
-## Licenses
+Loading a script is not "the worker fetches the text and hands it over" — it is a nested request originating in the sandbox itself:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant SB as Sandbox
+    participant OFFSC as Offscreen
+    participant SW as Service worker
+    participant GH as GitHub / script host
+
+    SB->>SW: initBackend (DOMContentLoaded, once per document)
+    SW->>SB: loadScript(name)
+    SB->>SB: buildScriptURL(name) resolves the address
+    SB->>SW: api.fetch(address)
+    SW->>GH: the actual network request (6s ceiling)
+    GH-->>SB: script text
+    SB->>SB: eval('(' + text + ')') → new SCRIPT()
+    SB-->>SW: {objectname, displayname}
+```
+
+What this buys: even a malicious script can only run in an origin that holds no extension API. Everything it can do must pass through those `api` methods, and behind them sits the worker's protocol allowlist (only `http`/`https`/the extension's own resources; link-local and cloud metadata endpoints refused).
+
+## Developer guides
+
+| What you are doing | Read this |
+| --- | --- |
+| Changing the extension itself (environment, checks, layout, PRs) | [ODH developer guide](docs/dev_guide_odh.md) |
+| Writing an external dictionary script | [Dictionary script guide](docs/dev_guide_uds.md) |
+| Working with built-in dictionary data | [Built-in dictionary data format](docs/dev_guide_dict.md) |
+
+Existing scripts live under `src/dict/`, covering various language pairs.
+
+## User guide
+
+Installation, lookup, what each options-page section does, card creation and troubleshooting: see the [user guide](docs/user_guide_odh.md).
+
+## License
 
 This project is MIT licensed (see [LICENSE](LICENSE)). The bundled third-party
 library is listed in [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
