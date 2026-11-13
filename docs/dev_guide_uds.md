@@ -172,19 +172,15 @@ The name shown in the dropdown. May be async (it usually needs `api.locale()`). 
 
 ### `setOptions(options)`
 
-Receives a copy of the configuration with **sensitive fields removed by a blocklist** (Anki credentials and the like) — dictionaries have no business knowing them. That blocklist is maintained by the extension and may grow; **do not assume the field set you receive is fixed or complete**, and rely only on the fields in the table below that you actually need.
+Receives a copy of the configuration with sensitive fields removed by a blocklist (Anki credentials and the like) — dictionaries have no business knowing them. That list is maintained by the extension and may grow, so do not assume the object you receive is complete or stable across versions.
 
-Commonly used fields:
+The field that may be useful today:
 
 | Field | Meaning |
 | --- | --- |
 | `maxexample` | example-sentence cap, string `'0'`–`'2'` |
-| `maxcontext` | page-context sentence count, string `'1'`–`'3'` |
-| `monolingual` | `'0'` bilingual, `'1'` monolingual |
-| `preferredaudio` | preferred audio index, `'0'` or `'1'` |
-| `dictSelected` | class name of the selected dictionary |
 
-Note that several values are **strings** — call `Number()` before comparing. The return value is not awaited, so do not do async initialization here.
+Note that the value is a string — call `Number()` before comparing. The return value is not awaited, so do not do async initialization here.
 
 ## 8. Note structure and card creation
 
