@@ -14,6 +14,20 @@ English | 中文
 
 阅读[项目背景](docs/background.zh.md)了解它为什么存在。
 
+## 使用说明
+
+安装、划词、选项页各栏的作用、制卡与常见问题，见[使用说明](docs/user_guide_odh.zh.md)。
+
+## 开发指南
+
+| 你在做什么 | 看哪份 |
+| --- | --- |
+| 改扩展本身（环境、检查、目录、PR） | [ODH 开发指南](docs/dev_guide_odh.zh.md) |
+| 写外部词典脚本 | [词典脚本开发指南](docs/dev_guide_uds.zh.md) |
+| 做内置词典数据 | [内置词典数据格式](docs/dev_guide_dict.zh.md) |
+
+现有脚本都在 `src/dict/` 下，覆盖多种语言组合。
+
 ## 架构
 
 扩展运行在四个彼此隔离的环境里，每个环境只能做它能做的事：
@@ -115,20 +129,6 @@ sequenceDiagram
 ```
 
 这套设计的收益：脚本即使有恶意代码，也只能在拿不到任何扩展 API 的 origin 里运行；它唯一能做的事情都必须经过 `api` 的这些方法，而方法背后是 worker 的协议白名单（仅 `http`/`https`/扩展自身资源，拒绝 link-local 与云 metadata 端点）。
-
-## 开发指南
-
-| 你在做什么 | 看哪份 |
-| --- | --- |
-| 改扩展本身（环境、检查、目录、PR） | [ODH 开发指南](docs/dev_guide_odh.zh.md) |
-| 写外部词典脚本 | [词典脚本开发指南](docs/dev_guide_uds.zh.md) |
-| 做内置词典数据 | [内置词典数据格式](docs/dev_guide_dict.zh.md) |
-
-现有脚本都在 `src/dict/` 下，覆盖多种语言组合。
-
-## 使用说明
-
-安装、划词、选项页各栏的作用、制卡与常见问题，见[使用说明](docs/user_guide_odh.zh.md)。
 
 ## 许可证
 

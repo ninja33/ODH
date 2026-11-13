@@ -14,6 +14,20 @@ With [Anki](https://apps.ankiweb.net/) and [AnkiConnect](https://github.com/FooS
 
 Read the [background](docs/background.md) for why it exists.
 
+## User guide
+
+Installation, lookup, what each options-page section does, card creation and troubleshooting: see the [user guide](docs/user_guide_odh.md).
+
+## Developer guides
+
+| What you are doing | Read this |
+| --- | --- |
+| Changing the extension itself (environment, checks, layout, PRs) | [ODH developer guide](docs/dev_guide_odh.md) |
+| Writing an external dictionary script | [Dictionary script guide](docs/dev_guide_uds.md) |
+| Working with built-in dictionary data | [Built-in dictionary data format](docs/dev_guide_dict.md) |
+
+Existing scripts live under `src/dict/`, covering various language pairs.
+
 ## Architecture
 
 The extension runs in four mutually isolated environments, each able to do only what it can:
@@ -115,20 +129,6 @@ sequenceDiagram
 ```
 
 What this buys: even a malicious script can only run in an origin that holds no extension API. Everything it can do must pass through those `api` methods, and behind them sits the worker's protocol allowlist (only `http`/`https`/the extension's own resources; link-local and cloud metadata endpoints refused).
-
-## Developer guides
-
-| What you are doing | Read this |
-| --- | --- |
-| Changing the extension itself (environment, checks, layout, PRs) | [ODH developer guide](docs/dev_guide_odh.md) |
-| Writing an external dictionary script | [Dictionary script guide](docs/dev_guide_uds.md) |
-| Working with built-in dictionary data | [Built-in dictionary data format](docs/dev_guide_dict.md) |
-
-Existing scripts live under `src/dict/`, covering various language pairs.
-
-## User guide
-
-Installation, lookup, what each options-page section does, card creation and troubleshooting: see the [user guide](docs/user_guide_odh.md).
 
 ## License
 
